@@ -73,7 +73,7 @@ export const signIn = async ({firebaseSignInToken,countryCode,phoneNumber}) => {
 const userAction = (val, data) => {
   return async function(dispatch) {
     if (val === 'signIn') {
-      signIn(data)
+      await signIn(data)
     } else if (val === 'logout') {
       await messaging().unsubscribeFromTopic(data.userID);
       await database()

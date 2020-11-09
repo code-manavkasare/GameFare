@@ -17,18 +17,13 @@ import equal from 'fast-deep-equal';
 
 
 import CardArchive from '../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
-
 import VideoBeingShared from './components/VideoBeingShared';
 import {FlatListComponent} from '../../layout/Views/FlatList';
 import Button from '../../layout/buttons/Button';
 
 import {uploadQueueAction} from '../../../store/actions/uploadQueueActions';
 import {layoutAction} from '../../../store/actions/layoutActions';
-
 import {rowTitle} from '../TeamPage/components/elements';
-import {timeout} from '../../functions/coach'
-
-import database from '@react-native-firebase/database';
 
 import {
   sortVideos,
@@ -89,7 +84,7 @@ class VideoLibraryPage extends Component {
     this.focusListener()
   }
   componentDidUpdate(prevProps) {
-    const {userConnected,videosArray} = this.props
+    const {userConnected} = this.props
     if (userConnected !== prevProps.userConnected) this.flatListRef.setState({numberToRender:13})
   }
   toggleSelectable(force) {
@@ -197,11 +192,10 @@ class VideoLibraryPage extends Component {
   }
 
   listVideos() {
-    const {navigation,videosArray} = this.props;
+    const {navigation} = this.props;
     const {selectOnly, selectableMode} = this.state;
-
-    const selectMargin = selectableMode ? 80 : 0; 
-    console.log('render list videos',videosArray)
+    const videosArray = this.videosArray()
+    const selectMargin = selectableMode ? 80 : 0;
     return (
       <View style={styleApp.fullSize}>
         <FlatListComponent
@@ -283,10 +277,16 @@ class VideoLibraryPage extends Component {
       />
     );
   }
-
+  videosArray = () => {
+    let {videosArray }=this.props
+    const allVideos = Object.values(videosArray).filter(
+      (v) => v.id && v.startTimestamp,
+    );
+    return sortVideos(allVideos).map((v) => v.id);
+  }
   render() {
-    const {navigation, route, currentSessionID, position,videosArray} = this.props;
-
+    const {navigation, route, currentSessionID, position} = this.props;
+    const videosArray = this.videosArray()
     const { 
       selectableMode,
       loader,
@@ -357,11 +357,6 @@ class VideoLibraryPage extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 10,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
   cardArchive: {
     width: width / 3,
     height: 170,
@@ -372,17 +367,11 @@ const styles = StyleSheet.create({
   },
 });
 const mapStateToProps = (state) => {
-  
-  const allVideos = Object.values({ 
-    ...state.localVideoLibrary.userLocalArchives,
-    ...state.user.infoUser.archivedStreams,
-  }).filter(
-    (v) => v.id && v.startTimestamp,
-  );
-  const sortedVideos = sortVideos(allVideos).map((v) => v.id);
-  console.log('sortefVew',sortedVideos)
   return {
-    videosArray:sortedVideos,
+    videosArray:{ 
+      ...state.localVideoLibrary.userLocalArchives,
+      ...state.user.infoUser.archivedStreams,
+    },
     currentSessionID: state.coach.currentSessionID,
     userID: state.user.userID,
     userConnected: state.user.userConnected,
