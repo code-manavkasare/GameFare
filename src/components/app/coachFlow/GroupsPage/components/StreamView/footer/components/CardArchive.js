@@ -74,7 +74,7 @@ class CardArchive extends Component {
   componentDidUpdate(prevProps) {
     const {id, archive} = this.props;
     const {archive: prevArchive} = prevProps;
-    if (prevArchive?.local && !archive?.local) {
+    if ((prevArchive?.local && !archive?.local) || (prevArchive && !archive)) {
       bindArchive(id);
     }
   }
@@ -281,6 +281,7 @@ class CardArchive extends Component {
       url,
     } = archive; 
     const {loader} = this.state;
+    
     return (
       <TouchableOpacity
         activeOpacity={0.8}

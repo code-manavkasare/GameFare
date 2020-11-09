@@ -66,13 +66,13 @@ class VideoLibraryPage extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.componentDidMount = this.componentDidMount.bind(this);
   }
-  shouldComponentUpdate(prevProps, prevState) {
-    const {archivedStreams, currentSessionID, userConnected} = this.props;
+  shouldComponentUpdate(nextProps, nextState) {
+    const {videosArray, currentSessionID, userConnected} = this.props;
     if (
-      !equal(archivedStreams, prevProps.archivedStreams) ||
-      !equal(currentSessionID, prevProps.currentSessionID) ||
-      !equal(userConnected, prevProps.userConnected) ||
-      !equal(prevState, this.state)
+      !equal(videosArray, nextProps.videosArray) ||
+      !equal(currentSessionID, nextProps.currentSessionID) ||
+      !equal(userConnected, nextProps.userConnected) ||
+      !equal(this.state, nextState)
     )
       return true;
     return false;
@@ -88,17 +88,10 @@ class VideoLibraryPage extends Component {
   componentWillUnmount=() => {
     this.focusListener()
   }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (!equal(nextState, this.state)) {
-      return true;
-    }
-    if (equal(this.props, nextProps)) {
-      return false;
-    }
-    return false;
+  componentDidUpdate(prevProps) {
+    const {userConnected,videosArray} = this.props
+    if (userConnected !== prevProps.userConnected) this.flatListRef.setState({numberToRender:13})
   }
-
   toggleSelectable(force) {
     const {selectableMode} = this.state;
     this.setState({selectableMode: force ? false : !selectableMode});
@@ -208,6 +201,7 @@ class VideoLibraryPage extends Component {
     const {selectOnly, selectableMode} = this.state;
 
     const selectMargin = selectableMode ? 80 : 0; 
+    console.log('render list videos',videosArray)
     return (
       <View style={styleApp.fullSize}>
         <FlatListComponent
@@ -215,6 +209,9 @@ class VideoLibraryPage extends Component {
           cardList={({item: videoID, index}) =>
             this.renderCardArchive(videoID, index)
           }
+          onRef={(ref) => {
+            this.flatListRef = ref;
+          }}
           fetchData={async ({numberToRender,nextNumberRender}) => {
             console.log('fetchData',{numberToRender,nextNumberRender}) 
           }}
@@ -383,6 +380,7 @@ const mapStateToProps = (state) => {
     (v) => v.id && v.startTimestamp,
   );
   const sortedVideos = sortVideos(allVideos).map((v) => v.id);
+  console.log('sortefVew',sortedVideos)
   return {
     videosArray:sortedVideos,
     currentSessionID: state.coach.currentSessionID,
