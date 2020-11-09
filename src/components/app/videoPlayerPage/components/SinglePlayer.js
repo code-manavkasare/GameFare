@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {Dimensions, View, StyleSheet, TouchableOpacity} from 'react-native';
+import {Dimensions, View, StyleSheet, InteractionManager} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import {isEqual} from 'lodash';
 
-import {archivesAction} from '../../../../actions/archivesActions';
+import {archivesAction} from '../../../../store/actions/archivesActions';
 
 import VideoPlayer from '../../coachFlow/VideoPlayer/index';
 import styleApp from '../../../style/style';
@@ -39,12 +39,14 @@ class SinglePlayer extends Component {
   }
 
   componentDidMount = () => {
-    const {onRef, id, archive, archivesAction} = this.props;
-    onRef && onRef(this);
-    if (!archive || !archive.local) {
-      // bind if missing entry or have non-local entry
-      bindArchive(id);
-    }
+    InteractionManager.runAfterInteractions(() => {
+      const {onRef, id, archive} = this.props;
+      onRef && onRef(this);
+      if (!archive || !archive.local) {
+        // bind if missing entry or have non-local entry
+        bindArchive(id);
+      }
+    });
   };
 
   componentDidUpdate = (prevProps, prevState) => {
@@ -74,10 +76,7 @@ class SinglePlayer extends Component {
           .update(updates);
       }
     }
-    if (prevArchive?.local && !archive?.local) {
-      // video was uploaded during the lifetime of this component
-      bindArchive(id);
-    }
+    if (prevArchive?.local && !archive?.local) bindArchive(id)
   };
 
   playerStyleByIndex = (i, total) => {
@@ -311,6 +310,7 @@ class SinglePlayer extends Component {
           disableControls={disableControls}
           seekbarSize={seekbarSize}
           width={playerStyle.width}
+          height={playerStyle.height}
           index={index}
           resizeMode="contain"
           userID={userID}

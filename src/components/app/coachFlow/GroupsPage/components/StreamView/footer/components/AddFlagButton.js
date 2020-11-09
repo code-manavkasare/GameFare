@@ -1,19 +1,17 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, Easing} from 'react-native';
-import {connect} from 'react-redux';
+import {View, Text, StyleSheet, Animated, Easing} from 'react-native'; 
 import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
-import PropTypes from 'prop-types';
-import isEqual from 'lodash.isequal';
+import PropTypes from 'prop-types'; 
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
-import {generateID} from '../../../../../../../functions/createEvent';
+import {generateID} from '../../../../../../../functions/utility.js';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 
-class AddFlagButton extends Component {
+export default class AddFlagButton extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -48,7 +46,8 @@ class AddFlagButton extends Component {
   buttonAddFlag() {
     const {recording} = this.props.member;
     const numberFlags = this.numberFlags(this.props);
-    if (!recording?.isRecording || !recording?.startTimestamp) return <Col size={10} />;
+    if (!recording?.isRecording || !recording?.startTimestamp)
+      return <Col size={10} />;
     return (
       <ButtonColor
         view={() => {
@@ -127,10 +126,3 @@ AddFlagButton.propTypes = {
   coachSessionID: PropTypes.string,
 };
 
-const mapStateToProps = (state) => {
-  return {
-    userID: state.user.userID,
-  };
-};
-
-export default connect(mapStateToProps)(AddFlagButton);

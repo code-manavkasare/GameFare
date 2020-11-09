@@ -3,8 +3,8 @@ import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 
-import {historicSearchAction} from '../../../actions/historicSearchActions';
-import {messageAction} from '../../../actions/messageActions';
+import {historicSearchAction} from '../../../store/actions/historicSearchActions';
+import {messageAction} from '../../../store/actions/messageActions';
 import {navigate} from '../../../../NavigationService';
 import PlaceHolder from '../../placeHolders/CardConversation';
 

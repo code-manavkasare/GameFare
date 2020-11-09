@@ -13,7 +13,7 @@ import {createThumbnail} from 'react-native-create-thumbnail';
 import RNFS from 'react-native-fs';
 import {fromHsv} from 'react-native-color-picker';
 
-import {store} from '../../../reduxStore';
+import {store} from '../../store/reduxStore';
 import {DocumentDirectoryPath} from 'react-native-fs';
 import {generateID} from '../functions/utility';
 import {deleteLocalVideoFile} from './videoManagement';
@@ -293,7 +293,7 @@ async function uploadVideoFirebase(image, destination) {
   }
 }
 
-const getImageSize = async (uri) => { 
+const getImageSize = async (uri) => {
   if (uri.includes('https'))
     return new Promise((resolve) => {
       try {

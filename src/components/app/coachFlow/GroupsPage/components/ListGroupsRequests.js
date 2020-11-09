@@ -1,30 +1,29 @@
 import React, {Component} from 'react';
-import {View, Text, Image} from 'react-native';
-
+import {} from 'react-native';
 import {connect} from 'react-redux';
 import isEqual from 'lodash.isequal';
 
 import {navigate} from '../../../../../../NavigationService';
 import CardStreamView from './CardStreamView';
 import {FlatListComponent} from '../../../../layout/Views/FlatList';
-import {newSession} from '../../../../functions/coach';
-import styleApp from '../../../../style/style';
-import colors from '../../../../style/colors';
 import sizes from '../../../../style/sizes';
-import Button from '../../../../layout/buttons/Button';
 
 class ListStreams extends Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.itemsRef = [];
   }
-  shouldComponentUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) {
+    const {coachSessions} = this.props;
+    if (prevProps.coachSessions.length === 1 && coachSessions.length === 0)
+      return navigate('Messages');
+  }
+  shouldComponentUpdate(nextProps, nextState) {
     const {coachSessions, userConnected} = this.props;
     if (
-      !isEqual(coachSessions, prevProps.coachSessions) ||
-      !isEqual(userConnected, prevProps.userConnected) ||
-      !isEqual(prevState, this.state)
+      !isEqual(coachSessions, nextProps.coachSessions) ||
+      !isEqual(userConnected, nextProps.userConnected) ||
+      !isEqual(nextState, this.state)
     )
       return true;
     return false;
@@ -38,17 +37,6 @@ class ListStreams extends Component {
     });
   };
   list = () => {
-    const styleViewLiveLogo = {
-      ...styleApp.center,
-      backgroundColor: colors.off,
-      height: 45,
-      width: 45,
-      borderRadius: 22.5,
-      borderWidth: 1,
-      borderColor: colors.grey,
-      marginTop: -100,
-      marginLeft: 65,
-    };
     const coachSessions = this.sessionsArray();
     const {AnimatedHeaderValue} = this.props;
 
@@ -61,7 +49,6 @@ class ListStreams extends Component {
             coachSessionID={session.id}
             key={session.id}
             scale={1}
-            onRef={(ref) => this.itemsRef.push(ref)}
           />
         )}
         numColumns={1}

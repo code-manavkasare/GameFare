@@ -10,7 +10,7 @@ import Config from 'react-native-config';
 import Loader from '../../layout/loaders/Loader';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
-import {userAction} from '../../../actions/userActions';
+import {userAction} from '../../../store/actions/userActions';
 import {timeout} from '../../functions/coach';
 import {formatPhoneNumber} from '../../functions/users';
 import {logMixpanel} from '../../functions/logs';

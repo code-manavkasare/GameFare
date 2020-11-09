@@ -1,7 +1,7 @@
 import React from 'react';
 import {Dimensions} from 'react-native';
 import {connect} from 'react-redux';
-import {layoutAction} from '../../actions/layoutActions';
+import {layoutAction} from '../../store/actions/layoutActions';
 const {height, width} = Dimensions.get('screen');
 
 import Orientation from 'react-native-orientation-locker';

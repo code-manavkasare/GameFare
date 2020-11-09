@@ -6,8 +6,8 @@ import {navigate} from '../../../../../NavigationService';
 
 import {createCoachSession, timeout} from '../../../functions/coach';
 import {logMixpanel} from '../../../database/mixpanel';
-import {coachAction} from '../../../../actions/coachActions';
-import {layoutAction} from '../../../../actions/layoutActions';
+import {coachAction} from '../../../../store/actions/coachActions';
+import {layoutAction} from '../../../../store/actions/layoutActions';
 
 import colors from '../../../style/colors';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';

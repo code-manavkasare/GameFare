@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Animated} from 'react-native';
+import {View, StyleSheet, Animated,InteractionManager} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
+import equal from 'fast-deep-equal';
+import isEqual from 'lodash.isequal';
 
 import PropTypes from 'prop-types';
 
@@ -58,108 +60,56 @@ class CardStream extends Component {
     const {coachSessionID} = this.props;
     navigate('Conversation', {coachSessionID});
   }
-
   componentDidMount = async () => {
-    const {onRef} = this.props;
-    onRef && onRef(this);
     this.bindSession();
-    if (this.selected) {
-      this.toggleSelected(1);
-    }
   };
-  static getDerivedStateFromProps(props, state) {
-    return {
-      hasNotification: conversationIsInNotification(
-        props.coachSessionID,
-        props.notifications,
-      ),
-    };
+  shouldComponentUpdate(nextProps, nextState) {
+    const {session,messages,notifications,showCallButton,selected} = this.props
+    if (
+      !equal(session, nextProps.session) ||
+      !equal(messages, nextProps.messages) ||
+      !equal(notifications, nextProps.notifications) ||
+      !equal(showCallButton, nextProps.showCallButton) ||
+      !equal(selected, nextProps.selected) ||
+      !equal(this.state, nextState)
+    )
+      return true;
+    return false;
   }
-  componentDidUpdate(prevProps) {
-    const {selected} = this.props;
-    if (selected !== prevProps.selected) {
-      this.toggleSelected(selected ? 1 : 0);
-    }
-  }
-
   bindSession() {
-    const {coachSessionID} = this.props;
-    bindSession(coachSessionID);
-    bindConversation(coachSessionID);
+    InteractionManager.runAfterInteractions(async () => {
+      const {coachSessionID} = this.props;
+      bindSession(coachSessionID);
+      bindConversation(coachSessionID);
+    });
   }
-  async openStream() {
-    const {session} = this.props;
-    sessionOpening(session);
-  }
-
   loading() {
     return <View>{<Loader size={55} color={colors.greyDark} />}</View>;
   }
-
-  toggleSelected(override) {
-    const toValue = override ?? 0;
-    Animated.timing(this.selectionIndication, native(toValue, 100)).start(
-      () => {
-        this.selected = this.selected ? false : true;
-      },
-    );
-  }
-
-  cardStream() {
+  buttonCard({style}) {
     const {
-      coachSessionID,
-      currentSessionID,
-      userID,
+      coachSessionID, 
       session,
       messages,
       recentView,
       onClick,
-      showCallButton,
-      showAddMemberButton,
-      style,
       key,
+      selected,
+      notifications,
+      unselectable
     } = this.props;
-    const {hasNotification, loading} = this.state;
-    const activeSession = coachSessionID === currentSessionID;
-    const animatedReverse = this.selectionIndication.interpolate({
-      inputRange: [0, 1],
-      outputRange: [1, 0],
-    });
-    const member = getMember(session, userID) ?? {};
-    const selectionIndicationOverlayStyle = {
-      ...styleApp.fullSize,
-      ...styleApp.shadowWeak,
-      position: 'absolute',
-      backgroundColor: colors.white,
-      borderRadius: 15,
-      borderWidth: 2,
-      borderColor: colors.green,
-      zIndex: -1,
-      opacity: this.selectionIndication,
-      height: 85,
-      marginTop: 13,
-    };
-    const callButtonContainerStyle = {
-      height: '100%',
-      width: 40,
-      ...styleApp.center,
-      position: 'absolute',
-      right: 0,
-      opacity: animatedReverse,
-    };
     const checkButtonContainerStyle = {
       ...styleApp.center,
       ...styleApp.fullSize,
       right: '10%',
       position: 'absolute',
       opacity: this.selectionIndication,
-    };
-    if (!session) return <PlaceHolder />;
-    return (
-      <Animated.View style={styles.card} key={key}>
-        <ButtonColor
-          color={'transparent'}
-          onPressColor={'transparent'}
+    }; 
+    const hasNotification= conversationIsInNotification(
+            coachSessionID,
+            notifications,
+          )
+    return <ButtonColor
           click={() => {
             logMixpanel({
               label: 'Click session ' + coachSessionID,
@@ -171,11 +121,12 @@ class CardStream extends Component {
               navigate('Conversation', {coachSessionID: coachSessionID});
             }
           }}
-          style={[styleApp.fullSize, {paddingVertical: 10, ...style}]}
-          view={() => {
-            return loading ? (
-              this.loading()
-            ) : (
+          color={colors.white}
+          onPressColor={colors.off}
+          style={[styleApp.fullSize, {paddingVertical: 0 ,...style,width:'100%',borderWidth:selected?2:0,borderColor:unselectable?colors.off:colors.green}]}
+          view={() => 
+            !session ?<PlaceHolder />
+            : (
               <View style={{...styleApp.fullSize, ...styleApp.center}}>
                 <Row style={{paddingTop: 5, paddingBottom: 5}}>
                   <Col size={30}>
@@ -215,10 +166,41 @@ class CardStream extends Component {
                   )}
                 </Row>
               </View>
-            );
-          }}
-        />
-        <Animated.View style={selectionIndicationOverlayStyle} />
+            )
+          }
+          />
+  }
+
+  cardStream() {
+    const {
+      coachSessionID,
+      currentSessionID,
+      session,
+      recentView,
+      showCallButton,
+      showAddMemberButton, 
+      key,
+      selected,
+      style
+    } = this.props;
+  
+    const animatedReverse = this.selectionIndication.interpolate({
+      inputRange: [0, 1],
+      outputRange: [1, 0],
+    });
+    const callButtonContainerStyle = {
+      height: '100%',
+      width: 40,
+      ...styleApp.center,
+      position: 'absolute',
+      right: 0,
+      opacity: animatedReverse,
+    };
+    
+     if (!session) return <PlaceHolder />;
+    return (
+      <Animated.View style={styles.card} key={key}>
+       {this.buttonCard({style})}
         {recentView && showCallButton && (
           <Animated.View style={callButtonContainerStyle}>
             <ButtonColor
@@ -278,7 +260,7 @@ class CardStream extends Component {
               }}
             />
           </Animated.View>
-        )}
+        )} 
       </Animated.View>
     );
   }
@@ -314,12 +296,14 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, props) => {
   const {notifications} = state.user.infoUser;
+  const conversation = state.conversations[props.coachSessionID] 
+  let messages = {}
+  if (conversation) messages = conversation.messages
   return {
     userID: state.user.userID,
-    session: state.coachSessions[props.coachSessionID],
-    messages: state.conversations[props.coachSessionID],
+    session: {...state.coachSessions[props.coachSessionID],isBinded:null},
+    messages,
     currentSessionID: state.coach.currentSessionID,
-    userConnected: state.user.userConnected,
     notifications: notifications ? Object.values(notifications) : [],
   };
 };

@@ -50,12 +50,15 @@ class ListPlayers extends Component {
 
 const mapStateToProps = (state, props) => {
   const {objectID} = props;
+  const conversation = state.conversations[objectID]
+  let messages = {}
+  if (conversation) messages = conversation.messages
   return {
     userID: state.user.userID,
     userConnected: state.user.userConnected,
     infoUser: state.user.infoUser.userInfo,
     session: state.coachSessions[objectID],
-    messages: state.conversations[objectID],
+    messages,
   };
 };
 

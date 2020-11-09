@@ -20,26 +20,14 @@ class ListStreams extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      coachSessions: false,
-      loading: true,
+      coachSessions:  getSortedSessions({
+        coachSessions:props.coachSessions,
+        sortBy: 'lastMessage',
+      }),
+      loading: false,
     };
-    this.itemsRef = [];
   }
-  componentDidMount() {
-    setTimeout(this.fetchSessions, 500);
-  }
-  componentDidUpdate(prevProps, prevState) {
-    if (!isEqual(prevProps.messages, this.props.messages)) {
-      setTimeout(this.fetchSessions, 0);
-    }
-  }
-  fetchSessions = async () => {
-    const coachSessions = await getSortedSessions({
-      coachSessions: this.props.coachSessions,
-      sortBy: 'lastMessage',
-    });
-    this.setState({coachSessions, loading: false});
-  };
+ 
   header() {
     return (
       <View>
@@ -134,11 +122,13 @@ class ListStreams extends Component {
             <CardStreamView
               coachSessionID={session.id}
               key={session.objectID}
+              unselectable={true}
               scale={1}
-              onRef={(ref) => this.itemsRef.push(ref)}
               style={{
                 borderBottomWidth: 1,
-                borderColor: '#f5f5f5',
+                borderColor: colors.off,
+                paddingTop:15,
+                paddingBottom:15
               }}
             />
           )
@@ -164,7 +154,6 @@ const mapStateToProps = (state) => {
   return {
     coachSessions: state.user.infoUser.coachSessions,
     userConnected: state.user.userConnected,
-    messages: state.conversations,
   };
 };
 

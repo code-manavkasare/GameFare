@@ -5,10 +5,9 @@ import {navigate, goBack} from '../../../../../../NavigationService';
 import colors from '../../../../style/colors';
 import HeaderBackButton from '../../../../layout/headers/HeaderBackButton';
 
+import {newConversation} from '../../../../functions/message';
 
-import {newConversation} from '../../../../functions/message'
-
-class HeaderListStream extends Component {
+export default class HeaderListStream extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -60,15 +59,3 @@ class HeaderListStream extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
-    userConnected: state.user.userConnected,
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  {},
-)(HeaderListStream);

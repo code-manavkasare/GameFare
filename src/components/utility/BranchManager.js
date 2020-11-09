@@ -2,12 +2,11 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import branch from 'react-native-branch';
 import database from '@react-native-firebase/database';
-import {store} from '../../../reduxStore';
-import {setSession} from '../../actions/coachSessionsActions';
+import {store} from '../../store/reduxStore';
+import {setSession} from '../../store/actions/coachSessionsActions';
 import {
   createCoachSessionFromUserIDs,
   addMembersToSessionByID,
-  bindSession,
   sessionOpening,
 } from '../functions/coach';
 import {shareCloudVideo} from '../database/firebase/videosManagement';

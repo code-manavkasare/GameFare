@@ -13,21 +13,21 @@ import {
 } from './pictures';
 import {generateID} from './utility';
 
-import {navigate, goBack} from '../../../NavigationService';
+import {navigate, goBack, getCurrentRoute} from '../../../NavigationService';
 
-import {store} from '../../../reduxStore';
+import {store} from '../../store/reduxStore';
 import {sendNewMessage} from './message';
 import {
   enqueueUploadTask,
   dequeueUploadTask,
   modifyUploadTask,
-} from '../../actions/uploadQueueActions';
+} from '../../store/actions/uploadQueueActions';
 import {
   addUserLocalArchive,
   removeUserLocalArchives,
   legacyRemoveUserLocalArchive,
-} from '../../actions/localVideoLibraryActions';
-import {setArchive, deleteArchives} from '../../actions/archivesActions';
+} from '../../store/actions/localVideoLibraryActions';
+import {setArchive, deleteArchives} from '../../store/actions/archivesActions';
 import {getArchiveByID} from './archive';
 import {
   createCloudVideo,
@@ -140,7 +140,7 @@ const addLocalVideo = async ({video, backgroundUpload}) => {
 const deleteVideos = (ids) => {
   const infos = ids.map((id) => getArchiveByID(id));
   store.dispatch(removeUserLocalArchives(ids));
-  store.dispatch(deleteArchives(ids));
+
   deleteCloudVideos(ids);
   infos.forEach((info) => {
     if (info && info.local && info.url) {
@@ -155,6 +155,7 @@ const deleteVideos = (ids) => {
       deleteCloudVideoInfo(info.id);
     }
   });
+  store.dispatch(deleteArchives(ids));
 };
 
 const openVideoPlayer = async ({
@@ -169,8 +170,10 @@ const openVideoPlayer = async ({
       coachSessionID,
       forceSharing,
     });
+  } else if (getCurrentRoute() === 'VideoPlayerPage') {
+    return goBack();
   }
-  return goBack();
+  return;
 };
 
 const uploadAlreadyInQueue = (videoID) => {
@@ -357,10 +360,10 @@ const generateThumbnailSet = async ({
   return thumbnails;
 };
 
-const updateLocalVideoUrls = () => {
+const updateLocalVideoUrls = async () => {
   const videos = store.getState().archives;
   if (videos) {
-    Object.values(videos)
+    await Object.values(videos)
       .filter((v) => v.local)
       .forEach(async (video) => {
         if (video.url) {
@@ -433,11 +436,11 @@ const updateLocalVideoUrls = () => {
   }
 };
 
-const oneTimeFixStoreLocalVideoLibrary = () => {
+const oneTimeFixStoreLocalVideoLibrary = async () => {
   // moves all videos from localVideoLibrary to archives
   const localVideos = store.getState().localVideoLibrary.videoLibrary;
   if (localVideos) {
-    Object.values(localVideos)
+    await Object.values(localVideos)
       .filter((v) => v && v.id && v.url && v.thumbnail)
       .forEach((video) => {
         addLocalVideo({video, backgroundUpload: true});

@@ -8,7 +8,7 @@ import database from '@react-native-firebase/database';
 
 import ImageUser from '../../../../../../../layout/image/ImageUser';
 import AddFlagButton from './AddFlagButton';
-import {uploadQueueAction} from '../../../../../../../../actions/uploadQueueActions';
+import {uploadQueueAction} from '../../../../../../../../store/actions/uploadQueueActions';
 import {arrayUploadFromSnippets} from '../../../../../../../functions/videoManagement';
 import {navigate} from '../../../../../../../../../NavigationService';
 

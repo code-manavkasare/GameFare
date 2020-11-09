@@ -8,7 +8,7 @@ import {fromHsv} from 'react-native-color-picker';
 
 import ButtonColor from '../../../../layout/Views/Button';
 import AllIcons from '../../../../layout/icons/AllIcons';
-import {coachAction} from '../../../../../actions/coachActions';
+import {coachAction} from '../../../../../store/actions/coachActions';
 import {getLastDrawing} from '../../../../functions/coach';
 
 import {

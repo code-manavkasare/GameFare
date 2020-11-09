@@ -166,7 +166,6 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, props) => {
   return {
-    userID: state.user.userID,
     userConnected: state.user.userConnected,
   };
 };

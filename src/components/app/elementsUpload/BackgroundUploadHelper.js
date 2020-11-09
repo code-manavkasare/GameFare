@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {isEqual} from 'lodash';
 
-import {uploadQueueAction} from '../../../actions';
+import {uploadQueueAction} from '../../../store/actions';
 import {uploadLocalVideo} from '../../functions/videoManagement';
 
 class BackgroundUploadHelper extends Component {

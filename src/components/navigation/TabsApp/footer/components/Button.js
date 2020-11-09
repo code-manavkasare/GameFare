@@ -94,30 +94,14 @@ class FooterButton extends React.Component {
       label,
       displayPastille,
       signInToPass,
-      userConnected,
-      discussions,
+      userConnected, 
       isFocused,
-      userID,
       scale,
       disableAnimation,
       numberNotifications,
       tintColor,
     } = this.props;
-    const conditionDisplayPastille =
-      Object.values(discussions).filter((discussion) => {
-        const lastMessage = discussion.lastMessage;
-        if (!lastMessage) {
-          return [];
-        }
-        let usersRead = lastMessage.usersRead;
-        if (!usersRead) {
-          usersRead = [];
-        }
-        if (!usersRead[userID]) {
-          return true;
-        }
-        return false;
-      }).length !== 0;
+ 
     let {routeName, pageStack} = this.props;
 
     if (!userConnected && signInToPass) {
@@ -148,14 +132,7 @@ class FooterButton extends React.Component {
                   {translateY: scale ? recordButtonYTranslate : 0},
                 ],
               }}>
-              {displayPastille && conditionDisplayPastille && (
-                <Reanimated.View
-                  style={{
-                    ...styles.roundMessage,
-                    backgroundColor: colors.greyMidDark,
-                  }}
-                />
-              )}
+          
               {label ? (
                 <AllIcons
                   name={icon.name}
@@ -170,8 +147,8 @@ class FooterButton extends React.Component {
               {label && (
                 <Reanimated.Text style={labelStyle}>{label}</Reanimated.Text>
               )}
-              {label === 'Calls' && numberNotifications !== 0 && (
-                <View pointerEvents="none" style={[styleApp.absoluteViewBadge]}>
+              {displayPastille && numberNotifications > 0 && (
+                <View pointerEvents="none" style={[styles.absoluteViewBadge,{backgroundColor:isFocused?colors.primaryLight:colors.grey}]}>
                   <Text
                     style={[
                       styleApp.textBold,
@@ -237,15 +214,16 @@ const styles = StyleSheet.create({
   rowInButton: {
     height: '100%',
   },
-  roundMessage: {
-    height: 11,
-    width: 11,
-    borderRadius: 5.5,
-    top: 0,
-    right: '25%',
+  absoluteViewBadge: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 5,
+    width: 5,
+    borderRadius: 10, 
+    backgroundColor: colors.blue,
     position: 'absolute',
-    zIndex: 30,
-    backgroundColor: colors.white,
+    top: 54,
+    right: '48%',
   },
   recordButton: {
     ...styleApp.center,
@@ -275,8 +253,6 @@ const mapStateToProps = (state) => {
 
   return {
     userConnected: state.user.userConnected,
-    discussions: state.message.conversations,
-    userID: state.user.userID,
     generalSessionRecording: state.layout.generalSessionRecording,
     numberNotifications: notifications
       ? Object.values(notifications).length

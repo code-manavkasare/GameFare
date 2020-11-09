@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Text, StyleSheet, View, Animated} from 'react-native';
-import moment from 'moment';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 
@@ -15,8 +14,6 @@ import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {imageCardTeam, sessionTitle} from './elements';
 import RowIcon from '../../../layout/rows/RowIcon';
 import {deleteSession} from '../../../functions/coach';
-
-import isEqual from 'lodash.isequal';
 
 class SessionSettings extends Component {
   constructor(props) {
@@ -90,15 +87,18 @@ class SessionSettings extends Component {
 
 const mapStateToProps = (state, props) => {
   const {objectID} = props.route.params;
+  const conversation = state.conversations[objectID]
+  let messages = {}
+  if (conversation) messages = conversation.messages
   return {
     userID: state.user.userID,
     userConnected: state.user.userConnected,
     infoUser: state.user.infoUser.userInfo,
     session: state.coachSessions[objectID],
-    messages: state.conversations[objectID],
-    // messages: state.conversations[objectID],
-  };
+    messages
+  }
 };
+
 
 export default connect(
   mapStateToProps,

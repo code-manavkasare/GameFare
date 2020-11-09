@@ -64,7 +64,7 @@ class InvitationManager extends Component {
     this.setState({keyboardVisible: false});
   }
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     this.keyboardWillShowListener = Keyboard.addListener(
       'keyboardWillShow',
       this._keyboardWillShow.bind(this),
@@ -105,12 +105,8 @@ class InvitationManager extends Component {
   }
 
   componentWillUnmount() {
-    if (this.keyboardWillShowListener) {
-      this.keyboardWillShowListener.remove();
-    }
-    if (this.keyboardWillHideListener) {
-      this.keyboardWillHideListener.remove();
-    }
+    Keyboard.removeListener("keyboardWillShow");
+    Keyboard.removeListener("keyboardWillHide", this._keyboardWillHide.bind(this))
   }
 
   hideButton() {

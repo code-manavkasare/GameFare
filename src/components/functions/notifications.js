@@ -4,7 +4,7 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import PushNotification from 'react-native-push-notification';
 import equal from 'fast-deep-equal';
 
-import {getValueOnce} from '../functions/firebase.js';
+import {getValueOnce} from '../database/firebase/methods.js';
 
 async function permissions() {
   try {

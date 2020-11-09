@@ -13,20 +13,17 @@ import {connect} from 'react-redux';
 import MediaPicker from 'react-native-image-crop-picker';
 
 import Orientation from 'react-native-orientation-locker';
-import isEqual from 'lodash.isequal';
+import equal from 'fast-deep-equal';
+
 
 import CardArchive from '../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
-
 import VideoBeingShared from './components/VideoBeingShared';
 import {FlatListComponent} from '../../layout/Views/FlatList';
 import Button from '../../layout/buttons/Button';
 
-import {uploadQueueAction} from '../../../actions/uploadQueueActions';
-import {layoutAction} from '../../../actions/layoutActions';
-
+import {uploadQueueAction} from '../../../store/actions/uploadQueueActions';
+import {layoutAction} from '../../../store/actions/layoutActions';
 import {rowTitle} from '../TeamPage/components/elements';
-
-import database from '@react-native-firebase/database';
 
 import {
   sortVideos,
@@ -45,7 +42,7 @@ import colors from '../../style/colors';
 import {navigate} from '../../../../NavigationService';
 import HeaderVideoLibrary from './components/HeaderVideoLibrary';
 import ToolRow from './components/ToolRow';
-import {store} from '../../../../reduxStore';
+import {store} from '../../../store/reduxStore';
 const {height, width} = Dimensions.get('screen');
 
 class VideoLibraryPage extends Component {
@@ -53,7 +50,6 @@ class VideoLibraryPage extends Component {
     super(props);
     const {params} = props.route;
     this.state = {
-      videosArray: [],
       loader: false,
       hideLocal: params ? params.hideLocal : false,
       hideCloud: params ? params.hideCloud : false,
@@ -65,15 +61,17 @@ class VideoLibraryPage extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.componentDidMount = this.componentDidMount.bind(this);
   }
-
-  static getDerivedStateFromProps(props) {
-    const allVideos = Object.values(props.archivedStreams).filter(
-      (v) => v.id && v.startTimestamp,
-    );
-    const sortedVideos = sortVideos(allVideos).map((v) => v.id);
-    return {videosArray: sortedVideos};
+  shouldComponentUpdate(nextProps, nextState) {
+    const {videosArray, currentSessionID, userConnected} = this.props;
+    if (
+      !equal(videosArray, nextProps.videosArray) ||
+      !equal(currentSessionID, nextProps.currentSessionID) ||
+      !equal(userConnected, nextProps.userConnected) ||
+      !equal(this.state, nextState)
+    )
+      return true;
+    return false;
   }
-
   componentDidMount() {
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('focus', () => {
@@ -82,17 +80,13 @@ class VideoLibraryPage extends Component {
       if (currentSessionID) this.setState({selectableMode: true});
     });
   }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (!isEqual(nextState, this.state)) {
-      return true;
-    }
-    if (isEqual(this.props, nextProps)) {
-      return false;
-    }
-    return false;
+  componentWillUnmount=() => {
+    this.focusListener()
   }
-
+  componentDidUpdate(prevProps) {
+    const {userConnected} = this.props
+    if (userConnected !== prevProps.userConnected) this.flatListRef.setState({numberToRender:13})
+  }
   toggleSelectable(force) {
     const {selectableMode} = this.state;
     this.setState({selectableMode: force ? false : !selectableMode});
@@ -199,10 +193,9 @@ class VideoLibraryPage extends Component {
 
   listVideos() {
     const {navigation} = this.props;
-    const {videosArray, selectOnly, selectableMode} = this.state;
-
+    const {selectOnly, selectableMode} = this.state;
+    const videosArray = this.videosArray()
     const selectMargin = selectableMode ? 80 : 0;
-
     return (
       <View style={styleApp.fullSize}>
         <FlatListComponent
@@ -210,6 +203,12 @@ class VideoLibraryPage extends Component {
           cardList={({item: videoID, index}) =>
             this.renderCardArchive(videoID, index)
           }
+          onRef={(ref) => {
+            this.flatListRef = ref;
+          }}
+          fetchData={async ({numberToRender,nextNumberRender}) => {
+            console.log('fetchData',{numberToRender,nextNumberRender}) 
+          }}
           ListEmptyComponent={{
             clickButton: () => navigation.navigate('Session'),
             textButton: 'Record',
@@ -278,18 +277,22 @@ class VideoLibraryPage extends Component {
       />
     );
   }
-
+  videosArray = () => {
+    let {videosArray }=this.props
+    const allVideos = Object.values(videosArray).filter(
+      (v) => v.id && v.startTimestamp,
+    );
+    return sortVideos(allVideos).map((v) => v.id);
+  }
   render() {
     const {navigation, route, currentSessionID, position} = this.props;
-
-    const {
-      videosArray,
+    const videosArray = this.videosArray()
+    const { 
       selectableMode,
       loader,
       selectedVideos,
       selectOnly,
-    } = this.state;
-
+    } = this.state; 
     return (
       <View style={styleApp.stylePage}>
         <StatusBar hidden={false} barStyle={'dark-content'} />
@@ -354,11 +357,6 @@ class VideoLibraryPage extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 10,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
   cardArchive: {
     width: width / 3,
     height: 170,
@@ -370,14 +368,12 @@ const styles = StyleSheet.create({
 });
 const mapStateToProps = (state) => {
   return {
-    archivedStreams: {
+    videosArray:{ 
       ...state.localVideoLibrary.userLocalArchives,
       ...state.user.infoUser.archivedStreams,
     },
-
     currentSessionID: state.coach.currentSessionID,
     userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
   };
 };
