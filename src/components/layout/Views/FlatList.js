@@ -66,7 +66,6 @@ class FlatListComponent extends Component {
   static getDerivedStateFromProps(props,state) {
     const {noLazy,list} = props;
     let {numberToRender} = state;
-   //   if (list.length !== state.list.length) numberToRender = 15;
     return {list: noLazy ? list : list.slice(0, numberToRender)}
   } 
   shouldComponentUpdate(nextProps, nextState) {
