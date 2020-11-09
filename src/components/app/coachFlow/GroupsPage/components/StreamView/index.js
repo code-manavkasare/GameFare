@@ -176,9 +176,14 @@ class GroupsPage extends Component {
       StatusBar.setBarStyle('light-content', true);
     });
 
-    this.focusListener = navigation.addListener('blur', () => {
+    this.blurListener = navigation.addListener('blur', () => {
       StatusBar.setBarStyle('dark-content', true);
     });
+  }
+  componentWillUnmount=() =>{
+    this.blurListener()
+    this.focusListener()
+    Orientation.removeOrientationListener()
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -221,6 +226,7 @@ class GroupsPage extends Component {
         this.footerRef?.bottomButtonsRef?.clickRecord();
       } catch (e) {}
     }
+    prevProps = null
   }
   isTokenUpToDate = () => {
     const {userID, session: coachSession} = this.props;

@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import Orientation from 'react-native-orientation-locker';
 import {BlurView} from '@react-native-community/blur';
 import {dissoc} from 'ramda';
+import equal from 'fast-deep-equal';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
@@ -52,7 +53,18 @@ class CallTab extends Component {
       Orientation.lockToPortrait();
     });
   };
-
+  shouldComponentUpdate(nextProps, nextState) { 
+    const {numberNotifications, currentSessionID, userConnected} = this.props;
+    
+    if (
+      !equal(numberNotifications, nextProps.numberNotifications) ||
+      !equal(currentSessionID, nextProps.currentSessionID) ||
+      !equal(userConnected, nextProps.userConnected) ||
+      !equal(nextState, this.state)
+    )
+      return true;
+    return false;
+  }
   componentWillUnmount = () => {
     if (this.focusUnsubscribe) {
       this.focusUnsubscribe();
@@ -274,7 +286,7 @@ class CallTab extends Component {
       modal,
       selectedSessions,
       selectedUsers,
-    } = this.state;
+    } = this.state; 
     return (
       <View style={styleApp.stylePage}>
         {this.header()}

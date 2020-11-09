@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import Orientation from 'react-native-orientation-locker';
+import Vitals from 'react-native-vitals';
 
 import {coachAction} from '../../store/actions/coachActions';
 import {layoutAction} from '../../store/actions/layoutActions';
@@ -36,6 +37,16 @@ import {userAction} from '../../store/actions/userActions';
 import {sendSMSFunction} from '../functions/message';
 import {createInviteToAppBranchUrl} from '../database/branch';
 
+Vitals.getMemory().then(memory => {
+  var {
+    appUsed,
+    systemTotal,
+    systemFree,
+    systemUsed
+  } = memory;
+  console.log('Low memory warning triggered',memory);
+})
+
 class MorePage extends Component {
   constructor(props) {
     super(props);
@@ -43,10 +54,7 @@ class MorePage extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    const {navigation} = this.props;
-    this.focusListener = navigation.addListener('focus', () => {
-      Orientation.lockToPortrait();
-    });
+    const {navigation} = this.props    
   }
   button2(dataButton) {
     const {text, icon, click, text2} = dataButton;
@@ -396,6 +404,45 @@ class MorePage extends Component {
               },
             }),
         })} */}
+
+ 
+        {this.button2({
+          text: 'Log getMemory',
+          icon: {
+            name: 'user',
+            type: 'font',
+            size: 20,
+            color: colors.title,
+          },
+          click: () =>
+          Vitals.getMemory().then(memory => {
+            var {
+              appUsed,
+              systemTotal,
+              systemFree,
+              systemUsed
+            } = memory;
+            console.log('memory',memory)
+          })
+        })}
+        {this.button2({
+          text: 'Log getStorage',
+          icon: {
+            name: 'user',
+            type: 'font',
+            size: 20,
+            color: colors.title,
+          },
+          click: () =>
+          Vitals.getStorage().then(storage => {
+            var {
+              total,
+              free,
+              used
+            } = storage;
+            console.log('storage',storage)
+          })
+        })}
 
         {/* {__DEV__ && (
           <View>

@@ -22,7 +22,7 @@ export default class Timer extends Component {
   }
 
   updateTime() {
-    // this.timeout = setTimeout(() => {this.setState({now: Date.now()})}, 1000)
+    this.timeout = setTimeout(() => {this.setState({now: Date.now()})}, 1000)
   }
 
   static getDerivedStateFromProps(props, state) {

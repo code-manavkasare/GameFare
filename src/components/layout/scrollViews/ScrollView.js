@@ -9,13 +9,12 @@ import {
   Easing,
   Dimensions,
   RefreshControl,
-} from 'react-native';
-import {connect} from 'react-redux';
+} from 'react-native'; 
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {marginTopApp, marginTopAppLandscape} from '../../style/sizes';
 
-class ScrollViewPage extends PureComponent {
+export default class ScrollViewPage extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -101,11 +100,3 @@ class ScrollViewPage extends PureComponent {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {};
-};
-
-export default connect(
-  mapStateToProps,
-  {},
-)(ScrollViewPage);

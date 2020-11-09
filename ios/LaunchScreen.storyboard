@@ -17,7 +17,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="logo.png" translatesAutoresizingMaskIntoConstraints="NO" id="Aob-M7-dw5">
-                                <rect key="frame" x="141" y="360" width="92" height="92"/>
+                                <rect key="frame" x="155" y="374" width="65" height="65"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="40" id="00e-fQ-N6r"/>
                                     <constraint firstAttribute="height" constant="40" id="ZWZ-6k-aXr"/>

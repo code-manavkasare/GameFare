@@ -13,11 +13,15 @@ const conversationsReducer = (state = initialState, action) => {
       const {conversation} = action;
       return {
         ...state,
-        [conversation.objectID]: conversation.messages,
+        [conversation.objectID]: {
+          objectID:conversation.objectID,
+          messages:conversation.messages,
+        },
       };
     case RESET_BINDS_CONVERSATIONS:
       return Object.values(state).reduce(function(result, item) {
-        result[item.id] = {...item, isBinded: false};
+        if (item.objectID)
+          result[item.objectID] = {...item, isBinded: false};
         return result;
       }, {});
     case RESET_CONVERSATIONS:

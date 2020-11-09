@@ -3,7 +3,6 @@ import * as Sentry from '@sentry/react-native';
 import {Integrations as TracingIntegrations} from '@sentry/tracing';
 import React, {Component} from 'react';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
-import {connect} from 'react-redux';
 import axios from 'axios';
 import SplashScreen from 'react-native-splash-screen';
 import Config from 'react-native-config';
@@ -19,9 +18,8 @@ import Notification from './src/components/layout/alerts/Notification';
 import UploadManager from './src/components/app/elementsUpload/UploadManager';
 import AppState from './src/components/app/functional/AppState.js';
 import {updateNotificationBadgeInBackground} from './src/components/functions/notifications.js';
-import {userAction} from './src/store/actions/userActions';
-import {globaleVariablesAction} from './src/store/actions/globaleVariablesActions.js';
-import {appSettingsAction} from './src/store/actions/appSettingsActions.js';
+import {signIn} from './src/store/actions/userActions'; 
+import {setCurrentBuildNumber} from './src/store/actions/appSettingsActions.js';
 import {navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
 import ConnectionTypeProvider from './src/components/utility/ConnectionTypeProvider';
@@ -47,7 +45,7 @@ const MyTheme = {
 
 // if (__DEV__) logsBridgeRN();
 
-class App extends Component {
+export default class App extends Component {
   constructor() {
     super();
     if (Text.defaultProps == null) Text.defaultProps = {};
@@ -56,7 +54,6 @@ class App extends Component {
   async componentDidMount() {
     const {userID} = store.getState().user;
     const {buildId} = store.getState().appSettings;
-    const {appSettingsAction} = this.props;
     if (!__DEV__) {
       this.configureSentry();
     }
@@ -66,7 +63,7 @@ class App extends Component {
 
     const actualBuildId = await DeviceInfo.getBuildId();
     if (buildId !== actualBuildId) {
-      appSettingsAction('setCurrentBuildNumber', actualBuildId);
+      store.dispatch(setCurrentBuildNumber(actualBuildId));
     }
 
     if (userID !== '') {
@@ -79,8 +76,6 @@ class App extends Component {
     audioDebugger({interval: 5000, disabled: true});
     SplashScreen.hide();
   }
-
-  componentDidUpdate = async (prevProps) => {};
 
   configureSentry = () => {
     Sentry.init({
@@ -120,7 +115,7 @@ class App extends Component {
     });
 
     if (data.response !== false) {
-      await this.props.userAction('signIn', {
+      await signIn({
         userID: userID,
         firebaseSignInToken: data.firebaseSignInToken,
         phoneNumber: phoneNumber,
@@ -150,11 +145,3 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {};
-};
-
-export default connect(
-  mapStateToProps,
-  {appSettingsAction, userAction, globaleVariablesAction},
-)(App);

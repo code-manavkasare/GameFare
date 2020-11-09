@@ -76,10 +76,7 @@ class SinglePlayer extends Component {
           .update(updates);
       }
     }
-    if (prevArchive?.local && !archive?.local) {
-      // video was uploaded during the lifetime of this component
-      bindArchive(id);
-    }
+    if (prevArchive?.local && !archive?.local) bindArchive(id)
   };
 
   playerStyleByIndex = (i, total) => {

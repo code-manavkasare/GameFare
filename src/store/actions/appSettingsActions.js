@@ -4,7 +4,7 @@ import {
   TOGGLE_WIFI_AUTO_UPLOAD,
 } from '../types';
 
-const setCurrentBuildNumber = (value) => ({
+export const setCurrentBuildNumber = (value) => ({
   type: SET_BUILD_NUMBER,
   buildId: value,
 });

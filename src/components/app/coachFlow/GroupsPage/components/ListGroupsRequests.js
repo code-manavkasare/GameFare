@@ -12,7 +12,6 @@ class ListStreams extends Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.itemsRef = [];
   }
   componentDidUpdate(prevProps, prevState) {
     const {coachSessions} = this.props;
@@ -50,7 +49,6 @@ class ListStreams extends Component {
             coachSessionID={session.id}
             key={session.id}
             scale={1}
-            onRef={(ref) => this.itemsRef.push(ref)}
           />
         )}
         numColumns={1}

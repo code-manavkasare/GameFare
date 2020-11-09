@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Share} from 'react-native';
-import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 
 import {store} from '../../../../store/reduxStore';
@@ -11,7 +10,7 @@ import {getValueOnce} from '../../../database/firebase/methods';
 import {shareVideosWithTeams} from '../../../functions/videoManagement';
 import {timeout} from '../../../functions/coach';
 
-class HeaderCallTab extends Component {
+export default class HeaderCallTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -89,15 +88,3 @@ class HeaderCallTab extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
-    coach: state.coach,
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  {},
-)(HeaderCallTab);

@@ -94,12 +94,12 @@ class FormatDate extends Component {
   constructor(props) {
     super(props);
   }
-  componentDidMount() {
-    this.interval = setInterval(() => this.tick(), 60000);
-  }
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
+  // componentDidMount() {
+  //   this.interval = setInterval(() => this.tick(), 60000);
+  // }
+  // componentWillUnmount() {
+  //   clearInterval(this.interval);
+  // }
   tick() {
     const {date} = this.props;
     let earlier = moment(Date.now()).subtract(7, 'days');

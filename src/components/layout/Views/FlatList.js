@@ -53,8 +53,15 @@ class FlatListComponent extends Component {
     super(props);
     this.state = {
       numberToRender: props.initialNumberToRender,
+      list:props.list
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
+  }
+  static getDerivedStateFromProps(props,state) {
+    const {noLazy,list} = props;
+    let {numberToRender} = state;
+   //   if (list.length !== state.list.length) numberToRender = 15;
+    return {list: noLazy ? list : list.slice(0, numberToRender)}
   }
   shouldComponentUpdate(nextProps, nextState) {
     if (!isEqual(nextState, this.state)) {
@@ -66,27 +73,25 @@ class FlatListComponent extends Component {
     return true;
   }
 
-  async onEndReached() {
-    const {list, incrementRendering} = this.props;
+   onEndReached = async () => {
+    const {list, incrementRendering,fetchData} = this.props;
     const {numberToRender} = this.state;
     const lengthList = list.length;
-    this.setState({
-      numberToRender:
-        numberToRender + incrementRendering > lengthList
-          ? lengthList
-          : numberToRender + incrementRendering,
-    });
+    const nextNumberRender = numberToRender + incrementRendering > lengthList
+    ? lengthList
+    : numberToRender + incrementRendering
+    if (fetchData) await fetchData({numberToRender,nextNumberRender})
+    this.setState({numberToRender:nextNumberRender});
   }
   render() {
-    const {numberToRender} = this.state;
+    const {numberToRender,list} = this.state;
     let {
       AnimatedHeaderValue,
       cardList,
       header,
       headerStyle,
       horizontal,
-      inverted,
-      list,
+      inverted, 
       ListEmptyComponent,
       noLazy,
       numColumns,
@@ -115,10 +120,10 @@ class FlatListComponent extends Component {
           <Loader size={40} color={colors.grey} />
         </View>
       );
-    };
+    }; 
     return (
       <FlatList
-        data={noLazy ? list : list.slice(0, numberToRender)}
+        data={list}
         renderItem={({item, index}) => cardList({item, index})}
         ListFooterComponent={() =>
           list.length > numberToRender && list.length !== 0 && viewLoader()

@@ -13,7 +13,8 @@ import {connect} from 'react-redux';
 import MediaPicker from 'react-native-image-crop-picker';
 
 import Orientation from 'react-native-orientation-locker';
-import isEqual from 'lodash.isequal';
+import equal from 'fast-deep-equal';
+
 
 import CardArchive from '../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 
@@ -25,6 +26,7 @@ import {uploadQueueAction} from '../../../store/actions/uploadQueueActions';
 import {layoutAction} from '../../../store/actions/layoutActions';
 
 import {rowTitle} from '../TeamPage/components/elements';
+import {timeout} from '../../functions/coach'
 
 import database from '@react-native-firebase/database';
 
@@ -53,7 +55,6 @@ class VideoLibraryPage extends Component {
     super(props);
     const {params} = props.route;
     this.state = {
-      videosArray: [],
       loader: false,
       hideLocal: params ? params.hideLocal : false,
       hideCloud: params ? params.hideCloud : false,
@@ -65,15 +66,17 @@ class VideoLibraryPage extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.componentDidMount = this.componentDidMount.bind(this);
   }
-
-  static getDerivedStateFromProps(props) {
-    const allVideos = Object.values(props.archivedStreams).filter(
-      (v) => v.id && v.startTimestamp,
-    );
-    const sortedVideos = sortVideos(allVideos).map((v) => v.id);
-    return {videosArray: sortedVideos};
+  shouldComponentUpdate(prevProps, prevState) {
+    const {archivedStreams, currentSessionID, userConnected} = this.props;
+    if (
+      !equal(archivedStreams, prevProps.archivedStreams) ||
+      !equal(currentSessionID, prevProps.currentSessionID) ||
+      !equal(userConnected, prevProps.userConnected) ||
+      !equal(prevState, this.state)
+    )
+      return true;
+    return false;
   }
-
   componentDidMount() {
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('focus', () => {
@@ -82,12 +85,15 @@ class VideoLibraryPage extends Component {
       if (currentSessionID) this.setState({selectableMode: true});
     });
   }
+  componentWillUnmount=() => {
+    this.focusListener()
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (!isEqual(nextState, this.state)) {
+    if (!equal(nextState, this.state)) {
       return true;
     }
-    if (isEqual(this.props, nextProps)) {
+    if (equal(this.props, nextProps)) {
       return false;
     }
     return false;
@@ -198,11 +204,10 @@ class VideoLibraryPage extends Component {
   }
 
   listVideos() {
-    const {navigation} = this.props;
-    const {videosArray, selectOnly, selectableMode} = this.state;
+    const {navigation,videosArray} = this.props;
+    const {selectOnly, selectableMode} = this.state;
 
-    const selectMargin = selectableMode ? 80 : 0;
-
+    const selectMargin = selectableMode ? 80 : 0; 
     return (
       <View style={styleApp.fullSize}>
         <FlatListComponent
@@ -210,6 +215,9 @@ class VideoLibraryPage extends Component {
           cardList={({item: videoID, index}) =>
             this.renderCardArchive(videoID, index)
           }
+          fetchData={async ({numberToRender,nextNumberRender}) => {
+            console.log('fetchData',{numberToRender,nextNumberRender}) 
+          }}
           ListEmptyComponent={{
             clickButton: () => navigation.navigate('Session'),
             textButton: 'Record',
@@ -280,16 +288,14 @@ class VideoLibraryPage extends Component {
   }
 
   render() {
-    const {navigation, route, currentSessionID, position} = this.props;
+    const {navigation, route, currentSessionID, position,videosArray} = this.props;
 
-    const {
-      videosArray,
+    const { 
       selectableMode,
       loader,
       selectedVideos,
       selectOnly,
-    } = this.state;
-
+    } = this.state; 
     return (
       <View style={styleApp.stylePage}>
         <StatusBar hidden={false} barStyle={'dark-content'} />
@@ -369,15 +375,18 @@ const styles = StyleSheet.create({
   },
 });
 const mapStateToProps = (state) => {
+  
+  const allVideos = Object.values({ 
+    ...state.localVideoLibrary.userLocalArchives,
+    ...state.user.infoUser.archivedStreams,
+  }).filter(
+    (v) => v.id && v.startTimestamp,
+  );
+  const sortedVideos = sortVideos(allVideos).map((v) => v.id);
   return {
-    archivedStreams: {
-      ...state.localVideoLibrary.userLocalArchives,
-      ...state.user.infoUser.archivedStreams,
-    },
-
+    videosArray:sortedVideos,
     currentSessionID: state.coach.currentSessionID,
     userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
   };
 };
