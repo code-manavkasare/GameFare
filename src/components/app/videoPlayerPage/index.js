@@ -26,7 +26,7 @@ import {
 } from '../../style/sizes';
 import {openVideoPlayer} from '../../functions/videoManagement';
 import {getArchiveByID} from '../../functions/archive';
-import {boolShouldComponentUpdate} from '../../functions/redux'
+import {boolShouldComponentUpdate} from '../../functions/redux';
 
 import {
   isVideosAreBeingShared,
@@ -77,11 +77,16 @@ class VideoPlayerPage extends Component {
       this.autoShareOnOpen();
     });
   };
-  
-  shouldComponentUpdate(nextProps,nextState) {
-    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+    });
   }
-  
+
   static getDerivedStateFromProps(props, state) {
     const {archives, objectID} = props.route.params;
     const {linkedPlayers} = state;
@@ -116,10 +121,9 @@ class VideoPlayerPage extends Component {
   };
 
   componentWillUnmount() {
-    this.blurListener()
-    this.focusListener()
+    this.blurListener();
+    this.focusListener();
     Orientation.removeOrientationListener(this._orientationListener.bind(this));
-
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -371,7 +375,10 @@ class VideoPlayerPage extends Component {
     const {isMicrophoneMutedLastValue} = this.recordingMenuRef.getState();
     const {archives, recordedActions} = this.state;
     const {userID, videoInfos} = this.props;
-    const audioFilePath = this.AudioRecorderPlayerRef.state.audioFilePath;
+    const {
+      audioFilePath,
+      audioFileDuration,
+    } = this.AudioRecorderPlayerRef.state;
     logMixpanel({
       label: 'Save review',
       params: {userID, recordedActions},
@@ -379,12 +386,13 @@ class VideoPlayerPage extends Component {
     for (const videoInfo of Object.values(videoInfos)) {
       if (videoInfo.local) {
         const localVideoInfo = getArchiveByID(archives[0]);
-        await generatePreview(
-          localVideoInfo.url,
-          recordedActions,
+        await generatePreview({
           audioFilePath,
-          isMicrophoneMutedLastValue,
-        );
+          audioFileDuration,
+          isMicrophoneMuted: isMicrophoneMutedLastValue,
+          recordedActions,
+          source: localVideoInfo.url,
+        });
         this.props.navigation.navigate('Alert', {
           close: true,
           title: 'Video successfully created!',
@@ -392,13 +400,14 @@ class VideoPlayerPage extends Component {
           textButton: 'Got it!',
         });
       } else {
-        await generatePreviewCloud(
-          userID,
+        await generatePreviewCloud({
+          audioFileDuration,
+          audioFilePath,
+          isMicrophoneMuted: isMicrophoneMutedLastValue,
+          userId: userID,
           videoInfo,
           recordedActions,
-          audioFilePath,
-          isMicrophoneMutedLastValue,
-        );
+        });
         this.props.navigation.navigate('Alert', {
           close: true,
           title: 'Your recording is being processed!',

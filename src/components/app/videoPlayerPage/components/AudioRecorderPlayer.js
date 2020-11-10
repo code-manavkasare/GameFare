@@ -14,6 +14,7 @@ class AudioRecorderPlayer extends Component {
       audioPlayer: null,
       audioRecorder: null,
       audioFilePath: null,
+      audioFileDuration: null,
     };
   }
 
@@ -41,13 +42,13 @@ class AudioRecorderPlayer extends Component {
 
   stopRecording = async () => {
     await this.state.audioRecorder.stop();
-    this.preparePlayer({});
+    await this.preparePlayer({});
   };
 
   preparePlayer = async ({url, isCloud}) => {
     await new Promise(async (resolve) => {
       await this.adjustAudioSession();
-      this.setState({
+      await this.setState({
         audioPlayer: new Player(
           url ? (isCloud ? url : `file://${url}`) : 'audio.mp4',
           {
@@ -55,6 +56,11 @@ class AudioRecorderPlayer extends Component {
             mixWithOthers: true,
           },
         ),
+      });
+      await this.state.audioPlayer.prepare(() => {
+        this.setState({
+          audioFileDuration: this.state.audioPlayer.duration / 1000,
+        });
       });
       this.adjustAudioSession().then(() => {
         resolve();
