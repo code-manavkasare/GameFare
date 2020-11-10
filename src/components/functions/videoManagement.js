@@ -280,7 +280,7 @@ const deleteLocalVideoFile = async (path) => {
   const filePath = path.split('///').pop(); // removes leading file:///
   RNFS.exists(filePath).then((res) => {
     if (res) {
-      RNFS.unlink(filePath).then(() => console.log('FILE DELETED'));
+      RNFS.unlink(filePath).then(() => console.log('FILE DELETED', path));
     }
   });
 };
