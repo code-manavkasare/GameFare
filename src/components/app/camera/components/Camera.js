@@ -17,7 +17,7 @@ import {
   openVideoPlayer,
 } from '../../../functions/videoManagement';
 import {logMixpanel} from '../../../functions/logs';
-import {boolShouldComponentUpdate} from '../../../functions/redux'
+import {boolShouldComponentUpdate} from '../../../functions/redux';
 
 class Camera extends Component {
   static propTypes = {
@@ -55,26 +55,19 @@ class Camera extends Component {
   componentDidMount() {
     this.configureQueue();
   }
-  shouldComponentUpdate(nextProps,nextState) {
-    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+    });
   }
   configureQueue() {
     queue.removeWorker('hideCamera');
     queue.removeWorker('showCamera');
     queue.addWorker(new Worker('hideCamera', this.hideCamera.bind(this)));
     queue.addWorker(new Worker('showCamera', this.showCamera.bind(this)));
-  }
-  shouldComponentUpdate(prevProps, prevState) {
-    return (
-      prevState.cameraReady !== this.state.cameraReady ||
-      prevProps.frontCamera !== this.props.frontCamera ||
-      prevState.isRecording !== this.state.isRecording ||
-      prevProps.cameraAvailability !== this.props.cameraAvailability ||
-      prevState.placeholderImg !== this.state.placeholderImg ||
-      prevState.displayPlaceholder !== this.state.displayPlaceholder ||
-      prevProps.currentScreenSize.portrait !==
-        this.props.currentScreenSize.portrait
-    );
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.cameraReady && !this.state.cameraReady) {
@@ -221,6 +214,7 @@ class Camera extends Component {
       <View style={styleApp.flexColumnBlack}>
         {(isRecording || !displayPlaceholder) && (
           <RNCamera
+            videoStabilizationMode={'standard'}
             onCameraReady={() => {
               this.setState({cameraReady: true});
               if (onCameraReady) {

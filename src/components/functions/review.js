@@ -61,12 +61,14 @@ const saveAudioFileToAppData = async (audioFilePath) => {
   return newAudioFilePath;
 };
 
-const generatePreview = async (
-  source,
-  recordedActions,
-  audioFilePath,
-  isMicrophoneMuted,
-) => {
+const generatePreview = async (params) => {
+  const {
+    audioFilePath,
+    audioFileDuration,
+    isMicrophoneMuted,
+    recordedActions,
+    source,
+  } = params;
   const {startTime, endTime} = await getActionLengthReview(recordedActions);
   const newSource = await cutVideo(source, startTime, endTime);
   const audioRecordUrl = await saveAudioFileToAppData(audioFilePath);
@@ -74,9 +76,12 @@ const generatePreview = async (
     recordedActions,
     startTime,
   );
+  const videoInfo = await getVideoInfo(newSource);
   const newVideo = {
-    ...(await getVideoInfo(newSource)),
+    ...videoInfo,
     audioRecordUrl,
+    durationSeconds:
+      audioFileDuration > 0 ? audioFileDuration : videoInfo.durationSeconds,
     recordedActions: newRecordedActions,
     isMicrophoneMuted,
   };
@@ -88,13 +93,15 @@ const generatePreview = async (
     await addAudioRecordToUploadQueue(audioRecordUrl, videoId);
 };
 
-const generatePreviewCloud = async (
-  userId,
-  videoInfo,
-  recordedActions,
-  audioFilePath,
-  isMicrophoneMuted,
-) => {
+const generatePreviewCloud = async (params) => {
+  const {
+    audioFileDuration,
+    audioFilePath,
+    isMicrophoneMuted,
+    recordedActions,
+    userId,
+    videoInfo,
+  } = params;
   const {startTime, endTime} = await getActionLengthReview(recordedActions);
 
   const newArchiveId = generateID();
@@ -109,7 +116,9 @@ const generatePreviewCloud = async (
       startTime,
       endTime,
     },
-    durationSeconds: endTime - startTime,
+    durationSeconds: isMicrophoneMuted
+      ? endTime - startTime
+      : audioFileDuration,
     id: newArchiveId,
     recordedActions: newRecordedActions,
     size: videoInfo.size,

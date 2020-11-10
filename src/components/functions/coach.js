@@ -11,7 +11,7 @@ import {generateID} from './utility.js';
 import {getVideoUUID, generateThumbnail} from './pictures';
 import {minutes, seconds, milliSeconds} from './date';
 import {userObject} from './users';
- 
+
 import {store} from '../../store/reduxStore';
 import {
   setCurrentSessionID,
@@ -588,6 +588,7 @@ const capitalize = (str) => {
 
 const deleteSession = (objectID) => {
   const userID = store.getState().user.userID;
+  console.log('delete session@@!');
   navigate('Alert', {
     title: 'Do you want to leave this conversation?',
     textButton: 'Leave',

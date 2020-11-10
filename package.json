@@ -10,7 +10,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "postinstall": "yarn rn-networking-patch",
+    "postinstall": "yarn rn-networking-patch && patch-package",
     "postuninstall": "yarn rn-networking-patch"
   },
   "dependencies": {
@@ -35,8 +35,8 @@
     "@react-navigation/material-top-tabs": "^5.2.16",
     "@react-navigation/native": "^5.7.2",
     "@react-navigation/stack": "^5.2.9",
-    "@sentry/react-native": "^1.9.0",
-    "@sentry/tracing": "^5.26.0",
+    "@sentry/react-native": "^2.0.0",
+    "@sentry/tracing": "^5.27.3",
     "@wwimmo/react-native-sketch-canvas": "https://github.com/wwimmo/react-native-sketch-canvas.git",
     "algoliasearch": "^4.0.0",
     "axios": "^0.19.0",
@@ -52,6 +52,8 @@
     "lottie-ios": "^3.1.8",
     "lottie-react-native": "^3.4.0",
     "moment": "^2.26.0",
+    "patch-package": "^6.2.2",
+    "postinstall-postinstall": "^2.1.0",
     "prop-types": "^15.7.2",
     "ramda": "^0.26.1",
     "react": "16.13.1",

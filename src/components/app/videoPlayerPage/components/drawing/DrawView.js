@@ -534,12 +534,12 @@ class DrawView extends Component {
                 path: drawing.data.path,
                 id: drawing.id,
                 startPoint: {
-                  x: drawing.data.startPoint.x * w,
-                  y: drawing.data.startPoint.y * h,
+                  x: drawing.data.startPoint?.x * w,
+                  y: drawing.data.startPoint?.y * h,
                 },
                 endPoint: {
-                  x: drawing.data.endPoint.x * w,
-                  y: drawing.data.endPoint.y * h,
+                  x: drawing.data.endPoint?.x * w,
+                  y: drawing.data.endPoint?.y * h,
                 },
                 thirdPoint: drawing.data.thirdPoint
                   ? {

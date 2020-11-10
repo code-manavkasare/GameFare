@@ -53,8 +53,7 @@ const deleteNotifications = async (userId, coachSessionId, notifications) => {
       updates[`users/${userId}/notifications/${notificationId}`] = null;
     }
   }
-
-  if (!equal(updates, {})) {
+  if (Object.values(updates).length !== 0) {
     await database()
       .ref()
       .update(updates);
@@ -62,15 +61,14 @@ const deleteNotifications = async (userId, coachSessionId, notifications) => {
 };
 
 const conversationIsInNotification = (coachSessionId, notifications) => {
-  console.log('coachSessionId, notifications',coachSessionId, notifications)
-  if (!notifications) return false
+  if (!notifications) return false;
   let isInNotification = false;
-  for (const notification of notifications) {
+  Object.values(notifications).map((notification) => {
     const {action, coachSessionID} = notification.data;
     if (action === 'Conversation' && coachSessionID === coachSessionId) {
       isInNotification = true;
     }
-  }
+  });
   return isInNotification;
 };
 
