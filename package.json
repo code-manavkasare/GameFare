@@ -10,7 +10,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "postinstall": "yarn rn-networking-patch",
+    "postinstall": "yarn rn-networking-patch && patch-package",
     "postuninstall": "yarn rn-networking-patch"
   },
   "dependencies": {
@@ -52,6 +52,8 @@
     "lottie-ios": "^3.1.8",
     "lottie-react-native": "^3.4.0",
     "moment": "^2.26.0",
+    "patch-package": "^6.2.2",
+    "postinstall-postinstall": "^2.1.0",
     "prop-types": "^15.7.2",
     "ramda": "^0.26.1",
     "react": "16.13.1",
