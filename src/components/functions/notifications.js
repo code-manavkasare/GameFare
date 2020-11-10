@@ -53,8 +53,7 @@ const deleteNotifications = async (userId, coachSessionId, notifications) => {
       updates[`users/${userId}/notifications/${notificationId}`] = null;
     }
   }
-
-  if (!equal(updates, {})) {
+  if (Object.values(updates).length !== 0) {
     await database()
       .ref()
       .update(updates);

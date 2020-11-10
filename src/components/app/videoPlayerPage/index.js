@@ -60,8 +60,16 @@ class VideoPlayerPage extends Component {
     this.focusListener = null;
   }
   componentDidMount = () => {
-    Orientation.unlockAllOrientations();
-    StatusBar.setBarStyle('light-content', true);
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('focus', () => {
+      Orientation.unlockAllOrientations();
+      StatusBar.setBarStyle('light-content', true);
+    });
+
+    this.blurListener = navigation.addListener('blur', () => {
+      StatusBar.setBarStyle('dark-content', true);
+      Orientation.lockToPortrait();
+    });
 
     Orientation.addOrientationListener(this._orientationListener.bind(this));
 
@@ -108,7 +116,10 @@ class VideoPlayerPage extends Component {
   };
 
   componentWillUnmount() {
+    this.blurListener()
+    this.focusListener()
     Orientation.removeOrientationListener(this._orientationListener.bind(this));
+
   }
 
   componentDidUpdate(prevProps, prevState) {

@@ -79,7 +79,6 @@ export default class HeaderCallTab extends Component {
         loader={loader}
         clickButton2={() => (modal ? this.clickShare() : clickButton2())}
         colorLoader={colors.title}
-        sizeLoader={45}
       />
     );
   }

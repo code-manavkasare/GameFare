@@ -31,7 +31,6 @@ class BodyUserDirectory extends Component {
     this.state = {
       selectedUsers: {},
       searchText: '',
-      branchLink: props.route?.params?.branchLink ?? null,
     };
     this.searchResultsRef = null;
     this.invitationManagerRef = null;

@@ -178,6 +178,7 @@ class GroupsPage extends Component {
 
     this.blurListener = navigation.addListener('blur', () => {
       StatusBar.setBarStyle('dark-content', true);
+      Orientation.lockToPortrait();
     });
   }
   componentWillUnmount=() =>{
