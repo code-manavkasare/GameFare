@@ -364,6 +364,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderBottomWidth: 1.5,
     borderColor: colors.white,
+    backgroundColor:colors.title
   },
 });
 const mapStateToProps = (state) => {

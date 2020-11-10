@@ -20,7 +20,6 @@ class TabsApp extends React.Component {
     return true;
   }
   render = () => {
-    console.log('render footer app')
     return (
       <Tab.Navigator
         initialRouteName="VideoLibrary"

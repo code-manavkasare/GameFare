@@ -28,11 +28,10 @@ class BlockedUsersList extends Component {
     this.refreshUsersList();
   };
 
-  selectUser(select, user) {
+  selectUser(user) {
     let {selectedUsers} = this.state;
-    if (!select) {
-      selectedUsers[user.objectID] = user;
-    } else delete selectedUsers[user.objectID];
+    if (!selectedUsers[user.objectID]) selectedUsers[user.objectID] = user;
+    else delete selectedUsers[user.objectID];
 
     this.setState({selectedUsers});
   }
@@ -62,8 +61,8 @@ class BlockedUsersList extends Component {
       <CardUserSelect
         user={user}
         key={user.info.objectID}
-        selectUser={this.selectUser.bind(this)}
-        usersSelected={selectedUsers}
+        onClick={this.selectUser.bind(this)}
+        isUserSelected={selectedUsers[user.objectID]}
       />
     );
   }
@@ -72,7 +71,7 @@ class BlockedUsersList extends Component {
     if (loader)
       return (
         <View style={[styleApp.center, {minHeight: '100%'}]}>
-          <Loader size={35} color={'green'} />
+          <Loader size={35} color={colors.green} />
         </View>
       );
     if (blockedUsers.length === 0)
@@ -82,14 +81,14 @@ class BlockedUsersList extends Component {
         </Text>
       );
     if (blockedUsers)
-      return blockedUsers.map((user, i) =>
+      return <View style={{marginTop:15}}>{blockedUsers.map((user, i) =>
         this.cardUser(user, i, selectedUsers),
-      );
+      )}</View>;
     return null;
   }
 
   render() {
-    const {blockedUsers} = this.state;
+    const {blockedUsers,selectedUsers} = this.state;
     const {goBack} = this.props.navigation;
     return (
       <View style={styleApp.stylePage}>
@@ -129,7 +128,9 @@ class BlockedUsersList extends Component {
             <Button
               text="Unblock users"
               backgroundColor={'green'}
+              disabled={Object.values(selectedUsers).length === 0}
               onPressColor={colors.greenLight}
+              styleButton={{height:55}}
               click={() => this.unblockUser()}
             />
           </View>
