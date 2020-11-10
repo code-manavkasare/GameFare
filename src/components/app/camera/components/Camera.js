@@ -69,18 +69,6 @@ class Camera extends Component {
     queue.addWorker(new Worker('hideCamera', this.hideCamera.bind(this)));
     queue.addWorker(new Worker('showCamera', this.showCamera.bind(this)));
   }
-  shouldComponentUpdate(prevProps, prevState) {
-    return (
-      prevState.cameraReady !== this.state.cameraReady ||
-      prevProps.frontCamera !== this.props.frontCamera ||
-      prevState.isRecording !== this.state.isRecording ||
-      prevProps.cameraAvailability !== this.props.cameraAvailability ||
-      prevState.placeholderImg !== this.state.placeholderImg ||
-      prevState.displayPlaceholder !== this.state.displayPlaceholder ||
-      prevProps.currentScreenSize.portrait !==
-        this.props.currentScreenSize.portrait
-    );
-  }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.cameraReady && !this.state.cameraReady) {
       this.holdRef();

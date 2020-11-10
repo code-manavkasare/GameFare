@@ -26,6 +26,7 @@ import {
   addUserLocalArchive,
   removeUserLocalArchives,
   legacyRemoveUserLocalArchive,
+  removeUserLocalArchive,
 } from '../../store/actions/localVideoLibraryActions';
 import {setArchive, deleteArchives} from '../../store/actions/archivesActions';
 import {getArchiveByID} from './archive';
@@ -35,6 +36,7 @@ import {
   shareCloudVideo,
   deleteCloudVideos,
   deleteCloudVideoInfo,
+  updateThumbnailCloud,
 } from '../database/firebase/videosManagement';
 
 const generateVideoInfosFromFlags = async (sourceVideoInfo, flags) => {
