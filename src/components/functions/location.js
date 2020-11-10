@@ -11,8 +11,6 @@ Geolocation.setRNConfiguration(configLocation);
 import Geocoder from 'react-native-geocoder';
 import {request, PERMISSIONS} from 'react-native-permissions';
 
-
-
 const options = {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000};
 
 async function getPermission() {
@@ -81,19 +79,4 @@ function getZone(rawAddress) {
   );
 }
 
-async function loadImageMap(location) {
-  // var uri = await MapboxGL.snapshotManager.takeSnap({
-  //   centerCoordinate: [location.lng, location.lat],
-  //   width: width,
-  //   height: 300,
-  //   zoomLevel: 12,
-  //   pitch: 30,
-  //   heading: 20,
-  //   // styleURL: MapboxGL.StyleURL.Dark,
-  //   writeToDisk: true, // Create a temporary file
-  // });
-
-  return uri;
-}
-
-export {currentLocation, getZone, loadImageMap};
+export {currentLocation, getZone};
