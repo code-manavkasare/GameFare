@@ -184,7 +184,6 @@ class GroupsPage extends Component {
   componentWillUnmount = () => {
     this.blurListener();
     this.focusListener();
-    Orientation.removeOrientationListener();
   };
 
   componentDidUpdate(prevProps, prevState) {
