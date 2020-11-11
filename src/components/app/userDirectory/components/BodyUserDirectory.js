@@ -6,7 +6,6 @@ import {dissoc} from 'ramda';
 import PropTypes from 'prop-types';
 import {navigate} from '../../../../../NavigationService';
 
-import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
 import sizes from '../../../style/sizes';
 
@@ -14,7 +13,6 @@ import {isUserPrivate, userObject} from '../../../functions/users';
 import {openSession} from '../../../functions/coach';
 
 import InvitationManager from '../../../utility/InvitationManager';
-
 import UserSearchResults from './UserSearchResults';
 
 class BodyUserDirectory extends Component {

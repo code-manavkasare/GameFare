@@ -51,6 +51,7 @@ const createCoachSessionFromUserIDs = async (
           id: otherIDs[i],
           info,
           isConnected: false,
+          permissionOtherUserToRecord: true,
         },
       };
     } else {
@@ -84,7 +85,11 @@ const createCoachSession = async (user, members, sessionID = null) => {
     },
     createdAt: Date.now(),
     members: {
-      [user.id]: {...user, isConnected: false},
+      [user.id]: {
+        ...user,
+        isConnected: false,
+        permissionOtherUserToRecord: true,
+      },
       ...members,
     },
     allMembers: {[user.id]: true, ...allMembers},
@@ -630,9 +635,6 @@ const loadAndOpenSession = async (sessionID) => {
 };
 
 const addMembersToSession = async (coachSessionID, members) => {
-  // members are assumed to have 'id' and 'info' properties.
-  // only update to firebase coachSession object is done from here
-  // {member.id}/coachSessions/ updates are done via cloud function.
   const userID = store.getState().user.userID;
   if (members && Object.keys(members).length > 0) {
     const invitationTimeStamp = Date.now();
@@ -643,6 +645,7 @@ const addMembersToSession = async (coachSessionID, members) => {
           ...member,
           invitationTimeStamp,
           invitedBy: userID,
+          permissionOtherUserToRecord: true,
         },
       };
     }, {});
@@ -665,6 +668,7 @@ const addMembersToSessionByID = async (coachSessionID, memberIDs) => {
         [id]: {
           ...member,
           isConnected: false,
+          permissionOtherUserToRecord: true,
         },
       };
     } else {

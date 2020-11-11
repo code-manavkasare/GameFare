@@ -5,7 +5,7 @@ import branch from 'react-native-branch';
 
 import colors from '../style/colors';
 import {store} from '../../store/reduxStore';
-import {createCoachSession} from '../functions/coach'
+import {createCoachSession} from '../functions/coach';
 
 const getArchivesFromBranchParams = (params) => {
   return params.archives ? params.archives.split(',') : [];
@@ -99,12 +99,16 @@ const createInviteToAppBranchUrl = async () => {
 const createInviteToSessionBranchUrl = async (sessionID) => {
   const {userID} = store.getState().user;
   if (!sessionID) {
-    const session = await createCoachSession({
-      id:userID,
-      info:store.getState().user.infoUser.userInfo
-    }, {})
-    sessionID = session.id
+    const session = await createCoachSession(
+      {
+        id: userID,
+        info: store.getState().user.infoUser.userInfo,
+      },
+      {},
+    );
+    sessionID = session.objectID;
   }
+
   const branchUniversalObject = await branch.createBranchUniversalObject(
     'canonicalIdentifier',
     {

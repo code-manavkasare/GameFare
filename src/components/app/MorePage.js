@@ -35,17 +35,12 @@ import AsyncImage from '../layout/image/AsyncImage';
 
 import {userAction} from '../../store/actions/userActions';
 import {createInviteToAppBranchUrl} from '../database/branch';
-import {boolShouldComponentUpdate} from '../functions/redux'
+import {boolShouldComponentUpdate} from '../functions/redux';
 
-Vitals.getMemory().then(memory => {
-  var {
-    appUsed,
-    systemTotal,
-    systemFree,
-    systemUsed
-  } = memory;
-  console.log('Low memory warning triggered',memory);
-})
+Vitals.getMemory().then((memory) => {
+  var {appUsed, systemTotal, systemFree, systemUsed} = memory;
+  console.log('Low memory warning triggered', memory);
+});
 
 class MorePage extends Component {
   constructor(props) {
@@ -53,8 +48,13 @@ class MorePage extends Component {
     this.state = {};
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  shouldComponentUpdate(nextProps,nextState) {
-    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+    });
   }
   button2(dataButton) {
     const {text, icon, click, text2} = dataButton;
@@ -405,44 +405,36 @@ class MorePage extends Component {
             }),
         })} */}
 
- 
-        {this.button2({
-          text: 'Log getMemory',
-          icon: {
-            name: 'user',
-            type: 'font',
-            size: 20,
-            color: colors.title,
-          },
-          click: () =>
-          Vitals.getMemory().then(memory => {
-            var {
-              appUsed,
-              systemTotal,
-              systemFree,
-              systemUsed
-            } = memory;
-            console.log('memory',memory)
-          })
-        })}
-        {this.button2({
-          text: 'Log getStorage',
-          icon: {
-            name: 'user',
-            type: 'font',
-            size: 20,
-            color: colors.title,
-          },
-          click: () =>
-          Vitals.getStorage().then(storage => {
-            var {
-              total,
-              free,
-              used
-            } = storage;
-            console.log('storage',storage)
-          })
-        })}
+        {__DEV__ &&
+          this.button2({
+            text: 'Log getMemory',
+            icon: {
+              name: 'user',
+              type: 'font',
+              size: 20,
+              color: colors.title,
+            },
+            click: () =>
+              Vitals.getMemory().then((memory) => {
+                var {appUsed, systemTotal, systemFree, systemUsed} = memory;
+                console.log('memory', memory);
+              }),
+          })}
+        {__DEV__ &&
+          this.button2({
+            text: 'Log getStorage',
+            icon: {
+              name: 'user',
+              type: 'font',
+              size: 20,
+              color: colors.title,
+            },
+            click: () =>
+              Vitals.getStorage().then((storage) => {
+                var {total, free, used} = storage;
+                console.log('storage', storage);
+              }),
+          })}
 
         {/* {__DEV__ && (
           <View>
