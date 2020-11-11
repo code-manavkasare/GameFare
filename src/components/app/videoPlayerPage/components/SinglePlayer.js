@@ -18,7 +18,7 @@ import {bindArchive} from '../../../database/firebase/bindings';
 import RecordingComponent from './recording/index';
 import ControlButtonRecording from './recording/components/ControlButtonsRecording';
 import AllIcon from '../../../layout/icons/AllIcons';
-import {boolShouldComponentUpdate} from '../../../functions/redux'
+import {boolShouldComponentUpdate} from '../../../functions/redux';
 
 class SinglePlayer extends Component {
   static propTypes = {
@@ -50,8 +50,13 @@ class SinglePlayer extends Component {
     });
   };
 
-  shouldComponentUpdate(nextProps,nextState) {
-    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+    });
   }
 
   componentDidUpdate = (prevProps, prevState) => {
@@ -81,7 +86,7 @@ class SinglePlayer extends Component {
           .update(updates);
       }
     }
-    if (prevArchive?.local && !archive?.local) bindArchive(id)
+    if (prevArchive?.local && !archive?.local) bindArchive(id);
   };
 
   playerStyleByIndex = (i, total) => {
@@ -385,17 +390,6 @@ class SinglePlayer extends Component {
 
   render = () => this.singlePlayer();
 }
-
-const styles = StyleSheet.create({
-  buttonReplayView: {
-    position: 'absolute',
-    zIndex: 2,
-    height: '100%',
-    width: '100%',
-    backgroundColor: colors.title + '40',
-    ...styleApp.center,
-  },
-});
 
 const mapStateToProps = (state, props) => {
   return {

@@ -32,8 +32,8 @@ import {
 } from '../../functions/pictures';
 import sizes from '../../style/sizes';
 import {
-  openVideoPlayer,
   addLocalVideo,
+  openVideoPlayer,
   deleteVideos,
 } from '../../functions/videoManagement';
 import styleApp from '../../style/style';
