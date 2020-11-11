@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import branch from 'react-native-branch';
-import database from '@react-native-firebase/database';
 import {store} from '../../store/reduxStore';
 import {setSession} from '../../store/actions/coachSessionsActions';
 import {
@@ -16,14 +15,8 @@ import {
 } from '../database/branch';
 import {navigate} from '../../../NavigationService';
 import {logMixpanel} from '../functions/logs';
-import {boolShouldComponentUpdate} from '../functions/redux'
-
-
-const testParams = {
-  type: 'session',
-  sentBy: 'AwNBbmiKJ1U9jKrOE8JbiHRdGtX2',
-  sessionID: 'abc12345',
-};
+import {boolShouldComponentUpdate} from '../functions/redux';
+import {getValueOnce} from '../database/firebase/methods';
 
 class BranchManager extends Component {
   constructor(props) {
@@ -38,12 +31,16 @@ class BranchManager extends Component {
         console.log('Error from branch:', error);
         return;
       }
-      // params will never be null if error is null
       this.setState({branchParams: params});
     });
   }
-  shouldComponentUpdate(nextProps,nextState) {
-    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -100,30 +97,28 @@ class BranchManager extends Component {
   }
 
   async handleSessionInvite(sessionID, userID, sentBy) {
-    database()
-      .ref(`coachSessions/${sessionID}`)
-      .once('value', async (snapshot) => {
-        const coachSessionFirebase = snapshot.val();
-        if (coachSessionFirebase) {
-          await store.dispatch(setSession(coachSessionFirebase));
-          await addMembersToSessionByID(sessionID, [userID]);
-          if (
-            coachSessionFirebase.members[sentBy] &&
-            coachSessionFirebase.members[sentBy].isConnected
-          ) {
-            sessionOpening(coachSessionFirebase);
-          } else {
-            navigate('Conversation', {coachSessionID: sessionID});
-          }
-        } else {
-          const session = await createCoachSessionFromUserIDs(
-            sentBy,
-            [userID],
-            sessionID,
-          );
-          navigate('Conversation', {coachSessionID: session.objectID});
-        }
-      });
+    const coachSessionFirebase = await getValueOnce(
+      `coachSessions/${sessionID}`,
+    );
+    if (coachSessionFirebase) {
+      await store.dispatch(setSession(coachSessionFirebase));
+      await addMembersToSessionByID(sessionID, [userID]);
+      if (
+        coachSessionFirebase.members[sentBy] &&
+        coachSessionFirebase.members[sentBy].isConnected
+      ) {
+        sessionOpening(coachSessionFirebase);
+      } else {
+        navigate('Conversation', {coachSessionID: sessionID});
+      }
+    } else {
+      const session = await createCoachSessionFromUserIDs(
+        sentBy,
+        [userID],
+        sessionID,
+      );
+      navigate('Conversation', {coachSessionID: session.objectID});
+    }
   }
 
   render = () => {
