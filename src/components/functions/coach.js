@@ -641,10 +641,10 @@ const addMembersToSession = async (coachSessionID, members) => {
       return {
         ...updates,
         [`coachSessions/${coachSessionID}/members/${member.id}`]: {
-          ...member,
           invitationTimeStamp,
           invitedBy: userID,
           permissionOtherUserToRecord: true,
+          ...member,
         },
       };
     }, {});
@@ -654,7 +654,7 @@ const addMembersToSession = async (coachSessionID, members) => {
   }
 };
 
-const addMembersToSessionByID = async (coachSessionID, memberIDs) => {
+const addMembersToSessionByID = async (coachSessionID, memberIDs,invitedBy) => {
   const infos = await Promise.all(
     memberIDs.map((id) => getValueOnce(`users/${id}/userInfo`)),
   );
@@ -667,6 +667,7 @@ const addMembersToSessionByID = async (coachSessionID, memberIDs) => {
         [id]: {
           ...member,
           isConnected: false,
+          invitedBy,
           permissionOtherUserToRecord: true,
         },
       };
