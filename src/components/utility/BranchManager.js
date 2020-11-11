@@ -102,7 +102,7 @@ class BranchManager extends Component {
     );
     if (coachSessionFirebase) {
       await store.dispatch(setSession(coachSessionFirebase));
-      await addMembersToSessionByID(sessionID, [userID]);
+      if (sentBy !== userID) await addMembersToSessionByID(sessionID, [userID]);
       if (
         coachSessionFirebase.members[sentBy] &&
         coachSessionFirebase.members[sentBy].isConnected
