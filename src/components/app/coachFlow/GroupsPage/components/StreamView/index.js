@@ -181,11 +181,11 @@ class GroupsPage extends Component {
       Orientation.lockToPortrait();
     });
   }
-  componentWillUnmount=() =>{
-    this.blurListener()
-    this.focusListener()
-    Orientation.removeOrientationListener()
-  }
+  componentWillUnmount = () => {
+    this.blurListener();
+    this.focusListener();
+    Orientation.removeOrientationListener();
+  };
 
   componentDidUpdate(prevProps, prevState) {
     const {
@@ -227,7 +227,7 @@ class GroupsPage extends Component {
         this.footerRef?.bottomButtonsRef?.clickRecord();
       } catch (e) {}
     }
-    prevProps = null
+    prevProps = null;
   }
   isTokenUpToDate = () => {
     const {userID, session: coachSession} = this.props;

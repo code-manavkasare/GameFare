@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Animated,InteractionManager} from 'react-native';
+import {View, StyleSheet, Animated, InteractionManager} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import equal from 'fast-deep-equal';
@@ -71,7 +71,13 @@ class CardStream extends Component {
     });
   }
   shouldComponentUpdate(nextProps, nextState) {
-    const {session,messages,notifications,showCallButton,selected} = this.props
+    const {
+      session,
+      messages,
+      notifications,
+      showCallButton,
+      selected,
+    } = this.props;
     if (
       !equal(session, nextProps.session) ||
       !equal(messages, nextProps.messages) ||
@@ -83,13 +89,13 @@ class CardStream extends Component {
       return true;
     return false;
   }
-  
+
   loading() {
     return <View>{<Loader size={55} color={colors.greyDark} />}</View>;
   }
   buttonCard({style}) {
     const {
-      coachSessionID, 
+      coachSessionID,
       session,
       conversation,
       recentView,
@@ -97,80 +103,96 @@ class CardStream extends Component {
       key,
       selected,
       notifications,
-      unselectable
+      unselectable,
     } = this.props;
-  
+
     const checkButtonContainerStyle = {
       ...styleApp.center,
       ...styleApp.fullSize,
       right: '10%',
       position: 'absolute',
       opacity: this.selectionIndication,
-    }; 
-    const hasNotification= conversationIsInNotification(
-            coachSessionID,
-            notifications,
-          )
-    return <ButtonColor
-          click={() => {
-            logMixpanel({
-              label: 'Click session ' + coachSessionID,
-              params: {coachSessionID},
-            });
-            if (onClick) {
-              onClick(session);
-            } else {
-              navigate('Conversation', {coachSessionID: coachSessionID});
-            }
-          }}
-          color={colors.white}
-          onPressColor={colors.off}
-          style={[styleApp.fullSize, {paddingVertical: 0 ,...style,width:'100%',borderWidth:selected?2:0,borderColor:unselectable?colors.off:colors.green}]}
-          view={() => 
-            !session ?<PlaceHolder />
-            : (
-              <View style={{...styleApp.fullSize, ...styleApp.center}}>
-                <Row style={{paddingTop: 5, paddingBottom: 5}}>
-                  <Col size={30}>
-                    {imageCardTeam(session)}
-                    {!recentView &&
-                      viewLive(session, {
-                        position: 'absolute',
-                        left: 10,
-                        top: -4,
-                      })}
-                  </Col>
-                  <Col size={50} style={[styleApp.center2, {paddingRight: 6}]}>
-                    {sessionTitle(session, {}, false)}
-                    {!recentView && lastMessage(conversation?.messages, hasNotification)}
-                  </Col>
-                  {!recentView ? (
-                    <Col size={20} style={styleApp.center}>
-                      <View style={[styleApp.center, {marginTop: 0}]}>
-                        {hasNotification
-                          ? blueBadge()
-                          : sessionDate({session, messages:conversation?.messages})}
-                      </View>
-                    </Col>
-                  ) : (
-                    <Col
-                      size={15}
-                      style={{...styleApp.center, ...styleApp.fullSize}}>
-                      <Animated.View style={checkButtonContainerStyle}>
-                        <AllIcon
-                          type={'font'}
-                          color={colors.green}
-                          size={18}
-                          name={'check'}
-                        />
-                      </Animated.View>
-                    </Col>
-                  )}
-                </Row>
-              </View>
-            )
+    };
+    const hasNotification = conversationIsInNotification(
+      coachSessionID,
+      notifications,
+    );
+    return (
+      <ButtonColor
+        click={() => {
+          logMixpanel({
+            label: 'Click session ' + coachSessionID,
+            params: {coachSessionID},
+          });
+          if (onClick) {
+            onClick(session);
+          } else {
+            navigate('Conversation', {coachSessionID: coachSessionID});
           }
-          />
+        }}
+        color={colors.white}
+        onPressColor={colors.off}
+        style={[
+          styleApp.fullSize,
+          {
+            paddingVertical: 0,
+            ...style,
+            width: '100%',
+            borderWidth: selected ? 2 : 0,
+            borderColor: unselectable ? colors.off : colors.green,
+          },
+        ]}
+        view={() =>
+          !session ? (
+            <PlaceHolder />
+          ) : (
+            <View style={{...styleApp.fullSize, ...styleApp.center}}>
+              <Row style={{paddingTop: 5, paddingBottom: 5}}>
+                <Col size={30}>
+                  {imageCardTeam(session)}
+                  {!recentView &&
+                    viewLive(session, {
+                      position: 'absolute',
+                      left: 10,
+                      top: -4,
+                    })}
+                </Col>
+                <Col size={50} style={[styleApp.center2, {paddingRight: 6}]}>
+                  {sessionTitle(session, {}, false)}
+                  {!recentView &&
+                    lastMessage(conversation?.messages, hasNotification)}
+                </Col>
+                {!recentView ? (
+                  <Col size={20} style={styleApp.center}>
+                    <View style={[styleApp.center, {marginTop: 0}]}>
+                      {hasNotification
+                        ? blueBadge()
+                        : sessionDate({
+                            session,
+                            messages: conversation?.messages,
+                          })}
+                    </View>
+                  </Col>
+                ) : (
+                  <Col
+                    size={15}
+                    style={{...styleApp.center, ...styleApp.fullSize}}>
+                    <Animated.View style={checkButtonContainerStyle}>
+                      <AllIcon
+                        type={'font'}
+                        color={colors.green}
+                        size={18}
+                        name={'check'}
+                      />
+                    </Animated.View>
+                  </Col>
+                )}
+              </Row>
+            </View>
+          )
+        }
+      />
+    );
   }
 
   cardStream() {
@@ -180,12 +202,12 @@ class CardStream extends Component {
       session,
       recentView,
       showCallButton,
-      showAddMemberButton, 
+      showAddMemberButton,
       key,
       selected,
-      style
+      style,
     } = this.props;
-  
+
     const animatedReverse = this.selectionIndication.interpolate({
       inputRange: [0, 1],
       outputRange: [1, 0],
@@ -198,11 +220,11 @@ class CardStream extends Component {
       right: 0,
       opacity: animatedReverse,
     };
-    
-     if (!session) return <PlaceHolder />;
+
+    if (!session) return <PlaceHolder />;
     return (
       <Animated.View style={styles.card} key={key}>
-       {this.buttonCard({style})}
+        {this.buttonCard({style})}
         {recentView && showCallButton && (
           <Animated.View style={callButtonContainerStyle}>
             <ButtonColor
@@ -262,7 +284,7 @@ class CardStream extends Component {
               }}
             />
           </Animated.View>
-        )} 
+        )}
       </Animated.View>
     );
   }
@@ -299,10 +321,13 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, props) => {
   return {
     userID: state.user.userID,
-    session: {...state.coachSessions[props.coachSessionID],isBinded:null},
-    conversation:{...state.conversations[props.coachSessionID],isBinded:null},
+    session: {...state.coachSessions[props.coachSessionID], isBinded: null},
+    conversation: {
+      ...state.conversations[props.coachSessionID],
+      isBinded: null,
+    },
     currentSessionID: state.coach.currentSessionID,
-    notifications:state.user.infoUser.notifications,
+    notifications: state.user.infoUser.notifications,
   };
 };
 
