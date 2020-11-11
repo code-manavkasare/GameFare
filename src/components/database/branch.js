@@ -107,7 +107,6 @@ const createInviteToSessionBranchUrl = async (sessionID) => {
       {},
     );
     sessionID = session.objectID;
-    console.log('sessionID', session);
   }
 
   const branchUniversalObject = await branch.createBranchUniversalObject(
