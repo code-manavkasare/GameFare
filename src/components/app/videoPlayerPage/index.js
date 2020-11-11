@@ -136,12 +136,14 @@ class VideoPlayerPage extends Component {
       });
 
       if (videosBeingShared) {
-        const prevVideos = Object.keys(
-          session?.members[personSharingScreen]?.sharedVideos,
-        );
-        const nextVideos = Object.keys(
-          nextSession?.members[personSharingScreen]?.sharedVideos,
-        );
+        let prevShareVideos =
+          session?.members[personSharingScreen]?.sharedVideos;
+        if (!prevShareVideos) prevShareVideos = {};
+        let nextShareVideos =
+          nextSession?.members[personSharingScreen]?.sharedVideos;
+        if (!prevShareVideos) nextShareVideos = {};
+        const prevVideos = Object.keys(prevShareVideos);
+        const nextVideos = Object.keys(nextShareVideos);
 
         if (
           archives.length !== nextVideos.length &&
@@ -459,7 +461,6 @@ class VideoPlayerPage extends Component {
         archives={archives}
         personSharingScreen={personSharingScreen}
         coachSessionID={coachSessionID}
-        togglePlayPause={() => this.videoPlayerRef.togglePlayPause(true)}
         getVideoState={(id) => {
           const index = Object.values(videoInfos).findIndex(
             (item) => item.id === id,
