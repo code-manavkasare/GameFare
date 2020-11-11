@@ -1,11 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  StatusBar,
-  InteractionManager,
-} from 'react-native';
+import {View, StatusBar, InteractionManager} from 'react-native';
 import {connect} from 'react-redux';
 import Orientation from 'react-native-orientation-locker';
 import database from '@react-native-firebase/database';
@@ -31,12 +25,12 @@ import {boolShouldComponentUpdate} from '../../functions/redux';
 import {
   isVideosAreBeingShared,
   isSomeoneSharingScreen,
-  updateInfoVideoCloud,
 } from '../../functions/coach';
 import {
   checkIfAllArchivesAreLocal,
   generatePreview,
   generatePreviewCloud,
+  videoIsReview,
 } from '../../functions/review';
 import RecordingMenu from './components/recording/components/RecordingMenu';
 
@@ -191,7 +185,7 @@ class VideoPlayerPage extends Component {
       params: {recordedActions: this.state.recordedActions},
     });
     const {isMicrophoneMuted} = this.recordingMenuRef.getState();
-    !isMicrophoneMuted && this.AudioRecorderPlayerRef?.stopRecording();
+    !isMicrophoneMuted && (await this.AudioRecorderPlayerRef?.stopRecording());
 
     this.videoPlayerRefs.forEach((ref) => {
       ref?.videoPlayerRef?.setRecording(false);
@@ -379,6 +373,7 @@ class VideoPlayerPage extends Component {
       audioFilePath,
       audioFileDuration,
     } = this.AudioRecorderPlayerRef.state;
+
     logMixpanel({
       label: 'Save review',
       params: {userID, recordedActions},
@@ -645,6 +640,7 @@ class VideoPlayerPage extends Component {
   render = () => {
     const {isRecording, isEditMode, recordedActions} = this.state;
     const {videoInfos, currentSessionID} = this.props;
+    const isReview = videoIsReview(videoInfos);
 
     const connectedToSession =
       currentSessionID !== false && currentSessionID !== undefined;
@@ -655,6 +651,7 @@ class VideoPlayerPage extends Component {
           onRef={(ref) => {
             this.AudioRecorderPlayerRef = ref;
           }}
+          isReview={isReview}
           connectedToSession={connectedToSession}
         />
 
@@ -682,22 +679,6 @@ class VideoPlayerPage extends Component {
     );
   };
 }
-
-const styles = StyleSheet.create({
-  buttonRecording: {
-    position: 'absolute',
-    zIndex: 600,
-    height: 30,
-    width: 110,
-    left: '5%',
-    borderRadius: 15,
-  },
-  buttonLink: {
-    borderRadius: 15,
-    height: '100%',
-    width: '100%',
-  },
-});
 
 const mapStateToProps = (state, props) => {
   const {currentSessionID} = state.coach;

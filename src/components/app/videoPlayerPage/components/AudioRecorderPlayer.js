@@ -1,11 +1,12 @@
 import {Component} from 'react';
-import PropTypes from 'prop-types';
+import {bool, func} from 'prop-types';
 import {Player, Recorder} from '@react-native-community/audio-toolkit';
 import AudioSession from 'react-native-audio-session';
 
 class AudioRecorderPlayer extends Component {
   static propTypes = {
-    onRef: PropTypes.func.isRequired,
+    onRef: func.isRequired,
+    isReview: bool,
   };
 
   constructor(props) {
@@ -18,11 +19,11 @@ class AudioRecorderPlayer extends Component {
     };
   }
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
     if (this.props.onRef) {
       this.props.onRef(this);
     }
-    this.preparePlayer({});
+    await this.preparePlayer({});
   };
   componentWillUnmount = () => {
     this.destroyPlayer();
@@ -41,8 +42,23 @@ class AudioRecorderPlayer extends Component {
   };
 
   stopRecording = async () => {
-    await this.state.audioRecorder.stop();
-    await this.preparePlayer({});
+    return new Promise(async (resolve) => {
+      await this.state.audioRecorder.stop();
+      await this.preparePlayer({});
+      resolve();
+    });
+  };
+
+  storeAudioDuration = async () => {
+    const {isReview} = this.props;
+    if (!isReview) {
+      await this.state.audioPlayer.prepare(() => {
+        const audioDurationSeconds = this.state.audioPlayer.duration / 1000;
+        this.setState({
+          audioFileDuration: audioDurationSeconds,
+        });
+      });
+    }
   };
 
   preparePlayer = async ({url, isCloud}) => {
@@ -57,11 +73,7 @@ class AudioRecorderPlayer extends Component {
           },
         ),
       });
-      await this.state.audioPlayer.prepare(() => {
-        this.setState({
-          audioFileDuration: this.state.audioPlayer.duration / 1000,
-        });
-      });
+      await this.storeAudioDuration();
       this.adjustAudioSession().then(() => {
         resolve();
       });
