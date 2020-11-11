@@ -15,7 +15,6 @@ import MediaPicker from 'react-native-image-crop-picker';
 import Orientation from 'react-native-orientation-locker';
 import equal from 'fast-deep-equal';
 
-
 import CardArchive from '../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 import VideoBeingShared from './components/VideoBeingShared';
 import {FlatListComponent} from '../../layout/Views/FlatList';
@@ -80,12 +79,13 @@ class VideoLibraryPage extends Component {
       if (currentSessionID) this.setState({selectableMode: true});
     });
   }
-  componentWillUnmount=() => {
-    this.focusListener()
-  }
+  componentWillUnmount = () => {
+    this.focusListener();
+  };
   componentDidUpdate(prevProps) {
-    const {userConnected} = this.props
-    if (userConnected !== prevProps.userConnected) this.flatListRef.setState({numberToRender:13})
+    const {userConnected} = this.props;
+    if (userConnected !== prevProps.userConnected)
+      this.flatListRef.setState({numberToRender: 13});
   }
   toggleSelectable(force) {
     const {selectableMode} = this.state;
@@ -194,7 +194,7 @@ class VideoLibraryPage extends Component {
   listVideos() {
     const {navigation} = this.props;
     const {selectOnly, selectableMode} = this.state;
-    const videosArray = this.videosArray()
+    const videosArray = this.videosArray();
     const selectMargin = selectableMode ? 80 : 0;
     return (
       <View style={styleApp.fullSize}>
@@ -206,9 +206,7 @@ class VideoLibraryPage extends Component {
           onRef={(ref) => {
             this.flatListRef = ref;
           }}
-          fetchData={async ({numberToRender,nextNumberRender}) => {
-            console.log('fetchData',{numberToRender,nextNumberRender}) 
-          }}
+          fetchData={async ({numberToRender, nextNumberRender}) => {}}
           ListEmptyComponent={{
             clickButton: () => navigation.navigate('Session'),
             textButton: 'Record',
@@ -278,21 +276,16 @@ class VideoLibraryPage extends Component {
     );
   }
   videosArray = () => {
-    let {videosArray }=this.props
+    let {videosArray} = this.props;
     const allVideos = Object.values(videosArray).filter(
       (v) => v.id && v.startTimestamp,
     );
     return sortVideos(allVideos).map((v) => v.id);
-  }
+  };
   render() {
     const {navigation, route, currentSessionID, position} = this.props;
-    const videosArray = this.videosArray()
-    const { 
-      selectableMode,
-      loader,
-      selectedVideos,
-      selectOnly,
-    } = this.state; 
+    const videosArray = this.videosArray();
+    const {selectableMode, loader, selectedVideos, selectOnly} = this.state;
     return (
       <View style={styleApp.stylePage}>
         <StatusBar hidden={false} barStyle={'dark-content'} />
@@ -364,12 +357,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderBottomWidth: 1.5,
     borderColor: colors.white,
-    backgroundColor:colors.title
+    backgroundColor: colors.title,
   },
 });
 const mapStateToProps = (state) => {
   return {
-    videosArray:{ 
+    videosArray: {
       ...state.localVideoLibrary.userLocalArchives,
       ...state.user.infoUser.archivedStreams,
     },

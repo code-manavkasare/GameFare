@@ -95,8 +95,7 @@ class Notification extends Component {
     const {notification} = this.props;
     const {width} = Dimensions.get('screen');
     if (!notification) return null;
-    const {picture} = notification.data;
-    //console.log('notification: ', notification);
+    const {picture} = notification.data; 
     let {body, title} = notification.notification;
     if (body.length > 80) body = body.slice(0, 80) + '...';
     const styleImg = {height: 50, width: 50, borderRadius: 5};

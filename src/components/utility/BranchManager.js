@@ -59,7 +59,6 @@ class BranchManager extends Component {
     const {userID} = this.props;
 
     const {type, sentBy} = branchParams;
-    console.log('branchParams', branchParams);
     switch (type) {
       case 'invite': {
         const session = await createCoachSessionFromUserIDs(sentBy, [userID]);
@@ -103,7 +102,6 @@ class BranchManager extends Component {
     );
     if (coachSessionFirebase) {
       await store.dispatch(setSession(coachSessionFirebase));
-      console.log('handleSessionInvite', coachSessionFirebase, sentBy);
       await addMembersToSessionByID(sessionID, [userID]);
       if (
         coachSessionFirebase.members[sentBy] &&

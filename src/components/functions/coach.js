@@ -593,7 +593,6 @@ const capitalize = (str) => {
 
 const deleteSession = (objectID) => {
   const userID = store.getState().user.userID;
-  console.log('delete session@@!');
   navigate('Alert', {
     title: 'Do you want to leave this conversation?',
     textButton: 'Leave',
@@ -635,9 +634,6 @@ const loadAndOpenSession = async (sessionID) => {
 };
 
 const addMembersToSession = async (coachSessionID, members) => {
-  // members are assumed to have 'id' and 'info' properties.
-  // only update to firebase coachSession object is done from here
-  // {member.id}/coachSessions/ updates are done via cloud function.
   const userID = store.getState().user.userID;
   if (members && Object.keys(members).length > 0) {
     const invitationTimeStamp = Date.now();
