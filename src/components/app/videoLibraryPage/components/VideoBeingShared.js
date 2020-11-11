@@ -27,6 +27,7 @@ class VideoBeingShared extends Component {
     if (!currentSessionID) return null;
     const personSharingScreen = isSomeoneSharingScreen(session);
     if (!personSharingScreen) return null;
+    if (!session.members[personSharingScreen].sharedVideos) return null;
     const videos = Object.keys(
       session.members[personSharingScreen].sharedVideos,
     );
