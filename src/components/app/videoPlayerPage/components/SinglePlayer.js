@@ -111,7 +111,7 @@ class SinglePlayer extends Component {
     return style;
   };
   togglePlayPause(forcePause) {
-    this.videoPlayerRef.togglePlayPause(forcePause);
+    this.videoPlayerRef?.togglePlayPause(forcePause);
   }
   seekDiff(time) {
     this.videoPlayerRef.seekDiff(time);

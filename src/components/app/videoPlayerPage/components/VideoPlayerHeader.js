@@ -181,13 +181,7 @@ export default class VideoPlayerHeader extends React.Component {
   }
 
   buttonSharing = () => {
-    const {
-      isEditMode,
-      coachSessionID,
-      videoInfos,
-      togglePlayPause,
-      getVideoState,
-    } = this.props;
+    const {isEditMode, coachSessionID, videoInfos, getVideoState} = this.props;
     if (!coachSessionID) {
       return null;
     }
@@ -198,7 +192,6 @@ export default class VideoPlayerHeader extends React.Component {
         archives={videoInfos}
         isEditMode={isEditMode}
         coachSessionID={coachSessionID}
-        togglePlayPause={togglePlayPause}
         getVideoState={getVideoState}
       />
     );

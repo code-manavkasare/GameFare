@@ -40,6 +40,7 @@ class ButtonShareVideo extends Component {
     if (isVideosWereBeingShared && !isVideosBeingShared)
       return openVideoPlayer({open: false});
   };
+  
   async startSharingVideo(value) {
     const {userID, coachSessionID, archives, getVideoState} = this.props;
 
