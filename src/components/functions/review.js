@@ -173,4 +173,17 @@ const addAudioRecordToUploadQueue = (audioFilePath, archiveId) => {
   );
 };
 
-export {checkIfAllArchivesAreLocal, generatePreview, generatePreviewCloud};
+const videoIsReview = (videosInfos) => {
+  for (const video of Object.values(videosInfos)) {
+    if (video.recordedActions) {
+      return true;
+    }
+  }
+};
+
+export {
+  checkIfAllArchivesAreLocal,
+  generatePreview,
+  generatePreviewCloud,
+  videoIsReview,
+};
