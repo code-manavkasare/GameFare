@@ -12,6 +12,7 @@ import AllIcons from '../../../../../../../layout/icons/AllIcons';
 import {uploadQueueAction} from '../../../../../../../../store/actions/uploadQueueActions';
 import {layoutAction} from '../../../../../../../../store/actions/layoutActions';
 import sizes from '../../../../../../../style/sizes';
+import {store} from '../../../../../../../../store/reduxStore';
 
 import {
   startRemoteRecording,
@@ -169,7 +170,7 @@ class BottomButton extends Component {
     return true;
   };
   startRecording = async (prevStartError = false) => {
-    const {coachSessionID, userID} = this.props;
+    const {coachSessionID, userID, getCameraPosition} = this.props;
     const messageCallback = async (response) => {
       if (response.error) {
         if (response.message === 'INIT_ERR' && !prevStartError) {
@@ -179,7 +180,21 @@ class BottomButton extends Component {
         }
         return false;
       }
-      updateTimestamp(coachSessionID, userID, Date.now());
+      const cameraPosition = getCameraPosition();
+      let {orientation} = store.getState().layout.currentScreenSize;
+
+      /// If camera position is rear facing and device is landscape
+      /// transformation needs to be reversed
+      if (cameraPosition === 'back') {
+        orientation =
+          orientation === 'landscapeLeft'
+            ? 'landscapeRight'
+            : orientation === 'landscapeRight'
+            ? 'landscapeLeft'
+            : orientation;
+      }
+
+      updateTimestamp(coachSessionID, userID, Date.now(), orientation);
     };
     const permissionLibrary = await permission('library');
     if (!permissionLibrary) {
