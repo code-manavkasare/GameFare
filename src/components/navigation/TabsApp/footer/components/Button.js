@@ -33,6 +33,7 @@ class FooterButton extends React.Component {
       this.indicatorAnimation();
     }
   }
+  
   indicatorAnimation() {
     const {generalSessionRecording, inSession} = this.props;
     if (generalSessionRecording || inSession) {

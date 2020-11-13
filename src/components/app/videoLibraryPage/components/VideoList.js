@@ -1,22 +1,15 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, Animated, ScrollView} from 'react-native';
-import moment from 'moment';
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import {connect} from 'react-redux';
-import isEqual from 'lodash.isequal';
+import {Text, StyleSheet, View} from 'react-native';
 
 import colors from '../../../style/colors';
-import {marginBottomApp, heightFooter} from '../../../style/sizes';
 import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 import {FlatListComponent} from '../../../layout/Views/FlatList';
 
 import ButtonColor from '../../../layout/Views/Button';
-import VideoBeingShared from './VideoBeingShared';
 import styleApp from '../../../style/style';
 import AllIcon from '../../../layout/icons/AllIcons';
-import {native} from '../../../animations/animations';
 
-class VideoList extends Component {
+export default class VideoList extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -61,6 +54,16 @@ class VideoList extends Component {
     if (selectedVideos.length === 0) {
       return false;
     }
+    const styleCardArchive = {
+      height: 70,
+      width: 55,
+      borderRadius: 5,
+      borderWidth: 5,
+      borderColor: colors.off,
+      overflow: 'hidden',
+      marginRight: 3,
+      ...styleApp.shadow,
+    };
     return (
       <View style={styles.tool}>
         <FlatListComponent
@@ -70,18 +73,7 @@ class VideoList extends Component {
             return (
               <View style={{height: 80, width: 80, overflow: 'visible'}}>
                 <CardArchive
-                  style={{
-                    height: 70,
-                    width: 55,
-
-                    borderRadius: 5,
-                    borderWidth: 5,
-                    borderColor: colors.off,
-                    overflow: 'hidden',
-                    marginRight: 3,
-                    // backgroundColor: 'red',
-                    ...styleApp.shadow,
-                  }}
+                  style={styleCardArchive}
                   clickButtonDismiss={() => selectVideo(item)}
                   hideInformation={true}
                   unclickable={false}
@@ -114,29 +106,13 @@ class VideoList extends Component {
 
 const styles = StyleSheet.create({
   tool: {
-    // ...styleApp.center3,
     position: 'absolute',
     height: 90,
     width: '100%',
-    // ...styleApp.shade,
-    // backgroundColor: 'red',
     bottom: 95,
     right: 0,
 
     zIndex: 30,
     flexDirection: 'row',
-    // alignItems: 'flex-end',
-    // marginRight: 10,
   },
 });
-
-const mapStateToProps = (state, props) => {
-  return {
-    userID: state.user.userID,
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  {},
-)(VideoList);

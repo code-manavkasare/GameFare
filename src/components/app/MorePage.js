@@ -54,6 +54,7 @@ class MorePage extends Component {
       nextProps,
       state: this.state,
       nextState,
+      component: 'MorePage',
     });
   }
   button2(dataButton) {

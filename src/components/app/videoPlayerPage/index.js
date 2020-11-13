@@ -78,6 +78,7 @@ class VideoPlayerPage extends Component {
       nextProps,
       state: this.state,
       nextState,
+      component: 'VideoPlayerPage',
     });
   }
 

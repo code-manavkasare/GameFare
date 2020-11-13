@@ -15,7 +15,7 @@ import sizes from '../../../../style/sizes';
 import {displayTime} from '../../../../functions/coach';
 import ControlBar from './ControlBar';
 import Filmstrip from './Filmstrip';
-import {boolShouldComponentUpdate} from '../../../../functions/redux'
+import {boolShouldComponentUpdate} from '../../../../functions/redux';
 
 class VisualSeekBar extends Component {
   constructor(props) {
@@ -124,8 +124,14 @@ class VisualSeekBar extends Component {
       this.props.onRef(this);
     }
   }
-  shouldComponentUpdate(nextProps,nextState) {
-    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+      component: 'VisualSeekBar',
+    });
   }
   componentDidUpdate(prevProps, prevState) {
     const {width} = this.state;

@@ -1,15 +1,10 @@
 import React, {Component} from 'react';
 import {StyleSheet, Animated, View} from 'react-native';
 
-import {connect} from 'react-redux';
-import isEqual from 'lodash.isequal';
-
 import BottomButtons from './components/BottomButtons';
-import VideosView from './components/VideosView';
-import {native} from '../../../../../../animations/animations';
 import styleApp from '../../../../../../style/style';
 
-class Footer extends Component {
+export default class Footer extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -59,12 +54,3 @@ const styles = StyleSheet.create({
     zIndex: 11,
   },
 });
-
-const mapStateToProps = (state) => {
-  return {};
-};
-
-export default connect(
-  mapStateToProps,
-  {},
-)(Footer);

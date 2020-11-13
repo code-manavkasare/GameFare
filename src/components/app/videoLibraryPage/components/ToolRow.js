@@ -3,7 +3,6 @@ import {Text, StyleSheet, View, Animated} from 'react-native';
 import moment from 'moment';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
-import isEqual from 'lodash.isequal';
 
 import colors from '../../../style/colors';
 import {marginBottomApp, heightFooter} from '../../../style/sizes';
@@ -14,6 +13,7 @@ import AllIcon from '../../../layout/icons/AllIcons';
 import {native} from '../../../animations/animations';
 import VideoList from './VideoList';
 import sizes from '../../../style/sizes';
+import {boolShouldComponentUpdate} from '../../../functions/redux';
 
 const heightFooterFull = sizes.heightFooter + sizes.marginBottomApp;
 
@@ -26,6 +26,15 @@ class ToolRow extends Component {
   }
   async componentDidMount() {
     this.props.onRef(this);
+  }
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+      component: 'Toolrow',
+    });
   }
   componentDidUpdate = (prevProps, prevState) => {
     const {clickButton1, isButton2Selected, selectedVideos} = this.props;
@@ -42,10 +51,6 @@ class ToolRow extends Component {
   };
   openToolBox = (val) => {
     Animated.parallel([
-      // Animated.timing(
-      //   this.translateXBox,
-      //   native(this.props.isButton2Selected ? 0 : 210),
-      // ),
       Animated.timing(
         this.translateYBox,
         native(val ? -10 : 75 + heightFooterFull),
@@ -258,12 +263,17 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state, props) => {
-  let selectedLocalVideos = props.selectedVideos
-    .map((video) => state.archives[video])
-    .filter((video) => video?.local);
-  let selectedRecordVideos = props.selectedVideos
-    .map((video) => state.archives[video])
-    .filter((video) => video?.recordedActions);
+  const {selectedVideos} = props;
+  let selectedLocalVideos = [];
+  let selectedRecordVideos = [];
+  if (selectedRecordVideos.length > 0) {
+    selectedLocalVideos = selectedVideos
+      .map((video) => state.archives[video])
+      .filter((video) => video?.local);
+    selectedRecordVideos = selectedVideos
+      .map((video) => state.archives[video])
+      .filter((video) => video?.recordedActions);
+  }
 
   return {
     currentSessionID: state.coach.currentSessionID,

@@ -44,15 +44,8 @@ class CardUserSelect extends Component {
   animate(to) {
     Animated.timing(this.selectionIndication, native(to, 250)).start();
   }
-
-  isUserInvitable = () => {
-    const {silentFriends, user} = this.props;
-    const {isPrivate} = user.info;
-    return !isPrivate || silentFriends[user.id];
-  };
-
   render() {
-    const {user, onClick, silentFriends,isUserSelected} = this.props;
+    const {user, onClick, silentFriends, isUserSelected} = this.props;
     const {isPrivate} = user.info;
     const selectionOverlayStyle = {
       width: '100%',
@@ -98,22 +91,21 @@ class CardUserSelect extends Component {
                   </Text>
                 </Col>
                 <Col size={10} style={styleApp.center3}>
-                  {
-                  isUserSelected?
-                  <AllIcon
+                  {isUserSelected ? (
+                    <AllIcon
                       type={'font'}
                       color={colors.green}
                       size={18}
                       name={'check'}
-                  />
-                  :privateUser ? (
+                    />
+                  ) : privateUser ? (
                     <AllIcon
                       type={'font'}
                       color={colors.greyDarker}
                       size={18}
                       name={'lock'}
                     />
-                  ):null}
+                  ) : null}
                 </Col>
               </Row>
             </View>

@@ -61,9 +61,15 @@ class VideoLibraryPage extends Component {
     this.componentDidMount = this.componentDidMount.bind(this);
   }
   shouldComponentUpdate(nextProps, nextState) {
-    const {videosArray, currentSessionID, userConnected} = this.props;
+    const {
+      currentSessionID,
+      userConnected,
+      userLocalArchives,
+      archivedStreams,
+    } = this.props;
     if (
-      !equal(videosArray, nextProps.videosArray) ||
+      !equal(userLocalArchives, nextProps.userLocalArchives) ||
+      !equal(archivedStreams, nextProps.archivedStreams) ||
       !equal(currentSessionID, nextProps.currentSessionID) ||
       !equal(userConnected, nextProps.userConnected) ||
       !equal(this.state, nextState)
@@ -276,7 +282,11 @@ class VideoLibraryPage extends Component {
     );
   }
   videosArray = () => {
-    let {videosArray} = this.props;
+    const {userLocalArchives, archivedStreams} = this.props;
+    const videosArray = {
+      ...userLocalArchives,
+      ...archivedStreams,
+    };
     const allVideos = Object.values(videosArray).filter(
       (v) => v.id && v.startTimestamp,
     );
@@ -362,10 +372,8 @@ const styles = StyleSheet.create({
 });
 const mapStateToProps = (state) => {
   return {
-    videosArray: {
-      ...state.localVideoLibrary.userLocalArchives,
-      ...state.user.infoUser.archivedStreams,
-    },
+    archivedStreams: state.user.infoUser.archivedStreams,
+    userLocalArchives: state.localVideoLibrary.userLocalArchives,
     currentSessionID: state.coach.currentSessionID,
     userID: state.user.userID,
     userConnected: state.user.userConnected,

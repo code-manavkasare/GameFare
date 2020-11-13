@@ -12,7 +12,7 @@ import BackgroundUploadHelper from './BackgroundUploadHelper';
 import {updateLocalUploadProgress} from '../../functions/videoManagement';
 import {updateCloudUploadProgress} from '../../database/firebase/videosManagement';
 import {afterUpload} from '../../functions/upload.js';
-import {boolShouldComponentUpdate} from '../../functions/redux'
+import {boolShouldComponentUpdate} from '../../functions/redux';
 
 class UploadManager extends Component {
   constructor(props) {
@@ -31,8 +31,14 @@ class UploadManager extends Component {
       this.manageUploads();
     }
   }
-  shouldComponentUpdate(nextProps,nextState) {
-    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+      component: 'UploadManager',
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {

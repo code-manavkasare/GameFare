@@ -42,7 +42,6 @@ class BottomButton extends Component {
     super(props);
     this.state = {
       endCurrentSession: false,
-      showPastSessionsPicker: false,
       anyMemberRecording: false,
       recordingUser: undefined,
       shouldStartRecording: false,
@@ -220,12 +219,6 @@ class BottomButton extends Component {
         messageCallback,
       );
       coachAction('setRecording', true);
-      // if (succeeded) {
-      //   coachAction('setRecording', true);
-      // } else {
-      //   coachAction('setRecording', true);
-      //   coachAction('setRecording', false);
-      // }
     }
   };
   stopRecording = async ({discardFile}) => {

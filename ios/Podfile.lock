@@ -615,7 +615,7 @@ PODS:
     - React
   - RNVectorIcons (6.6.0):
     - React
-  - RNVideoProcessing (1.7.4):
+  - RNVideoProcessing (1.7.5):
     - React
   - SDWebImage (5.9.1):
     - SDWebImage/Core (= 5.9.1)
@@ -1149,7 +1149,7 @@ SPEC CHECKSUMS:
   RNSentry: cb4ef23400fb6690f6ac8f6acef0c023a8a4f37d
   RNSVG: 67f1f12dae2cef6ed59a42cae74a6b8f5a9e7b46
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
-  RNVideoProcessing: cda67217db87030a335137bfb0c637bce2532aeb
+  RNVideoProcessing: 87e7cb7d5386bb5ea5149a9bb0c5f1bb59a22d06
   SDWebImage: a990c053fff71e388a10f3357edb0be17929c9c5
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Sentry: e2c691627ae1dc0029acebbd1b0b4af4df12af73
