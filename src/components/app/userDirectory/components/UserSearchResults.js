@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import {View, Animated, Text, TextInput, Image, StyleSheet} from 'react-native';
-import {connect} from 'react-redux';
+import {View, Animated, Text, StyleSheet} from 'react-native';
 import {Row, Col} from 'react-native-easy-grid';
 import {
   KeyboardAwareScrollView,
@@ -10,15 +9,14 @@ import PropTypes from 'prop-types';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
-import sizes from '../../../style/sizes';
 
 import {autocompleteSearchUsers, userObject} from '../../../functions/users';
-
+import {store} from '../../../../store/reduxStore';
 import AllIcon from '../../../layout/icons/AllIcons';
 import ButtonColor from '../../../layout/Views/Button';
 import CardUserSelect from '../../../layout/cards/CardUserSelect';
 
-class UserSearchResults extends Component {
+export default class UserSearchResults extends Component {
   static propTypes = {
     onSelect: PropTypes.func.isRequired,
     selectedUsers: PropTypes.object,
@@ -55,7 +53,9 @@ class UserSearchResults extends Component {
     if (searchText === '') {
       this.setState({users: []});
     } else {
-      const {blockedByUsers, userID} = this.props;
+      const {blockedByUsers} = store.getState().user.infoUser.blockedByUsers;
+      const {userID} = store.getState().user.userID;
+
       const rawUsers = await autocompleteSearchUsers(
         searchText,
         userID,
@@ -194,19 +194,3 @@ const styles = StyleSheet.create({
     ...styleApp.center,
   },
 });
-
-const mapStateToProps = (state) => {
-  return {
-    blockedByUsers: state.user.infoUser.blockedByUsers,
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
-    currentScreenSize: state.layout.currentScreenSize,
-    session: state.coachSessions[state.coach.currentSessionID],
-    coachSessionID: state.coach.currentSessionID,
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  {},
-)(UserSearchResults);

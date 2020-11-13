@@ -20,7 +20,7 @@ import {openVideoPlayer} from '../../../../../../../functions/videoManagement';
 
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 import AsyncImage from '../../../../../../../layout/image/AsyncImage';
-import {boolShouldComponentUpdate} from '../../../../../../../functions/redux'
+import {boolShouldComponentUpdate} from '../../../../../../../functions/redux';
 
 import {FormatDate, formatDuration} from '../../../../../../../functions/date';
 import Loader from '../../../../../../../layout/loaders/Loader';
@@ -61,8 +61,14 @@ class CardArchive extends Component {
       }
     });
   }
-  shouldComponentUpdate(nextProps,nextState) {
-    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+      component: 'CardArchive',
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -263,7 +269,7 @@ class CardArchive extends Component {
       unclickable,
       disableClick,
     } = this.props;
-    if (!archive) return this.placeholder()
+    if (!archive) return this.placeholder();
     const {
       id,
       thumbnail,
@@ -273,9 +279,9 @@ class CardArchive extends Component {
       progress,
       isBinded,
       url,
-    } = archive; 
+    } = archive;
     const {loader} = this.state;
-    
+
     return (
       <TouchableOpacity
         activeOpacity={0.8}
@@ -388,8 +394,8 @@ class CardArchive extends Component {
       </TouchableOpacity>
     );
   }
-  render() { 
-    const {archive} = this.props
+  render() {
+    const {archive} = this.props;
     return this.cardArchive(archive);
   }
 }

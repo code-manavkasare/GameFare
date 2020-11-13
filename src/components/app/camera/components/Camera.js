@@ -61,6 +61,7 @@ class Camera extends Component {
       nextProps,
       state: this.state,
       nextState,
+      component: 'Camera',
     });
   }
   configureQueue() {

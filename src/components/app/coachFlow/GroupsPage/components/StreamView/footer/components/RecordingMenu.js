@@ -10,7 +10,6 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
 import MemberSource from './MemberSource';
-import UploadMenu from './UploadMenu';
 import ExportQueue from './FinalizeRecording/components/ExportQueue';
 import {native} from '../../../../../../../animations/animations';
 
@@ -199,19 +198,7 @@ class RecordingMenu extends Component {
           width,
           transform: [{translateY: parentTranslateY}],
         }}>
-        {/* <UploadMenu
-          onRef={(ref) => {
-            this.uploadQueueRef = ref;
-          }}
-          openUploadQueue={() => {
-            this.openUploadQueue();
-          }}
-          members={members}
-          coachSessionID={coachSessionID}
-          close={(pass) => {
-            this.close(pass);
-          }}
-        /> */}
+     
         <Animated.View
           pointerEvents={visible ? 'auto' : 'none'}
           style={{

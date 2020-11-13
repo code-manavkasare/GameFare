@@ -56,6 +56,7 @@ class SinglePlayer extends Component {
       nextProps,
       state: this.state,
       nextState,
+      component: 'SinglePlayer',
     });
   }
 

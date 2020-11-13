@@ -11,9 +11,10 @@ import {
 } from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
+import equal from 'fast-deep-equal';
 
 import {updateNotificationBadge} from '../../functions/notifications.js';
-import {boolShouldComponentUpdate} from '../../functions/redux'
+import {boolShouldComponentUpdate} from '../../functions/redux';
 import {
   clickNotification,
   getCurrentRoute,
@@ -53,8 +54,14 @@ class Notification extends Component {
       },
     });
   }
-  shouldComponentUpdate(nextProps,nextState) {
-    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+      component: 'Notification',
+    });
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -67,9 +74,9 @@ class Notification extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const {notification, notifications} = this.props;
-    if (prevProps.notification !== notification) {
+    if (!equal(prevProps.notification, notification) && notifications) {
       notification.data.action === 'Conversation' &&
-        updateNotificationBadge(notifications.length + 1);
+        updateNotificationBadge(Object.values(notifications).length + 1);
       return this.openNotification();
     }
   }
@@ -95,7 +102,7 @@ class Notification extends Component {
     const {notification} = this.props;
     const {width} = Dimensions.get('screen');
     if (!notification) return null;
-    const {picture} = notification.data; 
+    const {picture} = notification.data;
     let {body, title} = notification.notification;
     if (body.length > 80) body = body.slice(0, 80) + '...';
     const styleImg = {height: 50, width: 50, borderRadius: 5};
@@ -182,11 +189,10 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => {
-  const {notifications} = state.user.infoUser;
   return {
     notification: state.layout.notification,
     userID: state.user.userID,
-    notifications: notifications ? Object.values(notifications) : [],
+    notifications: state.user.infoUser.notifications,
   };
 };
 

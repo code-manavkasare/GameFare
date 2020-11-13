@@ -40,6 +40,7 @@ class BranchManager extends Component {
       nextProps,
       state: this.state,
       nextState,
+      component: 'BranchManager',
     });
   }
 

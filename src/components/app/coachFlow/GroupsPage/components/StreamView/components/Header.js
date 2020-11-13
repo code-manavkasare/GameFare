@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Animated} from 'react-native';
+import {View, Text, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import database from '@react-native-firebase/database';
-
-import {layoutAction} from '../../../../../../../store/actions/layoutActions';
 
 import {createInviteToSessionBranchUrl} from '../../../../../../database/branch';
 
@@ -91,16 +88,13 @@ class HeaderStreamView extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
-
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
     currentSessionReconnecting: state.coach.reconnecting,
   };
 };
 
 export default connect(
   mapStateToProps,
-  {layoutAction},
+  {},
 )(HeaderStreamView);

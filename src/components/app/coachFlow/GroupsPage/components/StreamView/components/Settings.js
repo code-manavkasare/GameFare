@@ -10,11 +10,8 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
-import FadeInView from 'react-native-fade-in-view';
 
 import HeaderBackButton from '../../../../../../layout/headers/HeaderBackButton';
-import {coachAction} from '../../../../../../../store/actions/coachActions';
-import {appSettingsAction} from '../../../../../../../store/actions/appSettingsActions';
 
 import {
   heightFooter,
@@ -23,7 +20,6 @@ import {
 } from '../../../../../../style/sizes';
 
 import ScrollView from '../../../../../../layout/scrollViews/ScrollView2';
-import Button from '../../../../../../layout/buttons/Button';
 
 import colors from '../../../../../../style/colors';
 import styleApp from '../../../../../../style/style';
@@ -83,31 +79,7 @@ class Settings extends Component {
           },
           'Allow call participants to remotely trigger a recording',
         )}
-        <View style={{height: 20}} />
 
-        {/* {infoUser.coach &&
-          this.settingsSwitch(
-            chargeForSession,
-            async () => {
-              const {coachSessionID} = that.props.route.params;
-              await that.setState({
-                chargeForSession: !chargeForSession,
-              });
-              database()
-                .ref(`coachSessions/${coachSessionID}/members/${userID}`)
-                .update({
-                  chargeForSession: !chargeForSession,
-                });
-            },
-            'Charge players for the session',
-          )} */}
-        {/* {this.settingsSwitch(
-          batterySaver,
-          async () => {
-            that.props.appSettingsAction('toggleBatterySaver');
-          },
-          'Turn on battery saver mode',
-        )} */}
       </View>
     );
   }
@@ -153,9 +125,7 @@ class Settings extends Component {
       </View>
     );
   }
-}
-
-const styles = StyleSheet.create({});
+} 
 
 const mapStateToProps = (state) => {
   return {
@@ -170,5 +140,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  {coachAction, appSettingsAction},
+  {},
 )(Settings);
