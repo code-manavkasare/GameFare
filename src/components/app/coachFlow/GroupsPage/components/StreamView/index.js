@@ -645,8 +645,6 @@ const mapStateToProps = (state, props) => {
     currentSessionID: state.coach.currentSessionID,
     session: state.coachSessions[state.coach.currentSessionID],
     currentSession: state.coachSessions[state.coach.currentSessionID],
-    endCurrentSession: state.coach.endCurrentSession,
-    recording: state.coach.recording,
     reconnecting: state.coach.reconnecting,
     connectionType,
   };
