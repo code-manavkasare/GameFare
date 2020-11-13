@@ -8,7 +8,10 @@ const boolShouldComponentUpdate = ({
   nextState,
   component,
 }) => {
-  // if (__DEV__) console.log('boolShouldComponentUpdate', component);
+  return true
+  if (__DEV__) console.log('boolShouldComponentUpdate', component);
+  console.log('nextProps', nextProps);
+  console.log('props', props);
   if (!equal(props, nextProps) || !equal(state, nextState)) return true;
   return false;
 };
