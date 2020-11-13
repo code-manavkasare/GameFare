@@ -27,7 +27,8 @@ class Footer extends Component {
       members,
       publishVideo,
       publishAudio,
-    } = this.props; 
+      getCameraPosition,
+    } = this.props;
     return (
       <Animated.View style={[styles.footer]}>
         <BottomButtons
@@ -38,6 +39,7 @@ class Footer extends Component {
           publishVideo={publishVideo}
           publishAudio={publishAudio}
           coachSessionID={coachSessionID}
+          getCameraPosition={getCameraPosition}
         />
       </Animated.View>
     );

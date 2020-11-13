@@ -2,6 +2,7 @@ import React from 'react';
 import {StatusBar} from 'react-native';
 import database from '@react-native-firebase/database';
 import ImageResizer from 'react-native-image-resizer';
+import AudioSession from 'react-native-audio-session';
 import isEqual from 'lodash.isequal';
 
 import colors from '../style/colors';
@@ -207,7 +208,12 @@ const toggleVideoPublish = (sessionIDFirebase, memberID, enable) => {
     .update(updates);
 };
 
-const updateTimestamp = (sessionIDFirebase, memberID, timestamp) => {
+const updateTimestamp = (
+  sessionIDFirebase,
+  memberID,
+  timestamp,
+  orientation,
+) => {
   let updates = {};
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/startTimestamp`
@@ -218,6 +224,9 @@ const updateTimestamp = (sessionIDFirebase, memberID, timestamp) => {
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/dispatched`
   ] = false;
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/orientation`
+  ] = orientation;
 
   database()
     .ref()
@@ -571,6 +580,12 @@ const sessionOpening = async (session) => {
       return openMemberAcceptCharge(session);
   }
   */
+  await AudioSession.setCategoryAndMode(
+    'PlayAndRecord',
+    'VideoChat',
+    'AllowBluetooth',
+  );
+  console.log('Open session');
   logMixpanel({
     label: 'Open session ' + session.objectID,
     params: {coachSessionID: session.objectID},
@@ -655,7 +670,11 @@ const addMembersToSession = async (coachSessionID, members) => {
   }
 };
 
-const addMembersToSessionByID = async (coachSessionID, memberIDs,invitedBy) => {
+const addMembersToSessionByID = async (
+  coachSessionID,
+  memberIDs,
+  invitedBy,
+) => {
   const infos = await Promise.all(
     memberIDs.map((id) => getValueOnce(`users/${id}/userInfo`)),
   );
