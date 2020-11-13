@@ -2,7 +2,6 @@ import messaging from '@react-native-firebase/messaging';
 import database from '@react-native-firebase/database';
 import PushNotificationIOS from '@react-native-community/push-notification-ios'; //DO NOT DELETE, USEFUL FOR PushNotification
 import PushNotification from 'react-native-push-notification';
-import equal from 'fast-deep-equal';
 
 import {getValueOnce} from '../database/firebase/methods.js';
 

@@ -2,13 +2,13 @@ import React, {Component} from 'react';
 import {View, StyleSheet, Animated, InteractionManager} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
-import equal from 'fast-deep-equal';
 
 import PropTypes from 'prop-types';
 
 import {navigate} from '../../../../../../NavigationService';
 import PlaceHolder from '../../../../placeHolders/CardStream';
 import {logMixpanel} from '../../../../functions/logs';
+import {boolShouldComponentUpdate} from '../../../../functions/redux';
 
 import {sessionOpening} from '../../../../functions/coach';
 import {conversationIsInNotification} from '../../../../functions/notifications.js';
@@ -69,23 +69,13 @@ class CardStream extends Component {
     });
   }
   shouldComponentUpdate(nextProps, nextState) {
-    const {
-      session,
-      conversation,
-      notifications,
-      showCallButton,
-      selected,
-    } = this.props;
-    if (
-      !equal(session, nextProps.session) ||
-      !equal(conversation, nextProps.conversation) ||
-      !equal(notifications, nextProps.notifications) ||
-      !equal(showCallButton, nextProps.showCallButton) ||
-      !equal(selected, nextProps.selected) ||
-      !equal(this.state, nextState)
-    )
-      return true;
-    return false;
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+      component: 'CardStreamView',
+    });
   }
 
   loading() {
