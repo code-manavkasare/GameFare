@@ -11,15 +11,14 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import MediaPicker from 'react-native-image-crop-picker';
-
 import Orientation from 'react-native-orientation-locker';
-import equal from 'fast-deep-equal';
 
 import CardArchive from '../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 import VideoBeingShared from './components/VideoBeingShared';
 import {FlatListComponent} from '../../layout/Views/FlatList';
 import Button from '../../layout/buttons/Button';
 
+import {boolShouldComponentUpdate} from '../../functions/redux';
 import {uploadQueueAction} from '../../../store/actions/uploadQueueActions';
 import {layoutAction} from '../../../store/actions/layoutActions';
 import {rowTitle} from '../TeamPage/components/elements';
@@ -61,21 +60,13 @@ class VideoLibraryPage extends Component {
     this.componentDidMount = this.componentDidMount.bind(this);
   }
   shouldComponentUpdate(nextProps, nextState) {
-    const {
-      currentSessionID,
-      userConnected,
-      userLocalArchives,
-      archivedStreams,
-    } = this.props;
-    if (
-      !equal(userLocalArchives, nextProps.userLocalArchives) ||
-      !equal(archivedStreams, nextProps.archivedStreams) ||
-      !equal(currentSessionID, nextProps.currentSessionID) ||
-      !equal(userConnected, nextProps.userConnected) ||
-      !equal(this.state, nextState)
-    )
-      return true;
-    return false;
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+      component: 'VideoLibraryPage',
+    });
   }
   componentDidMount() {
     const {navigation} = this.props;
