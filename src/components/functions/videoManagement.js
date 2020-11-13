@@ -39,7 +39,11 @@ import {
   updateThumbnailCloud,
 } from '../database/firebase/videosManagement';
 
-const generateVideoInfosFromFlags = async (sourceVideoInfo, flags) => {
+const generateVideoInfosFromFlags = async (
+  sourceVideoInfo,
+  flags,
+  videoOrientation,
+) => {
   if (flags.length > 0) {
     return await Promise.all(
       flags.map(async (flag) => {
@@ -48,6 +52,7 @@ const generateVideoInfosFromFlags = async (sourceVideoInfo, flags) => {
           startTime: startTime / 1000,
           endTime: stopTime / 1000,
           saveWithCurrentDate: true,
+          videoOrientation,
         };
         const flagVideoUrl = await ProcessingManager.trim(
           sourceVideoInfo.url,
@@ -72,7 +77,8 @@ const arrayUploadFromSnippets = async ({
   coachSessionID,
   userID,
 }) => {
-  const {id} = recording.fullVideo;
+  const {fullVideo, orientation} = recording;
+  const {id} = fullVideo;
   const sourceVideoInfo = store.getState().archives[id];
   const flags = Object.values(flagsSelected).filter((flag) => {
     return flag?.id !== `${userID}-fullVideo`;
@@ -80,6 +86,7 @@ const arrayUploadFromSnippets = async ({
   const flagVideoInfos = await generateVideoInfosFromFlags(
     sourceVideoInfo,
     flags,
+    orientation,
   );
   if (flagsSelected[`${userID}-fullVideo`]) {
     store.dispatch(

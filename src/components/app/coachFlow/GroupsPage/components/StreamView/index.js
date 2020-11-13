@@ -549,6 +549,9 @@ class GroupsPage extends Component {
           coachSessionID={currentSessionID}
           publishAudio={publishAudio}
           publishVideo={publishVideo}
+          getCameraPosition={() => {
+            return cameraPosition;
+          }}
         />
         {reconnecting && (
           <View

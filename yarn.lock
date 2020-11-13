@@ -7499,9 +7499,9 @@ react-native-video-cache@^1.0.0:
   resolved "https://registry.yarnpkg.com/react-native-video-cache/-/react-native-video-cache-1.0.0.tgz#096cb3974b720ea336fb9175add7894c02dd6dee"
   integrity sha512-cVVnfDsZz6SCiEf1X5FRSNvc7EbhBjJ2C+My1A4/18erP3LZ0RzmxugcQJ69ssw8GoVno/JYgUXpk7NNKyS3Yw==
 
-"react-native-video-processing@git+https://github.com/foufrix/react-native-video-processing.git":
+"react-native-video-processing@git+https://github.com/pumposh/react-native-video-processing.git#master":
   version "1.7.4"
-  resolved "git+https://github.com/foufrix/react-native-video-processing.git#134e9228e4d6c63848ed8d2af13dc530c21c3f5d"
+  resolved "git+https://github.com/pumposh/react-native-video-processing.git#77547ae7ea7875f6ba0f68f404138c6faec7a60c"
   dependencies:
     babel-preset-es2015 "^6.24.1"
     babel-preset-react "^6.24.1"
