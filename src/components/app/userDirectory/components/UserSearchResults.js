@@ -53,7 +53,7 @@ export default class UserSearchResults extends Component {
     if (searchText === '') {
       this.setState({users: []});
     } else {
-      const {blockedByUsers} = store.getState().user.infoUser.blockedByUsers;
+      const {blockedByUsers} = store.getState().user.infoUser;
       const {userID} = store.getState().user.userID;
 
       const rawUsers = await autocompleteSearchUsers(
