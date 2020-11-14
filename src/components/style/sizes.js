@@ -41,8 +41,7 @@ if (Platform.OS === 'ios') {
   initialHeightControlBar = 80;
   offsetFooterStreaming = 0;
   borderRadius = 2;
-
-  if (height === 812) {
+  if (height === 812 || height === 844) {
     marginTopHeader = 50;
     heightPicture = 280;
     heightHeaderFilter = 130;
