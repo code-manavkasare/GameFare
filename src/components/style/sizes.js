@@ -41,7 +41,7 @@ if (Platform.OS === 'ios') {
   initialHeightControlBar = 80;
   offsetFooterStreaming = 0;
   borderRadius = 2;
-  if (height === 812 || height === 844) {
+  if (height === 812 || height === 844 || height === 896 || height === 926) {
     marginTopHeader = 50;
     heightPicture = 280;
     heightHeaderFilter = 130;
@@ -49,25 +49,11 @@ if (Platform.OS === 'ios') {
     heightFooter = 60;
     marginTopApp = 35;
     marginBottomApp = 30;
-    keyboardOffset = 310;
+    keyboardOffset = 320;
     marginBottomAppLandscade = 20;
     heightHeaderHomeSearch = 100;
     initialHeightControlBar = 100;
     offsetFooterStreaming = 30;
-    borderRadius = 25;
-  } else if (height === 896) {
-    marginTopHeader = 48;
-    heightPicture = 280;
-    heightHeaderFilter = 130;
-    heightFooterBooking = 110;
-    heightFooter = 60;
-    marginTopApp = 35;
-    marginBottomApp = 35;
-    keyboardOffset = 315;
-    marginBottomAppLandscade = 20;
-    heightHeaderHomeSearch = 100;
-    initialHeightControlBar = 100;
-    offsetFooterStreaming = 35;
     borderRadius = 25;
   } else if (height === 667) {
     heightFooterBooking = 85;
