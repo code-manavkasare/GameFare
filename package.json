@@ -43,7 +43,7 @@
     "base-64": "^0.1.0",
     "fast-deep-equal": "^3.1.1",
     "gamefare-camera-kit": "^1.1.2",
-    "gamefare-local-opentok": "git+https://gitlab.com/gamefare/gamefare-local-opentok.git#0.0.16",
+    "gamefare-local-opentok": "git+https://gitlab.com/gamefare/gamefare-local-opentok.git#0.0.17",
     "gamefare-rn-video": "git+https://gitlab.com/gamefare/gamefare-rn-video.git#ios14fix",
     "jstz": "^2.1.1",
     "libphonenumber-js": "^1.7.55",
