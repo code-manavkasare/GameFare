@@ -1,9 +1,7 @@
 import React, {Component} from 'react';
 import {Text, StyleSheet, View, Animated, ScrollView} from 'react-native';
-import moment from 'moment';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
-import isEqual from 'lodash.isequal';
 
 import colors from '../../../style/colors';
 import {isSomeoneSharingScreen} from '../../../functions/coach';
@@ -13,7 +11,6 @@ import ButtonColor from '../../../layout/Views/Button';
 import {openVideoPlayer} from '../../../functions/videoManagement';
 import styleApp from '../../../style/style';
 import AllIcon from '../../../layout/icons/AllIcons';
-import {native} from '../../../animations/animations';
 
 class VideoBeingShared extends Component {
   constructor(props) {

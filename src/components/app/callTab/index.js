@@ -4,7 +4,6 @@ import {connect} from 'react-redux';
 import Orientation from 'react-native-orientation-locker';
 import {BlurView} from '@react-native-community/blur';
 import {dissoc} from 'ramda';
-import equal from 'fast-deep-equal';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
@@ -15,6 +14,7 @@ import {isUserPrivate, userObject} from '../../functions/users';
 import {openSession} from '../../functions/coach';
 
 import Loader from '../../layout/loaders/Loader';
+import {boolShouldComponentUpdate} from '../../functions/redux';
 import SearchInput from '../../layout/textField/SearchInput';
 import PermissionView from '../../layout/Views/PermissionView';
 import InvitationManager from '../../utility/InvitationManager';
@@ -53,17 +53,14 @@ class CallTab extends Component {
       Orientation.lockToPortrait();
     });
   };
-  shouldComponentUpdate(nextProps, nextState) { 
-    const {numberNotifications, currentSessionID, userConnected} = this.props;
-    
-    if (
-      !equal(numberNotifications, nextProps.numberNotifications) ||
-      !equal(currentSessionID, nextProps.currentSessionID) ||
-      !equal(userConnected, nextProps.userConnected) ||
-      !equal(nextState, this.state)
-    )
-      return true;
-    return false;
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+      component: 'CallTab',
+    });
   }
   componentWillUnmount = () => {
     if (this.focusUnsubscribe) {
@@ -286,7 +283,7 @@ class CallTab extends Component {
       modal,
       selectedSessions,
       selectedUsers,
-    } = this.state; 
+    } = this.state;
     return (
       <View style={styleApp.stylePage}>
         {this.header()}

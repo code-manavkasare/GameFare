@@ -2,8 +2,10 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {isEqual} from 'lodash';
 
+import {store} from '../../../store/reduxStore';
 import {uploadQueueAction} from '../../../store/actions';
 import {uploadLocalVideo} from '../../functions/videoManagement';
+import {boolShouldComponentUpdate} from '../../functions/redux';
 
 class BackgroundUploadHelper extends Component {
   constructor(props) {
@@ -13,7 +15,24 @@ class BackgroundUploadHelper extends Component {
       queued: {},
     };
   }
-
+  componentDidMount() {
+    const {queue, archivesToUpload} = this.props;
+    if (
+      (!queue || Object.keys(queue).length === 0) &&
+      this.videosAvailableToUpload(archivesToUpload).length > 0
+    ) {
+      this.uploadNextLocalVideo();
+    }
+  }
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+      component: 'BackgroundUploadHelper',
+    });
+  }
   static getDerivedStateFromProps(props, state) {
     const {queue} = props;
     const {waitForQueueToPopulate} = state;
@@ -25,7 +44,7 @@ class BackgroundUploadHelper extends Component {
     return {};
   }
 
-  videosAvailableToUpload(archivesToUpload, archives) {
+  videosAvailableToUpload(archivesToUpload) {
     const {queued} = this.state;
     if (archivesToUpload) {
       const notQueued = Object.values(archivesToUpload).filter(
@@ -33,10 +52,10 @@ class BackgroundUploadHelper extends Component {
       );
       const notVolatile = notQueued.filter((v) => {
         return (
-          archives[v.id] &&
-          !archives[v.id].volatile &&
+          store.getState().archives[v.id] &&
+          !store.getState().archives[v.id].volatile &&
           (v.backgroundUpload === undefined || v.backgroundUpload === true) &&
-          archives[v.id].thumbnail !== undefined
+          store.getState().archives[v.id].thumbnail !== undefined
         );
       });
       return notVolatile;
@@ -44,35 +63,6 @@ class BackgroundUploadHelper extends Component {
       return [];
     }
   }
-
-  componentDidMount() {
-    const {queue, archivesToUpload, archives} = this.props;
-    if (
-      (!queue || Object.keys(queue).length === 0) &&
-      this.videosAvailableToUpload(archivesToUpload, archives).length > 0
-    ) {
-      this.uploadNextLocalVideo();
-    }
-  }
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   // update if the queue is empty and local library non empty AND not currently in a live session
-  //   const {
-  //     // queue: nextQueue,
-  //     archivesToUpload: nextArchivesToUpload,
-  //     archives: nextArchives,
-  //   } = nextProps;
-  //   const {waitForQueueToPopulate} = nextState;
-  //   if (waitForQueueToPopulate) {
-  //     return false;
-  //   }
-  //   // const nextQueueEmpty = !nextQueue || Object.keys(nextQueue).length === 0;
-  //   const nextArchivesNonEmpty =
-  //     nextArchivesToUpload &&
-  //     this.videosAvailableToUpload(nextArchivesToUpload, nextArchives).length >
-  //       0;
-  //   return nextArchivesNonEmpty && !nextProps.session;
-  // }
 
   componentDidUpdate(prevProps) {
     const {wifiAutoUpload} = this.props;
@@ -123,7 +113,6 @@ class BackgroundUploadHelper extends Component {
 const mapStateToProps = (state) => {
   return {
     session: state.coachSessions[state.coach.currentSessionID],
-    archives: state.archives,
     queue: state.uploadQueue.queue,
     archivesToUpload: state.localVideoLibrary.userLocalArchives,
     wifiAutoUpload: state.appSettings.wifiAutoUpload,

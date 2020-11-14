@@ -1,4 +1,4 @@
-import React, {Component,memo} from 'react';
+import React, {Component, memo} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 
@@ -9,8 +9,7 @@ import colors from '../../../style/colors';
 import sizes from '../../../style/sizes';
 
 import {FlatListComponent} from '../../../layout/Views/FlatList';
-import {boolShouldComponentUpdate} from '../../../functions/redux'
-
+import {boolShouldComponentUpdate} from '../../../functions/redux';
 
 import {viewLive, rowTitle} from '../../TeamPage/components/elements';
 import {getSortedSessions} from '../../../functions/coach';
@@ -21,9 +20,15 @@ class ListVideoCalls extends Component {
     super(props);
     this.state = {};
   }
-  // shouldComponentUpdate(nextProps,nextState) {
-  //   return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
-  // }
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+      component: 'ListVideoCalls',
+    });
+  }
   sessionsArray = () => {
     const {coachSessions, currentSessionID} = this.props;
     if (!coachSessions) {
@@ -75,19 +80,21 @@ class ListVideoCalls extends Component {
           image: require('../../../../img/images/search.png'),
         }}
         cardList={({item: session}) => {
-          return <View style={styles.cardStreamContainerStyle}>
-            <CardStreamView
-              coachSessionID={session.id}
-              key={session.id}
-              onClick={(session) => onClick(session)}
-              selected={selectedSessions[session.id]?true:false}
-              showCallButton={!hideCallButton}
-              scale={1}
-              recentView
-              style={styles.cardStreamStyle}
-            />
-            <View style={styles.divider} />
-          </View>
+          return (
+            <View style={styles.cardStreamContainerStyle}>
+              <CardStreamView
+                coachSessionID={session.id}
+                key={session.id}
+                onClick={(session) => onClick(session)}
+                selected={selectedSessions[session.id] ? true : false}
+                showCallButton={!hideCallButton}
+                scale={1}
+                recentView
+                style={styles.cardStreamStyle}
+              />
+              <View style={styles.divider} />
+            </View>
+          );
         }}
         incrementRendering={6}
         initialNumberToRender={8}
@@ -237,4 +244,4 @@ const mapStateToProps = (state) => {
 export default connect(
   mapStateToProps,
   {},
-)((ListVideoCalls));
+)(ListVideoCalls);

@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import Orientation from 'react-native-orientation-locker';
 import isEqual from 'lodash.isequal';
 
 import styleApp from '../../../style/style';
@@ -16,8 +15,6 @@ class StreamTab extends Component {
     this.state = {};
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  componentDidMount = () => {
-  };
   shouldComponentUpdate(prevProps, prevState) {
     const {coachSessionsRequests} = this.props;
     if (
@@ -27,8 +24,14 @@ class StreamTab extends Component {
       return true;
     return false;
   }
+  coachSessionsRequestsArray() {
+    const {coachSessionsRequests} = this.props;
+    if (!coachSessionsRequests) return [];
+    return Object.values(coachSessionsRequests);
+  }
   render() {
-    const {navigation, coachSessionsRequests} = this.props;
+    const {navigation} = this.props;
+    const coachSessionsRequests = this.coachSessionsRequestsArray();
     const tabBarVisible = coachSessionsRequests.length !== 0;
     return (
       <View style={styleApp.stylePage}>
@@ -55,12 +58,9 @@ class StreamTab extends Component {
 }
 
 const mapStateToProps = (state) => {
-  let coachSessionsRequests = state.user.infoUser.coachSessionsRequests;
-  if (!coachSessionsRequests) coachSessionsRequests = [];
-  coachSessionsRequests = Object.values(coachSessionsRequests);
   return {
     userID: state.user.userID,
-    coachSessionsRequests,
+    coachSessionsRequests: state.user.infoUser.coachSessionsRequest,
   };
 };
 

@@ -6,7 +6,7 @@ import messaging from '@react-native-firebase/messaging';
 import Animated, {call, block} from 'react-native-reanimated';
 
 import {layoutAction} from '../../../../store/actions/layoutActions';
-import {boolShouldComponentUpdate} from '../../../functions/redux'
+import {boolShouldComponentUpdate} from '../../../functions/redux';
 
 import FooterButton from './components/Button';
 import colors from '../../../style/colors';
@@ -14,7 +14,6 @@ import sizes from '../../../style/sizes';
 import {heightFooter, marginBottomApp} from '../../../style/sizes';
 import {clickNotification} from '../../../../../NavigationService';
 import styleApp from '../../../style/style';
-
 
 class Footer extends React.Component {
   constructor(props) {
@@ -32,8 +31,14 @@ class Footer extends React.Component {
     this.notificationHandler();
     this.handleCameraAvailability();
   }
-  shouldComponentUpdate(nextProps,nextState) {
-    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+      component: 'Footer app',
+    });
   }
   componentDidUpdate(prevProps, prevState) {
     const {index: currentIndex} = this.props.state;
@@ -82,13 +87,13 @@ class Footer extends React.Component {
     if (this.cameraAvailability) {
       clearTimeout(this.cameraAvailability);
     }
-    if (currentIndex === 1) { 
+    if (currentIndex === 1) {
       this.cameraVisible = true;
       layoutAction('setCameraAvailability', true);
-    } else { 
+    } else {
       this.cameraVisible = false;
       this.cameraAvailability = setTimeout(() => {
-        this.cameraVisible = false; 
+        this.cameraVisible = false;
         layoutAction('setCameraAvailability', false);
       }, 1000);
     }
@@ -217,7 +222,7 @@ class Footer extends React.Component {
               signInToPass,
               displayPastille,
               pageStack,
-            } = options; 
+            } = options;
             if (hideInFooter) {
               return null;
             }
@@ -349,7 +354,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => {
-  return { 
+  return {
     currentSessionID: state.coach.currentSessionID,
     userID: state.user.userID,
     currentScreenSize: state.layout.currentScreenSize,

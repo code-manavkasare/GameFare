@@ -7,10 +7,8 @@ import ProfilePage from '../../app/elementsUser/elementsProfile/ProfilePage';
 import Conversation from '../../app/elementsMessage/Conversation';
 
 import Profile from './components/Profile';
-import SignIn from '../SignIn/index';
 
 import Webview from '../../layout/Views/Webview';
-import TeamPage from '../../app/TeamPage/index';
 import VideoPlayerPage from '../../app/videoPlayerPage/index';
 import SelectVideosFromLibrary from '../../app/videoLibraryPage/index';
 import {DepthModal} from '../transitions/DepthModal';
@@ -46,8 +44,6 @@ const MainApp = () => {
       />
 
       <Stack.Screen name="Webview" component={Webview} />
-
-      <Stack.Screen name="TeamPage" component={TeamPage} />
 
       <Stack.Screen name="MorePage" component={Profile} options={ProfileSpec} />
 

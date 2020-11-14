@@ -10,7 +10,7 @@ import {rowTitle} from '../../../TeamPage/components/elements';
 import {FlatListComponent} from '../../../../layout/Views/FlatList';
 import {getSortedSessions} from '../../../../functions/coach';
 import {newConversation} from '../../../../functions/message';
-import {boolShouldComponentUpdate} from '../../../../functions/redux'
+import {boolShouldComponentUpdate} from '../../../../functions/redux';
 import styleApp from '../../../../style/style';
 import colors from '../../../../style/colors';
 import sizes from '../../../../style/sizes';
@@ -21,15 +21,21 @@ class ListStreams extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      coachSessions:  getSortedSessions({
-        coachSessions:props.coachSessions,
+      coachSessions: getSortedSessions({
+        coachSessions: props.coachSessions,
         sortBy: 'lastMessage',
       }),
       loading: false,
     };
   }
-  shouldComponentUpdate(nextProps,nextState) {
-    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+      component: 'ListGroups',
+    });
   }
   header() {
     return (
@@ -130,8 +136,8 @@ class ListStreams extends Component {
               style={{
                 borderBottomWidth: 1,
                 borderColor: colors.off,
-                paddingTop:15,
-                paddingBottom:15
+                paddingTop: 15,
+                paddingBottom: 15,
               }}
             />
           )
