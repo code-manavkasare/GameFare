@@ -61,7 +61,7 @@ class NewMethod extends Component {
           <Text style={[styleApp.title, {marginBottom: 20, fontSize: 19}]}>
             New payment method
           </Text>
-          <View style={[styleApp.divider2, {marginTop: 10, marginBottom: 0}]} />
+          <View style={[styleApp.divider2, {marginTop: 10, marginBottom: 1}]} />
         </View>
 
         {this.row(cardIcon('default'), 'Credit/Debit card', 'NewCard', {})}
