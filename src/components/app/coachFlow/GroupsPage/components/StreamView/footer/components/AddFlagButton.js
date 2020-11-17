@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, Easing} from 'react-native'; 
+import {View, Text, StyleSheet, Animated, Easing} from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
-import PropTypes from 'prop-types'; 
+import PropTypes from 'prop-types';
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import {generateID} from '../../../../../../../functions/utility.js';
@@ -40,7 +40,8 @@ export default class AddFlagButton extends Component {
     const {member} = props;
     const {recording} = member;
     if (!recording?.flags) return false;
-    return Object.values(recording.flags).length;
+    return Object.values(recording.flags).filter((f) => f?.id !== undefined)
+      .length;
   };
 
   buttonAddFlag() {
@@ -125,4 +126,3 @@ AddFlagButton.propTypes = {
   member: PropTypes.object,
   coachSessionID: PropTypes.string,
 };
-
