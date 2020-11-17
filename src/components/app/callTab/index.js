@@ -46,13 +46,6 @@ class CallTab extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
 
-  componentDidMount = () => {
-    const {navigation} = this.props;
-
-    this.focusUnsubscribe = navigation.addListener('focus', () => {
-      Orientation.lockToPortrait();
-    });
-  };
   shouldComponentUpdate(nextProps, nextState) {
     return boolShouldComponentUpdate({
       props: this.props,

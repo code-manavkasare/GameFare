@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {View, StatusBar, InteractionManager} from 'react-native';
+import {View, InteractionManager} from 'react-native';
 import {connect} from 'react-redux';
-import Orientation from 'react-native-orientation-locker';
+
 import database from '@react-native-firebase/database';
 
 import SinglePlayer from './components/SinglePlayer';
@@ -10,6 +10,7 @@ import AudioRecorderPlayer from './components/AudioRecorderPlayer';
 
 import {isArchiveUploading} from '../../functions/upload.js';
 import {logMixpanel} from '../../functions/logs';
+import FocusListeners from '../../hoc/focusListeners';
 
 import colors from '../../style/colors';
 
@@ -32,6 +33,7 @@ import {
   generatePreviewCloud,
   videoIsReview,
 } from '../../functions/review';
+
 import RecordingMenu from './components/recording/components/RecordingMenu';
 
 class VideoPlayerPage extends Component {
@@ -45,7 +47,6 @@ class VideoPlayerPage extends Component {
       isEditMode: false,
       isPreviewing: false,
       isRecording: false,
-      landscape: false,
       recordedActions: false,
       isAudioPlayerReady: false,
       prevCameraState: props.cameraAvailability,
@@ -54,19 +55,6 @@ class VideoPlayerPage extends Component {
     this.focusListener = null;
   }
   componentDidMount = () => {
-    const {navigation} = this.props;
-    this.focusListener = navigation.addListener('focus', () => {
-      Orientation.unlockAllOrientations();
-      StatusBar.setBarStyle('light-content', true);
-    });
-
-    this.blurListener = navigation.addListener('blur', () => {
-      StatusBar.setBarStyle('dark-content', true);
-      Orientation.lockToPortrait();
-    });
-
-    Orientation.addOrientationListener(this._orientationListener.bind(this));
-
     InteractionManager.runAfterInteractions(() => {
       this.autoShareOnOpen();
     });
@@ -100,26 +88,12 @@ class VideoPlayerPage extends Component {
     return {};
   }
 
-  _orientationListener(o) {
-    if (o === 'LANDSCAPE-LEFT' || o === 'LANDSCAPE-RIGHT') {
-      this.setState({landscape: true});
-    } else {
-      this.setState({landscape: false});
-    }
-  }
-
   autoShareOnOpen = () => {
     const {params} = this.props.route;
 
     if (params.forceSharing)
       this.headerRef.buttonShareRef.startSharingVideo(true);
   };
-
-  componentWillUnmount() {
-    this.blurListener();
-    this.focusListener();
-    Orientation.removeOrientationListener(this._orientationListener.bind(this));
-  }
 
   componentDidUpdate(prevProps, prevState) {
     const {session} = prevProps;
@@ -558,7 +532,12 @@ class VideoPlayerPage extends Component {
 
   singlePlayer = (videoInfo, i) => {
     const {archives} = this.state;
-    const {session, videoInfos, currentSessionID: coachSessionID} = this.props;
+    const {
+      session,
+      videoInfos,
+      currentSessionID: coachSessionID,
+      portrait,
+    } = this.props;
     let videosBeingShared = false;
     let personSharingScreen = false;
     if (session) {
@@ -601,7 +580,7 @@ class VideoPlayerPage extends Component {
         }
       : {};
 
-    const {landscape, recordedActions} = this.state;
+    const {recordedActions} = this.state;
 
     return (
       <SinglePlayer
@@ -624,7 +603,7 @@ class VideoPlayerPage extends Component {
         videosBeingShared={videosBeingShared}
         personSharingScreen={personSharingScreen}
         local={local}
-        landscape={landscape}
+        landscape={!portrait}
         propsWhenRecording={propsWhenRecording}
         playRecord={() => this.AudioRecorderPlayerRef?.playRecord()}
         videoFromCloud={
@@ -641,13 +620,14 @@ class VideoPlayerPage extends Component {
 
   render = () => {
     const {isRecording, isEditMode, recordedActions} = this.state;
-    const {videoInfos, currentSessionID} = this.props;
+    const {videoInfos, currentSessionID, navigation} = this.props;
     const isReview = videoIsReview(videoInfos);
 
     const connectedToSession =
       currentSessionID !== false && currentSessionID !== undefined;
     return (
       <View style={[{flex: 1}, {backgroundColor: colors.black}]}>
+        <FocusListeners navigation={navigation} />
         {this.header()}
         <AudioRecorderPlayer
           onRef={(ref) => {

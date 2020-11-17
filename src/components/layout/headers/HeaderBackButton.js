@@ -499,7 +499,6 @@ class HeaderBackButton extends Component {
       borderColorView,
       borderWidth,
     } = this.animatedValues();
-
     const styleHeader = {
       ...styles.header,
       backgroundColor: AnimateBackgroundView,

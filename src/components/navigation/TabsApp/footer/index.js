@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Dimensions} from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
@@ -156,9 +156,9 @@ class Footer extends React.Component {
     );
   }
   labelIndicator() {
-    const {state, position, currentScreenSize} = this.props;
+    const {state, position} = this.props;
     const {disableAnimation} = this.state;
-    const {currentWidth} = currentScreenSize;
+    const {width: currentWidth} = Dimensions.get('screen');
     const indicatorWidth = 50;
     let inputRange = state.routes.map((_, i) => i);
     inputRange.unshift(-1);
@@ -209,10 +209,10 @@ class Footer extends React.Component {
       currentSessionID,
     } = this.props;
     const {disableAnimation} = this.state;
-
+    const {width: currentWidth} = Dimensions.get('screen');
     return (
-      <View style={styles.footer}>
-        <Row style={styles.footerBody}>
+      <View style={[styles.footer, {width: currentWidth}]}>
+        <Row style={[styles.footerBody, {width: currentWidth * 0.85}]}>
           {state.routes.map((route, index) => {
             const {options} = descriptors[route.key];
             const {
@@ -300,7 +300,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 1,
     width: '100%',
-
     bottom: 0,
     overflow: 'visible',
   },
@@ -320,7 +319,6 @@ const styles = StyleSheet.create({
   footerBody: {
     ...styleApp.fullSize,
     overflow: 'hidden',
-    width: sizes.width * 0.85,
     marginTop: 0,
     paddingTop: 15,
     zIndex: 2,

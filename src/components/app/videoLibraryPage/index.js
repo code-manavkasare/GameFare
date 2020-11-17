@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import MediaPicker from 'react-native-image-crop-picker';
-import Orientation from 'react-native-orientation-locker';
 
 import CardArchive from '../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 import VideoBeingShared from './components/VideoBeingShared';
@@ -41,7 +40,6 @@ import {navigate} from '../../../../NavigationService';
 import HeaderVideoLibrary from './components/HeaderVideoLibrary';
 import ToolRow from './components/ToolRow';
 import {store} from '../../../store/reduxStore';
-const {height, width} = Dimensions.get('screen');
 
 class VideoLibraryPage extends Component {
   constructor(props) {
@@ -71,7 +69,6 @@ class VideoLibraryPage extends Component {
   componentDidMount() {
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('focus', () => {
-      Orientation.lockToPortrait();
       const currentSessionID = store.getState().coach.currentSessionID;
       if (currentSessionID) this.setState({selectableMode: true});
     });
@@ -259,12 +256,13 @@ class VideoLibraryPage extends Component {
       styleBorder = {
         borderRightWidth: 1.5,
       };
+    const {width} = Dimensions.get('screen');
     return (
       <CardArchive
         selectableMode={selectableMode}
         isSelected={isSelected}
         selectVideo={(id) => this.selectVideo(id)}
-        style={[styles.cardArchive, styleBorder]}
+        style={[styles.cardArchive, styleBorder, {width: width / 3}]}
         id={videoID}
         index={index}
         key={videoID}
@@ -352,7 +350,6 @@ class VideoLibraryPage extends Component {
 
 const styles = StyleSheet.create({
   cardArchive: {
-    width: width / 3,
     height: 170,
     borderRadius: 0,
     overflow: 'hidden',
