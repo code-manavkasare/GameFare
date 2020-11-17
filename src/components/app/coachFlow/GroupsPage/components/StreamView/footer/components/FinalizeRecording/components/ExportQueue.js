@@ -343,6 +343,7 @@ class ExportQueue extends Component {
                 recording?.flags &&
                 Object.values(recording.flags)
                   .sort((a, b) => a.time - b.time)
+                  .filter((f) => f?.id !== undefined)
                   .map((flag) => (
                     <CardFlag
                       key={flag.id}
@@ -385,8 +386,6 @@ class ExportQueue extends Component {
 
   render() {
     const {visible, flagsSelected, loader} = this.state;
-    const {currentScreenSize} = this.props;
-    const width = currentScreenSize.currentWidth;
 
     const translateY = this.scaleCard.interpolate({
       inputRange: [0, 1],
