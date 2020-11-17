@@ -1,8 +1,7 @@
 import React from 'react';
 import {Text, View, styleAppheet, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import {navigate} from '../../../../../../NavigationService';
-import Orientation from 'react-native-orientation-locker';
+import {navigate} from '../../../../../../NavigationService'; 
 import Reanimated from 'react-native-reanimated';
 import {native} from '../../../../animations/animations';
 

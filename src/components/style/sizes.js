@@ -1,5 +1,10 @@
 import {Platform, Dimensions} from 'react-native';
-const {height, width} = Dimensions.get('screen');
+const {height: initialHeight, width: initialWidth} = Dimensions.get('screen');
+let {height, width} = Dimensions.get('screen');
+if (height < width) {
+  height = initialWidth;
+  width = initialHeight;
+}
 var marginTopHeader = 7;
 var heightPicture = 280;
 var heightFooterBooking = 80;
