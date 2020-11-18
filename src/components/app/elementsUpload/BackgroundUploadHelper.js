@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {isEqual} from 'lodash';
+import equal from 'fast-deep-equal';
 
 import {store} from '../../../store/reduxStore';
 import {uploadQueueAction} from '../../../store/actions';
@@ -10,10 +10,6 @@ import {boolShouldComponentUpdate} from '../../functions/redux';
 class BackgroundUploadHelper extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      waitForQueueToPopulate: false,
-      queued: {},
-    };
   }
   componentDidMount() {
     const {queue, archivesToUpload} = this.props;
@@ -33,22 +29,15 @@ class BackgroundUploadHelper extends Component {
       component: 'BackgroundUploadHelper',
     });
   }
-  static getDerivedStateFromProps(props, state) {
-    const {queue} = props;
-    const {waitForQueueToPopulate} = state;
-    if (waitForQueueToPopulate) {
-      if (queue && Object.keys(queue).length > 0) {
-        return {waitForQueueToPopulate: false};
-      }
-    }
-    return {};
-  }
 
   videosAvailableToUpload(archivesToUpload) {
-    const {queued} = this.state;
+    const {queue} = this.props;
     if (archivesToUpload) {
       const notQueued = Object.values(archivesToUpload).filter(
-        (x) => !queued[x.id],
+        (archive) =>
+          !queue ||
+          Object.values(queue).filter((task) => task?.cloudID === archive.id)
+            .length === 0,
       );
       const notVolatile = notQueued.filter((v) => {
         return (
@@ -67,7 +56,7 @@ class BackgroundUploadHelper extends Component {
   componentDidUpdate(prevProps) {
     const {wifiAutoUpload} = this.props;
     if (
-      !isEqual(this.props.archivesToUpload, prevProps.archivesToUpload) ||
+      !equal(this.props.archivesToUpload, prevProps.archivesToUpload) ||
       (wifiAutoUpload && wifiAutoUpload !== prevProps.wifiAutoUpload)
     ) {
       this.uploadNextLocalVideo();
@@ -81,24 +70,16 @@ class BackgroundUploadHelper extends Component {
       archives,
       userConnected,
     } = this.props;
-    const {queued} = this.state;
     if (wifiAutoUpload && userConnected) {
       try {
         const videosToUpload = this.videosAvailableToUpload(
           archivesToUpload,
           archives,
         );
-        let newState = {};
         videosToUpload.map((video) => {
           const {id} = video;
-          newState = {
-            ...newState,
-            waitForQueueToPopulate: true,
-            queued: {...queued, [id]: true},
-          };
           uploadLocalVideo(id, true);
         });
-        await this.setState(newState);
       } catch (error) {
         console.log('ERROR BackgroundUploadHelper', error);
       }

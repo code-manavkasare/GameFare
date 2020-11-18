@@ -125,7 +125,7 @@ class Camera extends Component {
         codec: RNCamera.Constants.VideoCodec['H264'],
         quality: RNCamera.Constants.VideoQuality['1080p'],
         path: getNewVideoSavePath(),
-        muted: false,
+        mute: false,
       };
       let promise = camera.recordAsync(options);
       onRecord && onRecord();

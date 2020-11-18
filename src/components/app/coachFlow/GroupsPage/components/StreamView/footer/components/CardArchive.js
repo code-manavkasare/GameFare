@@ -303,10 +303,10 @@ class CardArchive extends Component {
         {this.buttonDismiss()}
 
         <View style={[styles.cardArchive, style]}>
-          {isBinded && !url ? (
+          {isBinded && !url && !progress ? (
             this.viewNoVideo()
           ) : local && thumbnail ? (
-            <Image style={styleApp.fullSize} source={{uri: thumbnail}} />
+            <AsyncImage style={styleApp.fullSize} mainImage={thumbnail} />
           ) : (
             <AsyncImage
               style={{...styleApp.fullSize}}
