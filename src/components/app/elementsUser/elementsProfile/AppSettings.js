@@ -70,18 +70,22 @@ class AppSettings extends Component {
         permissionOtherUserToRecord: nextVal,
       });
   };
+  toggleAutoUpload = () => {
+    const {wifiAutoUpload, userID, appSettingsAction} = this.props;
+    database()
+      .ref(`users/${userID}/appSettings/`)
+      .update({
+        wifiAutoUpload: !wifiAutoUpload,
+      });
+    return appSettingsAction('toggleWifiAutoUpload');
+  };
   settings() {
-    const {
-      wifiAutoUpload,
-      isPrivate,
-      appSettingsAction,
-      permissionOtherUserToRecord,
-    } = this.props;
+    const {wifiAutoUpload, isPrivate, permissionOtherUserToRecord} = this.props;
     return (
       <View style={styleApp.marginView}>
         {this.settingsSwitch(
           wifiAutoUpload,
-          async () => appSettingsAction('toggleWifiAutoUpload'),
+          async () => this.toggleAutoUpload(),
           'Auto upload local videos',
         )}
         {this.settingsSwitch(
