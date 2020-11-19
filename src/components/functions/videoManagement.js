@@ -512,7 +512,7 @@ const goToLibraryPage = () => {
 };
 
 const getVideosFromCameraroll = async () => {
-  const params = {assetType: 'Videos', first: 5};
+  const params = {assetType: 'Videos', first: 1000};
   const videos = await getPhotos(params);
   console.log('videos: ', videos);
   return Promise.resolve(videos);
