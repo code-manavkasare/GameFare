@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {View} from 'react-native';
 import {connect} from 'react-redux';
 
+import {selectVideosFromCameraRoll} from '../../../functions/videoManagement.js';
 import colors from '../../../style/colors';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import UploadHeader from './UploadHeader';
@@ -26,7 +27,6 @@ class HeaderVideoLibrary extends Component {
     const {
       loader,
       selectableMode,
-      addFromCameraRoll,
       AnimatedHeaderValue,
       selectOnly,
       navigation,
@@ -64,7 +64,7 @@ class HeaderVideoLibrary extends Component {
           sizeIcon2={22}
           colorIcon2={colors.title}
           clickButton2={() => toggleSelectable()}
-          clickButtonOffset={() => addFromCameraRoll({})}
+          clickButtonOffset={() => selectVideosFromCameraRoll()}
           iconOffset={!selectableMode && 'plus'}
           typeIconOffset={'font'}
           sizeIconOffset={22}

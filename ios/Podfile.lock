@@ -420,7 +420,7 @@ PODS:
     - React-Core
   - react-native-camera/RN (3.40.0):
     - React-Core
-  - react-native-cameraroll (1.8.1):
+  - react-native-cameraroll (4.0.1):
     - React
   - react-native-config (0.12.0):
     - React
@@ -589,15 +589,6 @@ PODS:
     - React
   - RNGestureHandler (1.8.0):
     - React
-  - RNImageCropPicker (0.35.1):
-    - React-Core
-    - React-RCTImage
-    - RNImageCropPicker/QBImagePickerController (= 0.35.1)
-    - TOCropViewController
-  - RNImageCropPicker/QBImagePickerController (0.35.1):
-    - React-Core
-    - React-RCTImage
-    - TOCropViewController
   - RNImageEditor (0.8.3):
     - React
   - RNInAppBrowser (3.5.1):
@@ -630,7 +621,6 @@ PODS:
   - tipsi-stripe (7.5.3):
     - React
     - Stripe (~> 14.0.1)
-  - TOCropViewController (2.5.5)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -734,7 +724,6 @@ DEPENDENCIES:
   - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
-  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - "RNImageEditor (from `../node_modules/@wwimmo/react-native-sketch-canvas`)"
   - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
@@ -793,7 +782,6 @@ SPEC REPOS:
     - SDWebImageWebPCoder
     - Sentry
     - Stripe
-    - TOCropViewController
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -979,8 +967,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fs"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
-  RNImageCropPicker:
-    :path: "../node_modules/react-native-image-crop-picker"
   RNImageEditor:
     :path: "../node_modules/@wwimmo/react-native-sketch-canvas"
   RNInAppBrowser:
@@ -1087,7 +1073,7 @@ SPEC CHECKSUMS:
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
   react-native-branch: a15b8ecb55c08139e06e7ea15bcadabc81a51e64
   react-native-camera: 35854c4f764a4a6cf61c1c3525888b92f0fe4b31
-  react-native-cameraroll: e2917a5e62da9f10c3d525e157e25e694d2d6dfa
+  react-native-cameraroll: 60ba0068826eab1c8d43146191bafd4363ea58a7
   react-native-config: f2c2ae45625a068c35681a16b9bfb1ca58b0adc7
   react-native-create-thumbnail: f5265b03ec18ccc86f754c7cb63f919147a78ce0
   react-native-flipper: 7936453fec474d5360a14cf6ac035bd689611ffd
@@ -1140,7 +1126,6 @@ SPEC CHECKSUMS:
   RNFBStorage: 08c6831d19190f68f0985ff7bd773262f11a1c4a
   RNFS: 2bd9eb49dc82fa9676382f0585b992c424cd59df
   RNGestureHandler: 7a5833d0f788dbd107fbb913e09aa0c1ff333c39
-  RNImageCropPicker: 16951bc02411f50c4d197488ed6406a23dc3b5f1
   RNImageEditor: 43f5f80bbfcb66dd9fff2399a22f3500514617e2
   RNInAppBrowser: 48b95ba7a4eaff5cc223bca338d3e319561dbd1b
   RNPermissions: 5df468064df661a4c8c017e2791ce90d7695eea5
@@ -1155,7 +1140,6 @@ SPEC CHECKSUMS:
   Sentry: e2c691627ae1dc0029acebbd1b0b4af4df12af73
   Stripe: 4305b646743612854819fb5d5cf67aaeb93577c0
   tipsi-stripe: fb5b32e890a4528322c491e1827133a3cb919e0a
-  TOCropViewController: da59f531f8ac8a94ef6d6c0fc34009350f9e8bfe
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 

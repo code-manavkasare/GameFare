@@ -1,16 +1,7 @@
 import React, {Component} from 'react';
-import {
-  Animated,
-  Dimensions,
-  FlatList,
-  Image,
-  StyleSheet,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+import {Animated, Dimensions, View, StatusBar} from 'react-native';
 import {connect} from 'react-redux';
-import MediaPicker from 'react-native-image-crop-picker';
+import Orientation from 'react-native-orientation-locker';
 
 import CardArchive from '../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 import VideoBeingShared from './components/VideoBeingShared';
@@ -22,17 +13,12 @@ import {uploadQueueAction} from '../../../store/actions/uploadQueueActions';
 import {layoutAction} from '../../../store/actions/layoutActions';
 import {rowTitle} from '../TeamPage/components/elements';
 
-import {
-  sortVideos,
-  permission,
-  goToSettings,
-  getNativeVideoInfo,
-} from '../../functions/pictures';
+import {sortVideos} from '../../functions/pictures';
 import sizes from '../../style/sizes';
 import {
-  addLocalVideo,
   openVideoPlayer,
   deleteVideos,
+  selectVideosFromCameraRoll,
 } from '../../functions/videoManagement';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -40,6 +26,7 @@ import {navigate} from '../../../../NavigationService';
 import HeaderVideoLibrary from './components/HeaderVideoLibrary';
 import ToolRow from './components/ToolRow';
 import {store} from '../../../store/reduxStore';
+import CamerarollList from './components/CamerarollList';
 
 class VideoLibraryPage extends Component {
   constructor(props) {
@@ -51,6 +38,7 @@ class VideoLibraryPage extends Component {
       hideCloud: params ? params.hideCloud : false,
       selectableMode: params ? params.selectableMode : false,
       selectOnly: params ? params.selectOnly : false,
+      selectFromCameraRoll: params ? params.selectFromCameraRoll : false,
       selectOne: params ? params.selectOnly && params.selectOne : false,
       selectedVideos: [],
     };
@@ -141,55 +129,15 @@ class VideoLibraryPage extends Component {
 
     this.setState({selectedVideos: nextSelectedVideos});
   }
-  async addFromCameraRoll({selectOnly}) {
-    const {navigation} = this.props;
-    const {navigate} = navigation;
-    const permissionLibrary = await permission('library');
-    if (!permissionLibrary) {
-      return navigate('Alert', {
-        textButton: 'Open Settings',
-        title:
-          'You need to allow access to your library before adding videos from the camera roll.',
-        colorButton: 'blue',
-        onPressColor: colors.blueLight,
-        onGoBack: () => goToSettings(),
-        icon: (
-          <Image
-            source={require('../../../img/icons/technology.png')}
-            style={{width: 25, height: 25}}
-          />
-        ),
-      });
-    }
-    const videos = await MediaPicker.openPicker({
-      multiple: true,
-      mediaType: 'video',
-      writeTempFile: false,
-      compressVideoPreset: 'Passthrough',
-    }).catch((err) => console.log('error', err));
-    if (videos) {
-      const videoInfos = await Promise.all(
-        videos.map((video) => getNativeVideoInfo(video.localIdentifier)),
-      );
-      videoInfos.forEach((video) => {
-        addLocalVideo({video, backgroundUpload: true});
-      });
-      if (videoInfos.length === 1 && !selectOnly) {
-        openVideoPlayer({
-          archives: [videoInfos[0].id],
-          open: true,
-        });
-      } else if (selectOnly) {
-        videoInfos.forEach((info) => this.selectVideo(info.id, true));
-      }
-    }
-  }
 
-  listVideos() {
+  listVideos = () => {
     const {navigation} = this.props;
-    const {selectOnly, selectableMode} = this.state;
+    const {selectOnly, selectableMode, selectFromCameraRoll} = this.state;
     const videosArray = this.videosArray();
     const selectMargin = selectableMode ? 80 : 0;
+    if (selectFromCameraRoll) {
+      return <CamerarollList />;
+    }
     return (
       <View style={styleApp.fullSize}>
         <FlatListComponent
@@ -205,7 +153,7 @@ class VideoLibraryPage extends Component {
             clickButton: () => navigation.navigate('Session'),
             textButton: 'Record',
             iconButton: 'video',
-            clickButton2: () => this.addFromCameraRoll({selectOnly: false}),
+            clickButton2: () => selectVideosFromCameraRoll(),
             textButton2: 'Pick from library',
             iconButton2: 'images',
             text: `You don't have any videos yet.`,
@@ -239,7 +187,7 @@ class VideoLibraryPage extends Component {
         />
       </View>
     );
-  }
+  };
   renderCardArchive(videoID, index) {
     const {selectableMode, selectedVideos} = this.state;
     const isSelected =
@@ -262,7 +210,11 @@ class VideoLibraryPage extends Component {
         selectableMode={selectableMode}
         isSelected={isSelected}
         selectVideo={(id) => this.selectVideo(id)}
-        style={[styles.cardArchive, styleBorder, {width: width / 3}]}
+        style={[
+          styleApp.cardArchiveVideoLibrary,
+          styleBorder,
+          {width: width / 3},
+        ]}
         id={videoID}
         index={index}
         key={videoID}
@@ -295,7 +247,6 @@ class VideoLibraryPage extends Component {
           text={!selectableMode ? 'Library' : 'Select Videos'}
           selectableMode={selectableMode}
           toggleSelectable={this.toggleSelectable.bind(this)}
-          addFromCameraRoll={this.addFromCameraRoll.bind(this)}
           isListEmpty={videosArray.length === 0}
         />
 
@@ -339,7 +290,6 @@ class VideoLibraryPage extends Component {
             clickButton3={() => this.shareSelectedVideos()}
             clickButton2={() => this.playSelectedVideos({})}
             selectedVideos={selectedVideos}
-            addFromCameraRoll={this.addFromCameraRoll.bind(this)}
             selectVideo={this.selectVideo.bind(this)}
           />
         )}
@@ -347,17 +297,6 @@ class VideoLibraryPage extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  cardArchive: {
-    height: 170,
-    borderRadius: 0,
-    overflow: 'hidden',
-    borderBottomWidth: 1.5,
-    borderColor: colors.white,
-    backgroundColor: colors.title,
-  },
-});
 const mapStateToProps = (state) => {
   return {
     archivedStreams: state.user.infoUser.archivedStreams,

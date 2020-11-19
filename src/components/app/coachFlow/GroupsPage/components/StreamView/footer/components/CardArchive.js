@@ -90,12 +90,8 @@ class CardArchive extends Component {
       />
     );
   }
-  selectVideo = async (id, isSelected) => {
-    const {selectVideo} = this.props;
-    selectVideo(id, isSelected);
-  };
-  openVideo = async () => {
-    const {archive, coachSessionID, videosToOpen, disableClick} = this.props;
+  openVideo = async (archive) => {
+    const {coachSessionID, videosToOpen, disableClick} = this.props;
     const {url, id} = archive;
     if (url && url !== '' && !disableClick) {
       logMixpanel({
@@ -110,11 +106,11 @@ class CardArchive extends Component {
     }
   };
 
-  labelIndicator() {
-    const {archive} = this.props;
+  labelIndicator(archive) {
+    const {archiveFromCameraroll} = this.props;
     const {local, progress} = archive;
 
-    if (this.isVideoGettingUploading())
+    if (this.isVideoGettingUploading(archive) && !archiveFromCameraroll)
       return <Loader size={25} color={colors.white} />;
     if (progress)
       return (
@@ -138,8 +134,8 @@ class CardArchive extends Component {
       );
     return null;
   }
-  isVideoGettingUploading = () => {
-    const {archive, userID} = this.props;
+  isVideoGettingUploading = (archive) => {
+    const {userID} = this.props;
     const {url, sourceUser} = archive;
     return (!url || url === '') && sourceUser !== userID;
   };
@@ -187,7 +183,7 @@ class CardArchive extends Component {
       />
     );
   };
-  rowIcons = () => {
+  rowIcons = (archive) => {
     const styleRow = {
       position: 'absolute',
       padding: 15,
@@ -195,8 +191,6 @@ class CardArchive extends Component {
       zIndex: 200,
       width: '100%',
     };
-
-    const {archive} = this.props;
 
     const {recordedActions} = archive;
     return (
@@ -223,7 +217,7 @@ class CardArchive extends Component {
           </Col>
           <Col size={70} />
           <Col size={15} style={styleApp.center3}>
-            {this.labelIndicator()}
+            {this.labelIndicator(archive)}
           </Col>
         </Row>
       </View>
@@ -262,13 +256,16 @@ class CardArchive extends Component {
   };
   cardArchive(archive) {
     const {
+      archiveFromCameraroll,
       isSelected,
       hideInformation,
       style,
       selectableMode,
       unclickable,
       disableClick,
+      selectVideo,
     } = this.props;
+
     if (!archive) return this.placeholder();
     const {
       id,
@@ -279,6 +276,7 @@ class CardArchive extends Component {
       progress,
       isBinded,
       url,
+      localIdentifier,
     } = archive;
     const {loader} = this.state;
 
@@ -289,7 +287,7 @@ class CardArchive extends Component {
         onPress={() => {
           unclickable
             ? true
-            : this.isVideoGettingUploading()
+            : this.isVideoGettingUploading(archive) && !archiveFromCameraroll
             ? navigate('Alert', {
                 textButton: 'Got it!',
                 title: 'The video is currently being uploaded.',
@@ -297,23 +295,21 @@ class CardArchive extends Component {
                 close: true,
               })
             : selectableMode
-            ? this.selectVideo(id, !isSelected)
-            : this.openVideo();
+            ? selectVideo(id, !isSelected, localIdentifier)
+            : this.openVideo(archive);
         }}>
         {this.buttonDismiss()}
 
         <View style={[styles.cardArchive, style]}>
-          {isBinded && !url && !progress ? (
-            this.viewNoVideo()
-          ) : local && thumbnail ? (
-            <AsyncImage style={styleApp.fullSize} mainImage={thumbnail} />
-          ) : (
-            <AsyncImage
-              style={{...styleApp.fullSize}}
-              mainImage={thumbnail ? thumbnail : ''}
-            />
-          )}
-          {!hideInformation && url && this.rowIcons()}
+          {this.cardArchiveImage({
+            archiveFromCameraroll,
+            isBinded,
+            local,
+            progress,
+            thumbnail,
+            url,
+          })}
+          {!hideInformation && url && this.rowIcons(archive)}
 
           {selectableMode && (
             <View
@@ -394,9 +390,37 @@ class CardArchive extends Component {
       </TouchableOpacity>
     );
   }
+
+  cardArchiveImage = ({
+    archiveFromCameraroll,
+    isBinded,
+    local,
+    progress,
+    thumbnail,
+    url,
+  }) => {
+    if (isBinded && !url && !progress) {
+      return this.viewNoVideo();
+    }
+    if (local && thumbnail) {
+      return <Image style={styleApp.fullSize} source={{uri: thumbnail}} />;
+    }
+    if (archiveFromCameraroll) {
+      return <Image style={styleApp.fullSize} source={{uri: url}} />;
+    }
+    return (
+      <AsyncImage
+        style={{...styleApp.fullSize}}
+        mainImage={thumbnail ? thumbnail : ''}
+      />
+    );
+  };
+
   render() {
-    const {archive} = this.props;
-    return this.cardArchive(archive);
+    const {archive, archiveFromCameraroll} = this.props;
+    return this.cardArchive(
+      archiveFromCameraroll ? archiveFromCameraroll : archive,
+    );
   }
 }
 

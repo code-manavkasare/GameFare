@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 
 import {StyleSheet, Text, Animated, View, TouchableOpacity} from 'react-native';
-import {Grid, Row, Col} from 'react-native-easy-grid';
+import {Row, Col} from 'react-native-easy-grid';
 
 import sizes, {
   marginTopApp,
@@ -93,7 +93,6 @@ class HeaderBackButton extends Component {
       colorIcon1,
       sizeIcon1,
       typeIcon1,
-      nobackgroundColorIcon1,
       onPressColorIcon1,
       badgeIcon1,
     } = this.props;
