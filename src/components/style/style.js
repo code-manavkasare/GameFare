@@ -266,6 +266,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.white,
   },
+  cardArchiveVideoLibrary: {
+    width: width / 3,
+    height: 170,
+    borderRadius: 0,
+    overflow: 'hidden',
+    borderBottomWidth: 1.5,
+    borderColor: colors.white,
+  },
   buttonMap: {
     borderColor: colors.off,
     height: 40,
