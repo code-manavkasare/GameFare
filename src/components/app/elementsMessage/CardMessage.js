@@ -198,16 +198,16 @@ export default class CardMessage extends React.Component {
                 displayPictureUser &&
                 this.goToProfilePage()
               }>
-              {displayPictureUser && (
+              {displayPictureUser ? (
                 <AsyncImage
                   style={{width: 45, height: 45, borderRadius: 5}}
                   mainImage={messageAvatar(user.info)}
                   imgInitial={messageAvatar(user.info)}
                 />
-              )}
+              ) : null}
             </Col>
             <Col size={80} style={styleApp.center2}>
-              {displayPictureUser && (
+              {displayPictureUser ? (
                 <Text
                   style={[styleApp.title, {fontSize: 16}]}
                   onPress={() =>
@@ -218,8 +218,8 @@ export default class CardMessage extends React.Component {
                     {moment(timeStamp).format('h:mm a')}
                   </Text>
                 </Text>
-              )}
-              {text !== '' && (
+              ) : null}
+              {text !== '' ? (
                 <Hyperlink
                   // linkDefault={true}
                   onPress={(url) => this.clickLink(url, this.state.viewUrl)}
@@ -232,8 +232,8 @@ export default class CardMessage extends React.Component {
                     {text}
                   </Text>
                 </Hyperlink>
-              )}
-              {type === 'video' && (
+              ) : null}
+              {type === 'video' ? (
                 <CardArchive
                   id={content}
                   style={{
@@ -243,14 +243,14 @@ export default class CardMessage extends React.Component {
                     borderRadius: 6,
                   }}
                 />
-              )}
+              ) : null}
               {this.renderImages(
                 props.currentMessage.images,
                 props.currentMessage,
                 this.props.discussion.objectID,
               )}
 
-              {this.state.viewUrl && (
+              {this.state.viewUrl ? (
                 <ButtonColor
                   view={() => {
                     return (
@@ -285,7 +285,7 @@ export default class CardMessage extends React.Component {
                   style={styles.buttonUrl}
                   onPressColor={colors.off}
                 />
-              )}
+              ) : null}
             </Col>
           </Row>
         )}

@@ -201,8 +201,8 @@ class QueueList extends Component {
           <TouchableWithoutFeedback style={{height: 80}}>
             <Text style={styles.text}>Uploading</Text>
           </TouchableWithoutFeedback>
-          {!orderedTasks || (orderedTasks.length === 0 && this.emptyList())}
-          {orderedTasks && orderedTasks.length > 0 && this.list()}
+          {!orderedTasks || orderedTasks.length === 0 ? this.emptyList() : null}
+          {orderedTasks && orderedTasks.length > 0 ? this.list() : null}
         </View>
         {this.backdrop()}
       </View>

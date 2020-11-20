@@ -10,11 +10,14 @@ import {boolShouldComponentUpdate} from '../../functions/redux';
 class BackgroundUploadHelper extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      queuedByHelper: {},
+    };
   }
   componentDidMount() {
-    const {queue, archivesToUpload} = this.props;
+    const {globalQueue, archivesToUpload} = this.props;
     if (
-      (!queue || Object.keys(queue).length === 0) &&
+      (!globalQueue || Object.keys(globalQueue).length === 0) &&
       this.videosAvailableToUpload(archivesToUpload).length > 0
     ) {
       this.uploadNextLocalVideo();
@@ -31,13 +34,16 @@ class BackgroundUploadHelper extends Component {
   }
 
   videosAvailableToUpload(archivesToUpload) {
-    const {queue} = this.props;
+    const {globalQueue} = this.props;
+    const {queuedByHelper} = this.state;
     if (archivesToUpload) {
       const notQueued = Object.values(archivesToUpload).filter(
         (archive) =>
-          !queue ||
-          Object.values(queue).filter((task) => task?.cloudID === archive.id)
-            .length === 0,
+          !queuedByHelper[archive.id] &&
+          (!globalQueue ||
+            Object.values(globalQueue).filter(
+              (task) => task?.cloudID === archive.id,
+            ).length === 0),
       );
       const notVolatile = notQueued.filter((v) => {
         return (
@@ -64,6 +70,7 @@ class BackgroundUploadHelper extends Component {
   }
 
   async uploadNextLocalVideo() {
+    const {queuedByHelper} = this.state;
     const {
       wifiAutoUpload,
       archivesToUpload,
@@ -76,10 +83,16 @@ class BackgroundUploadHelper extends Component {
           archivesToUpload,
           archives,
         );
+        let newState = {};
         videosToUpload.map((video) => {
           const {id} = video;
+          newState = {
+            ...newState,
+            queuedByHelper: {...queuedByHelper, [id]: true},
+          };
           uploadLocalVideo(id, true);
         });
+        await this.setState(newState);
       } catch (error) {
         console.log('ERROR BackgroundUploadHelper', error);
       }
@@ -94,7 +107,7 @@ class BackgroundUploadHelper extends Component {
 const mapStateToProps = (state) => {
   return {
     session: state.coachSessions[state.coach.currentSessionID],
-    queue: state.uploadQueue.queue,
+    globalQueue: state.uploadQueue.queue,
     archivesToUpload: state.localVideoLibrary.userLocalArchives,
     wifiAutoUpload: state.appSettings.wifiAutoUpload,
     userConnected: state.user.userConnected,

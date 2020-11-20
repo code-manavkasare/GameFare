@@ -199,15 +199,13 @@ export default class VideoPlayerHeader extends React.Component {
 
   buttonLink = () => {
     const {coachSessionID, toggleLinkAllVideos, allowLinking} = this.props;
-    return (
-      allowLinking && (
-        <ButtonLink
-          coachSessionID={coachSessionID}
-          toggleLinkAllVideos={toggleLinkAllVideos}
-          allowLinking={allowLinking}
-        />
-      )
-    );
+    return allowLinking ? (
+      <ButtonLink
+        coachSessionID={coachSessionID}
+        toggleLinkAllVideos={toggleLinkAllVideos}
+        allowLinking={allowLinking}
+      />
+    ) : null;
   };
 
   render() {

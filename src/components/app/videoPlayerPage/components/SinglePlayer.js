@@ -246,7 +246,7 @@ class SinglePlayer extends Component {
     } = videoFromCloud;
     return (
       <View style={playerStyle} onLayout={this.onLayoutContainer}>
-        {isDrawingEnabled && sizeVideo.height !== 0 && (
+        {isDrawingEnabled && sizeVideo.height !== 0 ? (
           <DrawTools
             topVideo={index === numArchives - 1}
             landscape={landscape}
@@ -254,9 +254,9 @@ class SinglePlayer extends Component {
             clear={() => this.drawViewRef.clear()}
             undo={() => this.drawViewRef.undo()}
           />
-        )}
+        ) : null}
 
-        {recordedActions.length > 0 && !isRecording && (
+        {recordedActions.length > 0 && !isRecording ? (
           <ControlButtonRecording
             displayButtonReplay={displayButtonReplay}
             isPlayingReview={isPlayingReview}
@@ -283,7 +283,7 @@ class SinglePlayer extends Component {
               pauseAudioPlayer();
             }}
           />
-        )}
+        ) : null}
 
         <RecordingComponent
           videoPlayerRef={this.videoPlayerRef}

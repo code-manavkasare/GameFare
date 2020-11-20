@@ -68,11 +68,10 @@ class TabsApp extends React.Component {
         <Tab.Screen
           name="CallTab"
           component={CallTabPage}
-   
           options={{
             pageStack: 'GroupsPage',
             label: 'Calls',
-            displayPastille:true,
+            displayPastille: true,
             signInToPass: false,
             icon: {
               name: 'video',

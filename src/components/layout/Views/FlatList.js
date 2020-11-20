@@ -65,7 +65,6 @@ class FlatListComponent extends Component {
   }
   static getDerivedStateFromProps(props, state) {
     const {noLazy, list} = props;
-    console.log('list: ', list);
     let {numberToRender} = state;
     return {list: noLazy ? list : list.slice(0, numberToRender)};
   }
@@ -133,7 +132,9 @@ class FlatListComponent extends Component {
         data={list}
         renderItem={({item, index}) => cardList({item, index})}
         ListFooterComponent={() =>
-          list.length > numberToRender && list.length !== 0 && viewLoader()
+          list.length > numberToRender && list.length !== 0
+            ? viewLoader()
+            : null
         }
         scrollIndicatorInsets={{right: 1}}
         keyboardShouldPersistTaps="always"
@@ -176,7 +177,7 @@ class FlatListComponent extends Component {
               style={{height: 50, width: 50, marginBottom: 20}}
             />
             <Text style={styleApp.textBold}>{ListEmptyComponent?.text}</Text>
-            {ListEmptyComponent?.clickButton && (
+            {ListEmptyComponent?.clickButton ? (
               <Button
                 backgroundColor="primary"
                 onPressColor={colors.primaryLight}
@@ -192,8 +193,8 @@ class FlatListComponent extends Component {
                 loader={false}
                 click={() => ListEmptyComponent?.clickButton()}
               />
-            )}
-            {ListEmptyComponent?.clickButton2 && (
+            ) : null}
+            {ListEmptyComponent?.clickButton2 ? (
               <Button
                 backgroundColor="green"
                 onPressColor={colors.greenLight}
@@ -209,7 +210,7 @@ class FlatListComponent extends Component {
                 loader={false}
                 click={() => ListEmptyComponent?.clickButton2()}
               />
-            )}
+            ) : null}
           </View>
         )}
         onScroll={

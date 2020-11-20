@@ -158,7 +158,7 @@ export default class UserSearchResults extends Component {
             contentContainerStyle={styles.results}
             AnimatedHeaderValue={AnimatedHeaderValue}>
             {users.slice(0, 3).map((user) => this.userCard(user))}
-            {users.length > 3 && this.displayMoreButton()}
+            {users.length > 3 ? this.displayMoreButton() : null}
           </KeyboardAwareScrollView>
         );
       }

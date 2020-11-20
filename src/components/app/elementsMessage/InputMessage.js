@@ -236,7 +236,7 @@ class InputMessage extends React.Component {
           </Col>
         </Row>
 
-        {showImages && (
+        {showImages ? (
           <View style={{height: 120, width: '100%'}}>
             <ListPhotos
               addImage={this.addImage.bind(this)}
@@ -244,7 +244,7 @@ class InputMessage extends React.Component {
               imagesSelected={this.state.images}
             />
           </View>
-        )}
+        ) : null}
       </View>
     );
   }

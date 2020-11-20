@@ -163,7 +163,7 @@ class CallTab extends Component {
     } = this.state;
     return (
       <View>
-        {searchText === '' && (
+        {searchText === '' ? (
           <ListVideoCalls
             AnimatedHeaderValue={this.AnimatedHeaderValue}
             selectedSessions={selectedSessions}
@@ -174,21 +174,21 @@ class CallTab extends Component {
             liveSessionHeader={action === 'call'}
             headerTitle={modal ? 'Recent' : userID ? 'Video Calls' : ''}
           />
-        )}
-        {searchActive && searchText === '' && (
+        ) : null}
+        {searchActive && searchText === '' ? (
           <BlurView
             style={styles.listVideoCallsBlur}
             blurType={'regular'}
             blurAmount={10}
           />
-        )}
-        {searchText !== '' && (
+        ) : null}
+        {searchText !== '' ? (
           <UserSearchResults
             onSelect={(user) => this.selectUser(user)}
             selectedUsers={selectedUsers}
             searchText={searchText}
           />
-        )}
+        ) : null}
       </View>
     );
   }
@@ -238,8 +238,7 @@ class CallTab extends Component {
         colorIcon2={colors.title}
         clickButton2={() => navigate('Groups')}
         badgeIcon2={
-          numberNotifications !== 0 &&
-          !modal && (
+          numberNotifications !== 0 && !modal ? (
             <View style={[styleApp.viewBadge, {marginLeft: 30}]}>
               <Text
                 style={[
@@ -249,10 +248,10 @@ class CallTab extends Component {
                 {numberNotifications}
               </Text>
             </View>
-          )
+          ) : null
         }
         searchBar={
-          inlineSearch && (
+          inlineSearch ? (
             <SearchInput
               search={(text) => this.setState({searchText: text})}
               onFocus={() => {
@@ -262,7 +261,7 @@ class CallTab extends Component {
                 this.setState({searchActive: false});
               }}
             />
-          )
+          ) : null
         }
       />
     );

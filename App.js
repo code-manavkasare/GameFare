@@ -8,7 +8,7 @@ import SplashScreen from 'react-native-splash-screen';
 import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
 import BackgroundTimer from 'react-native-background-timer';
-import {Text} from 'react-native';
+import {Text, LogBox} from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 
 import {store} from './src/store/reduxStore';
@@ -72,6 +72,11 @@ export default class App extends Component {
 
     //Console log the audio session
     audioDebugger({interval: 5000, disabled: true});
+
+    LogBox.ignoreLogs([
+      "Accessing the 'state' property of the 'route' object is not supported.",
+    ]);
+
     SplashScreen.hide();
   }
 

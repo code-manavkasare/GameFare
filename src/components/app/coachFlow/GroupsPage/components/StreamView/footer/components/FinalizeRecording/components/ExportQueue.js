@@ -256,11 +256,11 @@ class ExportQueue extends Component {
     const noFlags = flags && Object.values(flags).length === 0;
     return (
       <View>
-        {!noFlags && (
+        {!noFlags ? (
           <Text style={styles.subtitle}>
             Full Video{recordings.length > 1 ? 's' : ''}
           </Text>
-        )}
+        ) : null}
         <View style={{height: noFlags ? 300 : 110}}>
           <ScrollView
             horizontal
@@ -274,46 +274,44 @@ class ExportQueue extends Component {
             {Object.values(members).map((member) => {
               const recording = member?.recording;
               let flagId = `${member.id}-fullVideo`;
-              return (
-                recording && (
-                  <CardFlag
-                    flagsSelected={flagsSelected}
-                    key={member.id}
-                    onRef={(ref) => (this.cardFlagRefs[flagId] = ref)}
-                    click={() => {
-                      let {flagsSelected} = this.state;
-                      if (flagsSelected[flagId]) {
-                        delete flagsSelected[flagId];
-                      } else {
-                        flagsSelected = {
-                          ...flagsSelected,
-                          [flagId]: {
-                            time: 0,
-                            id: flagId,
-                            thumbnail: recording.thumbnail,
-                            source: member.id,
-                          },
-                        };
-                      }
-                      this.setState({flagsSelected});
-                    }}
-                    disableSelectTime={true}
-                    size={noFlags ? 'lg' : 'sm'}
-                    flag={{
-                      time:
-                        recording.stopTimestamp - recording.startTimestamp
-                          ? recording.stopTimestamp - recording.startTimestamp
-                          : '',
-                      fullVideo: true,
-                      thumbnail: recording?.fullVideo?.thumbnail,
-                      id: flagId,
-                      portrait: recording.portrait,
-                    }}
-                    memberPicture={member?.info?.picture}
-                    stopTimestamp={recording.stopTimestamp}
-                  />
-                )
-              );
+              return recording ? (
+                <CardFlag
+                  flagsSelected={flagsSelected}
+                  key={member.id}
+                  onRef={(ref) => (this.cardFlagRefs[flagId] = ref)}
+                  click={() => {
+                    let {flagsSelected} = this.state;
+                    if (flagsSelected[flagId]) {
+                      delete flagsSelected[flagId];
+                    } else {
+                      flagsSelected = {
+                        ...flagsSelected,
+                        [flagId]: {
+                          time: 0,
+                          id: flagId,
+                          thumbnail: recording.thumbnail,
+                          source: member.id,
+                        },
+                      };
+                    }
+                    this.setState({flagsSelected});
+                  }}
+                  disableSelectTime={true}
+                  size={noFlags ? 'lg' : 'sm'}
+                  flag={{
+                    time:
+                      recording.stopTimestamp - recording.startTimestamp
+                        ? recording.stopTimestamp - recording.startTimestamp
+                        : '',
+                    fullVideo: true,
+                    thumbnail: recording?.fullVideo?.thumbnail,
+                    id: flagId,
+                    portrait: recording.portrait,
+                  }}
+                  memberPicture={member?.info?.picture}
+                  stopTimestamp={recording.stopTimestamp}
+                />
+              ) : null;
             })}
           </ScrollView>
         </View>
@@ -339,44 +337,43 @@ class ExportQueue extends Component {
             showsHorizontalScrollIndicator={false}>
             {Object.values(members).map((member) => {
               const recording = member?.recording;
-              return (
-                recording?.flags &&
-                Object.values(recording.flags)
-                  .sort((a, b) => a.time - b.time)
-                  .filter((f) => f?.id !== undefined)
-                  .map((flag) => (
-                    <CardFlag
-                      key={flag.id}
-                      flag={flag}
-                      totalTime={
-                        (recording.stopTimestamp - recording.startTimestamp) /
-                        1000
-                      }
-                      flagsSelected={flagsSelected}
-                      onRef={(ref) => (this.cardFlagRefs[flag.id] = ref)}
-                      click={() => {
-                        let {flagsSelected} = this.state;
-                        if (flagsSelected[flag.id]) {
-                          delete flagsSelected[flag.id];
-                        } else {
-                          flagsSelected = {
-                            ...flagsSelected,
-                            [flag.id]: {
-                              time: flag.time,
-                              id: flag.id,
-                              thumbnail: flag.thumbnail,
-                              source: member.id,
-                            },
-                          };
-                          this.setState({flagsSelected});
+              return recording?.flags
+                ? Object.values(recording.flags)
+                    .sort((a, b) => a.time - b.time)
+                    .filter((f) => f?.id !== undefined)
+                    .map((flag) => (
+                      <CardFlag
+                        key={flag.id}
+                        flag={flag}
+                        totalTime={
+                          (recording.stopTimestamp - recording.startTimestamp) /
+                          1000
                         }
-                      }}
-                      memberPicture={member?.info?.picture}
-                      stopTimestamp={recording.stopTimestamp}
-                      size={'sm'}
-                    />
-                  ))
-              );
+                        flagsSelected={flagsSelected}
+                        onRef={(ref) => (this.cardFlagRefs[flag.id] = ref)}
+                        click={() => {
+                          let {flagsSelected} = this.state;
+                          if (flagsSelected[flag.id]) {
+                            delete flagsSelected[flag.id];
+                          } else {
+                            flagsSelected = {
+                              ...flagsSelected,
+                              [flag.id]: {
+                                time: flag.time,
+                                id: flag.id,
+                                thumbnail: flag.thumbnail,
+                                source: member.id,
+                              },
+                            };
+                            this.setState({flagsSelected});
+                          }
+                        }}
+                        memberPicture={member?.info?.picture}
+                        stopTimestamp={recording.stopTimestamp}
+                        size={'sm'}
+                      />
+                    ))
+                : null;
             })}
           </ScrollView>
         </View>

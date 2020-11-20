@@ -54,13 +54,13 @@ export default class AddFlagButton extends Component {
         view={() => {
           return (
             <Row>
-              {numberFlags && recording.isRecording && (
+              {numberFlags && recording.isRecording ? (
                 <Col size={30} style={styleApp.center3}>
                   <Text style={[styleApp.textBold, {fontSize: 13}]}>
                     {numberFlags}
                   </Text>
                 </Col>
-              )}
+              ) : null}
 
               <Col size={60} style={styleApp.center}>
                 <AllIcons

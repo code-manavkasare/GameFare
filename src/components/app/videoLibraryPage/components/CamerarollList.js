@@ -19,7 +19,8 @@ export default class CamerarollList extends Component {
       videos: [],
       selectedVideos: [],
       selectedVideosLocalIdentifiers: [],
-      loader: false,
+      loadingCameraRoll: true,
+      loadingExport: false,
       hasNextPage: false,
       lastElement: null,
     };
@@ -39,6 +40,7 @@ export default class CamerarollList extends Component {
         : this.state.videos.concat(videosFromCameraroll),
       hasNextPage: page_info.has_next_page,
       lastElement: page_info.end_cursor,
+      loadingCameraRoll: false,
     });
   };
 
@@ -97,18 +99,19 @@ export default class CamerarollList extends Component {
     );
   };
 
-  confirmVideosImport = async (selectedVideosLocalIdentifiers) => {
-    await this.setState({loader: true});
+  confirmVideosImport = async () => {
+    const {selectedVideosLocalIdentifiers} = this.state;
+    await this.setState({loadingExport: true});
     await addVideosFromCamerarollToApp(selectedVideosLocalIdentifiers);
-    await this.setState({loader: false});
+    await this.setState({loadingExport: false});
   };
 
   render = () => {
     const {
-      loader,
+      loadingExport,
+      loadingCameraRoll,
       videos,
       selectedVideos,
-      selectedVideosLocalIdentifiers,
       hasNextPage,
       lastElement,
     } = this.state;
@@ -127,10 +130,14 @@ export default class CamerarollList extends Component {
           fetchData={() => {
             hasNextPage && this.fetchNewPage({firstFetch: false, lastElement});
           }}
-          ListEmptyComponent={{
-            text: 'No videos',
-            image: require('../../../../img/images/shelve.png'),
-          }}
+          ListEmptyComponent={
+            !loadingCameraRoll
+              ? {
+                  text: 'No videos',
+                  image: require('../../../../img/images/shelve.png'),
+                }
+              : null
+          }
           numColumns={3}
           incrementRendering={20}
           initialNumberToRender={20}
@@ -139,7 +146,7 @@ export default class CamerarollList extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           noLazy={true}
         />
-        {selectedVideos.length > 0 && (
+        {selectedVideos.length > 0 ? (
           <View style={[styleApp.footerBooking, styleApp.marginView]}>
             <Button
               text={
@@ -147,14 +154,12 @@ export default class CamerarollList extends Component {
                 (selectedVideos.length === 1 ? '' : 's')
               }
               backgroundColor={'green'}
-              loader={loader}
+              loadingExport={loadingExport}
               onPressColor={colors.greenLight}
-              click={() =>
-                this.confirmVideosImport(selectedVideosLocalIdentifiers)
-              }
+              click={() => this.confirmVideosImport()}
             />
           </View>
-        )}
+        ) : null}
       </View>
     );
   };

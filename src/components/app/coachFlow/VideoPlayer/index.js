@@ -427,7 +427,7 @@ export default class VideoPlayer extends Component {
 
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
-        {buttonTopRight && buttonTopRight()}
+        {buttonTopRight ? buttonTopRight() : null}
 
         <View
           style={[
@@ -435,8 +435,8 @@ export default class VideoPlayer extends Component {
             styleApp.center,
             {backgroundColor: colors.black},
           ]}>
-          {(videoLoading || !url) && this.fullScreenLoader()}
-          {thumbnail && !videoLoaded && (
+          {videoLoading || !url ? this.fullScreenLoader() : null}
+          {thumbnail && !videoLoaded ? (
             <AsyncImage
               resizeMode={'contain'}
               style={[
@@ -450,7 +450,7 @@ export default class VideoPlayer extends Component {
               mainImage={thumbnail}
               pointerEvents={'none'}
             />
-          )}
+          ) : null}
 
           <PinchableBox
             styleContainer={[styleApp.fullSize, styleApp.center]}
@@ -464,7 +464,7 @@ export default class VideoPlayer extends Component {
             singleTouch={() => this.clickVideo(index)}
             component={() => (
               <View style={[styleApp.fullSize, styleApp.center]}>
-                {url && (
+                {url ? (
                   <Video
                     key={index}
                     debug
@@ -536,9 +536,9 @@ export default class VideoPlayer extends Component {
                       );
                     }}
                   />
-                )}
+                ) : null}
 
-                {componentOnTop && componentOnTop()}
+                {componentOnTop ? componentOnTop() : null}
               </View>
             )}
           />

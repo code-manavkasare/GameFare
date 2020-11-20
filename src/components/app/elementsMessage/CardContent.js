@@ -56,7 +56,7 @@ export default class CardContent extends React.Component {
         view={() => {
           return (
             <Row>
-              {this.conditionSelected(uri + '/' + filename) && (
+              {this.conditionSelected(uri + '/' + filename) ? (
                 <FadeInView duration={300} style={styles.voile1}>
                   <ButtonColor
                     view={() => {
@@ -76,8 +76,8 @@ export default class CardContent extends React.Component {
                   />
                   <View style={styles.voile} />
                 </FadeInView>
-              )}
-              {type === 'video' && (
+              ) : null}
+              {type === 'video' ? (
                 <View style={{...styles.viewRowVideo, width: this.props.width}}>
                   <Row style={styles.rowInfoView}>
                     <Col style={styleApp.center2}>
@@ -99,7 +99,7 @@ export default class CardContent extends React.Component {
                     </Col>
                   </Row>
                 </View>
-              )}
+              ) : null}
               <Image source={{uri: uri}} style={styleApp.fullSize} />
             </Row>
           );

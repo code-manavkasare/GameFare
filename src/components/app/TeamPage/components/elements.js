@@ -50,7 +50,7 @@ const imageCardTeam = (session, size, hideDots, color) => {
   // if (size) styleContainer = {height: size, width: size};
   return (
     <View style={{flex: 1, ...styleApp.center, ...styleContainer}}>
-      {length > 2 && (
+      {length > 2 ? (
         <View>
           {userCircle({
             member: length - 2,
@@ -60,7 +60,7 @@ const imageCardTeam = (session, size, hideDots, color) => {
             color,
           })}
         </View>
-      )}
+      ) : null}
       {members
         .splice(0, 2)
         .reverse()
@@ -145,7 +145,7 @@ const userCircle = (options) => {
             </View>
           )}
         </View>
-        {!hideDots && member.info && (
+        {!hideDots && member.info ? (
           <View
             style={{
               position: 'absolute',
@@ -161,7 +161,7 @@ const userCircle = (options) => {
               borderColor: color ? color : colors.white,
             }}
           />
-        )}
+        ) : null}
       </View>
     </View>
   );
@@ -474,7 +474,7 @@ const viewLive = (session, style, hideText) => {
   return (
     <ButtonColor
       view={() => {
-        return <Text style={styleText}>{!hideText && 'Live'}</Text>;
+        return <Text style={styleText}>{!hideText ? 'Live' : ''}</Text>;
       }}
       color={colors.red}
       style={styleViewLive}
@@ -585,7 +585,7 @@ const iconWithBadge = (icon, badgeNumber) => {
         size={size}
         solid={solid}
       />
-      {badgeNumber && (
+      {badgeNumber ? (
         <View style={styleBadge}>
           <Text
             style={[
@@ -595,7 +595,7 @@ const iconWithBadge = (icon, badgeNumber) => {
             {badgeNumber}
           </Text>
         </View>
-      )}
+      ) : null}
     </View>
   );
 };
@@ -758,11 +758,11 @@ const ListPlayers = (props) => {
                   {sessionTitle({members: {[member.id]: member}}, {}, true)}
                   {sessionDate({
                     session: {members: {[member.id]: member}},
-                    messages:
-                      messages &&
-                      Object.values(messages).filter(
-                        (message) => message.user.id === member.id,
-                      ),
+                    messages: messages
+                      ? Object.values(messages).filter(
+                          (message) => message.user.id === member.id,
+                        )
+                      : null,
                   })}
                 </Col>
                 <Col size={15} style={styleApp.center}>

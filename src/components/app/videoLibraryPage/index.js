@@ -288,7 +288,7 @@ class VideoLibraryPage extends Component {
 
         <View style={listContainerStyle}>{this.listVideos()}</View>
 
-        {selectOnly && selectedVideos.length > 0 && (
+        {selectOnly && selectedVideos.length > 0 ? (
           <View style={[styleApp.footerBooking, styleApp.marginView]}>
             <Button
               text={`Confirm ${selectedVideos.length} videos`}
@@ -304,9 +304,9 @@ class VideoLibraryPage extends Component {
               }}
             />
           </View>
-        )}
+        ) : null}
 
-        {!selectOnly && (
+        {!selectOnly ? (
           <ToolRow
             onRef={(ref) => {
               this.toolRowRef = ref;
@@ -322,7 +322,7 @@ class VideoLibraryPage extends Component {
             selectedVideos={selectedVideos}
             selectVideo={this.selectVideo.bind(this)}
           />
-        )}
+        ) : null}
       </View>
     );
   }

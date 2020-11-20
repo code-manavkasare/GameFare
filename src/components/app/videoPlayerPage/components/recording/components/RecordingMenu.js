@@ -63,7 +63,7 @@ class RecordingMenu extends React.Component {
         view={() => {
           return (
             <Row style={styleApp.marginView}>
-              {text && (
+              {text ? (
                 <Col size={75} style={[styleApp.center3, {paddingLeft: 10}]}>
                   <Text
                     style={[
@@ -73,7 +73,7 @@ class RecordingMenu extends React.Component {
                     {text}
                   </Text>
                 </Col>
-              )}
+              ) : null}
               <Col size={25} style={styleApp.center}>
                 <AllIcons
                   solid
@@ -137,21 +137,21 @@ class RecordingMenu extends React.Component {
           },
         })}
 
-        {!isRecording &&
-          recordedActions.length > 0 &&
-          this.button({
-            index: 2,
-            backgroundColor: colors.title + '70',
-            text: 'Save',
-            onPressColor: colors.greyDark + '70',
-            click: userConnected ? saveReview : () => navigate('SignIn'),
-            icon: {
-              name: 'sd-card',
-              type: 'font',
-              size: 18,
-              color: colors.white,
-            },
-          })}
+        {!isRecording && recordedActions.length > 0
+          ? this.button({
+              index: 2,
+              backgroundColor: colors.title + '70',
+              text: 'Save',
+              onPressColor: colors.greyDark + '70',
+              click: userConnected ? saveReview : () => navigate('SignIn'),
+              icon: {
+                name: 'sd-card',
+                type: 'font',
+                size: 18,
+                color: colors.white,
+              },
+            })
+          : null}
       </View>
     );
   }

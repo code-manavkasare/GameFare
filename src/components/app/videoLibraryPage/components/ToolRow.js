@@ -81,7 +81,7 @@ class ToolRow extends Component {
                 color={isSelected ? color : colors.greyMidDark}
                 type={type}
               />
-              {overlayIcon && (
+              {overlayIcon ? (
                 <View
                   style={{
                     position: 'absolute',
@@ -95,8 +95,8 @@ class ToolRow extends Component {
                     type={overlayIcon.type}
                   />
                 </View>
-              )}
-              {label && (
+              ) : null}
+              {label ? (
                 <Text
                   style={[
                     styleApp.textBold,
@@ -111,7 +111,7 @@ class ToolRow extends Component {
                   ]}>
                   {label} {badge && badge !== 0 ? `(${badge})` : ''}
                 </Text>
-              )}
+              ) : null}
             </View>
           );
         }}
@@ -139,12 +139,12 @@ class ToolRow extends Component {
 
     return (
       <View style={styles.tool} pointerEvents="box-none">
-        {isButton2Selected && (
+        {isButton2Selected ? (
           <VideoList
             selectedVideos={selectedVideos}
             selectVideo={selectVideo}
           />
-        )}
+        ) : null}
         <Animated.View
           style={[
             styles.animatedToolBox,

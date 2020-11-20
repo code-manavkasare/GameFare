@@ -36,7 +36,7 @@ class AppSettings extends Component {
           <Text style={styleApp.text}>{description}</Text>
         </Col>
         <Col size={10} style={styleApp.center}>
-          {moreInfo && (
+          {moreInfo ? (
             <TouchableOpacity
               activeOpacity={0.8}
               style={[styleApp.fullSize, styleApp.center]}
@@ -48,7 +48,7 @@ class AppSettings extends Component {
                 color={colors.secondary}
               />
             </TouchableOpacity>
-          )}
+          ) : null}
         </Col>
         <Col size={20} style={styleApp.center3}>
           <Switch

@@ -199,9 +199,9 @@ class Camera extends Component {
           blurType="dark"
           blurAmount={1}
         />
-        {/* {placeholderImg && (
+        {/* {placeholderImg ? (
           <Image source={{uri: placeholderImg}} style={styleApp.fullSize} />
-        )} */}
+        ) : null} */}
       </Animated.View>
     );
   }
@@ -215,7 +215,7 @@ class Camera extends Component {
     const {isRecording, displayPlaceholder} = this.state;
     return (
       <View style={styleApp.flexColumnBlack}>
-        {(isRecording || !displayPlaceholder) && (
+        {isRecording || !displayPlaceholder ? (
           <RNCamera
             videoStabilizationMode={'standard'}
             onCameraReady={() => {
@@ -256,8 +256,8 @@ class Camera extends Component {
             flashMode={RNCamera.Constants.FlashMode.off}
             pictureSize={'1280x720'} // this prop stops flickering when stop and start recording
           />
-        )}
-        {!isRecording && this.placeholder()}
+        ) : null}
+        {!isRecording ? this.placeholder() : null}
       </View>
     );
   }
