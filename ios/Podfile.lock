@@ -599,9 +599,9 @@ PODS:
     - React
   - RNScreens (2.13.0):
     - React-Core
-  - RNSentry (2.0.0):
+  - RNSentry (2.0.1):
     - React-Core
-    - Sentry (~> 6.0.3)
+    - Sentry (= 6.0.8)
   - RNSVG (11.0.1):
     - React
   - RNVectorIcons (6.6.0):
@@ -614,9 +614,9 @@ PODS:
   - SDWebImageWebPCoder (0.6.1):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.7)
-  - Sentry (6.0.9):
-    - Sentry/Core (= 6.0.9)
-  - Sentry/Core (6.0.9)
+  - Sentry (6.0.8):
+    - Sentry/Core (= 6.0.8)
+  - Sentry/Core (6.0.8)
   - Stripe (14.0.1)
   - tipsi-stripe (7.5.3):
     - React
@@ -1131,13 +1131,13 @@ SPEC CHECKSUMS:
   RNPermissions: 5df468064df661a4c8c017e2791ce90d7695eea5
   RNReanimated: dd8c286ab5dd4ba36d3a7fef8bff7e08711b5476
   RNScreens: 13f23e5498fb4aa749d19a5eda7f8792fbb9d01f
-  RNSentry: cb4ef23400fb6690f6ac8f6acef0c023a8a4f37d
+  RNSentry: 5408304a9fc37053c5589cfa4123a7ad2dce2456
   RNSVG: 67f1f12dae2cef6ed59a42cae74a6b8f5a9e7b46
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   RNVideoProcessing: 87e7cb7d5386bb5ea5149a9bb0c5f1bb59a22d06
   SDWebImage: 0b2ba0d56479bf6a45ecddbfd5558bea93150d25
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
-  Sentry: 388c9dc093b2fd3a264466a5c5b21e25959610a9
+  Sentry: 6ab9f44a413dec7ebf5e82b166048afb5f60b895
   Stripe: 4305b646743612854819fb5d5cf67aaeb93577c0
   tipsi-stripe: fb5b32e890a4528322c491e1827133a3cb919e0a
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598
@@ -1145,4 +1145,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 5d92bf47a852fd0f82942747a9998ea8cb1a411e
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.0
