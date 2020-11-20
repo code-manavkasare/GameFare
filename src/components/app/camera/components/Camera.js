@@ -122,7 +122,7 @@ class Camera extends Component {
       layoutAction('setGeneralSessionRecording', true);
       this.setState({isRecording: true});
       const options = {
-        codec: RNCamera.Constants.VideoCodec.HVEC,
+        codec: RNCamera.Constants.VideoCodec['HVEC'],
         quality: RNCamera.Constants.VideoQuality['1080p'],
         path: getNewVideoSavePath(),
         mute: false,

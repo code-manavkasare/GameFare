@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Animated, Dimensions, View, StatusBar} from 'react-native';
 import {connect} from 'react-redux';
-import Orientation from 'react-native-orientation-locker';
 
 import CardArchive from '../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 import VideoBeingShared from './components/VideoBeingShared';
