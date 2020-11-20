@@ -18,11 +18,6 @@ const DepthModal = ({heightScale, bottom, top, ignoreBackgroundScale}) => {
       backgroundColor: 'transparent',
     },
     cardOverlayEnabled: true,
-    // cardOverlay: () => {
-    //   return <View>
-
-    //   </View>
-    // },
     cardStyleInterpolator: ({current, next, layouts}) => {
       return {
         cardStyle: {

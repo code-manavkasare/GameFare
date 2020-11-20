@@ -112,7 +112,7 @@ const createInviteToSessionBranchUrl = async (sessionID) => {
   const branchUniversalObject = await branch.createBranchUniversalObject(
     'canonicalIdentifier',
     {
-      title: 'Come chat with me on GameFare.',
+      title: 'Come chat with me on GameFare!',
       contentDescription: 'Join the GameFare community today!',
       contentMetadata: {
         customMetadata: {

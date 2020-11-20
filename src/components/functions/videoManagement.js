@@ -257,7 +257,7 @@ const uploadLocalVideo = async (videoID, background) => {
     if (videoInfo.local) {
       const isUploadAlreadyInQueue = uploadAlreadyInQueue(videoID);
       if (isUploadAlreadyInQueue) {
-        if (isUploadAlreadyInQueue.uploading) return true;
+        if (isUploadAlreadyInQueue[0].uploading) return true;
         return isUploadAlreadyInQueue.map((item) =>
           store.dispatch(
             modifyUploadTask({
@@ -501,6 +501,7 @@ const selectVideosFromCameraRoll = () => {
     selectOnly: true,
     navigateBackAfterConfirm: true,
     selectFromCameraRoll: true,
+    modalMode: true,
     confirmVideo: async (selectedVideos) => {
       console.log('selectedVideos: ', selectedVideos);
     },

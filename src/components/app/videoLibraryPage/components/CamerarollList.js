@@ -103,6 +103,7 @@ export default class CamerarollList extends Component {
     return (
       <View style={styleApp.fullSize}>
         <FlatListComponent
+          styleContainer={{paddingTop: 80}}
           list={videos ? videos : []}
           cardList={({item: video, index}) =>
             this.renderCardArchive(video, index)
@@ -114,22 +115,9 @@ export default class CamerarollList extends Component {
             console.log('fetchData', {numberToRender, nextNumberRender});
           }}
           ListEmptyComponent={{
-            text: `You don't have any videos in your cameraroll.`,
-            image: require('../../../../img/images/video-player.png'),
+            text: 'No videos',
+            image: require('../../../../img/images/shelve.png'),
           }}
-          header={
-            <View>
-              {rowTitle({
-                hideDividerHeader: true,
-                title: 'Select Videos',
-                titleColor: colors.black,
-                titleStyle: {
-                  fontWeight: '800',
-                  fontSize: 23,
-                },
-              })}
-            </View>
-          }
           numColumns={3}
           incrementRendering={12}
           initialNumberToRender={15}
@@ -140,7 +128,10 @@ export default class CamerarollList extends Component {
         {selectedVideos.length > 0 && (
           <View style={[styleApp.footerBooking, styleApp.marginView]}>
             <Button
-              text={`Confirm ${selectedVideos.length} videos`}
+              text={
+                `Add ${selectedVideos.length} video` +
+                (selectedVideos.length === 1 ? '' : 's')
+              }
               backgroundColor={'green'}
               loader={loader}
               onPressColor={colors.greenLight}

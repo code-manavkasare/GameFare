@@ -44,6 +44,15 @@ const deleteCloudVideos = async (videoIDs) => {
   videoIDs.map((videoID) => {
     updates[`users/${userID}/archivedStreams/${videoID}`] = null;
     updates[`archivedStreams/${videoID}/members/${userID}`] = null;
+
+    //if file is being uploaded, remove from all linked users
+    let archive = store.getState().archives[videoID];
+    const {url, progress, members} = archive;
+    if ((!url || url === '') && progress && members) {
+      Object.keys(members).map((memberID) => {
+        updates[`users/${memberID}/archivedStreams/${videoID}`] = null;
+      });
+    }
   });
   database()
     .ref()
@@ -127,24 +136,21 @@ const setCloudVideoThumbnail = async (cloudVideoID, thumbnail) => {
 };
 
 const updateCloudUploadProgress = async (cloudVideoID, progress) => {
-  const isBinded = store.getState().archives[cloudVideoID]?.isBinded;
   const archive = store.getState().archives[cloudVideoID];
-  if (isBinded) {
-    if (archive && archive.progress) {
-      if (
-        progress === null ||
-        progress === 1 ||
-        progress > archive.progress + 0.2
-      ) {
-        database()
-          .ref(`archivedStreams/${cloudVideoID}/progress`)
-          .set(progress);
-      }
-    } else if (archive) {
+  if (archive && archive.progress) {
+    if (
+      progress === null ||
+      progress === 1 ||
+      progress > archive.progress + 0.2
+    ) {
       database()
         .ref(`archivedStreams/${cloudVideoID}/progress`)
         .set(progress);
     }
+  } else if (archive) {
+    database()
+      .ref(`archivedStreams/${cloudVideoID}/progress`)
+      .set(progress);
   }
 };
 

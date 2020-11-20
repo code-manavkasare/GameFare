@@ -515,6 +515,14 @@ const styles = StyleSheet.create({
     borderColor: colors.off,
     backgroundColor: colors.white,
   },
+  stylePageModal: {
+    flex: 1,
+    maxHeight: height - sizes.marginTopApp - 25,
+    borderLeftWidth: 0,
+    borderRadius: sizes.borderRadius,
+    borderColor: colors.off,
+    backgroundColor: colors.white,
+  },
   marginView: {
     paddingLeft: '5%',
     paddingRight: '5%',
@@ -542,6 +550,11 @@ const styles = StyleSheet.create({
   fullSize: {
     width: '100%',
     height: '100%',
+  },
+  fullAppModal: {
+    width: '100%',
+    height: sizes.height - sizes.marginTopApp,
+    borderRadius: sizes.borderRadius,
   },
   eventTitle: {
     color: colors.primary,

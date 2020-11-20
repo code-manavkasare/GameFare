@@ -122,7 +122,7 @@ class Camera extends Component {
       layoutAction('setGeneralSessionRecording', true);
       this.setState({isRecording: true});
       const options = {
-        codec: RNCamera.Constants.VideoCodec['H264'],
+        codec: RNCamera.Constants.VideoCodec.HVEC,
         quality: RNCamera.Constants.VideoQuality['1080p'],
         path: getNewVideoSavePath(),
         mute: false,
@@ -223,12 +223,10 @@ class Camera extends Component {
               if (onCameraReady) {
                 onCameraReady(true);
               }
-              setTimeout(() => {
-                Animated.timing(
-                  this.placeholderAnimation.opacity,
-                  native(0, 200),
-                ).start();
-              }, 300);
+              Animated.timing(
+                this.placeholderAnimation.opacity,
+                native(0, 200),
+              ).start();
             }}
             onMountError={(error) =>
               console.log('RNCamera mount error: ', error)

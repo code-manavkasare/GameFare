@@ -4407,9 +4407,9 @@ gamefare-camera-kit@^1.1.2:
   dependencies:
     lodash "^4.14.2"
 
-"gamefare-local-opentok@git+https://gitlab.com/gamefare/gamefare-local-opentok.git#0.0.17":
-  version "0.0.17"
-  resolved "git+https://gitlab.com/gamefare/gamefare-local-opentok.git#74d66fce5fdd5969b9536929f4e244a5f802ea0b"
+"gamefare-local-opentok@git+https://gitlab.com/gamefare/gamefare-local-opentok.git#0.0.18":
+  version "0.0.18"
+  resolved "git+https://gitlab.com/gamefare/gamefare-local-opentok.git#d3ff0f138ab7630999b0a1ab2a7bb0a1c15187cd"
   dependencies:
     axios "^0.19.0"
     prop-types "^15.7.2"
@@ -8214,9 +8214,9 @@ setprototypeof@1.1.1:
   integrity sha512-JvdAWfbXeIGaZ9cILp38HntZSFSo3mWg6xGcJJsd+d4aRMOqauag1C63dJfDw7OaMYwEbHMOxEZ1lqVRYP2OAw==
 
 shaka-player@^2.5.9:
-  version "2.5.17"
-  resolved "https://registry.yarnpkg.com/shaka-player/-/shaka-player-2.5.17.tgz#824740a0db06fd433397389650ec94ce3b57a26d"
-  integrity sha512-v8kzAXJOiEnI9B1z0CmlMSIbsIfmPseHuosriKqqnDWvDlYVwvdwUz4biPvxUiRIIw9v6His548kPQdO39+jow==
+  version "2.5.18"
+  resolved "https://registry.yarnpkg.com/shaka-player/-/shaka-player-2.5.18.tgz#5382d0b879ade01dc7cea5115d311d2168b7428a"
+  integrity sha512-kW6sNMl36E4ookOcAo7//D/+sNkKNw7kBCR58AAC0eYw+fpVXwUbFoN/aqsj5nhACZ00QGQQajTZXZyK1s8Dow==
   dependencies:
     eme-encryption-scheme-polyfill "^2.0.1"
 
