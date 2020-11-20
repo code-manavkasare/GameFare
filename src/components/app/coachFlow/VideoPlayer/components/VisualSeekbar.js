@@ -380,7 +380,7 @@ class VisualSeekBar extends Component {
       <View style={seekbarContainerStyle}>
         <View style={panHandlerStyle} {...this.panResponder.panHandlers}>
           <Animated.View style={seekbarStyle}>
-            {!(size === 'sm') && (
+            {!(size === 'sm') ? (
               <Filmstrip
                 onRef={(ref) => (this.filmstripRef = ref)}
                 source={source}
@@ -390,7 +390,7 @@ class VisualSeekBar extends Component {
                 height={seekbarStyle.height}
                 onFilmstripLoad={() => this.onSeekbarLoad()}
               />
-            )}
+            ) : null}
           </Animated.View>
           {this.seekbarMarkers()}
           {this.playhead()}

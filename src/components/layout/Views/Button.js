@@ -64,14 +64,9 @@ export default class Button extends Component {
   loading() {
     const {loading} = this.state;
     const {loaderColor} = this.props;
-    return (
-      loading && (
-        <Loader
-          size={30}
-          color={loaderColor ? loaderColor : colors.greyDarker}
-        />
-      )
-    );
+    return loading ? (
+      <Loader size={30} color={loaderColor ? loaderColor : colors.greyDarker} />
+    ) : null;
   }
   render() {
     const {
@@ -134,9 +129,9 @@ export default class Button extends Component {
             {this.loading()}
           </Animated.View>
         </TouchableOpacity>
-        {defaultColorProp === 'blur' && (
+        {defaultColorProp === 'blur' ? (
           <BlurView style={blurViewStyle} blurType="dark" blurAmount={5} />
-        )}
+        ) : null}
       </Animated.View>
     );
   }

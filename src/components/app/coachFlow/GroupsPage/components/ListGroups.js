@@ -127,7 +127,7 @@ class ListStreams extends Component {
       <FlatListComponent
         list={coachSessions}
         cardList={({item: session}) =>
-          session.id && (
+          session.id ? (
             <CardStreamView
               coachSessionID={session.id}
               key={session.objectID}
@@ -140,7 +140,7 @@ class ListStreams extends Component {
                 paddingBottom: 15,
               }}
             />
-          )
+          ) : null
         }
         header={this.header()}
         numColumns={1}

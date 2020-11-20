@@ -113,11 +113,11 @@ export default class CardContent extends React.Component {
         view={() => {
           return (
             <Row>
-              {this.state.loader && (
+              {this.state.loader ? (
                 <View style={styles.loaderView}>
                   <Loader size={20} color={'green'} />
                 </View>
-              )}
+              ) : null}
 
               {!image.uploaded ? (
                 this.displayImg(image.uri, image.type, true, index)

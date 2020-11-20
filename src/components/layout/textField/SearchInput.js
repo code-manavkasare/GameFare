@@ -43,7 +43,7 @@ export default class SearchInput extends Component {
     const {autoFocus, onFocus, onBlur} = this.props;
     return (
       <View style={styles.searchBarStyle}>
-        <Row >
+        <Row>
           <Col size={15} style={styleApp.center}>
             <AllIcon
               name={'search'}
@@ -85,16 +85,14 @@ export default class SearchInput extends Component {
             <Animated.View style={styles.buttonContainerStyle}>
               <ButtonColor
                 view={() => {
-                  return (
-                    !empty && (
-                      <AllIcon
-                        type={'font'}
-                        color={colors.title}
-                        size={13}
-                        name={'times'}
-                      />
-                    )
-                  );
+                  return !empty ? (
+                    <AllIcon
+                      type={'font'}
+                      color={colors.title}
+                      size={13}
+                      name={'times'}
+                    />
+                  ) : null;
                 }}
                 color={'transparent'}
                 click={() => {
@@ -135,7 +133,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   buttonContainerStyle: {
-    opacity: 1, 
+    opacity: 1,
     right: 10,
   },
   buttonStyle: {
@@ -143,4 +141,3 @@ const styles = StyleSheet.create({
     width: 30,
   },
 });
-

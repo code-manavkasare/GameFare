@@ -276,7 +276,7 @@ class GroupsPage extends Component {
     return (
       <View style={loaderViewStyle}>
         {<Text style={styleText}>{text}</Text>}
-        {!hideLoader && <Loader size={55} color={colors.white} />}
+        {!hideLoader ? <Loader size={55} color={colors.white} /> : null}
       </View>
     );
   }
@@ -494,9 +494,9 @@ class GroupsPage extends Component {
           members={coachSession.members}
           coachSessionID={currentSessionID}
         />
-        {!publishVideo && this.pausedView(userIsAlone)}
+        {!publishVideo ? this.pausedView(userIsAlone) : null}
         <View style={styleApp.fullSize}>
-          {member.tokenTokbox && connectionType && this.isTokenUpToDate() && (
+          {member.tokenTokbox && connectionType && this.isTokenUpToDate() ? (
             <OTSession
               apiKey={Config.OPENTOK_API}
               ref={this.otSessionRef}
@@ -518,7 +518,7 @@ class GroupsPage extends Component {
                 {this.renderSubscribers}
               </OTSubscriber>
             </OTSession>
-          )}
+          ) : null}
         </View>
 
         <Footer
@@ -537,7 +537,7 @@ class GroupsPage extends Component {
             return cameraPosition;
           }}
         />
-        {reconnecting && (
+        {reconnecting ? (
           <View
             style={[
               styleApp.center,
@@ -546,7 +546,7 @@ class GroupsPage extends Component {
             ]}>
             <Loader size={55} color={colors.white} />
           </View>
-        )}
+        ) : null}
       </View>
     );
   }

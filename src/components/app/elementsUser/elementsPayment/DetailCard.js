@@ -51,14 +51,14 @@ class ListEvent extends Component {
             </Text>
           </Col>
           <Col size={25} style={styleApp.center3}>
-            {defaultCard && dataCard.id === defaultCard.id && (
+            {defaultCard && dataCard.id === defaultCard.id ? (
               <View style={styleApp.viewSport}>
                 <Text
                   style={[styleApp.text, {fontSize: 12, color: colors.white}]}>
                   Default
                 </Text>
               </View>
-            )}
+            ) : null}
           </Col>
         </Row>
       </TouchableOpacity>

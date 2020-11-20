@@ -654,10 +654,11 @@ class VideoPlayerPage extends Component {
           saveReview={this.saveReview.bind(this)}
         />
 
-        {videoInfos &&
-          Object.values(videoInfos)
-            .filter((x) => x)
-            .map((videoInfo, i) => this.singlePlayer(videoInfo, i))}
+        {videoInfos
+          ? Object.values(videoInfos)
+              .filter((x) => x)
+              .map((videoInfo, i) => this.singlePlayer(videoInfo, i))
+          : null}
       </View>
     );
   };

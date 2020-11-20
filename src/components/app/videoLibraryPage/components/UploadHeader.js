@@ -84,7 +84,7 @@ class UploadHeader extends Component {
     };
     return (
       <View style={containerStyle}>
-        {headerVisible && (
+        {headerVisible ? (
           <TouchableWithoutFeedback onPress={() => this.open()}>
             <View style={{...styles.container, maxWidth}}>
               {this.totalProgress('header')}
@@ -93,7 +93,7 @@ class UploadHeader extends Component {
               </Text>
             </View>
           </TouchableWithoutFeedback>
-        )}
+        ) : null}
       </View>
     );
   }

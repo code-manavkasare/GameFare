@@ -112,7 +112,7 @@ class ListVideoCalls extends Component {
                 marginBottom: currentlyInSession ? 0 : -10,
               },
             })}
-            {currentlyInSession && (
+            {currentlyInSession ? (
               <View style={styles.sessionMenuStyle}>
                 {viewLive(currentSession, {
                   position: 'absolute',
@@ -130,7 +130,7 @@ class ListVideoCalls extends Component {
                   style={styles.cardStreamStyle}
                 />
               </View>
-            )}
+            ) : null}
           </View>
         }
         AnimatedHeaderValue={AnimatedHeaderValue}

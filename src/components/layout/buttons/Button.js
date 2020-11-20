@@ -140,7 +140,7 @@ export default class Button extends Component {
           onPressOut={() => this.onPress(false)}
           disabled={disabled}
           onPress={() => !(loader || loading) && this.click()}>
-          {icon && this.iconView()}
+          {icon ? this.iconView() : null}
           <View style={[styleApp.center, styleApp.fullSize]}>
             {(loader || loading) && !icon ? (
               <Loader
@@ -152,9 +152,9 @@ export default class Button extends Component {
             )}
           </View>
         </TouchableOpacity>
-        {this.props.backgroundColor === 'blur' && (
+        {this.props.backgroundColor === 'blur' ? (
           <BlurView style={blurViewStyle} blurType="dark" blurAmount={5} />
-        )}
+        ) : null}
       </Animated.View>
     );
   }

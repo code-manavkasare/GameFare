@@ -137,7 +137,7 @@ class HeaderBackButton extends Component {
             style={[styles.buttonRight]}
             onPressColor={onPressColorIcon1 ? onPressColorIcon1 : colors.off}
           />
-          {badgeIcon1 && (
+          {badgeIcon1 ? (
             <View
               pointerEvents="none"
               style={{
@@ -147,7 +147,7 @@ class HeaderBackButton extends Component {
               }}>
               {badgeIcon1}
             </View>
-          )}
+          ) : null}
         </Animated.View>
       );
     }
@@ -454,7 +454,7 @@ class HeaderBackButton extends Component {
               backgroundColorIcon2 ? backgroundColorIcon2 : colors.off
             }
           />
-          {badgeIcon2 && (
+          {badgeIcon2 ? (
             <View
               pointerEvents="none"
               style={{
@@ -464,7 +464,7 @@ class HeaderBackButton extends Component {
               }}>
               {badgeIcon2}
             </View>
-          )}
+          ) : null}
         </Animated.View>
       );
     }
@@ -524,11 +524,11 @@ class HeaderBackButton extends Component {
                 imgHeader ? styles.rowTextImgHeader : styles.rowTextHeader
               }>
               <Row>
-                {imgHeader && (
+                {imgHeader ? (
                   <Col size={25} style={styleApp.center2}>
                     {imgHeader}
                   </Col>
-                )}
+                ) : null}
                 <Col
                   size={70}
                   style={imgHeader ? styleApp.center2 : styleApp.center}>
