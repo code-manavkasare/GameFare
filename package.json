@@ -35,7 +35,7 @@
     "@react-navigation/material-top-tabs": "^5.3.9",
     "@react-navigation/native": "^5.8.9",
     "@react-navigation/stack": "^5.12.6",
-    "@sentry/react-native": "^2.0.0",
+    "@sentry/react-native": "^2.0.1",
     "@sentry/tracing": "^5.27.3",
     "@wwimmo/react-native-sketch-canvas": "https://github.com/wwimmo/react-native-sketch-canvas.git",
     "algoliasearch": "^4.0.0",
