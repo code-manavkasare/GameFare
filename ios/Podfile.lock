@@ -95,12 +95,12 @@ PODS:
     - Flipper-Folly (~> 2.2)
     - Flipper-RSocket (~> 1.1)
   - Flipper-DoubleConversion (1.1.7)
-  - Flipper-Folly (2.2.0):
+  - Flipper-Folly (2.3.0):
     - boost-for-react-native
     - CocoaLibEvent (~> 1.0)
     - Flipper-DoubleConversion
     - Flipper-Glog
-    - OpenSSL-Universal (= 1.0.2.19)
+    - OpenSSL-Universal (= 1.0.2.20)
   - Flipper-Glog (0.3.6)
   - Flipper-PeerTalk (0.0.4)
   - Flipper-RSocket (1.1.0):
@@ -148,11 +148,7 @@ PODS:
     - glog
   - gamefare-camera-kit (1.1.2):
     - React
-<<<<<<< Updated upstream
-  - gamefare-local-opentok (0.0.17):
-=======
   - gamefare-local-opentok (0.0.18):
->>>>>>> Stashed changes
     - OpenTok
     - React
   - glog (0.3.5)
@@ -186,7 +182,7 @@ PODS:
   - GoogleUtilities/UserDefaults (6.7.2):
     - GoogleUtilities/Logger
   - GPUImage (0.2.0)
-  - GTMSessionFetcher/Core (1.4.0)
+  - GTMSessionFetcher/Core (1.5.0)
   - KTVCocoaHTTPServer (1.0.0):
     - CocoaAsyncSocket
   - KTVHTTPCache (2.0.1):
@@ -205,16 +201,16 @@ PODS:
   - lottie-react-native (3.5.0):
     - lottie-ios (~> 3.1.8)
     - React
-  - Mixpanel (3.6.2)
+  - Mixpanel (3.6.3)
   - nanopb (0.3.9011):
     - nanopb/decode (= 0.3.9011)
     - nanopb/encode (= 0.3.9011)
   - nanopb/decode (0.3.9011)
   - nanopb/encode (0.3.9011)
-  - OpenSSL-Universal (1.0.2.19):
-    - OpenSSL-Universal/Static (= 1.0.2.19)
-  - OpenSSL-Universal/Static (1.0.2.19)
-  - OpenTok (2.18.0)
+  - OpenSSL-Universal (1.0.2.20):
+    - OpenSSL-Universal/Static (= 1.0.2.20)
+  - OpenSSL-Universal/Static (1.0.2.20)
+  - OpenTok (2.18.1)
   - Permission-Calendars (2.2.2):
     - RNPermissions
   - Permission-Camera (2.2.2):
@@ -235,7 +231,7 @@ PODS:
     - RNPermissions
   - Permission-StoreKit (2.2.2):
     - RNPermissions
-  - PromisesObjC (1.2.10)
+  - PromisesObjC (1.2.11)
   - Protobuf (3.13.0)
   - RCTCallDetection (1.9.0):
     - React
@@ -612,15 +608,15 @@ PODS:
     - React
   - RNVideoProcessing (1.7.5):
     - React
-  - SDWebImage (5.9.1):
-    - SDWebImage/Core (= 5.9.1)
-  - SDWebImage/Core (5.9.1)
+  - SDWebImage (5.9.5):
+    - SDWebImage/Core (= 5.9.5)
+  - SDWebImage/Core (5.9.5)
   - SDWebImageWebPCoder (0.6.1):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.7)
-  - Sentry (6.0.7):
-    - Sentry/Core (= 6.0.7)
-  - Sentry/Core (6.0.7)
+  - Sentry (6.0.9):
+    - Sentry/Core (= 6.0.9)
+  - Sentry/Core (6.0.9)
   - Stripe (14.0.1)
   - tipsi-stripe (7.5.3):
     - React
@@ -1023,7 +1019,7 @@ SPEC CHECKSUMS:
   FirebaseStorage: 93fe2f8190a01bfb2b2c4932df7d679744c4ef1d
   Flipper: 5e4fa8b930abb3d2ef2079d8ad33ae47d7cd8037
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
-  Flipper-Folly: c12092ea368353b58e992843a990a3225d4533c3
+  Flipper-Folly: e4493b013c02d9347d5e0cb4d128680239f6c78a
   Flipper-Glog: 1dfd6abf1e922806c52ceb8701a3599a79a200a6
   Flipper-PeerTalk: 116d8f857dc6ef55c7a5a75ea3ceaafe878aadc9
   Flipper-RSocket: 64e7431a55835eb953b0bf984ef3b90ae9fdddd7
@@ -1037,17 +1033,17 @@ SPEC CHECKSUMS:
   GoogleDataTransportCCTSupport: 84e4d4bbab642f2e9d83ee65d78aca2b5527d314
   GoogleUtilities: 7f2f5a07f888cdb145101d6042bc4422f57e70b3
   GPUImage: d34c2d8ce12c9d7eb7e4f5017e1a7dd2eb0abc70
-  GTMSessionFetcher: 6f5c8abbab8a9bce4bb3f057e317728ec6182b10
+  GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
   KTVCocoaHTTPServer: df8d7b861e603ff8037e9b2138aca2563a6b768d
   KTVHTTPCache: 588c3eb16f6bd1e6fde1e230dabfb7bd4e490a4d
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
   lottie-ios: 3a3758ef5a008e762faec9c9d50a39842f26d124
   lottie-react-native: 1fb4ce21d6ad37dab8343eaff8719df76035bd93
-  Mixpanel: 0a78141d1a073308201f76c55c3e629535e72b47
+  Mixpanel: 0e9d50ecc6398e1082e690ddedf6968e57e81935
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
-  OpenSSL-Universal: 8b48cc0d10c1b2923617dfe5c178aa9ed2689355
-  OpenTok: bf4c81ff741e7976542c61b8f317882f8076eede
+  OpenSSL-Universal: ff34003318d5e1163e9529b08470708e389ffcdd
+  OpenTok: 2a816f5d77fbf2e2ebb5aec841bd21fb7dc7737b
   Permission-Calendars: 17bb6a871acc7580754be7b56cfb25537e1b57de
   Permission-Camera: 5d2aaf95592660b6dcb5e8d1d90ed5d0156cad02
   Permission-LocationAlways: 700dfb730b07b24a84f8c173b93ad816d71d3dc8
@@ -1058,7 +1054,7 @@ SPEC CHECKSUMS:
   Permission-PhotoLibrary: 8227a6ed9f6a971537afe63742d54f5f23a38fe2
   Permission-Reminders: f1bddb60953645830289f9b00977b11e2b62fbf8
   Permission-StoreKit: 43b6a94351b1ffc24f48a814c1396d6d5712e41d
-  PromisesObjC: b14b1c6b68e306650688599de8a45e49fae81151
+  PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
   Protobuf: 3dac39b34a08151c6d949560efe3f86134a3f748
   RCTCallDetection: c27a0ca2c29d8e8004bebd31353fe1041408e88e
   RCTRequired: f13f25e7b12f925f1f6a6a8c69d929a03c0129fe
@@ -1139,9 +1135,9 @@ SPEC CHECKSUMS:
   RNSVG: 67f1f12dae2cef6ed59a42cae74a6b8f5a9e7b46
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   RNVideoProcessing: 87e7cb7d5386bb5ea5149a9bb0c5f1bb59a22d06
-  SDWebImage: a990c053fff71e388a10f3357edb0be17929c9c5
+  SDWebImage: 0b2ba0d56479bf6a45ecddbfd5558bea93150d25
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
-  Sentry: e2c691627ae1dc0029acebbd1b0b4af4df12af73
+  Sentry: 388c9dc093b2fd3a264466a5c5b21e25959610a9
   Stripe: 4305b646743612854819fb5d5cf67aaeb93577c0
   tipsi-stripe: fb5b32e890a4528322c491e1827133a3cb919e0a
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598
