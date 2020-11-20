@@ -53,7 +53,7 @@ class FlatListComponent extends Component {
     super(props);
     this.state = {
       numberToRender: props.initialNumberToRender,
-      list:props.list
+      list: props.list,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -63,11 +63,12 @@ class FlatListComponent extends Component {
       onRef(this);
     }
   }
-  static getDerivedStateFromProps(props,state) {
-    const {noLazy,list} = props;
+  static getDerivedStateFromProps(props, state) {
+    const {noLazy, list} = props;
+    console.log('list: ', list);
     let {numberToRender} = state;
-    return {list: noLazy ? list : list.slice(0, numberToRender)}
-  } 
+    return {list: noLazy ? list : list.slice(0, numberToRender)};
+  }
   shouldComponentUpdate(nextProps, nextState) {
     if (!isEqual(nextState, this.state)) {
       return true;
@@ -78,25 +79,26 @@ class FlatListComponent extends Component {
     return true;
   }
 
-   onEndReached = async () => {
-    const {list, incrementRendering,fetchData} = this.props;
+  onEndReached = async () => {
+    const {list, incrementRendering, fetchData} = this.props;
     const {numberToRender} = this.state;
     const lengthList = list.length;
-    const nextNumberRender = numberToRender + incrementRendering > lengthList
-    ? lengthList
-    : numberToRender + incrementRendering
-    if (fetchData) await fetchData({numberToRender,nextNumberRender})
-    this.setState({numberToRender:nextNumberRender});
-  }
+    const nextNumberRender =
+      numberToRender + incrementRendering > lengthList
+        ? lengthList
+        : numberToRender + incrementRendering;
+    if (fetchData) await fetchData({numberToRender, nextNumberRender});
+    this.setState({numberToRender: nextNumberRender});
+  };
   render() {
-    const {numberToRender,list} = this.state;
+    const {numberToRender, list} = this.state;
     let {
       AnimatedHeaderValue,
       cardList,
       header,
       headerStyle,
       horizontal,
-      inverted, 
+      inverted,
       ListEmptyComponent,
       noLazy,
       numColumns,
@@ -125,7 +127,7 @@ class FlatListComponent extends Component {
           <Loader size={40} color={colors.grey} />
         </View>
       );
-    }; 
+    };
     return (
       <FlatList
         data={list}
