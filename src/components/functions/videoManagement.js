@@ -512,8 +512,11 @@ const goToLibraryPage = () => {
   navigate('VideoLibrary');
 };
 
-const getVideosFromCameraroll = async () => {
-  const params = {assetType: 'Videos', first: 1000};
+const getVideosFromCameraroll = async (lastElement = false) => {
+  let params = {assetType: 'Videos', first: 20};
+  if (lastElement) {
+    params.after = lastElement;
+  }
   const videos = await getPhotos(params);
   console.log('videos: ', videos);
   return Promise.resolve(videos);
@@ -545,12 +548,12 @@ const getLocalIdentifierFromPhPath = (phPath) => {
   return phPath.slice(5, 48);
 };
 
-const getVideosFormattedFromCameraroll = async () => {
-  const videos = await getVideosFromCameraroll();
+const getVideosFormattedFromCameraroll = async (lastElement = false) => {
+  const videos = await getVideosFromCameraroll(lastElement);
   const videosFormatted = videos.edges.map((edge) =>
     formatVideoDataFromCameraroll(edge),
   );
-  return videosFormatted;
+  return {videosFormatted, page_info: videos.page_info};
 };
 
 const addVideosFromCamerarollToApp = async (videos) => {

@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import {View} from 'react-native';
 
 import {
@@ -21,13 +20,26 @@ export default class CamerarollList extends Component {
       selectedVideos: [],
       selectedVideosLocalIdentifiers: [],
       loader: false,
+      hasNextPage: false,
+      lastElement: null,
     };
   }
   componentDidMount = async () => {
-    //TODO: lazy loading of local assets using RNCameraroll methods
-    const videosFromCameraroll = await getVideosFormattedFromCameraroll();
-    console.log('videosFromCameraroll: ', videosFromCameraroll);
-    this.setState({videos: videosFromCameraroll});
+    this.fetchNewPage({firstFetch: true});
+  };
+
+  fetchNewPage = async ({firstFetch, lastElement}) => {
+    const {
+      videosFormatted: videosFromCameraroll,
+      page_info,
+    } = await getVideosFormattedFromCameraroll(lastElement);
+    await this.setState({
+      videos: firstFetch
+        ? videosFromCameraroll
+        : this.state.videos.concat(videosFromCameraroll),
+      hasNextPage: page_info.has_next_page,
+      lastElement: page_info.end_cursor,
+    });
   };
 
   selectVideo(id, isSelected, localIdentifier) {
@@ -97,6 +109,8 @@ export default class CamerarollList extends Component {
       videos,
       selectedVideos,
       selectedVideosLocalIdentifiers,
+      hasNextPage,
+      lastElement,
     } = this.state;
 
     return (
@@ -110,19 +124,20 @@ export default class CamerarollList extends Component {
           onRef={(ref) => {
             this.flatListRef = ref;
           }}
-          fetchData={async ({numberToRender, nextNumberRender}) => {
-            console.log('fetchData', {numberToRender, nextNumberRender});
+          fetchData={() => {
+            hasNextPage && this.fetchNewPage({firstFetch: false, lastElement});
           }}
           ListEmptyComponent={{
             text: 'No videos',
             image: require('../../../../img/images/shelve.png'),
           }}
           numColumns={3}
-          incrementRendering={12}
-          initialNumberToRender={15}
-          showsVerticalScrollIndicator={false}
+          incrementRendering={20}
+          initialNumberToRender={20}
+          showsVerticalScrollIndicator={true}
           paddingBottom={0}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
+          noLazy={true}
         />
         {selectedVideos.length > 0 && (
           <View style={[styleApp.footerBooking, styleApp.marginView]}>
