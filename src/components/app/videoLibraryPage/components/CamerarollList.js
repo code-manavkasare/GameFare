@@ -7,7 +7,6 @@ import {
   getVideosFormattedFromCameraroll,
 } from '../../../functions/videoManagement.js';
 import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive.js';
-import {rowTitle} from '../../TeamPage/components/elements.js';
 import {FlatListComponent} from '../../../layout/Views/FlatList';
 import Button from '../../../layout/buttons/Button';
 

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {View, Text, Animated, StyleSheet} from 'react-native';
 import {BlurView} from '@react-native-community/blur';
+import {string} from 'prop-types';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -10,6 +11,10 @@ import AllIcons from '../../layout/icons/AllIcons';
 import {goBack} from '../../../../NavigationService';
 
 export default class ModalHeader extends Component {
+  static propTypes = {
+    title: string,
+  };
+
   constructor(props) {
     super(props);
     this.AnimatedHeaderValue = new Animated.Value(0);
