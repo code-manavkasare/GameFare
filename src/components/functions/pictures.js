@@ -255,6 +255,10 @@ const resolutionP = (size) => {
 };
 
 const getNewVideoSavePath = () => {
+  return DocumentDirectoryPath + '/' + generateID() + '.mov';
+};
+
+const getNewAudioSavePath = () => {
   return DocumentDirectoryPath + '/' + generateID() + '.mp4';
 };
 
@@ -356,6 +360,7 @@ export {
   ge10tLastVideo,
   getNativeVideoInfo,
   getNewVideoSavePath,
+  getNewAudioSavePath,
   valueColor,
   updateVideoSavePath,
   getOpentokVideoInfo,

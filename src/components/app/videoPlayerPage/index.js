@@ -475,6 +475,7 @@ class VideoPlayerPage extends Component {
             selectOnly: true,
             selectOne: true,
             navigateBackAfterConfirm: false,
+            modalMode: true,
             confirmVideo: async (selectedVideos) => {
               if (videosBeingShared) {
                 let updates = {};

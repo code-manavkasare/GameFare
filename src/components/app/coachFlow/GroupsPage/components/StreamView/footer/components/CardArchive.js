@@ -136,8 +136,8 @@ class CardArchive extends Component {
   }
   isVideoGettingUploading = (archive) => {
     const {userID} = this.props;
-    const {url, sourceUser} = archive;
-    return (!url || url === '') && sourceUser !== userID;
+    const {url, sourceUser, progress} = archive;
+    return (!url || url === '') && sourceUser !== userID && progress;
   };
   linearGradient() {
     const lgStyle = {
@@ -192,7 +192,7 @@ class CardArchive extends Component {
       width: '100%',
     };
 
-    const {recordedActions} = archive;
+    const {recordedActions, url} = archive;
     return (
       <View style={styleRow}>
         <Row>
@@ -205,7 +205,7 @@ class CardArchive extends Component {
                 color={colors.white}
                 style={styleApp.shadowIcon}
               />
-            ) : (
+            ) : url ? (
               <AllIcons
                 name={'play'}
                 type="font"
@@ -213,7 +213,7 @@ class CardArchive extends Component {
                 color={colors.white}
                 style={styleApp.shadowIcon}
               />
-            )}
+            ) : null}
           </Col>
           <Col size={70} />
           <Col size={15} style={styleApp.center3}>
@@ -279,19 +279,39 @@ class CardArchive extends Component {
       localIdentifier,
     } = archive;
     const {loader} = this.state;
-
+    const selectionOverlayStyle = {
+      ...styles.viewText,
+      ...styleApp.fullSize,
+      padding: 10,
+      backgroundColor: isSelected ? colors.grey + '30' : 'transparent',
+    };
+    const isSelectedStyle = {
+      ...styleApp.center,
+      height: 30,
+      width: 30,
+      backgroundColor: colors.primary,
+      borderRadius: 15,
+    };
     return (
       <TouchableOpacity
         activeOpacity={0.8}
         pointerEvents={disableClick ? 'none' : 'auto'}
         onPress={() => {
+          console.log(archive);
           unclickable
             ? true
+            : isBinded && !url && !progress
+            ? navigate('Alert', {
+                textButton: 'Got it!',
+                title: 'This video is unavailable.',
+                subtitle: 'There was an issue accessing this video.',
+                close: true,
+              })
             : this.isVideoGettingUploading(archive) && !archiveFromCameraroll
             ? navigate('Alert', {
                 textButton: 'Got it!',
-                title: 'The video is currently being uploaded.',
-                subtitle: 'We will notify you when complete.',
+                title: 'This video is currently being uploaded.',
+                subtitle: "We'll notify you when it's ready!",
                 close: true,
               })
             : selectableMode
@@ -301,6 +321,7 @@ class CardArchive extends Component {
         {this.buttonDismiss()}
 
         <View style={[styles.cardArchive, style]}>
+          {isBinded && !url && !progress ? this.viewNoVideo() : null}
           {this.cardArchiveImage({
             archiveFromCameraroll,
             isBinded,
@@ -309,34 +330,16 @@ class CardArchive extends Component {
             thumbnail,
             url,
           })}
-          {!hideInformation && url && this.rowIcons(archive)}
+          {!hideInformation ? this.rowIcons(archive) : null}
 
-          {selectableMode && (
-            <View
-              pointerEvents="none"
-              style={{
-                ...styles.viewText,
-                ...styleApp.fullSize,
-                padding: 10,
-                backgroundColor: isSelected
-                  ? colors.grey + '30'
-                  : 'transparent',
-              }}>
+          {selectableMode ? (
+            <View pointerEvents="none" style={selectionOverlayStyle}>
               <Row>
                 <Col style={styleApp.center6}>
                   {loader ? (
                     <Loader size={25} color={colors.white} />
                   ) : isSelected ? (
-                    <View
-                      style={[
-                        styleApp.center,
-                        {
-                          height: 30,
-                          width: 30,
-                          backgroundColor: colors.primary,
-                          borderRadius: 15,
-                        },
-                      ]}>
+                    <View style={isSelectedStyle}>
                       <AllIcons
                         name={'check'}
                         type="font"
@@ -356,11 +359,11 @@ class CardArchive extends Component {
                 </Col>
               </Row>
             </View>
-          )}
+          ) : null}
 
-          {!hideInformation && this.linearGradient()}
+          {!hideInformation ? this.linearGradient() : null}
 
-          {!hideInformation && url && (
+          {!hideInformation ? (
             <View
               pointerEvents="none"
               style={{...styles.viewText, bottom: 5, left: 10}}>
@@ -370,14 +373,16 @@ class CardArchive extends Component {
                     styleApp.textBold,
                     {color: colors.white, fontSize: 13},
                   ]}>
-                  {formatDuration(durationSeconds * 1000, true)}
+                  {isBinded && !url && !progress
+                    ? null
+                    : formatDuration(durationSeconds * 1000, true)}
                 </Text>
                 <Text
                   style={[
                     styleApp.textBold,
                     {color: colors.white, fontSize: 11},
                   ]}>
-                  {progress ? (
+                  {isBinded && !url && !progress ? null : progress ? (
                     'Uploading...'
                   ) : (
                     <FormatDate date={startTimestamp} short />
@@ -385,7 +390,7 @@ class CardArchive extends Component {
                 </Text>
               </Col>
             </View>
-          )}
+          ) : null}
         </View>
       </TouchableOpacity>
     );
@@ -399,9 +404,6 @@ class CardArchive extends Component {
     thumbnail,
     url,
   }) => {
-    if (isBinded && !url && !progress) {
-      return this.viewNoVideo();
-    }
     if (local && thumbnail) {
       return <Image style={styleApp.fullSize} source={{uri: thumbnail}} />;
     }

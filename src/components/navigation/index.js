@@ -12,6 +12,7 @@ import CallTabPage from '../app/callTab';
 import QueueList from '../app/elementsUpload/QueueList';
 import UserDirectoryPage from '../app/userDirectory';
 import NotificationPage from '../app/elementsUser/elementsProfile/NotificationPage';
+import SelectVideosFromLibrary from '../app/videoLibraryPage/index';
 import Alert from '../layout/alerts/Alert';
 import {DepthModal} from './transitions/DepthModal';
 import sizes from '../style/sizes';
@@ -89,6 +90,12 @@ function InitialStack() {
         options={{
           ...AlertSpec,
         }}
+      />
+
+      <Stack.Screen
+        name="SelectVideosFromLibrary"
+        component={SelectVideosFromLibrary}
+        options={{...CallTabSpec}}
       />
 
       <Stack.Screen

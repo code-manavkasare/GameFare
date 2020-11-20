@@ -7,6 +7,7 @@ import CardArchive from '../coachFlow/GroupsPage/components/StreamView/footer/co
 import VideoBeingShared from './components/VideoBeingShared';
 import {FlatListComponent} from '../../layout/Views/FlatList';
 import Button from '../../layout/buttons/Button';
+import ModalHeader from '../../layout/headers/ModalHeader';
 
 import {boolShouldComponentUpdate} from '../../functions/redux';
 import {uploadQueueAction} from '../../../store/actions/uploadQueueActions';
@@ -40,6 +41,7 @@ class VideoLibraryPage extends Component {
       selectOnly: params ? params.selectOnly : false,
       selectFromCameraRoll: params ? params.selectFromCameraRoll : false,
       selectOne: params ? params.selectOnly && params.selectOne : false,
+      modalMode: params ? params.modalMode : false,
       selectedVideos: [],
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
@@ -132,7 +134,12 @@ class VideoLibraryPage extends Component {
 
   listVideos = () => {
     const {navigation} = this.props;
-    const {selectOnly, selectableMode, selectFromCameraRoll} = this.state;
+    const {
+      selectOnly,
+      selectableMode,
+      selectFromCameraRoll,
+      modalMode,
+    } = this.state;
     const videosArray = this.videosArray();
     const selectMargin = selectableMode ? 80 : 0;
     if (selectFromCameraRoll) {
@@ -141,6 +148,7 @@ class VideoLibraryPage extends Component {
     return (
       <View style={styleApp.fullSize}>
         <FlatListComponent
+          styleContainer={modalMode ? {paddingTop: 80} : {}}
           list={videosArray}
           cardList={({item: videoID, index}) =>
             this.renderCardArchive(videoID, index)
@@ -162,15 +170,17 @@ class VideoLibraryPage extends Component {
           }}
           header={
             <View>
-              {rowTitle({
-                hideDividerHeader: true,
-                title: !selectableMode ? 'Library' : 'Select Videos',
-                titleColor: colors.black,
-                titleStyle: {
-                  fontWeight: '800',
-                  fontSize: 23,
-                },
-              })}
+              {modalMode
+                ? null
+                : rowTitle({
+                    hideDividerHeader: true,
+                    title: !selectableMode ? 'Library' : 'Select Videos',
+                    titleColor: colors.black,
+                    titleStyle: {
+                      fontWeight: '800',
+                      fontSize: 23,
+                    },
+                  })}
               <VideoBeingShared />
             </View>
           }
@@ -236,27 +246,48 @@ class VideoLibraryPage extends Component {
   render() {
     const {navigation, route, currentSessionID, position} = this.props;
     const videosArray = this.videosArray();
-    const {selectableMode, loader, selectedVideos, selectOnly} = this.state;
+    const {
+      selectableMode,
+      loader,
+      selectedVideos,
+      selectOnly,
+      selectFromCameraRoll,
+      modalMode,
+    } = this.state;
+    const containerStyle = modalMode
+      ? styleApp.stylePageModal
+      : styleApp.stylePage;
+    const listContainerStyle = {
+      marginTop: modalMode ? 0 : sizes.heightHeaderHome + sizes.marginTopApp,
+      zIndex: 10,
+    };
     return (
-      <View style={styleApp.stylePage}>
+      <View style={containerStyle}>
         <StatusBar hidden={false} barStyle={'dark-content'} />
-        <HeaderVideoLibrary
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          navigation={navigation}
-          selectOnly={selectOnly}
-          text={!selectableMode ? 'Library' : 'Select Videos'}
-          selectableMode={selectableMode}
-          toggleSelectable={this.toggleSelectable.bind(this)}
-          isListEmpty={videosArray.length === 0}
-        />
+        {modalMode ? (
+          <ModalHeader
+            title={
+              selectFromCameraRoll
+                ? 'Add from Camera Roll'
+                : selectableMode
+                ? 'Select Videos'
+                : 'Library'
+            }
+          />
+        ) : (
+          <HeaderVideoLibrary
+            selectFromCameraRoll={selectFromCameraRoll}
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
+            navigation={navigation}
+            selectOnly={selectOnly}
+            text={!selectableMode ? 'Library' : 'Select Videos'}
+            selectableMode={selectableMode}
+            toggleSelectable={this.toggleSelectable.bind(this)}
+            isListEmpty={videosArray.length === 0}
+          />
+        )}
 
-        <View
-          style={{
-            marginTop: sizes.heightHeaderHome + sizes.marginTopApp,
-            zIndex: 10,
-          }}>
-          {this.listVideos()}
-        </View>
+        <View style={listContainerStyle}>{this.listVideos()}</View>
 
         {selectOnly && selectedVideos.length > 0 && (
           <View style={[styleApp.footerBooking, styleApp.marginView]}>

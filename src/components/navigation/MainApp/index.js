@@ -10,7 +10,6 @@ import Profile from './components/Profile';
 
 import Webview from '../../layout/Views/Webview';
 import VideoPlayerPage from '../../app/videoPlayerPage/index';
-import SelectVideosFromLibrary from '../../app/videoLibraryPage/index';
 import {DepthModal} from '../transitions/DepthModal';
 
 import Groups from '../../app/coachFlow/GroupsPage/index';
@@ -49,11 +48,6 @@ const MainApp = () => {
 
       <Stack.Screen name="VideoPlayerPage" component={VideoPlayerPage} />
       <Stack.Screen name="Groups" component={Groups} />
-
-      <Stack.Screen
-        name="SelectVideosFromLibrary"
-        component={SelectVideosFromLibrary}
-      />
 
       <Stack.Screen name="SessionSettings" component={SessionSettings} />
     </Stack.Navigator>
