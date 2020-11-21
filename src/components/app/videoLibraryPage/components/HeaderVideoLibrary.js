@@ -64,7 +64,7 @@ class HeaderVideoLibrary extends Component {
           sizeIcon2={22}
           colorIcon2={colors.title}
           clickButton2={() => toggleSelectable()}
-          clickButtonOffset={() => selectVideosFromCameraRoll()}
+          clickButtonOffset={selectVideosFromCameraRoll}
           iconOffset={!selectableMode && 'plus'}
           typeIconOffset={'font'}
           sizeIconOffset={22}
