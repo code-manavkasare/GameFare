@@ -58,9 +58,10 @@ class UploadManager extends Component {
     const {uploadInProgress} = this.state;
     const {queue} = uploadQueue;
     const {queue: prevQueue} = prevUploadQueue;
-    const lostWifi = connectionType !== 'wifi' && prevConnectionType === 'wifi';
+    const wifiConnected = connectionType === 'wifi';
+    const lostWifi = !wifiConnected && prevConnectionType === 'wifi';
     const gainedWifi =
-      connectionType === 'wifi' &&
+      wifiConnected &&
       prevConnectionType !== 'unknown' &&
       prevConnectionType !== 'wifi';
     if (uploadInProgress) {
@@ -72,12 +73,14 @@ class UploadManager extends Component {
         !isBackground &&
         (prevIsBackground === undefined || prevIsBackground === true);
       if (isBackground && lostWifi) {
-        this.pauseUploadInProgress();
+        return this.pauseUploadInProgress();
       } else if (gainedWifi || forceStart) {
-        this.manageUploads(true);
+        return this.manageUploads(true);
+      } else if (isBackground && !wifiConnected) {
+        return this.manageUploads();
       }
     } else if (isConnected) {
-      this.manageUploads();
+      return this.manageUploads();
     }
   }
 
