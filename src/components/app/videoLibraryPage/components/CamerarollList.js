@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, InteractionManager} from 'react-native';
+import {View} from 'react-native';
 
 import {
   addVideosFromCamerarollToApp,
@@ -15,60 +15,61 @@ import styleApp from '../../../style/style';
 export default class CamerarollList extends Component {
   constructor(props) {
     super(props);
-    this.selectedVideos = {};
-    this.selectedVideosLocalIdentifiers = {};
     this.state = {
       videos: [],
+      selectedVideos: [],
+      selectedVideosLocalIdentifiers: [],
       loadingCameraRoll: true,
       loadingExport: false,
       hasNextPage: false,
       lastElement: null,
     };
-
-    this.selectVideo = this.selectVideo.bind(this);
   }
   componentDidMount = async () => {
     this.fetchNewPage({firstFetch: true});
   };
 
   fetchNewPage = async ({firstFetch, lastElement}) => {
-    InteractionManager.runAfterInteractions(async () => {
-      const {
-        videosFormatted: videosFromCameraroll,
-        page_info,
-      } = await getVideosFormattedFromCameraroll(lastElement);
-      await this.setState({
-        videos: firstFetch
-          ? videosFromCameraroll
-          : this.state.videos.concat(videosFromCameraroll),
-        hasNextPage: page_info.has_next_page,
-        lastElement: page_info.end_cursor,
-        loadingCameraRoll: false,
-      });
+    const {
+      videosFormatted: videosFromCameraroll,
+      page_info,
+    } = await getVideosFormattedFromCameraroll(lastElement);
+    await this.setState({
+      videos: firstFetch
+        ? videosFromCameraroll
+        : this.state.videos.concat(videosFromCameraroll),
+      hasNextPage: page_info.has_next_page,
+      lastElement: page_info.end_cursor,
+      loadingCameraRoll: false,
     });
   };
 
   selectVideo(id, isSelected, localIdentifier) {
-    const {canExportVideos} = this.state;
+    let nextSelectedVideos = this.state.selectedVideos.slice();
+    let nextSelectedVideosLocalIdentifiers = this.state.selectedVideosLocalIdentifiers.slice();
 
-    if (isSelected) {
-      this.selectedVideos[id] = true;
-      this.selectedVideosLocalIdentifiers[localIdentifier] = true;
-    } else if (this.selectedVideos[id]) {
-      delete this.selectedVideos[id];
-      delete this.selectedVideosLocalIdentifiers[localIdentifier];
+    if (nextSelectedVideos.filter((idVideo) => idVideo === id).length === 0) {
+      nextSelectedVideos.push(id);
+      nextSelectedVideosLocalIdentifiers.push(localIdentifier);
+    } else {
+      nextSelectedVideos = nextSelectedVideos.filter(
+        (idVideo) => idVideo !== id,
+      );
+      nextSelectedVideosLocalIdentifiers = nextSelectedVideosLocalIdentifiers.filter(
+        (localId) => localId !== localIdentifier,
+      );
     }
-
-    const lengthVideos = Object.values(this.selectedVideos).length;
-    if (lengthVideos <= 0 && canExportVideos) {
-      this.setState({canExportVideos: false});
-    } else if (lengthVideos > 0 && !canExportVideos) {
-      this.setState({canExportVideos: true});
-    }
+    this.setState({
+      selectedVideos: nextSelectedVideos,
+      selectedVideosLocalIdentifiers: nextSelectedVideosLocalIdentifiers,
+    });
   }
 
   renderCardArchive = (video, index) => {
     const {id} = video;
+    const {selectedVideos} = this.state;
+    const isSelected =
+      selectedVideos.filter((idVideo) => idVideo === id).length !== 0;
 
     let styleBorder = {};
 
@@ -85,7 +86,8 @@ export default class CamerarollList extends Component {
       <CardArchive
         archiveFromCameraroll={video}
         selectableMode={true}
-        selectVideo={({id, isSelected, localIdentifier}) =>
+        isSelected={isSelected}
+        selectVideo={(id, isSelected, localIdentifier) =>
           this.selectVideo(id, isSelected, localIdentifier)
         }
         style={[styleApp.cardArchiveVideoLibrary, styleBorder]}
@@ -98,11 +100,9 @@ export default class CamerarollList extends Component {
   };
 
   confirmVideosImport = async () => {
-    const {selectedVideosLocalIdentifiers} = this;
+    const {selectedVideosLocalIdentifiers} = this.state;
     await this.setState({loadingExport: true});
-    await addVideosFromCamerarollToApp(
-      Object.keys(selectedVideosLocalIdentifiers),
-    );
+    await addVideosFromCamerarollToApp(selectedVideosLocalIdentifiers);
     await this.setState({loadingExport: false});
   };
 
@@ -111,9 +111,9 @@ export default class CamerarollList extends Component {
       loadingExport,
       loadingCameraRoll,
       videos,
+      selectedVideos,
       hasNextPage,
       lastElement,
-      canExportVideos,
     } = this.state;
 
     return (
@@ -124,7 +124,6 @@ export default class CamerarollList extends Component {
           cardList={({item: video, index}) =>
             this.renderCardArchive(video, index)
           }
-          keyExtractor={(item, index) => `${item.id}-${index}`}
           onRef={(ref) => {
             this.flatListRef = ref;
           }}
@@ -147,12 +146,15 @@ export default class CamerarollList extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           noLazy={true}
         />
-        {canExportVideos ? (
+        {selectedVideos.length > 0 ? (
           <View style={[styleApp.footerBooking, styleApp.marginView]}>
             <Button
-              text={'Add to Library'}
+              text={
+                `Add ${selectedVideos.length} video` +
+                (selectedVideos.length === 1 ? '' : 's')
+              }
               backgroundColor={'green'}
-              loader={loadingExport}
+              loadingExport={loadingExport}
               onPressColor={colors.greenLight}
               click={() => this.confirmVideosImport()}
             />

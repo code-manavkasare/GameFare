@@ -74,7 +74,7 @@ export default class VideoList extends Component {
               <View style={{height: 80, width: 80, overflow: 'visible'}}>
                 <CardArchive
                   style={styleCardArchive}
-                  clickButtonDismiss={() => selectVideo({id: item})}
+                  clickButtonDismiss={() => selectVideo(item)}
                   hideInformation={true}
                   unclickable={false}
                   id={item}
