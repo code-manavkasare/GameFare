@@ -44,7 +44,6 @@ class FlatListComponent extends Component {
     showsVerticalScrollIndicator: bool,
     showsHorizontalScrollIndicator: bool,
     styleContainer: object,
-    keyExtractor: func,
   };
   static defaultProps = {
     incrementRendering: 12,
@@ -110,7 +109,6 @@ class FlatListComponent extends Component {
       showsHorizontalScrollIndicator,
       showsVerticalScrollIndicator,
       styleContainer,
-      keyExtractor,
     } = this.props;
 
     const containerStyle = {
@@ -141,11 +139,7 @@ class FlatListComponent extends Component {
         scrollIndicatorInsets={{right: 1}}
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="interactive"
-        keyExtractor={
-          keyExtractor
-            ? keyExtractor
-            : (item) => (item.id ? item.id : item.toString())
-        }
+        keyExtractor={(item) => (item.id ? item.id : item.toString())}
         numColumns={numColumns}
         scrollEnabled={true}
         horizontal={horizontal}

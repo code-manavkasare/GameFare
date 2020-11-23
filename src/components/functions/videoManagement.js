@@ -195,6 +195,7 @@ const uploadAlreadyInQueue = (videoID) => {
   const matchingTasks = Object.values(uploadQueue).filter(
     (item) => item.cloudID === videoID,
   );
+  console.log(Object.values(uploadQueue).map((t) => t.cloudID));
   return matchingTasks.length > 0 ? matchingTasks : null;
 };
 
@@ -256,6 +257,7 @@ const uploadLocalVideo = async (videoID, background) => {
   if (videoInfo) {
     if (videoInfo.local) {
       const isUploadAlreadyInQueue = uploadAlreadyInQueue(videoID);
+      console.log('isUploadAlreadyInQueue?', isUploadAlreadyInQueue);
       if (isUploadAlreadyInQueue) {
         if (isUploadAlreadyInQueue[0].uploading) return true;
         return isUploadAlreadyInQueue.map((item) =>
@@ -518,6 +520,7 @@ const getVideosFromCameraroll = async (lastElement = false) => {
     params.after = lastElement;
   }
   const videos = await getPhotos(params);
+  console.log('videos: ', videos);
   return Promise.resolve(videos);
 };
 

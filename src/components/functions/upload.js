@@ -58,7 +58,7 @@ const afterUpload = async (uploadTask, cloudUrl) => {
     await updateThumbnailCloud({
       id: cloudID,
       thumbnail: cloudUrl,
-      startTimestamp: videoInfo.startTimestamp ?? Date.now(),
+      startTimestamp: Date.now(),
     });
     await store.dispatch(
       setArchive({
