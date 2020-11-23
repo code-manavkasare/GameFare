@@ -77,10 +77,10 @@ class UploadManager extends Component {
       } else if (gainedWifi || forceStart) {
         return this.manageUploads(true);
       } else if (isBackground && !wifiConnected) {
-        this.manageUploads();
+        return this.manageUploads();
       }
     } else if (isConnected) {
-      this.manageUploads();
+      return this.manageUploads();
     }
   }
 
