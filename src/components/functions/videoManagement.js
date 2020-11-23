@@ -558,20 +558,24 @@ const getVideosFormattedFromCameraroll = async (lastElement = false) => {
   return {videosFormatted, page_info: videos.page_info};
 };
 
-const addVideosFromCamerarollToApp = async (videos) => {
-  const videoInfos = await Promise.all(
-    videos.map((localIdentifier) => getNativeVideoInfo(localIdentifier)),
-  );
-  videoInfos.forEach((video) => {
-    addLocalVideo({video, backgroundUpload: true});
-  });
-  goToLibraryPage();
-  if (videoInfos.length === 1) {
+const openVideoPlayerIfOneVideoImported = (videosInfos) => {
+  if (videosInfos.length === 1) {
     openVideoPlayer({
-      archives: [videoInfos[0].id],
+      archives: [videosInfos[0].id],
       open: true,
     });
   }
+};
+
+const addVideosFromCamerarollToApp = async (videos) => {
+  const videosInfos = await Promise.all(
+    videos.map((localIdentifier) => getNativeVideoInfo(localIdentifier)),
+  );
+  videosInfos.forEach((video) => {
+    addLocalVideo({video, backgroundUpload: true});
+  });
+  goToLibraryPage();
+  openVideoPlayerIfOneVideoImported(videosInfos);
 };
 export {
   addVideosFromCamerarollToApp,
