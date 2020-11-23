@@ -103,7 +103,6 @@ export default class CamerarollList extends Component {
     const {selectedVideosLocalIdentifiers} = this.state;
     await this.setState({loadingExport: true});
     await addVideosFromCamerarollToApp(selectedVideosLocalIdentifiers);
-    await this.setState({loadingExport: false});
   };
 
   render = () => {
@@ -154,7 +153,7 @@ export default class CamerarollList extends Component {
                 (selectedVideos.length === 1 ? '' : 's')
               }
               backgroundColor={'green'}
-              loadingExport={loadingExport}
+              loader={loadingExport}
               onPressColor={colors.greenLight}
               click={() => this.confirmVideosImport()}
             />
