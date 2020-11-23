@@ -43,13 +43,13 @@ class CardArchive extends Component {
   };
   static defaultProps = {
     selectableMode: false,
-    isSelected: false,
     allowPlay: true,
   };
   constructor(props) {
     super(props);
     this.state = {
       loader: false,
+      isSelected: false,
     };
   }
 
@@ -72,7 +72,7 @@ class CardArchive extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    let {archive} = props;
+    let {archive, isSelected} = props;
     const {archiveFromCameraroll, userID} = props;
 
     if (archiveFromCameraroll) {
@@ -90,11 +90,14 @@ class CardArchive extends Component {
       sourceUser !== userID &&
       progress &&
       !archiveFromCameraroll;
-
+    if (isSelected === undefined) {
+      isSelected = state.isSelected;
+    }
     return {
       archive,
       videoUnavailable,
       currentlyUploading,
+      isSelected,
     };
   }
 
@@ -146,7 +149,6 @@ class CardArchive extends Component {
           color={colors.white}
           progress={progress ? progress : 0}
           borderWidth={0}
-          fill={colors.white}
           size={18}
         />
       );
@@ -236,7 +238,7 @@ class CardArchive extends Component {
 
     const {thumbnail, local} = archive;
     if (local && thumbnail) {
-      return <Image style={styleApp.fullSize} source={{uri: thumbnail}} />;
+      return <AsyncImage style={styleApp.fullSize} mainImage={thumbnail} />;
     }
 
     return (
@@ -289,12 +291,24 @@ class CardArchive extends Component {
   };
 
   onPress = () => {
-    const {archive, videoUnavailable, currentlyUploading} = this.state;
+    const {
+      archive,
+      videoUnavailable,
+      currentlyUploading,
+      isSelected,
+    } = this.state;
     const {id, localIdentifier} = archive;
-    const {isSelected, selectableMode, unclickable, selectVideo} = this.props;
-
+    const {selectableMode, unclickable, selectVideo} = this.props;
     if (unclickable) {
       return;
+    } else if (selectableMode) {
+      this.setState({isSelected: !isSelected});
+      selectVideo({
+        id,
+        isSelected: !isSelected,
+        localIdentifier,
+        playable: !videoUnavailable && !currentlyUploading,
+      });
     } else if (videoUnavailable) {
       navigate('Alert', {
         title: 'This video is unavailable.',
@@ -309,16 +323,13 @@ class CardArchive extends Component {
         textButton: 'Got it!',
         close: true,
       });
-    } else if (selectableMode) {
-      selectVideo(id, !isSelected, localIdentifier);
     } else {
       this.openVideo(archive);
     }
   };
 
   selectionOverlay() {
-    const {isSelected} = this.props;
-    const {loader} = this.state;
+    const {loader, isSelected} = this.state;
     const selectionOverlayStyle = {
       ...styles.selectionOverlay,
       backgroundColor: isSelected ? colors.grey + '30' : 'transparent',
@@ -385,6 +396,9 @@ class CardArchive extends Component {
 }
 
 const styles = StyleSheet.create({
+  cardArchive: {
+    backgroundColor: colors.greyDarker,
+  },
   linearGradient: {
     width: '100%',
     height: 80,

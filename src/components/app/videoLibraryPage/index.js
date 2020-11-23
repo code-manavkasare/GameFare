@@ -42,6 +42,7 @@ class VideoLibraryPage extends Component {
       selectOne: params ? params.selectOnly && params.selectOne : false,
       modalMode: params ? params.modalMode : false,
       selectedVideos: [],
+      nonplayableVideos: 0,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -75,8 +76,8 @@ class VideoLibraryPage extends Component {
     this.setState({selectableMode: force ? false : !selectableMode});
   }
   playSelectedVideos = ({forceSharing}) => {
-    const {selectedVideos} = this.state;
-
+    const {selectedVideos, nonplayableVideos} = this.state;
+    if (nonplayableVideos > 0) return;
     openVideoPlayer({
       archives: selectedVideos,
       open: true,
@@ -117,19 +118,21 @@ class VideoLibraryPage extends Component {
       });
     }
   }
-  selectVideo(id) {
+  selectVideo = ({id, playable}) => {
     let nextSelectedVideos = this.state.selectedVideos.slice();
-
+    let {nonplayableVideos} = this.state;
     if (nextSelectedVideos.filter((idVideo) => idVideo === id).length === 0) {
       nextSelectedVideos.push(id);
+      if (playable === false) nonplayableVideos++;
     } else {
       nextSelectedVideos = nextSelectedVideos.filter(
         (idVideo) => idVideo !== id,
       );
+      if (playable === false) nonplayableVideos--;
     }
 
-    this.setState({selectedVideos: nextSelectedVideos});
-  }
+    this.setState({selectedVideos: nextSelectedVideos, nonplayableVideos});
+  };
 
   listVideos = () => {
     const {navigation} = this.props;
@@ -152,6 +155,7 @@ class VideoLibraryPage extends Component {
           cardList={({item: videoID, index}) =>
             this.renderCardArchive(videoID, index)
           }
+          keyExtractor={(item, index) => `${item.id}-${index}`}
           onRef={(ref) => {
             this.flatListRef = ref;
           }}
@@ -218,7 +222,7 @@ class VideoLibraryPage extends Component {
       <CardArchive
         selectableMode={selectableMode}
         isSelected={isSelected}
-        selectVideo={(id) => this.selectVideo(id)}
+        selectVideo={this.selectVideo}
         style={[
           styleApp.cardArchiveVideoLibrary,
           styleBorder,
@@ -275,7 +279,6 @@ class VideoLibraryPage extends Component {
           />
         ) : (
           <HeaderVideoLibrary
-            selectFromCameraRoll={selectFromCameraRoll}
             AnimatedHeaderValue={this.AnimatedHeaderValue}
             navigation={navigation}
             selectOnly={selectOnly}
@@ -320,7 +323,7 @@ class VideoLibraryPage extends Component {
             clickButton3={() => this.shareSelectedVideos()}
             clickButton2={() => this.playSelectedVideos({})}
             selectedVideos={selectedVideos}
-            selectVideo={this.selectVideo.bind(this)}
+            selectVideo={this.selectVideo}
           />
         ) : null}
       </View>
