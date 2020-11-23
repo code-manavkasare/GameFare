@@ -4,6 +4,7 @@ import {View, Animated} from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import {native} from '../../animations/animations';
+import {timeout} from '../../functions/coach';
 import {sentryCaptureException} from '../../functions/logs.js';
 
 export default class AsyncImage extends Component {
@@ -15,13 +16,33 @@ export default class AsyncImage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      imagePath: this.props.mainImage,
+      imagePathSmall: this.props.imgInitial,
       showLocalImg: true,
       initialLoader: true,
       zIndexInitial: -1,
       zIndexCached: 10,
       checkToken: '',
     };
-    this.opacityFastImageCached = new Animated.Value(1);
+    this.opacityFastImageCached = new Animated.Value(0);
+  }
+  componentDidMount() {
+    this.preloadImage();
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.mainImage !== prevProps.mainImage) {
+      this.preloadImage();
+    }
+  }
+  async preloadImage() {
+    await FastImage.preload([
+      {
+        uri: this.props.mainImage,
+        cache: FastImage.cacheControl.web,
+      },
+    ]);
+    await timeout(1000);
+    this.setState({imagePath: this.props.mainImage});
   }
   enterPictureCached() {
     Animated.timing(this.opacityFastImageCached, native(1)).start();
@@ -35,7 +56,7 @@ export default class AsyncImage extends Component {
   }
   imgDisplay() {
     const {style, resizeMode, onError} = this.props;
-    const mainImage = this.getMainImage();
+    const {imagePath} = this.state;
     return (
       <Animated.View
         style={{
@@ -51,7 +72,7 @@ export default class AsyncImage extends Component {
           style={[style, {zIndex: 10, position: 'absolute', top: 0}]}
           source={{
             cache: FastImage.cacheControl.web,
-            uri: mainImage,
+            uri: imagePath,
           }}
           onError={(response) => {
             if (onError) onError();
