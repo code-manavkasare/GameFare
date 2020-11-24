@@ -20,7 +20,7 @@ export default class FocusListeners extends Component {
     this.blurListener = navigation.addListener('blur', () => {
       StatusBar.setBarStyle('dark-content', true);
       const currentRoute = getCurrentRoute();
-      if (currentRoute !== 'videoPlayerPage' && currentRoute !== 'Session')
+      if (currentRoute !== 'VideoPlayerPage' && currentRoute !== 'Session')
         lockOrientation(true);
     });
   };
