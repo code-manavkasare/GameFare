@@ -138,17 +138,19 @@ class CardStream extends Component {
               <Row style={{paddingTop: 5, paddingBottom: 5}}>
                 <Col size={30}>
                   {imageCardTeam(session)}
-                  {!recentView &&
-                    viewLive(session, {
-                      position: 'absolute',
-                      left: 10,
-                      top: -4,
-                    })}
+                  {!recentView
+                    ? viewLive(session, {
+                        position: 'absolute',
+                        left: 10,
+                        top: -4,
+                      })
+                    : null}
                 </Col>
                 <Col size={50} style={[styleApp.center2, {paddingRight: 6}]}>
                   {sessionTitle(session, {}, false)}
-                  {!recentView &&
-                    lastMessage(conversation?.messages, hasNotification)}
+                  {!recentView
+                    ? lastMessage(conversation?.messages, hasNotification)
+                    : null}
                 </Col>
                 {!recentView ? (
                   <Col size={20} style={styleApp.center}>
@@ -213,7 +215,7 @@ class CardStream extends Component {
     return (
       <Animated.View style={styles.card} key={key}>
         {this.buttonCard({style})}
-        {recentView && showCallButton && (
+        {recentView && showCallButton ? (
           <Animated.View style={callButtonContainerStyle}>
             <ButtonColor
               color={colors.greyLight}
@@ -241,8 +243,8 @@ class CardStream extends Component {
               }}
             />
           </Animated.View>
-        )}
-        {recentView && showAddMemberButton && (
+        ) : null}
+        {recentView && showAddMemberButton ? (
           <Animated.View style={callButtonContainerStyle}>
             <ButtonColor
               color={colors.greyLight}
@@ -272,7 +274,7 @@ class CardStream extends Component {
               }}
             />
           </Animated.View>
-        )}
+        ) : null}
       </Animated.View>
     );
   }

@@ -43,7 +43,6 @@ class UploadManager extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const {
-      isConnected: prevIsConnected,
       connectionType: prevConnectionType,
       lastDeletedArchiveIds,
       uploadQueue: prevUploadQueue,
@@ -59,12 +58,12 @@ class UploadManager extends Component {
     const {uploadInProgress} = this.state;
     const {queue} = uploadQueue;
     const {queue: prevQueue} = prevUploadQueue;
-    const lostConnection = prevIsConnected && !isConnected;
-    const lostWifi = connectionType !== 'wifi' && prevConnectionType === 'wifi';
+    const wifiConnected = connectionType === 'wifi';
+    const lostWifi = !wifiConnected && prevConnectionType === 'wifi';
     const gainedWifi =
-      connectionType === 'wifi' && prevConnectionType !== 'wifi';
-    const gainedCellular =
-      connectionType === 'cellular' && prevConnectionType !== 'cellular';
+      wifiConnected &&
+      prevConnectionType !== 'unknown' &&
+      prevConnectionType !== 'wifi';
     if (uploadInProgress) {
       const isBackground =
         queue[(uploadInProgress?.uploadTask?.id)]?.isBackground;
@@ -74,12 +73,14 @@ class UploadManager extends Component {
         !isBackground &&
         (prevIsBackground === undefined || prevIsBackground === true);
       if (isBackground && lostWifi) {
-        this.pauseUploadInProgress();
+        return this.pauseUploadInProgress();
       } else if (gainedWifi || forceStart) {
-        this.manageUploads(true);
+        return this.manageUploads(true);
+      } else if (isBackground && !wifiConnected) {
+        return this.manageUploads();
       }
     } else if (isConnected) {
-      this.manageUploads();
+      return this.manageUploads();
     }
   }
 
@@ -135,6 +136,7 @@ class UploadManager extends Component {
     const {queue} = this.props.uploadQueue;
     const currentUpload = getCurrentUploadingTask(queue);
     if (currentUpload) {
+      console.log('STARTING TASK --- restart upload in progress');
       this.startTask(currentUpload);
     }
   };
@@ -190,6 +192,7 @@ class UploadManager extends Component {
               firebaseUploadTask: null,
             },
           });
+          console.log('STARTING TASK --- next user upload');
           this.startTask(nextUserUpload);
         }
       } else if (uploadInProgress.uploadTask.isBackground) {
@@ -201,6 +204,7 @@ class UploadManager extends Component {
           },
           savedBackgroundUpload: uploadInProgress,
         });
+        console.log('STARTING TASK --- interrupt background upload task');
         this.startTask(nextUserUpload);
       }
     } else if (!uploadInProgress && savedBackgroundUpload) {
@@ -217,10 +221,12 @@ class UploadManager extends Component {
       !nextBackgroundUpload.started &&
       connectionType === 'wifi'
     ) {
+      console.log('STARTING TASK --- next background upload');
       this.startTask(nextBackgroundUpload);
     } else if (!uploadInProgress && !nextBackgroundUpload) {
       uploadQueueAction('resetUploadQueue');
     } else if (forceStart && nextBackgroundUpload) {
+      console.log('STARTING TASK --- force start background upload');
       this.startTask(nextBackgroundUpload);
     }
   }

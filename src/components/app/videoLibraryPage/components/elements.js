@@ -5,12 +5,7 @@ import colors from '../../../style/colors';
 
 import {rowTitle} from '../../TeamPage/components/elements';
 
-const pickerlocalVideos = ({
-  lengthGameFareLibrary,
-  selectVideo,
-  selectedLocalVideos,
-  addFromCameraRoll,
-}) => {
+const pickerlocalVideos = ({lengthGameFareLibrary, addFromCameraRoll}) => {
   return (
     <View>
       {rowTitle({

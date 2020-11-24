@@ -36,7 +36,7 @@ class AppSettings extends Component {
           <Text style={styleApp.text}>{description}</Text>
         </Col>
         <Col size={10} style={styleApp.center}>
-          {moreInfo && (
+          {moreInfo ? (
             <TouchableOpacity
               activeOpacity={0.8}
               style={[styleApp.fullSize, styleApp.center]}
@@ -48,7 +48,7 @@ class AppSettings extends Component {
                 color={colors.secondary}
               />
             </TouchableOpacity>
-          )}
+          ) : null}
         </Col>
         <Col size={20} style={styleApp.center3}>
           <Switch
@@ -70,18 +70,22 @@ class AppSettings extends Component {
         permissionOtherUserToRecord: nextVal,
       });
   };
+  toggleAutoUpload = () => {
+    const {wifiAutoUpload, userID, appSettingsAction} = this.props;
+    database()
+      .ref(`users/${userID}/appSettings/`)
+      .update({
+        wifiAutoUpload: !wifiAutoUpload,
+      });
+    return appSettingsAction('toggleWifiAutoUpload');
+  };
   settings() {
-    const {
-      wifiAutoUpload,
-      isPrivate,
-      appSettingsAction,
-      permissionOtherUserToRecord,
-    } = this.props;
+    const {wifiAutoUpload, isPrivate, permissionOtherUserToRecord} = this.props;
     return (
       <View style={styleApp.marginView}>
         {this.settingsSwitch(
           wifiAutoUpload,
-          async () => appSettingsAction('toggleWifiAutoUpload'),
+          async () => this.toggleAutoUpload(),
           'Auto upload local videos',
         )}
         {this.settingsSwitch(

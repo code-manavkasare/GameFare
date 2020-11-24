@@ -81,14 +81,16 @@ class BlockedUsersList extends Component {
         </Text>
       );
     if (blockedUsers)
-      return <View style={{marginTop:15}}>{blockedUsers.map((user, i) =>
-        this.cardUser(user, i, selectedUsers),
-      )}</View>;
+      return (
+        <View style={{marginTop: 15}}>
+          {blockedUsers.map((user, i) => this.cardUser(user, i, selectedUsers))}
+        </View>
+      );
     return null;
   }
 
   render() {
-    const {blockedUsers,selectedUsers} = this.state;
+    const {blockedUsers, selectedUsers} = this.state;
     const {goBack} = this.props.navigation;
     return (
       <View style={styleApp.stylePage}>
@@ -118,7 +120,7 @@ class BlockedUsersList extends Component {
           showsVerticalScrollIndicator={true}
         />
 
-        {blockedUsers.length !== 0 && (
+        {blockedUsers.length !== 0 ? (
           <View
             style={[
               styleApp.footerBooking,
@@ -130,11 +132,11 @@ class BlockedUsersList extends Component {
               backgroundColor={'green'}
               disabled={Object.values(selectedUsers).length === 0}
               onPressColor={colors.greenLight}
-              styleButton={{height:55}}
+              styleButton={{height: 55}}
               click={() => this.unblockUser()}
             />
           </View>
-        )}
+        ) : null}
       </View>
     );
   }

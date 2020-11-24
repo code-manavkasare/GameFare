@@ -153,20 +153,18 @@ class RecordingMenu extends Component {
   backdrop() {
     const {visible} = this.state;
 
-    return (
-      visible && (
-        <TouchableWithoutFeedback
-          disabled={!visible}
-          onPress={() => {
-            this.close();
-          }}>
-          <View
-            pointerEvents={visible ? 'auto' : 'none'}
-            style={styles.fullPage}
-          />
-        </TouchableWithoutFeedback>
-      )
-    );
+    return visible ? (
+      <TouchableWithoutFeedback
+        disabled={!visible}
+        onPress={() => {
+          this.close();
+        }}>
+        <View
+          pointerEvents={visible ? 'auto' : 'none'}
+          style={styles.fullPage}
+        />
+      </TouchableWithoutFeedback>
+    ) : null;
   }
 
   render() {
@@ -198,7 +196,6 @@ class RecordingMenu extends Component {
           width,
           transform: [{translateY: parentTranslateY}],
         }}>
-     
         <Animated.View
           pointerEvents={visible ? 'auto' : 'none'}
           style={{

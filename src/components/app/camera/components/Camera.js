@@ -122,8 +122,10 @@ class Camera extends Component {
       layoutAction('setGeneralSessionRecording', true);
       this.setState({isRecording: true});
       const options = {
-        quality: RNCamera.Constants.VideoQuality['2160p'],
+        codec: RNCamera.Constants.VideoCodec['HVEC'],
+        quality: RNCamera.Constants.VideoQuality['1080p'],
         path: getNewVideoSavePath(),
+        mute: false,
       };
       let promise = camera.recordAsync(options);
       onRecord && onRecord();
@@ -197,9 +199,9 @@ class Camera extends Component {
           blurType="dark"
           blurAmount={1}
         />
-        {/* {placeholderImg && (
+        {/* {placeholderImg ? (
           <Image source={{uri: placeholderImg}} style={styleApp.fullSize} />
-        )} */}
+        ) : null} */}
       </Animated.View>
     );
   }
@@ -213,7 +215,7 @@ class Camera extends Component {
     const {isRecording, displayPlaceholder} = this.state;
     return (
       <View style={styleApp.flexColumnBlack}>
-        {(isRecording || !displayPlaceholder) && (
+        {isRecording || !displayPlaceholder ? (
           <RNCamera
             videoStabilizationMode={'standard'}
             onCameraReady={() => {
@@ -221,12 +223,10 @@ class Camera extends Component {
               if (onCameraReady) {
                 onCameraReady(true);
               }
-              setTimeout(() => {
-                Animated.timing(
-                  this.placeholderAnimation.opacity,
-                  native(0, 200),
-                ).start();
-              }, 300);
+              Animated.timing(
+                this.placeholderAnimation.opacity,
+                native(0, 200),
+              ).start();
             }}
             onMountError={(error) =>
               console.log('RNCamera mount error: ', error)
@@ -256,8 +256,8 @@ class Camera extends Component {
             flashMode={RNCamera.Constants.FlashMode.off}
             pictureSize={'1280x720'} // this prop stops flickering when stop and start recording
           />
-        )}
-        {!isRecording && this.placeholder()}
+        ) : null}
+        {!isRecording ? this.placeholder() : null}
       </View>
     );
   }

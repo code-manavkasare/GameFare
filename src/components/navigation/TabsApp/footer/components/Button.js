@@ -2,7 +2,6 @@ import React from 'react';
 import {Text, View, styleAppheet, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {navigate} from '../../../../../../NavigationService';
-import Orientation from 'react-native-orientation-locker';
 import Reanimated from 'react-native-reanimated';
 import {native} from '../../../../animations/animations';
 
@@ -33,7 +32,7 @@ class FooterButton extends React.Component {
       this.indicatorAnimation();
     }
   }
-  
+
   indicatorAnimation() {
     const {generalSessionRecording, inSession} = this.props;
     if (generalSessionRecording || inSession) {
@@ -69,7 +68,7 @@ class FooterButton extends React.Component {
     };
     return (
       <Reanimated.View style={{...styles.recordButton, borderColor: tintColor}}>
-        {generalSessionRecording && (
+        {generalSessionRecording ? (
           <View style={{...styles.recordButtonActive}}>
             <Animated.View
               style={{
@@ -78,14 +77,14 @@ class FooterButton extends React.Component {
               }}
             />
           </View>
-        )}
-        {inSession && !generalSessionRecording && (
+        ) : null}
+        {inSession && !generalSessionRecording ? (
           <Animated.View style={inSessionContainerStyle}>
             <Reanimated.View style={inSessionViewStyle}>
               <Text style={styles.inSessionText}>Live</Text>
             </Reanimated.View>
           </Animated.View>
-        )}
+        ) : null}
       </Reanimated.View>
     );
   }
@@ -95,14 +94,14 @@ class FooterButton extends React.Component {
       label,
       displayPastille,
       signInToPass,
-      userConnected, 
+      userConnected,
       isFocused,
       scale,
       disableAnimation,
       numberNotifications,
       tintColor,
     } = this.props;
- 
+
     let {routeName, pageStack} = this.props;
 
     if (!userConnected && signInToPass) {
@@ -133,7 +132,6 @@ class FooterButton extends React.Component {
                   {translateY: scale ? recordButtonYTranslate : 0},
                 ],
               }}>
-          
               {label ? (
                 <AllIcons
                   name={icon.name}
@@ -145,11 +143,20 @@ class FooterButton extends React.Component {
               ) : (
                 this.recordButton()
               )}
-              {label && (
+              {label ? (
                 <Reanimated.Text style={labelStyle}>{label}</Reanimated.Text>
-              )}
-              {displayPastille && numberNotifications > 0 && (
-                <View pointerEvents="none" style={[styles.absoluteViewBadge,{backgroundColor:isFocused?colors.primaryLight:colors.grey}]}>
+              ) : null}
+              {displayPastille && numberNotifications > 0 ? (
+                <View
+                  pointerEvents="none"
+                  style={[
+                    styles.absoluteViewBadge,
+                    {
+                      backgroundColor: isFocused
+                        ? colors.primaryLight
+                        : colors.grey,
+                    },
+                  ]}>
                   <Text
                     style={[
                       styleApp.textBold,
@@ -158,7 +165,7 @@ class FooterButton extends React.Component {
                     {/* {numberNotifications} */}
                   </Text>
                 </View>
-              )}
+              ) : null}
             </Reanimated.View>
           );
         }}
@@ -220,7 +227,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 5,
     width: 5,
-    borderRadius: 10, 
+    borderRadius: 10,
     backgroundColor: colors.blue,
     position: 'absolute',
     top: 54,

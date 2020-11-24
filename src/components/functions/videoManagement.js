@@ -3,13 +3,16 @@ import RNFS from 'react-native-fs';
 import database from '@react-native-firebase/database';
 import {DocumentDirectoryPath} from 'react-native-fs';
 import {assoc} from 'ramda';
+import {getPhotos} from '@react-native-community/cameraroll';
 
 import {
+  checkVideoLibraryAccess,
   getNewVideoSavePath,
   getOpentokVideoInfo,
   getVideoUUID,
   updateVideoSavePath,
   generateThumbnail,
+  getNativeVideoInfo,
 } from './pictures';
 import {generateID} from './utility';
 
@@ -254,7 +257,6 @@ const uploadLocalVideo = async (videoID, background) => {
     if (videoInfo.local) {
       const isUploadAlreadyInQueue = uploadAlreadyInQueue(videoID);
       if (isUploadAlreadyInQueue) {
-        if (isUploadAlreadyInQueue.uploading) return true;
         return isUploadAlreadyInQueue.map((item) =>
           store.dispatch(
             modifyUploadTask({
@@ -491,18 +493,101 @@ const dimensionRectangle = ({startPoint, endPoint}) => {
   return {height: y2 < y1 ? -height : height, width: x2 < x1 ? -width : width};
 };
 
+const selectVideosFromCameraRoll = () => {
+  checkVideoLibraryAccess();
+  navigate('SelectVideosFromLibrary', {
+    selectableMode: true,
+    selectOnly: true,
+    navigateBackAfterConfirm: true,
+    selectFromCameraRoll: true,
+    modalMode: true,
+    confirmVideo: async (selectedVideos) => {
+      console.log('selectedVideos: ', selectedVideos);
+    },
+  });
+};
+
+const goToLibraryPage = () => {
+  navigate('VideoLibrary');
+};
+
+const getVideosFromCameraroll = async (lastElement = false) => {
+  let params = {assetType: 'Videos', first: 18};
+  if (lastElement) {
+    params.after = lastElement;
+  }
+  const videos = await getPhotos(params);
+  return Promise.resolve(videos);
+};
+
+const formatVideoDataFromCameraroll = (edge) => {
+  const {height, playableDuration, uri, width} = edge.node.image;
+  const video = {
+    durationSeconds: playableDuration,
+    fromNativeLibrary: true,
+    id: getIdFromPhPath(uri),
+    localIdentifier: getLocalIdentifierFromPhPath(uri),
+    local: true,
+    size: {
+      height,
+      width,
+    },
+    startTimestamp: edge.node.timestamp * 1000,
+    url: uri,
+  };
+  return video;
+};
+
+const getIdFromPhPath = (phPath) => {
+  return phPath.slice(5, 41);
+};
+
+const getLocalIdentifierFromPhPath = (phPath) => {
+  return phPath.slice(5, 48);
+};
+
+const getVideosFormattedFromCameraroll = async (lastElement = false) => {
+  const videos = await getVideosFromCameraroll(lastElement);
+  const videosFormatted = videos.edges.map((edge) =>
+    formatVideoDataFromCameraroll(edge),
+  );
+  return {videosFormatted, page_info: videos.page_info};
+};
+
+const openVideoPlayerIfOneVideoImported = (videosInfos) => {
+  if (videosInfos.length === 1) {
+    openVideoPlayer({
+      archives: [videosInfos[0].id],
+      open: true,
+    });
+  }
+};
+
+const addVideosFromCamerarollToApp = async (videos) => {
+  const videosInfos = await Promise.all(
+    videos.map((localIdentifier) => getNativeVideoInfo(localIdentifier)),
+  );
+  videosInfos.forEach((video) => {
+    addLocalVideo({video, backgroundUpload: true});
+  });
+  goToLibraryPage();
+  openVideoPlayerIfOneVideoImported(videosInfos);
+};
 export {
+  addVideosFromCamerarollToApp,
   addLocalVideo,
   arrayUploadFromSnippets,
+  deleteLocalVideoFile,
   deleteVideos,
   dimensionRectangle,
   generateThumbnailSet,
   oneTimeFixStoreLocalVideoLibrary,
   openVideoPlayer,
   regenerateThumbnail,
+  selectVideosFromCameraRoll,
   shareVideosWithTeams,
   updateLocalUploadProgress,
   updateLocalVideoUrls,
   uploadLocalVideo,
-  deleteLocalVideoFile,
+  getVideosFormattedFromCameraroll,
 };

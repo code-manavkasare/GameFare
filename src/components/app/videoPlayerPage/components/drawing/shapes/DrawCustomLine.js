@@ -69,7 +69,7 @@ export default class DrawSraightLine extends Component {
           endEditShape={endEditShape}
         />
 
-        {isSelected && (
+        {isSelected ? (
           <EditPoint
             endPoint={endPoint}
             startPoint={startPoint}
@@ -83,8 +83,8 @@ export default class DrawSraightLine extends Component {
             h={h}
             endEditShape={endEditShape}
           />
-        )}
-        {isSelected && (
+        ) : null}
+        {isSelected ? (
           <EditPoint
             startPoint={startPoint}
             endPoint={endPoint}
@@ -98,7 +98,7 @@ export default class DrawSraightLine extends Component {
             h={h}
             endEditShape={endEditShape}
           />
-        )}
+        ) : null}
       </G>
     );
   }
@@ -106,4 +106,3 @@ export default class DrawSraightLine extends Component {
     return this.drawView();
   }
 }
-

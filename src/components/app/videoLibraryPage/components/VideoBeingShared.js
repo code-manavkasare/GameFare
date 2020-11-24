@@ -50,7 +50,6 @@ class VideoBeingShared extends Component {
                         // backgroundColor: 'red',
                         // ...styleApp.shade,
                       }}
-                      // `clickButtonDismiss={() => selectVideo(item)}`
                       disableClick={true}
                       hideInformation={true}
                       unclickable={false}

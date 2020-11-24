@@ -129,7 +129,7 @@ export default class Alert extends Component {
             bottom: 0,
             transform: [{translateY}],
           }}>
-          {closable && (
+          {closable ? (
             <TouchableOpacity
               style={styles.buttonClose}
               activeOpacity={0.5}
@@ -142,25 +142,25 @@ export default class Alert extends Component {
               />
               {/* <MatIcon name="close" color={'#4a4a4a'} size={24} /> */}
             </TouchableOpacity>
-          )}
+          ) : null}
 
           <Row style={styles.rowTitleSubtitle}>
             <Col size={icon ? 85 : 100}>
               {this.title()}
               {this.subtitle()}
             </Col>
-            {icon && (
+            {icon ? (
               <Col size={15} style={styleApp.center}>
                 <View style={styles.viewIcon}>{icon}</View>
               </Col>
-            )}
+            ) : null}
           </Row>
 
-          {componentAdded && (
+          {componentAdded ? (
             <View style={[styleApp.marginView, {marginTop: 15}]}>
               {componentAdded}
             </View>
-          )}
+          ) : null}
 
           {// CASE 1: Two options given (YES / NO Style)
           displayList === 'addImage' ? (

@@ -63,9 +63,9 @@ export default class Button extends Component {
                     type="font"
                   />
                   <Text style={styles.text}>{title}</Text>
-                  {title2 && (
+                  {title2 ? (
                     <Text style={[styles.text, {marginTop: 1}]}>{title2}</Text>
-                  )}
+                  ) : null}
                 </View>
               ) : (
                 <AsyncImage mainImage={img} style={styleImg} />

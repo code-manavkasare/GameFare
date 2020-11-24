@@ -55,7 +55,7 @@ export default class DrawSraightLine extends Component {
           editShape={isSelected && editShape}
         />
 
-        {isSelected && (
+        {isSelected ? (
           <EditPoint
             startPoint={startPoint}
             positionZone={{x: startPoint.x, y: startPoint.y}}
@@ -65,7 +65,7 @@ export default class DrawSraightLine extends Component {
             endEditShape={endEditShape}
             backgroundColor={colors.secondary}
           />
-        )}
+        ) : null}
       </G>
     );
   }
@@ -73,4 +73,3 @@ export default class DrawSraightLine extends Component {
     return this.drawView();
   }
 }
-

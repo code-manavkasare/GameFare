@@ -43,13 +43,13 @@ class CardArchive extends Component {
   };
   static defaultProps = {
     selectableMode: false,
-    isSelected: false,
     allowPlay: true,
   };
   constructor(props) {
     super(props);
     this.state = {
       loader: false,
+      isSelected: false,
     };
   }
 
@@ -71,6 +71,36 @@ class CardArchive extends Component {
     });
   }
 
+  static getDerivedStateFromProps(props, state) {
+    let {archive, isSelected} = props;
+    const {archiveFromCameraroll, userID} = props;
+
+    if (archiveFromCameraroll) {
+      archive = archiveFromCameraroll;
+    }
+    if (!archive) {
+      return {};
+    }
+
+    const {progress, isBinded, url, sourceUser} = archive;
+    const videoUnavailable =
+      isBinded && !url && !progress && !archiveFromCameraroll;
+    const currentlyUploading =
+      (!url || url === '') &&
+      sourceUser !== userID &&
+      progress &&
+      !archiveFromCameraroll;
+    if (isSelected === undefined) {
+      isSelected = state.isSelected;
+    }
+    return {
+      archive,
+      videoUnavailable,
+      currentlyUploading,
+      isSelected,
+    };
+  }
+
   componentDidUpdate(prevProps) {
     const {id, archive} = this.props;
     const {archive: prevArchive} = prevProps;
@@ -90,12 +120,9 @@ class CardArchive extends Component {
       />
     );
   }
-  selectVideo = async (id, isSelected) => {
-    const {selectVideo} = this.props;
-    selectVideo(id, isSelected);
-  };
-  openVideo = async () => {
-    const {archive, coachSessionID, videosToOpen, disableClick} = this.props;
+
+  openVideo = async (archive) => {
+    const {coachSessionID, videosToOpen, disableClick} = this.props;
     const {url, id} = archive;
     if (url && url !== '' && !disableClick) {
       logMixpanel({
@@ -111,22 +138,21 @@ class CardArchive extends Component {
   };
 
   labelIndicator() {
-    const {archive} = this.props;
+    const {archive, currentlyUploading} = this.state;
     const {local, progress} = archive;
 
-    if (this.isVideoGettingUploading())
+    if (currentlyUploading) {
       return <Loader size={25} color={colors.white} />;
-    if (progress)
+    } else if (progress) {
       return (
         <Progress.Circle
           color={colors.white}
           progress={progress ? progress : 0}
           borderWidth={0}
-          fill={colors.white}
           size={18}
         />
       );
-    if (local)
+    } else if (local) {
       return (
         <AllIcons
           name={'mobile-alt'}
@@ -136,71 +162,42 @@ class CardArchive extends Component {
           style={styleApp.shadowIcon}
         />
       );
-    return null;
+    } else {
+      return null;
+    }
   }
-  isVideoGettingUploading = () => {
-    const {archive, userID} = this.props;
-    const {url, sourceUser} = archive;
-    return (!url || url === '') && sourceUser !== userID;
-  };
+
   linearGradient() {
-    const lgStyle = {
-      width: '100%',
-      height: 80,
-      bottom: 0,
-      position: 'absolute',
-    };
     return (
       <LinearGradient
-        style={lgStyle}
+        style={styles.linearGradient}
         colors={[colors.black + '00', colors.black + '70']}
       />
     );
   }
+
   buttonDismiss = () => {
     const {clickButtonDismiss} = this.props;
-    if (!clickButtonDismiss) return null;
-    const styleButton = {
-      position: 'absolute',
-      top: -5,
-      right: 5,
-      zIndex: 40,
-      ...styleApp.shade,
-      ...styleApp.center,
-      borderRadius: 20,
-      borderWidth: 1,
-      borderColor: colors.grey,
-      height: 30,
-      width: 30,
-    };
-    return (
+    return clickButtonDismiss ? (
       <ButtonColor
         view={() => {
           return (
             <AllIcons name={'minus'} type="font" size={12} color={colors.red} />
           );
         }}
-        style={[styleButton, styleApp.shadowWhite]}
+        style={styles.buttonDismiss}
         click={() => clickButtonDismiss()}
         color={colors.white}
         onPressColor={colors.off}
       />
-    );
+    ) : null;
   };
+
   rowIcons = () => {
-    const styleRow = {
-      position: 'absolute',
-      padding: 15,
-      height: 50,
-      zIndex: 200,
-      width: '100%',
-    };
-
-    const {archive} = this.props;
-
-    const {recordedActions} = archive;
+    let {archive} = this.state;
+    const {recordedActions, url} = archive;
     return (
-      <View style={styleRow}>
+      <View style={styles.rowIcons}>
         <Row>
           <Col size={15} style={styleApp.center}>
             {recordedActions ? (
@@ -211,7 +208,7 @@ class CardArchive extends Component {
                 color={colors.white}
                 style={styleApp.shadowIcon}
               />
-            ) : (
+            ) : url ? (
               <AllIcons
                 name={'play'}
                 type="font"
@@ -219,7 +216,7 @@ class CardArchive extends Component {
                 color={colors.white}
                 style={styleApp.shadowIcon}
               />
-            )}
+            ) : null}
           </Col>
           <Col size={70} />
           <Col size={15} style={styleApp.center3}>
@@ -229,17 +226,55 @@ class CardArchive extends Component {
       </View>
     );
   };
-  viewNoVideo = () => {
-    const styleRow = {
-      position: 'absolute',
-      padding: 15,
-      height: '100%',
-      zIndex: 230,
-      width: '100%',
-    };
+
+  cardArchiveImage = () => {
+    const {archive} = this.state;
+    const {archiveFromCameraroll} = this.props;
+
+    if (archiveFromCameraroll) {
+      const {url} = archiveFromCameraroll;
+      return <Image style={styleApp.fullSize} source={{uri: url}} />;
+    }
+
+    const {thumbnail, local} = archive;
+    if (local && thumbnail) {
+      return <AsyncImage style={styleApp.fullSize} mainImage={thumbnail} />;
+    }
 
     return (
-      <View style={styleRow}>
+      <AsyncImage
+        style={{...styleApp.fullSize}}
+        mainImage={thumbnail ? thumbnail : ''}
+      />
+    );
+  };
+
+  infoRow = () => {
+    const {archive, videoUnavailable} = this.state;
+    const {startTimestamp, durationSeconds, progress} = archive;
+    return (
+      <View pointerEvents="none" style={styles.infoRow}>
+        <Col>
+          <Text style={styles.durationText}>
+            {videoUnavailable
+              ? null
+              : formatDuration(durationSeconds * 1000, true)}
+          </Text>
+          <Text style={styles.dateText}>
+            {videoUnavailable ? null : progress ? (
+              'Uploading...'
+            ) : (
+              <FormatDate date={startTimestamp} short />
+            )}
+          </Text>
+        </Col>
+      </View>
+    );
+  };
+
+  viewNoVideo = () => {
+    return (
+      <View style={styles.viewNoVideo}>
         <Row>
           <Col size={15} style={styleApp.center}>
             <AllIcons
@@ -248,172 +283,190 @@ class CardArchive extends Component {
               size={16}
               color={colors.white}
             />
-            <Text
-              style={[
-                styleApp.textBold,
-                {marginTop: 10, color: colors.white, fontSize: 14},
-              ]}>
-              Unavailable
-            </Text>
+            <Text style={styles.unavailableText}>Unavailable</Text>
           </Col>
         </Row>
       </View>
     );
   };
-  cardArchive(archive) {
+
+  onPress = () => {
     const {
+      archive,
+      videoUnavailable,
+      currentlyUploading,
       isSelected,
-      hideInformation,
-      style,
-      selectableMode,
-      unclickable,
-      disableClick,
-    } = this.props;
-    if (!archive) return this.placeholder();
-    const {
-      id,
-      thumbnail,
-      startTimestamp,
-      durationSeconds,
-      local,
-      progress,
-      isBinded,
-      url,
-    } = archive;
-    const {loader} = this.state;
+    } = this.state;
+    const {id, localIdentifier} = archive;
+    const {selectableMode, unclickable, selectVideo} = this.props;
+    if (unclickable) {
+      return;
+    } else if (selectableMode) {
+      this.setState({isSelected: !isSelected});
+      selectVideo({
+        id,
+        isSelected: !isSelected,
+        localIdentifier,
+        playable: !videoUnavailable && !currentlyUploading,
+      });
+    } else if (videoUnavailable) {
+      navigate('Alert', {
+        title: 'This video is unavailable.',
+        subtitle: 'There was an issue accessing this video.',
+        textButton: 'Got it!',
+        close: true,
+      });
+    } else if (currentlyUploading) {
+      navigate('Alert', {
+        title: 'This video is currently being uploaded.',
+        subtitle: "We'll notify you when it's ready!",
+        textButton: 'Got it!',
+        close: true,
+      });
+    } else {
+      this.openVideo(archive);
+    }
+  };
+
+  selectionOverlay() {
+    const {loader, isSelected} = this.state;
+    const selectionOverlayStyle = {
+      ...styles.selectionOverlay,
+      backgroundColor: isSelected ? colors.grey + '30' : 'transparent',
+    };
+    return (
+      <View pointerEvents="none" style={selectionOverlayStyle}>
+        <Row>
+          <Col style={styleApp.center6}>
+            {loader ? (
+              <Loader size={25} color={colors.white} />
+            ) : isSelected ? (
+              <View style={styles.isSelected}>
+                <AllIcons
+                  name={'check'}
+                  type="font"
+                  size={14}
+                  color={colors.white}
+                />
+              </View>
+            ) : (
+              <AllIcons
+                name={'circle'}
+                type="font"
+                size={23}
+                color={colors.white}
+                solid={isSelected ? true : false}
+              />
+            )}
+          </Col>
+        </Row>
+      </View>
+    );
+  }
+
+  cardArchive() {
+    let {archive, videoUnavailable} = this.state;
+    const {hideInformation, style, selectableMode, disableClick} = this.props;
 
     return (
       <TouchableOpacity
         activeOpacity={0.8}
         pointerEvents={disableClick ? 'none' : 'auto'}
-        onPress={() => {
-          unclickable
-            ? true
-            : this.isVideoGettingUploading()
-            ? navigate('Alert', {
-                textButton: 'Got it!',
-                title: 'The video is currently being uploaded.',
-                subtitle: 'We will notify you when complete.',
-                close: true,
-              })
-            : selectableMode
-            ? this.selectVideo(id, !isSelected)
-            : this.openVideo();
-        }}>
+        onPress={this.onPress}>
         {this.buttonDismiss()}
-
         <View style={[styles.cardArchive, style]}>
-          {isBinded && !url ? (
-            this.viewNoVideo()
-          ) : local && thumbnail ? (
-            <Image style={styleApp.fullSize} source={{uri: thumbnail}} />
-          ) : (
-            <AsyncImage
-              style={{...styleApp.fullSize}}
-              mainImage={thumbnail ? thumbnail : ''}
-            />
-          )}
-          {!hideInformation && url && this.rowIcons()}
-
-          {selectableMode && (
-            <View
-              pointerEvents="none"
-              style={{
-                ...styles.viewText,
-                ...styleApp.fullSize,
-                padding: 10,
-                backgroundColor: isSelected
-                  ? colors.grey + '30'
-                  : 'transparent',
-              }}>
-              <Row>
-                <Col style={styleApp.center6}>
-                  {loader ? (
-                    <Loader size={25} color={colors.white} />
-                  ) : isSelected ? (
-                    <View
-                      style={[
-                        styleApp.center,
-                        {
-                          height: 30,
-                          width: 30,
-                          backgroundColor: colors.primary,
-                          borderRadius: 15,
-                        },
-                      ]}>
-                      <AllIcons
-                        name={'check'}
-                        type="font"
-                        size={14}
-                        color={colors.white}
-                      />
-                    </View>
-                  ) : selectableMode ? (
-                    <AllIcons
-                      name={'circle'}
-                      type="font"
-                      size={23}
-                      color={colors.white}
-                      solid={isSelected ? true : false}
-                    />
-                  ) : null}
-                </Col>
-              </Row>
-            </View>
-          )}
-
-          {!hideInformation && this.linearGradient()}
-
-          {!hideInformation && url && (
-            <View
-              pointerEvents="none"
-              style={{...styles.viewText, bottom: 5, left: 10}}>
-              <Col>
-                <Text
-                  style={[
-                    styleApp.textBold,
-                    {color: colors.white, fontSize: 13},
-                  ]}>
-                  {formatDuration(durationSeconds * 1000, true)}
-                </Text>
-                <Text
-                  style={[
-                    styleApp.textBold,
-                    {color: colors.white, fontSize: 11},
-                  ]}>
-                  {progress ? (
-                    'Uploading...'
-                  ) : (
-                    <FormatDate date={startTimestamp} short />
-                  )}
-                </Text>
-              </Col>
-            </View>
-          )}
+          {this.cardArchiveImage()}
+          {videoUnavailable ? this.viewNoVideo() : null}
+          {!hideInformation ? this.rowIcons(archive) : null}
+          {!hideInformation ? this.linearGradient() : null}
+          {!hideInformation ? this.infoRow() : null}
+          {selectableMode ? this.selectionOverlay() : null}
         </View>
       </TouchableOpacity>
     );
   }
+
   render() {
-    const {archive} = this.props;
-    return this.cardArchive(archive);
+    const {archive} = this.state;
+    if (!archive) {
+      return this.placeholder();
+    }
+    return this.cardArchive();
   }
 }
 
 const styles = StyleSheet.create({
-  viewText: {
-    position: 'absolute',
-    zIndex: 5,
+  cardArchive: {
+    backgroundColor: colors.greyDarker,
   },
-  resolution: {
-    zIndex: 5,
+  linearGradient: {
+    width: '100%',
+    height: 80,
+    bottom: 0,
     position: 'absolute',
-    padding: 7,
-    top: 0,
-    right: 0,
-    backgroundColor: colors.greenLight,
-    opacity: 0.8,
-    borderBottomLeftRadius: 5,
+  },
+  infoRow: {
+    position: 'absolute',
+    zIndex: 5,
+    bottom: 5,
+    left: 10,
+  },
+  durationText: {
+    ...styleApp.textBold,
+    color: colors.white,
+    fontSize: 13,
+  },
+  dateText: {
+    ...styleApp.textBold,
+    color: colors.white,
+    fontSize: 11,
+  },
+  viewNoVideo: {
+    position: 'absolute',
+    padding: 15,
+    height: '100%',
+    zIndex: 230,
+    width: '100%',
+  },
+  unavailableText: {
+    ...styleApp.textBold,
+    marginTop: 10,
+    color: colors.white,
+    fontSize: 14,
+  },
+  selectionOverlay: {
+    ...styleApp.fullSize,
+    position: 'absolute',
+    zIndex: 5,
+    padding: 10,
+  },
+  isSelected: {
+    ...styleApp.center,
+    height: 30,
+    width: 30,
+    backgroundColor: colors.primary,
+    borderRadius: 15,
+  },
+  rowIcons: {
+    position: 'absolute',
+    padding: 15,
+    height: 50,
+    zIndex: 200,
+    width: '100%',
+  },
+  buttonDismiss: {
+    position: 'absolute',
+    top: -5,
+    right: 5,
+    zIndex: 40,
+    ...styleApp.shade,
+    ...styleApp.center,
+    ...styleApp.shadowWhite,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.grey,
+    height: 30,
+    width: 30,
   },
 });
 

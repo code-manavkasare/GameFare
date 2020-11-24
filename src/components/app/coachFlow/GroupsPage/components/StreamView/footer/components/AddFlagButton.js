@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, Easing} from 'react-native'; 
+import {View, Text, StyleSheet, Animated, Easing} from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
-import PropTypes from 'prop-types'; 
+import PropTypes from 'prop-types';
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import {generateID} from '../../../../../../../functions/utility.js';
@@ -40,7 +40,8 @@ export default class AddFlagButton extends Component {
     const {member} = props;
     const {recording} = member;
     if (!recording?.flags) return false;
-    return Object.values(recording.flags).length;
+    return Object.values(recording.flags).filter((f) => f?.id !== undefined)
+      .length;
   };
 
   buttonAddFlag() {
@@ -53,13 +54,13 @@ export default class AddFlagButton extends Component {
         view={() => {
           return (
             <Row>
-              {numberFlags && recording.isRecording && (
+              {numberFlags && recording.isRecording ? (
                 <Col size={30} style={styleApp.center3}>
                   <Text style={[styleApp.textBold, {fontSize: 13}]}>
                     {numberFlags}
                   </Text>
                 </Col>
-              )}
+              ) : null}
 
               <Col size={60} style={styleApp.center}>
                 <AllIcons
@@ -125,4 +126,3 @@ AddFlagButton.propTypes = {
   member: PropTypes.object,
   coachSessionID: PropTypes.string,
 };
-

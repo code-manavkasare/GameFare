@@ -44,7 +44,7 @@ class DrawTools extends Component {
                 <Col style={styleApp.center}>
                   <AllIcons type={type} color={color} size={size} name={name} />
                 </Col>
-                {arrow && this.arrow(arrow)}
+                {arrow ? this.arrow(arrow) : null}
               </Row>
             </View>
           );

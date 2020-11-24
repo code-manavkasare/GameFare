@@ -744,6 +744,7 @@ const selectVideosFromLibrary = (coachSessionID) => {
     selectableMode: true,
     selectOnly: true,
     navigateBackAfterConfirm: true,
+    modalMode: true,
     confirmVideo: async (selectedVideos) => {
       await shareVideosWithTeams(selectedVideos, [coachSessionID]);
     },

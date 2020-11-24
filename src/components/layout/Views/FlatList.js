@@ -44,6 +44,7 @@ class FlatListComponent extends Component {
     showsVerticalScrollIndicator: bool,
     showsHorizontalScrollIndicator: bool,
     styleContainer: object,
+    keyExtractor: func,
   };
   static defaultProps = {
     incrementRendering: 12,
@@ -53,7 +54,7 @@ class FlatListComponent extends Component {
     super(props);
     this.state = {
       numberToRender: props.initialNumberToRender,
-      list:props.list
+      list: props.list,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -63,11 +64,11 @@ class FlatListComponent extends Component {
       onRef(this);
     }
   }
-  static getDerivedStateFromProps(props,state) {
-    const {noLazy,list} = props;
+  static getDerivedStateFromProps(props, state) {
+    const {noLazy, list} = props;
     let {numberToRender} = state;
-    return {list: noLazy ? list : list.slice(0, numberToRender)}
-  } 
+    return {list: noLazy ? list : list.slice(0, numberToRender)};
+  }
   shouldComponentUpdate(nextProps, nextState) {
     if (!isEqual(nextState, this.state)) {
       return true;
@@ -78,25 +79,26 @@ class FlatListComponent extends Component {
     return true;
   }
 
-   onEndReached = async () => {
-    const {list, incrementRendering,fetchData} = this.props;
+  onEndReached = async () => {
+    const {list, incrementRendering, fetchData} = this.props;
     const {numberToRender} = this.state;
     const lengthList = list.length;
-    const nextNumberRender = numberToRender + incrementRendering > lengthList
-    ? lengthList
-    : numberToRender + incrementRendering
-    if (fetchData) await fetchData({numberToRender,nextNumberRender})
-    this.setState({numberToRender:nextNumberRender});
-  }
+    const nextNumberRender =
+      numberToRender + incrementRendering > lengthList
+        ? lengthList
+        : numberToRender + incrementRendering;
+    if (fetchData) await fetchData({numberToRender, nextNumberRender});
+    this.setState({numberToRender: nextNumberRender});
+  };
   render() {
-    const {numberToRender,list} = this.state;
+    const {numberToRender, list} = this.state;
     let {
       AnimatedHeaderValue,
       cardList,
       header,
       headerStyle,
       horizontal,
-      inverted, 
+      inverted,
       ListEmptyComponent,
       noLazy,
       numColumns,
@@ -108,6 +110,7 @@ class FlatListComponent extends Component {
       showsHorizontalScrollIndicator,
       showsVerticalScrollIndicator,
       styleContainer,
+      keyExtractor,
     } = this.props;
 
     const containerStyle = {
@@ -125,18 +128,24 @@ class FlatListComponent extends Component {
           <Loader size={40} color={colors.grey} />
         </View>
       );
-    }; 
+    };
     return (
       <FlatList
         data={list}
         renderItem={({item, index}) => cardList({item, index})}
         ListFooterComponent={() =>
-          list.length > numberToRender && list.length !== 0 && viewLoader()
+          list.length > numberToRender && list.length !== 0
+            ? viewLoader()
+            : null
         }
         scrollIndicatorInsets={{right: 1}}
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="interactive"
-        keyExtractor={(item) => (item.id ? item.id : item.toString())}
+        keyExtractor={
+          keyExtractor
+            ? keyExtractor
+            : (item) => (item.id ? item.id : item.toString())
+        }
         numColumns={numColumns}
         scrollEnabled={true}
         horizontal={horizontal}
@@ -174,7 +183,7 @@ class FlatListComponent extends Component {
               style={{height: 50, width: 50, marginBottom: 20}}
             />
             <Text style={styleApp.textBold}>{ListEmptyComponent?.text}</Text>
-            {ListEmptyComponent?.clickButton && (
+            {ListEmptyComponent?.clickButton ? (
               <Button
                 backgroundColor="primary"
                 onPressColor={colors.primaryLight}
@@ -190,8 +199,8 @@ class FlatListComponent extends Component {
                 loader={false}
                 click={() => ListEmptyComponent?.clickButton()}
               />
-            )}
-            {ListEmptyComponent?.clickButton2 && (
+            ) : null}
+            {ListEmptyComponent?.clickButton2 ? (
               <Button
                 backgroundColor="green"
                 onPressColor={colors.greenLight}
@@ -207,7 +216,7 @@ class FlatListComponent extends Component {
                 loader={false}
                 click={() => ListEmptyComponent?.clickButton2()}
               />
-            )}
+            ) : null}
           </View>
         )}
         onScroll={

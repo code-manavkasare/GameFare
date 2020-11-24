@@ -154,13 +154,14 @@ class ProfilePage extends Component {
               {firstname} {lastname}
             </Text>
             {BadgesView({badges})}
-            {coach &&
-              PriceView({
-                hourlyRate,
-              })}
+            {coach
+              ? PriceView({
+                  hourlyRate,
+                })
+              : null}
           </Col>
         </Row>
-        {coach && <View style={styleApp.divider} />}
+        {coach ? <View style={styleApp.divider} /> : null}
         {FocusView({
           list: focusAreas,
           icon: {
@@ -170,39 +171,42 @@ class ProfilePage extends Component {
             type: 'font',
           },
         })}
-        {gender &&
-          FocusView({
-            list: [capitalize(gender)],
-            icon: {
-              name: gender === 'male' ? 'mars' : 'venus',
-              color: colors.title,
-              size: 23,
-              type: 'font',
-            },
-          })}
-        {levelCoached &&
-          FocusView({
-            list: [capitalize(levelCoached)],
-            icon: {
-              name: 'balance-scale',
-              color: colors.title,
-              size: 21,
-              type: 'font',
-            },
-          })}
-        {biography &&
-          FocusView({
-            list: [biography],
-            icon: {
-              name: 'align-left',
-              color: colors.title,
-              size: 23,
-              type: 'font',
-            },
-          })}
+        {gender
+          ? FocusView({
+              list: [capitalize(gender)],
+              icon: {
+                name: gender === 'male' ? 'mars' : 'venus',
+                color: colors.title,
+                size: 23,
+                type: 'font',
+              },
+            })
+          : null}
+        {levelCoached
+          ? FocusView({
+              list: [capitalize(levelCoached)],
+              icon: {
+                name: 'balance-scale',
+                color: colors.title,
+                size: 21,
+                type: 'font',
+              },
+            })
+          : null}
+        {biography
+          ? FocusView({
+              list: [biography],
+              icon: {
+                name: 'align-left',
+                color: colors.title,
+                size: 23,
+                type: 'font',
+              },
+            })
+          : null}
         <View style={styleApp.divider} />
         {/* <View style={{height: 30}} />
-        {coach && (
+        {coach ? (
           <Button
             text={'Request a session'}
             loader={loaderMessage}
@@ -216,7 +220,7 @@ class ProfilePage extends Component {
             onPressColor={colors.blueLight}
             click={() => this.requestSession()}
           />
-        )} */}
+        ) : null} */}
 
         <View style={[{height: 10}]} />
 

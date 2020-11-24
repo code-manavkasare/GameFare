@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, Alert} from 'react-native'
+import {} from 'react-native';
 import {Line, G, Path} from 'react-native-svg';
 
 import colors from '../../../../../style/colors';
 import EditPoint from '../editShape/EditPoint';
 
-class DrawSraightLine extends Component {
+export default class DrawSraightLine extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -60,7 +60,7 @@ class DrawSraightLine extends Component {
           )}
           editShape={isSelected && editShape}
         />
-        {arrow && this.pointsNotNull() && (
+        {arrow && this.pointsNotNull() ? (
           <G
             rotation={(Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI - 135}
             origin={`${x2}, ${y2}`}>
@@ -71,8 +71,8 @@ class DrawSraightLine extends Component {
               stroke={strokeColor}
             />
           </G>
-        )}
-        {isSelected && (
+        ) : null}
+        {isSelected ? (
           <EditPoint
             endPoint={endPoint}
             endEditShape={endEditShape}
@@ -85,8 +85,8 @@ class DrawSraightLine extends Component {
             editShape={editShape}
             backgroundColor={colors.secondary + '50'}
           />
-        )}
-        {isSelected && (
+        ) : null}
+        {isSelected ? (
           <EditPoint
             startPoint={startPoint}
             positionZone={{x: startPoint.x, y: startPoint.y}}
@@ -96,7 +96,7 @@ class DrawSraightLine extends Component {
             endEditShape={endEditShape}
             backgroundColor={colors.secondary}
           />
-        )}
+        ) : null}
       </G>
     );
   }
@@ -104,4 +104,3 @@ class DrawSraightLine extends Component {
     return this.drawView();
   }
 }
-

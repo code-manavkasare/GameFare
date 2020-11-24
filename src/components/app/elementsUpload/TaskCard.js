@@ -1,12 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  Animated,
-  TouchableHighlight,
-} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {Row, Col} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import * as Progress from 'react-native-progress';
@@ -16,8 +9,8 @@ import styleApp from '../../style/style';
 import colors from '../../style/colors';
 
 import {uploadQueueAction} from '../../../store/actions/uploadQueueActions';
+import AsyncImage from '../../layout/image/AsyncImage';
 import {FormatDate, formatDuration} from '../../functions/date';
-import AllIcons from '../../layout/icons/AllIcons';
 
 class TaskCard extends Component {
   constructor(props) {
@@ -41,13 +34,15 @@ class TaskCard extends Component {
   }
 
   thumbnail() {
-    const {task} = this.props;
+    const {task, archiveThumbnail} = this.props;
     return (
       <View style={styles.fullCenter}>
         <View style={{...styles.thumbnail}}>
-          {task?.videoInfo?.thumbnail ? (
-            <Image
-              source={{uri: task.videoInfo.thumbnail}}
+          {archiveThumbnail ? (
+            <AsyncImage mainImage={archiveThumbnail} style={styles.thumbnail} />
+          ) : task?.videoInfo?.thumbnail ? (
+            <AsyncImage
+              mainImage={task?.videoInfo?.thumbnail}
               style={styles.thumbnail}
             />
           ) : (
@@ -92,12 +87,12 @@ class TaskCard extends Component {
 
   render() {
     const {task} = this.props;
+    const styleCard = {
+      ...styles.card,
+      opacity: task.uploading ? 1 : 0.7,
+    };
     return (
-      <View
-        style={{
-          ...styles.card,
-          opacity: task.uploading ? 1 : 0.7,
-        }}>
+      <View style={styleCard}>
         <Row>
           <Col size={15}>{this.thumbnail()}</Col>
           <Col size={5} />
@@ -160,11 +155,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
   return {
-    uploadQueue: state.uploadQueue,
     currentScreenSize: state.layout.currentScreenSize,
     connectionType: state.connectionType.type,
+    archiveThumbnail: state.archives[props.task.cloudID].thumbnail,
   };
 };
 
