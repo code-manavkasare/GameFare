@@ -96,7 +96,7 @@ export default class LogoutView extends Component {
           },
         ]}>
         {this.loader()}
-        {displayVideo && (
+        {displayVideo ? (
           <Video
             repeat={true}
             paused={paused}
@@ -108,7 +108,7 @@ export default class LogoutView extends Component {
             onLoad={() => this.setState({paused: false})}
             style={videoStyle()}
           />
-        )}
+        ) : null}
         <Animated.View style={{...styles.logoContainer, opacity}}>
           <Animated.Image
             style={{width: 230, height: 50, position: 'absolute'}}

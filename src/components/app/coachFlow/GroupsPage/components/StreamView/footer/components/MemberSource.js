@@ -188,14 +188,14 @@ class MemberSource extends Component {
 
           <Col size={15} />
           <Col size={15}>
-            {!recording?.dispatched && (
+            {!recording?.dispatched ? (
               <AddFlagButton
                 coachSessionID={coachSessionID}
                 member={member}
                 disableSnapShot={true}
                 takeSnapShotCameraView={takeSnapShotCameraView}
               />
-            )}
+            ) : null}
           </Col>
 
           <Col size={8} />

@@ -57,7 +57,7 @@ export default class SelectCountry extends Component {
     }
     return (
       <View key={i}>
-        {displayLetter && displayHeader && (
+        {displayLetter && displayHeader ? (
           <Row style={styles.rowLetter}>
             <Col style={styleApp.center2}>
               <Text style={[styleApp.title, {fontSize: 14}]}>
@@ -65,7 +65,7 @@ export default class SelectCountry extends Component {
               </Text>
             </Col>
           </Row>
-        )}
+        ) : null}
 
         <ButtonColor
           view={() => {

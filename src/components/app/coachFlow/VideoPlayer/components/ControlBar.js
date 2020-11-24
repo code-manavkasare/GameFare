@@ -234,11 +234,11 @@ export default class ControlBar extends Component {
         <Animated.View style={focusedSpeedStyle}>
           {this.speedButton()}
         </Animated.View>
-        {speedSelectorVisible && (
+        {speedSelectorVisible ? (
           <Animated.View style={speedSelectorStyle}>
             {this.speedSelector()}
           </Animated.View>
-        )}
+        ) : null}
       </View>
     );
   }

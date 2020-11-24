@@ -62,7 +62,7 @@ export default class CameraPage extends Component {
           typeIcon2="font"
           colorIcon2={colors.white}
         />
-        {cameraReady && (
+        {cameraReady ? (
           <Row style={styles.bottomButtonsContainer}>
             <BottomButtons
               onRef={(ref) => {
@@ -73,7 +73,7 @@ export default class CameraPage extends Component {
               stopRecording={() => camera.stopRecording(true, true)}
             />
           </Row>
-        )}
+        ) : null}
       </View>
     );
   }
@@ -96,4 +96,3 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
 });
-

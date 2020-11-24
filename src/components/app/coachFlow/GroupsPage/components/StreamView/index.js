@@ -19,7 +19,6 @@ import database from '@react-native-firebase/database';
 import KeepAwake from 'react-native-keep-awake';
 import isEqual from 'lodash.isequal';
 import axios from 'axios';
-import Orientation from 'react-native-orientation-locker';
 
 import colors from '../../../../../style/colors';
 import styleApp from '../../../../../style/style';
@@ -45,18 +44,17 @@ import {
   userPartOfSession,
   getVideosSharing,
   getMember,
+  timeout,
 } from '../../../../../functions/coach';
 import {openVideoPlayer} from '../../../../../functions/videoManagement';
 import {permission} from '../../../../../functions/pictures';
-
+import FocusListeners from '../../../../../hoc/focusListeners';
 import Header from './components/Header';
 import Loader from '../../../../../layout/loaders/Loader';
 
 import MembersView from './components/MembersView';
 import CameraPage from '../../../../../app/camera/index';
 import Footer from './footer/index';
-
-const {width} = Dimensions.get('screen');
 
 class GroupsPage extends Component {
   constructor(props) {
@@ -154,7 +152,7 @@ class GroupsPage extends Component {
           });
       },
       streamDestroyed: (event) => {
-        const {userID, currentSessionID} = this.props;
+        const {currentSessionID} = this.props;
         const {streamId, connectionId} = event;
         logMixpanel({
           label: 'publisherEventHandlers streamDestroyed ' + currentSessionID,
@@ -169,22 +167,8 @@ class GroupsPage extends Component {
   }
 
   componentDidMount() {
-    const {navigation} = this.props;
     this.refreshTokenMember();
-    this.focusListener = navigation.addListener('focus', () => {
-      Orientation.unlockAllOrientations();
-      StatusBar.setBarStyle('light-content', true);
-    });
-
-    this.blurListener = navigation.addListener('blur', () => {
-      StatusBar.setBarStyle('dark-content', true);
-      Orientation.lockToPortrait();
-    });
   }
-  componentWillUnmount = () => {
-    this.blurListener();
-    this.focusListener();
-  };
 
   componentDidUpdate(prevProps, prevState) {
     const {
@@ -292,7 +276,7 @@ class GroupsPage extends Component {
     return (
       <View style={loaderViewStyle}>
         {<Text style={styleText}>{text}</Text>}
-        {!hideLoader && <Loader size={55} color={colors.white} />}
+        {!hideLoader ? <Loader size={55} color={colors.white} /> : null}
       </View>
     );
   }
@@ -510,9 +494,9 @@ class GroupsPage extends Component {
           members={coachSession.members}
           coachSessionID={currentSessionID}
         />
-        {!publishVideo && this.pausedView(userIsAlone)}
+        {!publishVideo ? this.pausedView(userIsAlone) : null}
         <View style={styleApp.fullSize}>
-          {member.tokenTokbox && connectionType && this.isTokenUpToDate() && (
+          {member.tokenTokbox && connectionType && this.isTokenUpToDate() ? (
             <OTSession
               apiKey={Config.OPENTOK_API}
               ref={this.otSessionRef}
@@ -534,7 +518,7 @@ class GroupsPage extends Component {
                 {this.renderSubscribers}
               </OTSubscriber>
             </OTSession>
-          )}
+          ) : null}
         </View>
 
         <Footer
@@ -553,7 +537,7 @@ class GroupsPage extends Component {
             return cameraPosition;
           }}
         />
-        {reconnecting && (
+        {reconnecting ? (
           <View
             style={[
               styleApp.center,
@@ -562,13 +546,15 @@ class GroupsPage extends Component {
             ]}>
             <Loader size={55} color={colors.white} />
           </View>
-        )}
+        ) : null}
       </View>
     );
   }
   session() {
+    const {navigation} = this.props;
     return (
       <View style={styleApp.stylePage}>
+        <FocusListeners navigation={navigation} />
         <KeepAwake />
         {this.streamPage()}
       </View>
@@ -625,7 +611,7 @@ const styles = StyleSheet.create({
   },
   loaderView: {
     height: '100%',
-    width: width,
+    width: '100%',
     backgroundColor: colors.red,
     opacity: 0.4,
     zIndex: 5,

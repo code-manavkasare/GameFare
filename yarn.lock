@@ -1062,10 +1062,10 @@
   dependencies:
     prop-types "^15.5.10"
 
-"@react-native-community/cameraroll@^1.3.0":
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/@react-native-community/cameraroll/-/cameraroll-1.8.1.tgz#cf0efd3f963a53448ca246c186c273d3675731e5"
-  integrity sha512-5omI11UUNGpNFPmaE/TQVARFdP+ZvxiTl3rLluGS4raqvPVqz5C8ETVVKCnGk8FjVhuc/7CdfAkC6mvokAsAcw==
+"@react-native-community/cameraroll@^4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@react-native-community/cameraroll/-/cameraroll-4.0.1.tgz#8466f99a476e6b833ecd5efff045f74a4224459b"
+  integrity sha512-KLKh5rAg511KUoGKHrbRhBLvkHhOz6kZ2sx8dPhndZ5ZFVYfVpTadSN1x3cfQbOAlkyGZql07p1hk7lEb3sa8g==
 
 "@react-native-community/cli-debugger-ui@^4.9.0":
   version "4.9.0"
@@ -1281,44 +1281,44 @@
   resolved "https://registry.yarnpkg.com/@react-native-firebase/storage/-/storage-6.7.1.tgz#fe5c99e8fac55529869ff502ecb775f87e9eca2a"
   integrity sha512-NqiwgOaYIPlxUn2Ith/bJNBy4aV0MNAKmWLzRxnW7rczz6BxtLbKC46NVzlA3S2LKaE3Abbx74dFisiOhp9vBA==
 
-"@react-navigation/core@^5.14.0":
-  version "5.14.0"
-  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-5.14.0.tgz#7cfba86ca3042ddc4542bd3422b73b3cf3553f61"
-  integrity sha512-FAF7pFxqUtpkY7ylod5IYmwz0rbuYul4qqn0jKc8LHzHdZJd9pbKrJb9GIjx9Y0Zucj8XUEyE8S0SEM0JiF9PA==
+"@react-navigation/core@^5.14.3":
+  version "5.14.3"
+  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-5.14.3.tgz#6bbbfe1fb90aa64068fdb69bbb6c55120b7b24f1"
+  integrity sha512-l4zCfIfPC4DYuDcluiisaWKg7GO5yAjBrIL0pzEw8bIBj+R6vnZnyG9AWgnwo5fl241DX+1sfgzGEUQgpIJNew==
   dependencies:
-    "@react-navigation/routers" "^5.6.0"
+    "@react-navigation/routers" "^5.6.2"
     escape-string-regexp "^4.0.0"
     nanoid "^3.1.15"
     query-string "^6.13.6"
     react-is "^16.13.0"
 
-"@react-navigation/material-top-tabs@^5.2.16":
-  version "5.3.6"
-  resolved "https://registry.yarnpkg.com/@react-navigation/material-top-tabs/-/material-top-tabs-5.3.6.tgz#d13b1b6d999d7d0fc6ecac936f217bb1b2f51078"
-  integrity sha512-LYsH/jZsaIausnF+l6Cnl0YlHNcWwkdncxjiIcdndrd0BbBuTj84najzELrISyGPLbB0nr/e5HhDI5NjoecdYw==
+"@react-navigation/material-top-tabs@^5.3.9":
+  version "5.3.9"
+  resolved "https://registry.yarnpkg.com/@react-navigation/material-top-tabs/-/material-top-tabs-5.3.9.tgz#8a43c3213313abdc896bf5d59eb447ec67a66593"
+  integrity sha512-y7Ny5Emjuo5NsmiXX5mkAn1j160dzYocV+r8H/tiQUfR9cTLRu22jym7eLGpeKM0yzpeT2o2D+kRclom4oxMjg==
   dependencies:
     color "^3.1.3"
 
-"@react-navigation/native@^5.7.2":
-  version "5.8.6"
-  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-5.8.6.tgz#a853a93a7daf995beb0bb1051693caf9efc4c31e"
-  integrity sha512-MCfOF1gZaugElyT0KxSA15VXGBt5RBCIW2SevZwIy41juKBxJeiCa41HTE7o5tbasp1EHtE0SzgIYz/0tneoxQ==
+"@react-navigation/native@^5.8.9":
+  version "5.8.9"
+  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-5.8.9.tgz#67ee2afef6af6ef40c425e02264bd25d1530b361"
+  integrity sha512-d1oihLxp9UDVsZyvHNcwJfj+LKsEo0m8vEBBV6jhLJAXs1d2DEBzBXGeP907uG+877TK7luh2h79Or4w7/+p+g==
   dependencies:
-    "@react-navigation/core" "^5.14.0"
+    "@react-navigation/core" "^5.14.3"
     escape-string-regexp "^4.0.0"
     nanoid "^3.1.15"
 
-"@react-navigation/routers@^5.6.0":
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/@react-navigation/routers/-/routers-5.6.0.tgz#90f56691b68cbab8d144503a66fa2a1742234d7e"
-  integrity sha512-sQRJVv5g0Zou1wouEnX/zKQi5QJEIccTd7oLy9ex2MJKjALTsfWUMWaFCZQLZjBJqT7Hz2GKp+VKlep6Dzq7Wg==
+"@react-navigation/routers@^5.6.2":
+  version "5.6.2"
+  resolved "https://registry.yarnpkg.com/@react-navigation/routers/-/routers-5.6.2.tgz#accc008c3b777f74d998e16cb2ea8e4c1fe8d9aa"
+  integrity sha512-XBcDKXS5s4MaHFufN44LtbXqFDH/nUHfHjbwG85fP3k772oRyPRgbnUb2mbw5MFGqORla9T7uymR6Gh6uwIwVw==
   dependencies:
     nanoid "^3.1.15"
 
-"@react-navigation/stack@^5.2.9":
-  version "5.12.3"
-  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-5.12.3.tgz#a9ad55b9ab8c2337a6298e92d5c38dc376cdfe83"
-  integrity sha512-qJBX6+3JKFi252b/98eijCM2yB+t5GVvZjod3lWpl+44By5EAo4gMGlAVTXbLBLqDEE+LDtHRFE3AMt1IjLVmw==
+"@react-navigation/stack@^5.12.6":
+  version "5.12.6"
+  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-5.12.6.tgz#a6f2caf66da78ad2afa80f7a960c36db6b83bcff"
+  integrity sha512-pf9AigAIVtCQuCpZAZqBux4kNqQwj98ngvd6JEryFrqTQ1CYsUH6jfpQE7SKyHggVRFSQVMf24aCgwtRixBvjw==
   dependencies:
     color "^3.1.3"
     react-native-iphone-x-helper "^1.3.0"
@@ -1367,14 +1367,14 @@
   resolved "https://registry.yarnpkg.com/@redux-saga/types/-/types-1.1.0.tgz#0e81ce56b4883b4b2a3001ebe1ab298b84237204"
   integrity sha512-afmTuJrylUU/0OtqzaRkbyYFFNgCF73Bvel/sw90pvGrWIZ+vyoIJqA6eMSoA6+nb443kTmulmBtC9NerXboNg==
 
-"@sentry/browser@5.27.3", "@sentry/browser@^5.27.1":
-  version "5.27.3"
-  resolved "https://registry.yarnpkg.com/@sentry/browser/-/browser-5.27.3.tgz#02e78a4502ee99988d3cbb0075a11ec44b503871"
-  integrity sha512-vczS+XTW4Nk2A7TIpAw8IVFHpp+NK6mV9euBG2I61Bs2QbQY9yKLfbjiln/yH2Q8X4THX6MKa0GuiPoCEeq3uw==
+"@sentry/browser@5.27.4":
+  version "5.27.4"
+  resolved "https://registry.yarnpkg.com/@sentry/browser/-/browser-5.27.4.tgz#241dedc7d82d3ed2769bfc8e4fb193d10e6a1d4d"
+  integrity sha512-L8Fsnkl3PIak4zJ1pcGDmV92XTQjS2/H6EBgp1rhuOF4OE3L59K8RR73C9w+wVtsIi7nyfYg/FIe8lvG++3Mow==
   dependencies:
-    "@sentry/core" "5.27.3"
-    "@sentry/types" "5.27.3"
-    "@sentry/utils" "5.27.3"
+    "@sentry/core" "5.27.4"
+    "@sentry/types" "5.27.4"
+    "@sentry/utils" "5.27.4"
     tslib "^1.9.3"
 
 "@sentry/cli@^1.52.4":
@@ -1388,18 +1388,18 @@
     progress "^2.0.3"
     proxy-from-env "^1.1.0"
 
-"@sentry/core@5.27.3", "@sentry/core@^5.27.1":
-  version "5.27.3"
-  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-5.27.3.tgz#d7a175b71596b7eb4b2e8b4cd1858a60d95813bb"
-  integrity sha512-yqepQO88jSt5hy0awpk61AxI4oHB09LjVbUEk4nJDg+1YXuND23cuZvH+Sp2jCZX2vrsw2tefwflToYfA8/U2w==
+"@sentry/core@5.27.4":
+  version "5.27.4"
+  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-5.27.4.tgz#4155ee09ee4deed7364918094bf81654dcf681c0"
+  integrity sha512-IbI37cIZU/qBQouuUXaLbGF/9xYFp5STqmj1Gv64l0IZe4JnEp06V3yD5GxQ/mJ78vSfOqfwLooVCUw9FA61sQ==
   dependencies:
-    "@sentry/hub" "5.27.3"
-    "@sentry/minimal" "5.27.3"
-    "@sentry/types" "5.27.3"
-    "@sentry/utils" "5.27.3"
+    "@sentry/hub" "5.27.4"
+    "@sentry/minimal" "5.27.4"
+    "@sentry/types" "5.27.4"
+    "@sentry/utils" "5.27.4"
     tslib "^1.9.3"
 
-"@sentry/hub@5.27.3", "@sentry/hub@^5.27.1":
+"@sentry/hub@5.27.3":
   version "5.27.3"
   resolved "https://registry.yarnpkg.com/@sentry/hub/-/hub-5.27.3.tgz#f509c2fd38f500afef6030504e82510dbd0649d6"
   integrity sha512-icEH3hr6NVQkpowXZcPOs9IgJZP5lMKtvud4mVioSpkd+NxtRdKrGEX4eF2TCviOJc9Md0mV4K+aL5Au7hxggQ==
@@ -1408,13 +1408,22 @@
     "@sentry/utils" "5.27.3"
     tslib "^1.9.3"
 
-"@sentry/integrations@^5.27.1":
-  version "5.27.3"
-  resolved "https://registry.yarnpkg.com/@sentry/integrations/-/integrations-5.27.3.tgz#d9a8f898c9414e9dc287fcd00d28321f54f4701e"
-  integrity sha512-lmkYH3g1ZW9I8g3SXQNYIfNc9gaNoqJUxgTI9d0AQph+mSB8Y3lx50NYMAfK74XgiC3VJ9j8kWstdQCMbgfXpQ==
+"@sentry/hub@5.27.4":
+  version "5.27.4"
+  resolved "https://registry.yarnpkg.com/@sentry/hub/-/hub-5.27.4.tgz#15db6f504672edd70b793e4b3d370dca9cb2fef6"
+  integrity sha512-Ba1AqcjvSd2S+fpdXtXCrVXdrzq9E2Etb2eHUOkEYwSsq7StMOw7E8YHDPAo+to8zUbpMPz/Z9XGhFkyAbImGQ==
   dependencies:
-    "@sentry/types" "5.27.3"
-    "@sentry/utils" "5.27.3"
+    "@sentry/types" "5.27.4"
+    "@sentry/utils" "5.27.4"
+    tslib "^1.9.3"
+
+"@sentry/integrations@5.27.4":
+  version "5.27.4"
+  resolved "https://registry.yarnpkg.com/@sentry/integrations/-/integrations-5.27.4.tgz#a048a2e9cbc65575a70a54dd0cae5bce2130d55e"
+  integrity sha512-/2KRNrpbRDatNfurKzhpeYa5YQCYSXgR2JbPGQzg8d3fKggSTDLiVxrc+LC7oHeHgv6LWOzkVVzfmB01LJRZTA==
+  dependencies:
+    "@sentry/types" "5.27.4"
+    "@sentry/utils" "5.27.4"
     localforage "1.8.1"
     tslib "^1.9.3"
 
@@ -1427,29 +1436,38 @@
     "@sentry/types" "5.27.3"
     tslib "^1.9.3"
 
-"@sentry/react-native@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@sentry/react-native/-/react-native-2.0.0.tgz#6e6cf9e67354c15a40b8d3a9d3837359d40b9f87"
-  integrity sha512-Hw7OukaBljJRY72tGtshQGaxqg+P2WbftqC+JD1xXO7Qecrms1fg0wdY9/Q6gNIYFDCtSX0narx2R7pCQ5RK/A==
+"@sentry/minimal@5.27.4":
+  version "5.27.4"
+  resolved "https://registry.yarnpkg.com/@sentry/minimal/-/minimal-5.27.4.tgz#2b331ed43d5f8999606fe9f8bf26a85155e8286c"
+  integrity sha512-biw5YfIQwvDoaRhLarfeRQ6MJ9UJOoDTmu8Kgg18prJy4rtfDowNJP0OBs5XAsTk6SWAXiE3g7vqUJBXgs7BWA==
   dependencies:
-    "@sentry/browser" "^5.27.1"
-    "@sentry/core" "^5.27.1"
-    "@sentry/hub" "^5.27.1"
-    "@sentry/integrations" "^5.27.1"
-    "@sentry/react" "^5.27.1"
-    "@sentry/types" "^5.27.1"
-    "@sentry/utils" "^5.27.1"
+    "@sentry/hub" "5.27.4"
+    "@sentry/types" "5.27.4"
+    tslib "^1.9.3"
+
+"@sentry/react-native@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@sentry/react-native/-/react-native-2.0.1.tgz#5a399e4fbe7104acce03d3a3167fb1271bb6198b"
+  integrity sha512-1PycCdLLjwDKINRJa8RV1+P11s/Bqi03EQ2Wn+X3J6sfybLO2qPPE92MBM6NMMaeYf8clhBJr4f5lwjdeDeMzA==
+  dependencies:
+    "@sentry/browser" "5.27.4"
+    "@sentry/core" "5.27.4"
+    "@sentry/hub" "5.27.4"
+    "@sentry/integrations" "5.27.4"
+    "@sentry/react" "5.27.4"
+    "@sentry/types" "5.27.4"
+    "@sentry/utils" "5.27.4"
     "@sentry/wizard" "^1.1.4"
 
-"@sentry/react@^5.27.1":
-  version "5.27.3"
-  resolved "https://registry.yarnpkg.com/@sentry/react/-/react-5.27.3.tgz#aefff1cb2249a4e7f123c7467d1da205d5c02e92"
-  integrity sha512-p7E+djSUVKz02HoRVDX+zamjV8+RL4bqoPnS9JQESweB0sRTYlpvi+CqWLYWNWnamWQWOl97hOw/lLDpo4kUSA==
+"@sentry/react@5.27.4":
+  version "5.27.4"
+  resolved "https://registry.yarnpkg.com/@sentry/react/-/react-5.27.4.tgz#757983dda2b2c8782d4c3a73c85806bb21ec93ed"
+  integrity sha512-nRv/u2nP4cQMWu1Gybv7izIl2VwcM6s6P2hco9RlxrCJUpQIUuHRo4yWqDn+G1Xxdr511yY8p4JR+ESBaRGJFg==
   dependencies:
-    "@sentry/browser" "5.27.3"
-    "@sentry/minimal" "5.27.3"
-    "@sentry/types" "5.27.3"
-    "@sentry/utils" "5.27.3"
+    "@sentry/browser" "5.27.4"
+    "@sentry/minimal" "5.27.4"
+    "@sentry/types" "5.27.4"
+    "@sentry/utils" "5.27.4"
     hoist-non-react-statics "^3.3.2"
     tslib "^1.9.3"
 
@@ -1464,17 +1482,30 @@
     "@sentry/utils" "5.27.3"
     tslib "^1.9.3"
 
-"@sentry/types@5.27.3", "@sentry/types@^5.27.1":
+"@sentry/types@5.27.3":
   version "5.27.3"
   resolved "https://registry.yarnpkg.com/@sentry/types/-/types-5.27.3.tgz#d377508769bc658d672c287166c7f6c5db45660c"
   integrity sha512-PkWhMArFMxBb1g3HtMEL8Ea9PYae2MU0z9CMIWiqzerFy2ZpKG98IU3pt8ic4JkmKQdwB8hDiZpRPMHhW0WYwQ==
 
-"@sentry/utils@5.27.3", "@sentry/utils@^5.27.1":
+"@sentry/types@5.27.4":
+  version "5.27.4"
+  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-5.27.4.tgz#ba7cefae6f77bb39a0ac59aeba1bb23ce4ad5216"
+  integrity sha512-41h3c7tgtSS8UBmfvEckSr+7V7/IVOjt/EiydyOd6s0N18zSFfGY5HdA6g+eFtIJK3DhWkUHCHZNanD5IY5YCQ==
+
+"@sentry/utils@5.27.3":
   version "5.27.3"
   resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-5.27.3.tgz#1fc45dfad1f1e4398bee58684d8947666d8d3003"
   integrity sha512-R9WvFrRBALZvCzu/9BsuXBCfkNxz4MwdBNSXaBsJo4afQw1ljkjIc9DpHzlL9S9goIwXo81Buwmr5gGDO6aH+Q==
   dependencies:
     "@sentry/types" "5.27.3"
+    tslib "^1.9.3"
+
+"@sentry/utils@5.27.4":
+  version "5.27.4"
+  resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-5.27.4.tgz#d57ccd72a56e2f97e109d632957f6cd11806e992"
+  integrity sha512-shV1I/q+Tob3hUxRj11DfMhe9PNDiv85hUUoRloZGGwu275dMwpswb2uwgSmjc2Ao4pnMKVx8TL1hC3kGLVHTQ==
+  dependencies:
+    "@sentry/types" "5.27.4"
     tslib "^1.9.3"
 
 "@sentry/wizard@^1.1.4":
@@ -4407,9 +4438,9 @@ gamefare-camera-kit@^1.1.2:
   dependencies:
     lodash "^4.14.2"
 
-"gamefare-local-opentok@git+https://gitlab.com/gamefare/gamefare-local-opentok.git#0.0.14":
-  version "0.0.14"
-  resolved "git+https://gitlab.com/gamefare/gamefare-local-opentok.git#1eac20c6cf847fca1a0c2e62290698a8dc10bd8c"
+"gamefare-local-opentok@git+https://gitlab.com/gamefare/gamefare-local-opentok.git#0.0.18":
+  version "0.0.18"
+  resolved "git+https://gitlab.com/gamefare/gamefare-local-opentok.git#d3ff0f138ab7630999b0a1ab2a7bb0a1c15187cd"
   dependencies:
     axios "^0.19.0"
     prop-types "^15.7.2"
@@ -5839,9 +5870,9 @@ lodash@^3.10.0:
   integrity sha1-W/Rejkm6QYnhfUgnid/RW9FAt7Y=
 
 lodash@^4.0.0, lodash@^4.14.2, lodash@^4.16.6, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.12, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.3.0, lodash@^4.6.1:
-  version "4.17.20"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
-  integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
+  version "4.17.19"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
+  integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
 
 log-symbols@^2.2.0:
   version "2.2.0"
@@ -7296,11 +7327,6 @@ react-native-hyperlink@^0.0.19:
     linkify-it "^2.2.0"
     mdurl "^1.0.0"
 
-react-native-image-crop-picker@^0.35.0:
-  version "0.35.1"
-  resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.35.1.tgz#590b6ed7af7b63a505132c73819c9166347bf1e3"
-  integrity sha512-5HY2NnkmgL/Nw1IpU9CkTWj4qgFYPF8KxDaHoaufEWNjvOCRGziMoui55cO7k4KdwsIKmb1UbDzkCYemJqcyow==
-
 react-native-image-pan-zoom@^2.1.9:
   version "2.1.12"
   resolved "https://registry.yarnpkg.com/react-native-image-pan-zoom/-/react-native-image-pan-zoom-2.1.12.tgz#eb98bf56fb5610379bdbfdb63219cc1baca98fd2"
@@ -8219,9 +8245,9 @@ setprototypeof@1.1.1:
   integrity sha512-JvdAWfbXeIGaZ9cILp38HntZSFSo3mWg6xGcJJsd+d4aRMOqauag1C63dJfDw7OaMYwEbHMOxEZ1lqVRYP2OAw==
 
 shaka-player@^2.5.9:
-  version "2.5.17"
-  resolved "https://registry.yarnpkg.com/shaka-player/-/shaka-player-2.5.17.tgz#824740a0db06fd433397389650ec94ce3b57a26d"
-  integrity sha512-v8kzAXJOiEnI9B1z0CmlMSIbsIfmPseHuosriKqqnDWvDlYVwvdwUz4biPvxUiRIIw9v6His548kPQdO39+jow==
+  version "2.5.18"
+  resolved "https://registry.yarnpkg.com/shaka-player/-/shaka-player-2.5.18.tgz#5382d0b879ade01dc7cea5115d311d2168b7428a"
+  integrity sha512-kW6sNMl36E4ookOcAo7//D/+sNkKNw7kBCR58AAC0eYw+fpVXwUbFoN/aqsj5nhACZ00QGQQajTZXZyK1s8Dow==
   dependencies:
     eme-encryption-scheme-polyfill "^2.0.1"
 

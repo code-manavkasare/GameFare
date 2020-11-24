@@ -1,3 +1,4 @@
+import React from 'react';
 import {Platform, Image} from 'react-native';
 import CameraRoll from '@react-native-community/cameraroll';
 import Permissions, {
@@ -13,6 +14,8 @@ import {createThumbnail} from 'react-native-create-thumbnail';
 import RNFS from 'react-native-fs';
 import {fromHsv} from 'react-native-color-picker';
 
+import colors from '../style/colors';
+import {navigate} from '../../../NavigationService';
 import {store} from '../../store/reduxStore';
 import {DocumentDirectoryPath} from 'react-native-fs';
 import {generateID} from '../functions/utility';
@@ -252,6 +255,10 @@ const resolutionP = (size) => {
 };
 
 const getNewVideoSavePath = () => {
+  return DocumentDirectoryPath + '/' + generateID() + '.mov';
+};
+
+const getNewAudioSavePath = () => {
   return DocumentDirectoryPath + '/' + generateID() + '.mp4';
 };
 
@@ -316,7 +323,28 @@ const getImageSize = async (uri) => {
   return {};
 };
 
+const checkVideoLibraryAccess = async () => {
+  const permissionLibrary = await permission('library');
+  if (!permissionLibrary) {
+    return navigate('Alert', {
+      textButton: 'Open Settings',
+      title:
+        'You need to allow access to your library before adding videos from the camera roll.',
+      colorButton: 'blue',
+      onPressColor: colors.blueLight,
+      onGoBack: () => goToSettings(),
+      icon: (
+        <Image
+          source={require('../../img/icons/technology.png')}
+          style={{width: 25, height: 25}}
+        />
+      ),
+    });
+  }
+};
+
 export {
+  checkVideoLibraryAccess,
   takePicture,
   pickLibrary,
   resize,
@@ -332,6 +360,7 @@ export {
   ge10tLastVideo,
   getNativeVideoInfo,
   getNewVideoSavePath,
+  getNewAudioSavePath,
   valueColor,
   updateVideoSavePath,
   getOpentokVideoInfo,

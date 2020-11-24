@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 
 import {StyleSheet, Text, Animated, View, TouchableOpacity} from 'react-native';
-import {Grid, Row, Col} from 'react-native-easy-grid';
+import {Row, Col} from 'react-native-easy-grid';
 
 import sizes, {
   marginTopApp,
@@ -93,7 +93,6 @@ class HeaderBackButton extends Component {
       colorIcon1,
       sizeIcon1,
       typeIcon1,
-      nobackgroundColorIcon1,
       onPressColorIcon1,
       badgeIcon1,
     } = this.props;
@@ -138,7 +137,7 @@ class HeaderBackButton extends Component {
             style={[styles.buttonRight]}
             onPressColor={onPressColorIcon1 ? onPressColorIcon1 : colors.off}
           />
-          {badgeIcon1 && (
+          {badgeIcon1 ? (
             <View
               pointerEvents="none"
               style={{
@@ -148,7 +147,7 @@ class HeaderBackButton extends Component {
               }}>
               {badgeIcon1}
             </View>
-          )}
+          ) : null}
         </Animated.View>
       );
     }
@@ -455,7 +454,7 @@ class HeaderBackButton extends Component {
               backgroundColorIcon2 ? backgroundColorIcon2 : colors.off
             }
           />
-          {badgeIcon2 && (
+          {badgeIcon2 ? (
             <View
               pointerEvents="none"
               style={{
@@ -465,7 +464,7 @@ class HeaderBackButton extends Component {
               }}>
               {badgeIcon2}
             </View>
-          )}
+          ) : null}
         </Animated.View>
       );
     }
@@ -499,7 +498,6 @@ class HeaderBackButton extends Component {
       borderColorView,
       borderWidth,
     } = this.animatedValues();
-
     const styleHeader = {
       ...styles.header,
       backgroundColor: AnimateBackgroundView,
@@ -526,11 +524,11 @@ class HeaderBackButton extends Component {
                 imgHeader ? styles.rowTextImgHeader : styles.rowTextHeader
               }>
               <Row>
-                {imgHeader && (
+                {imgHeader ? (
                   <Col size={25} style={styleApp.center2}>
                     {imgHeader}
                   </Col>
-                )}
+                ) : null}
                 <Col
                   size={70}
                   style={imgHeader ? styleApp.center2 : styleApp.center}>

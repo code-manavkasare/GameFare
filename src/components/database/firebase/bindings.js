@@ -8,9 +8,6 @@ import {setSession} from '../../../store/actions/coachSessionsActions';
 import {setConversation} from '../../../store/actions/conversationsActions';
 import {setArchive} from '../../../store/actions/archivesActions';
 
-import {getArchiveByID, cacheArchive} from '../../functions/archive';
-import {deleteVideos} from '../../functions/videoManagement';
-
 const bindSession = (sessionID) => {
   const prevSession = store.getState().archives[sessionID];
   if (!prevSession?.isBinded)

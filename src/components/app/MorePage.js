@@ -136,11 +136,11 @@ class MorePage extends Component {
                 </Text>
               </Col>
               <Col size={20} style={styleApp.center3}>
-                {page === 'Wallet' && (
+                {page === 'Wallet' ? (
                   <Text style={[styleApp.textBold, {color: colors.primary}]}>
                     ${this.props.wallet.totalWallet}
                   </Text>
-                )}
+                ) : null}
               </Col>
               <Col size={10} style={styleApp.center3}>
                 <AllIcons
@@ -406,38 +406,40 @@ class MorePage extends Component {
             }),
         })} */}
 
-        {__DEV__ &&
-          this.button2({
-            text: 'Log getMemory',
-            icon: {
-              name: 'user',
-              type: 'font',
-              size: 20,
-              color: colors.title,
-            },
-            click: () =>
-              Vitals.getMemory().then((memory) => {
-                var {appUsed, systemTotal, systemFree, systemUsed} = memory;
-                console.log('memory', memory);
-              }),
-          })}
-        {__DEV__ &&
-          this.button2({
-            text: 'Log getStorage',
-            icon: {
-              name: 'user',
-              type: 'font',
-              size: 20,
-              color: colors.title,
-            },
-            click: () =>
-              Vitals.getStorage().then((storage) => {
-                var {total, free, used} = storage;
-                console.log('storage', storage);
-              }),
-          })}
+        {__DEV__
+          ? this.button2({
+              text: 'Log getMemory',
+              icon: {
+                name: 'user',
+                type: 'font',
+                size: 20,
+                color: colors.title,
+              },
+              click: () =>
+                Vitals.getMemory().then((memory) => {
+                  var {appUsed, systemTotal, systemFree, systemUsed} = memory;
+                  console.log('memory', memory);
+                }),
+            })
+          : null}
+        {__DEV__
+          ? this.button2({
+              text: 'Log getStorage',
+              icon: {
+                name: 'user',
+                type: 'font',
+                size: 20,
+                color: colors.title,
+              },
+              click: () =>
+                Vitals.getStorage().then((storage) => {
+                  var {total, free, used} = storage;
+                  console.log('storage', storage);
+                }),
+            })
+          : null}
 
-        {/* {__DEV__ && (
+        {/* {__DEV__ ? (
           <View>
             {this.button2({
               text: 'Test notif open stream',
@@ -455,7 +457,7 @@ class MorePage extends Component {
                     objectID: 'yrhyg3a4nrik9v83hjx',
                   },
                 }),
-            })}
+            }) : null}
             {this.button2({
               text: 'Test notif open conversation',
               icon: {
@@ -538,8 +540,9 @@ class MorePage extends Component {
         )} */}
 
         <View style={[{marginTop: 20}]}>
-          {this.props.userConnected &&
-            this.button('logout', 'Logout', 'Alert', 'logout')}
+          {this.props.userConnected
+            ? this.button('logout', 'Logout', 'Alert', 'logout')
+            : null}
         </View>
       </View>
     );
@@ -557,7 +560,7 @@ class MorePage extends Component {
           marginTop={10}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={
-            userConnected && infoUser.firstname + ' ' + infoUser.lastname
+            userConnected ? infoUser.firstname + ' ' + infoUser.lastname : null
           }
           inputRange={[2, 5]}
           initialBorderColorIcon={'white'}

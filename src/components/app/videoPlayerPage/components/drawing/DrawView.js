@@ -5,11 +5,9 @@ import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import {PanGestureHandler, State} from 'react-native-gesture-handler';
 import Svg, {Circle} from 'react-native-svg';
-import isEqual from 'lodash.isequal';
 
 import {coachAction} from '../../../../../store/actions/coachActions';
 import {generateID} from '../../../../functions/utility.js';
-import {getLastDrawing} from '../../../../functions/coach';
 
 import {ratio} from '../../../../style/sizes';
 import colors from '../../../../style/colors';
@@ -426,7 +424,7 @@ class DrawView extends Component {
         />
       );
 
-    if (drawSetting === 'straight')
+    if (drawSetting === 'straight' || drawSetting === 'arrow')
       return (
         <DrawSraightLine
           isSelected={isSelected}
@@ -437,29 +435,7 @@ class DrawView extends Component {
           endPoint={endPoint}
           key={id}
           id={id}
-          editShape={this.editShape.bind(this)}
-          endEditShape={this.endEditShape.bind(this)}
-          onRef={(ref) => (this.drawStraighLinesRef = ref)}
-          toggleSelect={(forceSelect) =>
-            this.setState({
-              selectedShape: isSelected && !forceSelect ? null : id,
-            })
-          }
-        />
-      );
-
-    if (drawSetting === 'arrow')
-      return (
-        <DrawSraightLine
-          isSelected={isSelected}
-          style={styles.drawingZone}
-          arrow={true}
-          strokeWidth={strokeWidth}
-          strokeColor={colorDrawing}
-          startPoint={startPoint}
-          endPoint={endPoint}
-          id={id}
-          key={id}
+          arrow={drawSetting === 'arrow'}
           editShape={this.editShape.bind(this)}
           endEditShape={this.endEditShape.bind(this)}
           onRef={(ref) => (this.drawStraighLinesRef = ref)}

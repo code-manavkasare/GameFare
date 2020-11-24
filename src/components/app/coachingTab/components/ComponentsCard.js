@@ -46,12 +46,13 @@ const BadgesView = (props) => {
       </Col>
       <Col size={85} style={styleApp.center2}>
         <Text style={[styleApp.text, {fontSize: 15}]}>
-          {badges &&
-            badges.map((badge, key) => {
-              if (badges.length != 1 && badges.length != Number(key) + 1)
-                return badge + ', ';
-              return badge;
-            })}
+          {badges
+            ? badges.map((badge, key) => {
+                if (badges.length != 1 && badges.length != Number(key) + 1)
+                  return badge + ', ';
+                return badge;
+              })
+            : null}
         </Text>
       </Col>
     </Row>

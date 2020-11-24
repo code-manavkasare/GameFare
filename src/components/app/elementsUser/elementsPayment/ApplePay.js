@@ -96,7 +96,7 @@ class ApplePay extends Component {
             </Col>
           )}
         </Row>
-        {!this.state.setup && (
+        {!this.state.setup ? (
           <ButtonColor
             view={() => {
               return (
@@ -112,7 +112,7 @@ class ApplePay extends Component {
             style={styles.buttonCancel}
             onPressColor={colors.off}
           />
-        )}
+        ) : null}
       </View>
     );
   }

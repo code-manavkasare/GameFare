@@ -1,7 +1,7 @@
 import React from 'react';
 import {Dimensions} from 'react-native';
 
-import {store} from '../../store/reduxStore'
+import {store} from '../../store/reduxStore';
 import {layoutAction} from '../../store/actions/layoutActions';
 const {height, width} = Dimensions.get('screen');
 
@@ -15,8 +15,8 @@ export default class OrientationListener extends React.Component {
     };
   }
   async componentDidMount() {
-    const initialOrientation = Orientation.getInitialOrientation();
-
+    Orientation.lockToPortrait();
+    const initialOrientation = 'PORTRAIT';
     await this.setInitialOrientation(initialOrientation);
     this.setScreenOrientation(initialOrientation);
     Orientation.addOrientationListener(this._onOrientationDidChange);
@@ -80,12 +80,13 @@ export default class OrientationListener extends React.Component {
       portrait = false;
     }
     const {currentHeight, currentWidth} = this.currentScreenSize(portrait);
-    store.dispatch(layoutAction('setLayout', {
-      currentScreenSize: {currentHeight, currentWidth, portrait, orientation},
-    }));
+    store.dispatch(
+      layoutAction('setLayout', {
+        currentScreenSize: {currentHeight, currentWidth, portrait, orientation},
+      }),
+    );
   };
   render() {
     return null;
   }
 }
-

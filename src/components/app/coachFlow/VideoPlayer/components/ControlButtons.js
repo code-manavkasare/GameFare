@@ -138,7 +138,7 @@ export default class ControlButtons extends Component {
     };
     return (
       <View style={styleApp.fullSize}>
-        {showSpeedSet && (
+        {showSpeedSet ? (
           <FadeInView
             duration={250}
             style={[
@@ -148,7 +148,7 @@ export default class ControlButtons extends Component {
             {speeds.map((speed, i) => buttonSpeed(speed, i))}
             <View style={styles.triangleSpeedView} />
           </FadeInView>
-        )}
+        ) : null}
         <ButtonColor
           view={() => {
             return (
@@ -214,7 +214,7 @@ export default class ControlButtons extends Component {
                 />
               </Col>
             </Row>
-            {sizeControlButton !== 'sm' && (
+            {sizeControlButton !== 'sm' ? (
               <Row style={styles.rowTime}>
                 <Col style={styleApp.center2}>
                   <CurrentTime
@@ -228,9 +228,9 @@ export default class ControlButtons extends Component {
                   </Text>
                 </Col>
               </Row>
-            )}
+            ) : null}
           </Col>
-          {!hideFullScreenButton && (
+          {!hideFullScreenButton ? (
             <Col
               size={10}
               style={styleApp.center3}
@@ -243,10 +243,10 @@ export default class ControlButtons extends Component {
                 color={colors.white}
               />
             </Col>
-          )}
-          {sizeControlButton !== 'sm' && (
+          ) : null}
+          {sizeControlButton !== 'sm' ? (
             <Col size={10}>{this.speedButton()}</Col>
-          )}
+          ) : null}
         </Row>
       </Animated.View>
     );

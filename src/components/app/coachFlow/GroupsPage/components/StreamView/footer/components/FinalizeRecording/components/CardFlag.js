@@ -139,12 +139,12 @@ class CardFlag extends Component {
                     )}
                   </View>
                   <View style={styles.memberPictureContainer}>
-                    {memberPicture && (
+                    {memberPicture ? (
                       <AsyncImage
                         mainImage={memberPicture}
                         style={styles.memberPicture}
                       />
-                    )}
+                    ) : null}
                   </View>
                 </Col>
                 <Col size={70} style={[styleApp.center2, {paddingLeft: 10}]}>
@@ -180,12 +180,12 @@ class CardFlag extends Component {
                     )}
                   </View>
                   <View style={styles.memberPictureContainerLg}>
-                    {memberPicture && (
+                    {memberPicture ? (
                       <AsyncImage
                         mainImage={memberPicture}
                         style={styles.memberPicture}
                       />
-                    )}
+                    ) : null}
                   </View>
                 </Row>
                 <Row size={20} style={[styleApp.center2, {paddingLeft: 10}]}>

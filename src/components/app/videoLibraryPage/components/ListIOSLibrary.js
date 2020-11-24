@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, Animated} from 'react-native';
-import moment from 'moment';
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {View, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import isEqual from 'lodash.isequal';
 
 import colors from '../../../style/colors';
 import Loader from '../../../layout/loaders/Loader';

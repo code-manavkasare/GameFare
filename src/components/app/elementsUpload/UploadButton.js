@@ -134,21 +134,18 @@ class UploadButton extends Component {
       outputRange: [-50, 0],
       extrapolate: 'clamp',
     });
-    return (
-      expanded &&
-      expandableView && (
-        <Animated.View
-          style={{
-            ...expandableViewStyle,
-            ...styles.expandableView,
-            left: width - expandableViewStyle.width - 20,
-            opacity: this.scaleCard,
-            transform: [{translateY: translateY}],
-          }}>
-          <QueueList />
-        </Animated.View>
-      )
-    );
+    return expanded && expandableView ? (
+      <Animated.View
+        style={{
+          ...expandableViewStyle,
+          ...styles.expandableView,
+          left: width - expandableViewStyle.width - 20,
+          opacity: this.scaleCard,
+          transform: [{translateY: translateY}],
+        }}>
+        <QueueList />
+      </Animated.View>
+    ) : null;
   }
 
   streamButtonView() {

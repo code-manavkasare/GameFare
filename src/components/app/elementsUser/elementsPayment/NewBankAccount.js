@@ -138,7 +138,7 @@ class ListEvent extends Component {
         view={() => {
           return (
             <Row>
-              {icon && (
+              {icon ? (
                 <Col size={15} style={styleApp.center2}>
                   <AllIcons
                     name={icon}
@@ -147,7 +147,7 @@ class ListEvent extends Component {
                     color={colors.title}
                   />
                 </Col>
-              )}
+              ) : null}
               <Col size={85} style={styleApp.center2}>
                 <TextInput
                   placeholder={field.name}
@@ -196,11 +196,11 @@ class ListEvent extends Component {
           autofocus: false,
         })}
 
-        {this.state.error && (
+        {this.state.error ? (
           <Text style={[styleApp.subtitle, {marginTop: 20, fontSize: 14}]}>
             {this.state.errorMessage}
           </Text>
-        )}
+        ) : null}
       </View>
     );
   }
