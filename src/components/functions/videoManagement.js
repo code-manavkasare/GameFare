@@ -257,7 +257,6 @@ const uploadLocalVideo = async (videoID, background) => {
     if (videoInfo.local) {
       const isUploadAlreadyInQueue = uploadAlreadyInQueue(videoID);
       if (isUploadAlreadyInQueue) {
-        if (isUploadAlreadyInQueue[0].uploading) return true;
         return isUploadAlreadyInQueue.map((item) =>
           store.dispatch(
             modifyUploadTask({
