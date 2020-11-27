@@ -24,6 +24,12 @@ import ScrollView from '../../../../../../layout/scrollViews/ScrollView2';
 import colors from '../../../../../../style/colors';
 import styleApp from '../../../../../../style/style';
 import database from '@react-native-firebase/database';
+import {
+  userIDSelector,
+  userInfoSelector,
+  userSettingsSelector,
+} from '../../../../../../../store/selectors/user';
+import {currentScreenSizeSelector} from '../../../../../../../store/selectors/layout';
 
 class Settings extends Component {
   constructor(props) {
@@ -60,7 +66,6 @@ class Settings extends Component {
       settings = {};
     }
     const {permissionOtherUserToRecord, chargeForSession} = this.state;
-    const {batterySaver} = this.props;
     const that = this;
     return (
       <View style={styleApp.marginView}>
@@ -79,7 +84,6 @@ class Settings extends Component {
           },
           'Allow call participants to remotely trigger a recording',
         )}
-
       </View>
     );
   }
@@ -125,20 +129,16 @@ class Settings extends Component {
       </View>
     );
   }
-} 
+}
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
-    currentScreenSize: state.layout.currentScreenSize,
-    settings: state.user.infoUser.settings,
-    batterySaver: state.appSettings.batterySaver,
+    userID: userIDSelector(state),
+    infoUser: userInfoSelector(state),
+    currentScreenSize: currentScreenSizeSelector(state),
+    settings: userSettingsSelector(state),
     recordingPermission: state.appSettings.recordingPermission,
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(Settings);
+export default connect(mapStateToProps)(Settings);

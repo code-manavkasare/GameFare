@@ -26,6 +26,12 @@ import AllIcon from '../layout/icons/AllIcons';
 import ButtonColor from '../layout/Views/Button';
 
 import {titleSession} from '../app/TeamPage/components/elements';
+import {
+  userConnectedSelector,
+  userIDSelector,
+  userInfoSelector,
+} from '../../store/selectors/user';
+import {currentSessionIDSelector} from '../../store/selectors/sessions';
 
 class InvitationManager extends Component {
   static propTypes = {
@@ -105,8 +111,11 @@ class InvitationManager extends Component {
   }
 
   componentWillUnmount() {
-    Keyboard.removeListener("keyboardWillShow");
-    Keyboard.removeListener("keyboardWillHide", this._keyboardWillHide.bind(this))
+    Keyboard.removeListener('keyboardWillShow');
+    Keyboard.removeListener(
+      'keyboardWillHide',
+      this._keyboardWillHide.bind(this),
+    );
   }
 
   hideButton() {
@@ -168,7 +177,6 @@ class InvitationManager extends Component {
     const {
       selectedUsers,
       userID,
-      infoUser,
       archivesToShare,
       sessionToInvite,
       currentSessionID,
@@ -187,10 +195,7 @@ class InvitationManager extends Component {
         );
       }
     } else {
-      const session = await openSession(
-        userObject(infoUser, userID),
-        selectedUsers,
-      );
+      const session = await openSession(userObject(userID), selectedUsers);
       if (action === 'shareArchives') {
         if (archivesToShare && archivesToShare.length > 0) {
           shareVideosWithTeams(archivesToShare, [session.objectID]);
@@ -372,14 +377,11 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
-    userConnected: state.user.userConnected,
-    currentSessionID: state.coach.currentSessionID,
+    userID: userIDSelector(state),
+    infoUser: userInfoSelector(state),
+    userConnected: userConnectedSelector(state),
+    currentSessionID: currentSessionIDSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(InvitationManager);
+export default connect(mapStateToProps)(InvitationManager);

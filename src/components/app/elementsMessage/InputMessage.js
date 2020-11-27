@@ -1,8 +1,6 @@
 import React from 'react';
 import {
   View,
-  Text,
-  Dimensions,
   StyleSheet,
   Platform,
   TouchableOpacity,
@@ -30,10 +28,9 @@ import {selectVideosFromLibrary} from '../../functions/coach';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 
-import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 import ListPhotos from './ListPhotos';
-import NavigationService from '../../../../NavigationService';
+import {userIDSelector, userInfoSelector} from '../../../store/selectors/user';
 
 class InputMessage extends React.Component {
   constructor(props) {
@@ -57,11 +54,16 @@ class InputMessage extends React.Component {
 
   async sendNewMessage() {
     const {inputValue, images} = this.state;
-    const {user, discussion} = this.props;
+    const {userID, userInfo, discussion} = this.props;
     const {objectID} = discussion;
 
     await this.setState({inputValue: '', images: {}});
-    await sendNewMessage({objectID, user, text: inputValue, images});
+    await sendNewMessage({
+      objectID,
+      user: {id: userID, info: userInfo},
+      text: inputValue,
+      images,
+    });
 
     return true;
   }
@@ -185,18 +187,6 @@ class InputMessage extends React.Component {
         ) : null}
 
         <Row style={styles.rowUtils}>
-          {/* <Col
-            size={12}
-            style={styleApp.center2}
-            activeOpacity={0.7}
-            onPress={() => this.takePicture()}>
-            <AllIcons
-              name="camera"
-              color={colors.title}
-              type="moon"
-              size={24}
-            />
-          </Col> */}
           <Col
             size={12}
             style={styleApp.center2}
@@ -209,18 +199,7 @@ class InputMessage extends React.Component {
               size={24}
             />
           </Col>
-          {/* <Col
-            size={12}
-            style={styleApp.center2}
-            activeOpacity={0.7}
-            onPress={() => this.selectPicture()}>
-            <AllIcons
-              name="dots-menu"
-              color={colors.title}
-              type="moon"
-              size={20}
-            />
-          </Col> */}
+
           <Col size={50} style={styleApp.center2} />
 
           <Col
@@ -285,13 +264,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 18,
   },
-  buttonSend: {
-    borderWidth: 0,
-    height: 40,
-    width: '100%',
-    borderRadius: 20,
-    alignSelf: 'center',
-  },
   buttonCloseImg: {
     ...styleApp.center,
     position: 'absolute',
@@ -315,11 +287,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
+    userID: userIDSelector(state),
+    userInfo: userInfoSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(InputMessage);
+export default connect(mapStateToProps)(InputMessage);

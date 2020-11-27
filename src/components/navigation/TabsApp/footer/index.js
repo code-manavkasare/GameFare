@@ -14,6 +14,9 @@ import sizes from '../../../style/sizes';
 import {heightFooter, marginBottomApp} from '../../../style/sizes';
 import {clickNotification} from '../../../../../NavigationService';
 import styleApp from '../../../style/style';
+import {currentSessionIDSelector} from '../../../../store/selectors/sessions';
+import {userIDSelector} from '../../../../store/selectors/user';
+import {currentScreenSizeSelector} from '../../../../store/selectors/layout';
 
 class Footer extends React.Component {
   constructor(props) {
@@ -353,9 +356,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    currentSessionID: state.coach.currentSessionID,
-    userID: state.user.userID,
-    currentScreenSize: state.layout.currentScreenSize,
+    currentSessionID: currentSessionIDSelector(state),
+    userID: userIDSelector(state),
+    currentScreenSize: currentScreenSizeSelector(state),
   };
 };
 

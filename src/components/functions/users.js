@@ -34,7 +34,8 @@ const autocompleteSearchUsers = async (
   return users;
 };
 
-function userObject(infoUser, userID) {
+function userObject(userID) {
+  const infoUser = store.getState().infoUser;
   return {
     id: userID,
     info: infoUser,
@@ -74,12 +75,8 @@ const isUserPrivate = (user) => {
   const {id, info} = user;
   if (id && info) {
     const {isPrivate} = user.info;
-    const {silentFriends} = store.getState().user.infoUser;
-    if (silentFriends) {
-      return isPrivate && !silentFriends[id];
-    } else {
-      return isPrivate;
-    }
+    const silentFriends = store.getState().userSilentFriends;
+    return isPrivate && !silentFriends[id];
   }
   return false;
 };

@@ -7,7 +7,6 @@ import SignIn from './SignIn/index';
 import ListCountry from '../login/elementsFlags/ListCountry';
 import Payments from './MainApp/components/Payments';
 import NewConversation from '../app/elementsMessage/NewConversation';
-import Coaches from './MainApp/components/Coaches';
 import CallTabPage from '../app/callTab';
 import QueueList from '../app/elementsUpload/QueueList';
 import UserDirectoryPage from '../app/userDirectory';
@@ -21,7 +20,6 @@ function InitialStack() {
   const AlertSpec = DepthModal({heightScale: 0});
   const CallTabSpec = DepthModal({top: sizes.marginTopApp + 25});
   const NotificationPageSpec = DepthModal({top: sizes.marginTopApp + 25});
-  const SignInSpec = DepthModal({top: sizes.marginTopApp + 25});
   return (
     <Stack.Navigator
       initialRouteName="MainApp"
@@ -74,14 +72,6 @@ function InitialStack() {
         name="UserDirectory"
         component={UserDirectoryPage}
         options={{...CallTabSpec}}
-      />
-
-      <Stack.Screen
-        name="Coaches"
-        component={Coaches}
-        options={{
-          gestureEnabled: false,
-        }}
       />
 
       <Stack.Screen

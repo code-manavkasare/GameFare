@@ -15,8 +15,9 @@ import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import CardTransfer from './CardTransfer';
+import {userIDSelector, walletSelector} from '../../../../store/selectors/user';
 
-class ListEvent extends Component {
+class Wallet extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -180,16 +181,11 @@ class ListEvent extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
-
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    wallet: state.user.infoUser.wallet,
+    userID: userIDSelector(state),
+    wallet: walletSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(ListEvent);
+export default connect(mapStateToProps)(Wallet);

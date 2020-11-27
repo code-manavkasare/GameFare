@@ -1,10 +1,9 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 
 import colors from '../../style/colors';
 
-import {openSession, sessionOpening} from '../../functions/coach';
+import {sessionOpening} from '../../functions/coach';
 import {navigate} from '../../../../NavigationService';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
@@ -14,6 +13,7 @@ import {
   viewLive,
   hangupButton,
 } from '../TeamPage/components/elements';
+import {isSessionRequestSelector} from '../../../store/selectors/sessions';
 
 class HeaderConversation extends React.Component {
   constructor(props) {
@@ -70,16 +70,9 @@ class HeaderConversation extends React.Component {
 
 const mapStateToProps = (state, props) => {
   const {objectID} = props.session;
-  const isSessionRequest =
-    state.user.infoUser.coachSessionsRequests &&
-    state.user.infoUser.coachSessionsRequests[objectID];
   return {
-    infoUser: state.user.infoUser.userInfo,
-    isSessionRequest: isSessionRequest ? isSessionRequest : null,
+    isSessionRequest: isSessionRequestSelector(state, {id: objectID}),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(HeaderConversation);
+export default connect(mapStateToProps)(HeaderConversation);

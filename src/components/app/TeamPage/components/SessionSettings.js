@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, Animated} from 'react-native';
+import {View, Animated} from 'react-native';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 
@@ -14,6 +14,13 @@ import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {imageCardTeam, sessionTitle} from './elements';
 import RowIcon from '../../../layout/rows/RowIcon';
 import {deleteSession} from '../../../functions/coach';
+import {sessionSelector} from '../../../../store/selectors/sessions';
+import {
+  userConnectedSelector,
+  userIDSelector,
+  userInfoSelector,
+} from '../../../../store/selectors/user';
+import {messagesSelector} from '../../../../store/selectors/conversations';
 
 class SessionSettings extends Component {
   constructor(props) {
@@ -87,20 +94,13 @@ class SessionSettings extends Component {
 
 const mapStateToProps = (state, props) => {
   const {objectID} = props.route.params;
-  const conversation = state.conversations[objectID]
-  let messages = {}
-  if (conversation) messages = conversation.messages
   return {
-    userID: state.user.userID,
-    userConnected: state.user.userConnected,
-    infoUser: state.user.infoUser.userInfo,
-    session: state.coachSessions[objectID],
-    messages
-  }
+    userID: userIDSelector(state),
+    userConnected: userConnectedSelector(state),
+    infoUser: userInfoSelector(state),
+    session: sessionSelector(state, {id: objectID}),
+    messages: messagesSelector(state, {id: objectID}),
+  };
 };
 
-
-export default connect(
-  mapStateToProps,
-  {},
-)(SessionSettings);
+export default connect(mapStateToProps)(SessionSettings);

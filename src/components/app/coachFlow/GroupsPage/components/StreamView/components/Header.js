@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated} from 'react-native';
+import {Animated} from 'react-native';
 import {connect} from 'react-redux';
+import {reconnectingSelector} from '../../../../../../../store/selectors/sessions';
 
 import {createInviteToSessionBranchUrl} from '../../../../../../database/branch';
 
@@ -90,11 +91,8 @@ class HeaderStreamView extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    currentSessionReconnecting: state.coach.reconnecting,
+    currentSessionReconnecting: reconnectingSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(HeaderStreamView);
+export default connect(mapStateToProps)(HeaderStreamView);

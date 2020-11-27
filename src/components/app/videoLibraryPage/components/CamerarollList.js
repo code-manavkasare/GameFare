@@ -127,6 +127,7 @@ export default class CamerarollList extends Component {
           fetchData={() => {
             hasNextPage && this.fetchNewPage({firstFetch: false, lastElement});
           }}
+          displayLoader={hasNextPage}
           ListEmptyComponent={
             !loadingCameraRoll
               ? {

@@ -7,7 +7,7 @@ import styleApp from '../style/style';
 
 import Loader from '../layout/loaders/Loader';
 
-function loader() {
+const LoaderComponent = () => {
   const {height, width} = Dimensions.get('screen');
   return (
     <FadeInView duration={200} style={[styleApp.center, {height}]}>
@@ -22,10 +22,5 @@ function loader() {
       </View>
     </FadeInView>
   );
-}
-export default function initialPage(props) {
-  StatusBar.setBarStyle('dark-content', true);
-  StatusBar.setHidden(false, 'slide');
-  props.navigation.navigate('TabsApp');
-  return loader();
-}
+};
+export {LoaderComponent};

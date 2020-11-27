@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Animated, Share, Keyboard} from 'react-native';
+import {View, StyleSheet, Keyboard} from 'react-native';
 import {connect} from 'react-redux';
 import {Row, Col} from 'react-native-easy-grid';
 import {dissoc} from 'ramda';
@@ -14,6 +14,10 @@ import {openSession} from '../../../functions/coach';
 
 import InvitationManager from '../../../utility/InvitationManager';
 import UserSearchResults from './UserSearchResults';
+import {
+  userIDSelector,
+  userInfoSelector,
+} from '../../../../store/selectors/user';
 
 class BodyUserDirectory extends Component {
   static propTypes = {
@@ -38,7 +42,7 @@ class BodyUserDirectory extends Component {
   }
 
   selectUser(user) {
-    const {userID, infoUser} = this.props;
+    const {userID} = this.props;
     if (isUserPrivate(user)) {
       Keyboard.dismiss();
       return navigate('Alert', {
@@ -54,7 +58,7 @@ class BodyUserDirectory extends Component {
           {
             forceNavigation: true,
             operation: async () => {
-              const session = await openSession(userObject(infoUser, userID), {
+              const session = await openSession(userObject(userID), {
                 [user.id]: user,
               });
               navigate('Conversation', {
@@ -122,12 +126,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
+    userID: userIDSelector(state),
+    infoUser: userInfoSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(BodyUserDirectory);
+export default connect(mapStateToProps)(BodyUserDirectory);

@@ -8,6 +8,10 @@ import colors from '../../../style/colors';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import UploadHeader from './UploadHeader';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
+import {
+  userIDSelector,
+  userInfoSelector,
+} from '../../../../store/selectors/user';
 
 class HeaderVideoLibrary extends Component {
   constructor(props) {
@@ -33,7 +37,10 @@ class HeaderVideoLibrary extends Component {
       infoUser,
       text,
       toggleSelectable,
+      selectVideosFromCameraRoll,
+      userID,
     } = this.props;
+
     return (
       <View style={{zIndex: 11}}>
         <HeaderBackButton
@@ -49,8 +56,8 @@ class HeaderVideoLibrary extends Component {
           icon1={
             selectOnly
               ? 'chevron-left'
-              : infoUser.picture
-              ? infoUser.picture
+              : infoUser?.picture
+              ? infoUser?.picture
               : 'profileFooter'
           }
           sizeIcon1={selectOnly ? 21 : infoUser.picture ? 40 : 23}
@@ -63,7 +70,7 @@ class HeaderVideoLibrary extends Component {
           typeIcon2="font"
           sizeIcon2={22}
           colorIcon2={colors.title}
-          clickButton2={() => toggleSelectable()}
+          clickButton2={toggleSelectable}
           clickButtonOffset={selectVideosFromCameraRoll}
           iconOffset={!selectableMode && 'plus'}
           typeIconOffset={'font'}
@@ -82,12 +89,9 @@ class HeaderVideoLibrary extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
+    userID: userIDSelector(state),
+    infoUser: userInfoSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(HeaderVideoLibrary);
+export default connect(mapStateToProps)(HeaderVideoLibrary);

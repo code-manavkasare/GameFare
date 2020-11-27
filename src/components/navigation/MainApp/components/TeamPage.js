@@ -1,18 +1,13 @@
 import * as React from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {Dimensions, View, TouchableOpacity, Animated} from 'react-native';
+import {Dimensions, View} from 'react-native';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import Loader from '../../../layout/loaders/Loader';
 
 import ListMessages from '../../../app/elementsMessage/ListMessages';
-import {
-  ListContents,
-  ListPlayers,
-} from '../../../app/TeamPage/components/elements';
-
-import AllIcon from '../../../layout/icons/AllIcons';
+import {ListContents} from '../../../app/TeamPage/components/elements';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -45,25 +40,6 @@ const MyTabs = ({session, user, initialMessage, messages}) => {
       <Tab.Screen
         options={{
           tabBarLabel: 'Chat',
-          tabBarIcon: () => (
-            <View
-              style={[
-                styleApp.center2,
-                {
-                  position: 'absolute',
-                  zIndex: -1,
-                  backgroundColor: 'red',
-                  height: '100%',
-                },
-              ]}>
-              <AllIcon
-                name="check"
-                color={colors.primary}
-                size={20}
-                type={'font'}
-              />
-            </View>
-          ),
         }}
         name="Chat">
         {() => (
@@ -83,10 +59,6 @@ const MyTabs = ({session, user, initialMessage, messages}) => {
         name="Videos">
         {() => ListContents({session})}
       </Tab.Screen>
-
-      {/* <Tab.Screen options={{tabBarLabel: 'Players'}} name="Players">
-        {() => ListPlayers({session, messages})}
-      </Tab.Screen> */}
     </Tab.Navigator>
   );
 };

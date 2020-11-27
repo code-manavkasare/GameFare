@@ -7535,11 +7535,6 @@ react-native-video-cache@^1.0.0:
     babel-preset-react-native-stage-0 "1.0.1"
     lodash "^4.16.6"
 
-react-native-vitals@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-vitals/-/react-native-vitals-2.0.1.tgz#0ba276b9c2a9c16a4771e1f9dd64a4c4f41a3c0f"
-  integrity sha512-cEI/HZU9MOmP3EtNlhVuHMcwVFHlGgjG9VS7z3IgA8/z0iNw7s6hu9jPyuEN+b72H2zqZacMe97KO9BM2hCRmQ==
-
 react-native-windows@^0.62.0-0:
   version "0.62.14"
   resolved "https://registry.yarnpkg.com/react-native-windows/-/react-native-windows-0.62.14.tgz#fb1fa1abe64a52c3f5796a7022914044c80d6483"
@@ -7965,6 +7960,11 @@ require-uncached@^1.0.3:
   dependencies:
     caller-path "^0.1.0"
     resolve-from "^1.0.0"
+
+reselect@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/reselect/-/reselect-4.0.0.tgz#f2529830e5d3d0e021408b246a206ef4ea4437f7"
+  integrity sha512-qUgANli03jjAyGlnbYVAV5vvnOmJnODyABz51RdBN7M4WaVu8mecZWgyQNkG8Yqe3KRGRt0l4K4B3XVEULC4CA==
 
 resolve-cwd@^2.0.0:
   version "2.0.0"

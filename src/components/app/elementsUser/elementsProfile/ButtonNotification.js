@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, AppState} from 'react-native';
-import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 
 import {navigate} from '../../../../../NavigationService';
@@ -11,7 +10,7 @@ import styleApp from '../../../style/style';
 import ButtonColor from '../../../layout/Views/Button';
 import colors from '../../../style/colors';
 
-class CardTransfer extends Component {
+export default class ButtonNotification extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -20,26 +19,6 @@ class CardTransfer extends Component {
       appState: AppState.currentState,
     };
   }
-  async componentDidMount() {
-    this.loadPermission();
-    AppState.addEventListener('change', this._handleAppStateChange);
-  }
-  async loadPermission() {
-    const permissionNotification = await permission('notification');
-    this.setState({permission: permissionNotification});
-  }
-  componentWillUnmount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
-  }
-  _handleAppStateChange = (nextAppState) => {
-    if (
-      this.state.appState.match(/inactive|background/) &&
-      nextAppState === 'active'
-    ) {
-      this.loadPermission();
-    }
-    this.setState({appState: nextAppState});
-  };
 
   render() {
     const {loader, permission} = this.state;
@@ -53,8 +32,8 @@ class CardTransfer extends Component {
             <Row>
               <Col size={10} style={styleApp.center2}>
                 <AllIcons
-                  name={permission ? 'bell' : 'bell-slash'}
-                  color={permission ? colors.greenConfirm : colors.red}
+                  name={'bell'}
+                  color={colors.title}
                   size={20}
                   type="font"
                 />
@@ -96,12 +75,3 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
 });
-
-const mapStateToProps = (state) => {
-  return {};
-};
-
-export default connect(
-  mapStateToProps,
-  {},
-)(CardTransfer);

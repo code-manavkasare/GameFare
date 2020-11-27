@@ -7,7 +7,7 @@ const initialState = {
 const connectionTypeReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_CONNECTION_TYPE:
-      return {type: action.connectionType};
+      return {...state, ...action.connectionData};
     default:
       return state;
   }

@@ -466,16 +466,6 @@ const updateLocalUploadProgress = (videoID, progress) => {
     store.dispatch(setArchive({...videoInfo, progress}));
   }
 };
-
-const regenerateThumbnail = async (archive) => {
-  let newArchive = {...archive};
-  const thumbnailPath = await generateThumbnail(archive.url);
-  const oldThumbnailPath = archive.thumbnail;
-  newArchive.thumbnail = thumbnailPath;
-  store.dispatch(setArchive(newArchive));
-  RNFS.unlink(oldThumbnailPath);
-};
-
 const dimensionRectangle = ({startPoint, endPoint}) => {
   const {x: x1, y: y1} = startPoint;
   const {x: x2, y: y2} = endPoint;
@@ -583,7 +573,6 @@ export {
   generateThumbnailSet,
   oneTimeFixStoreLocalVideoLibrary,
   openVideoPlayer,
-  regenerateThumbnail,
   selectVideosFromCameraRoll,
   shareVideosWithTeams,
   updateLocalUploadProgress,

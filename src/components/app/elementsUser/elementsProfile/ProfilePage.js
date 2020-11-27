@@ -14,8 +14,7 @@ import styleApp from '../../../style/style';
 import {heightHeaderHome} from '../../../style/sizes';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
-import {openDiscussion} from '../../../functions/message';
-import {openMemberAcceptCharge, capitalize} from '../../../functions/coach';
+import {capitalize} from '../../../functions/coach';
 
 import {
   BadgesView,
@@ -24,6 +23,11 @@ import {
 } from '../../coachingTab/components/ComponentsCard';
 
 import {getValueOnce} from '../../../database/firebase/methods';
+import {
+  userIDSelector,
+  userInfoSelector,
+} from '../../../../store/selectors/user';
+import {blockedUsersSelector} from '../../../../store/selectors/blockedUsers';
 
 class ProfilePage extends Component {
   constructor(props) {
@@ -31,7 +35,6 @@ class ProfilePage extends Component {
     this.state = {
       loader: false,
       initialLoader: true,
-      loaderMessage: false,
       userProfile: {
         info: {
           firstname: '',
@@ -54,11 +57,11 @@ class ProfilePage extends Component {
     return {userProfile: userProfile};
   }
   componentDidMount = async () => {
-    const {infoUser, route} = this.props;
+    const {route, blockedUsers} = this.props;
     let userProfile = route.params.user;
     if (!userProfile.id) userProfile.id = userProfile.objectID;
     let isBlocked = false;
-    if (infoUser.blockedUsers && infoUser.blockedUsers[userProfile.id]) {
+    if (blockedUsers[userProfile.id]) {
       isBlocked = true;
     }
     const userInfo = await getValueOnce(`users/${userProfile.id}/userInfo`);
@@ -72,7 +75,9 @@ class ProfilePage extends Component {
   };
 
   blockUnblockUser = async (block) => {
-    await blockUnblockUser(block, this.props.userID, this.state.userProfile.id);
+    const {userID} = this.props;
+    const {userProfile} = this.state;
+    await blockUnblockUser(block, userID, userProfile.id);
     this.setState({isBlocked: block});
   };
 
@@ -109,28 +114,8 @@ class ProfilePage extends Component {
       );
     }
   };
-  async requestSession() {
-    const {userProfile} = this.state;
-    const {userID, navigation, infoUser} = this.props;
-    const {id: profileUserID, info} = userProfile;
-    await this.setState({loaderMessage: true});
 
-    const discussion = await openDiscussion([
-      {id: userID, info: infoUser.userInfo},
-      {id: profileUserID, info},
-    ]);
-    this.setState({loaderMessage: false});
-    openMemberAcceptCharge({...userProfile, isCoach: true}, false, () =>
-      navigation.navigate('Conversation', {
-        data: discussion,
-        myConversation: true,
-        back: true,
-        message: "Hi, I'd like to book a video session with you. Thanks!",
-      }),
-    );
-  }
   profilePage() {
-    const {loaderMessage} = this.state;
     const {
       firstname,
       lastname,
@@ -205,22 +190,6 @@ class ProfilePage extends Component {
             })
           : null}
         <View style={styleApp.divider} />
-        {/* <View style={{height: 30}} />
-        {coach ? (
-          <Button
-            text={'Request a session'}
-            loader={loaderMessage}
-            icon={{
-              name: 'speech',
-              size: 22,
-              type: 'moon',
-              color: colors.white,
-            }}
-            backgroundColor={'blue'}
-            onPressColor={colors.blueLight}
-            click={() => this.requestSession()}
-          />
-        ) : null} */}
 
         <View style={[{height: 10}]} />
 
@@ -282,8 +251,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    infoUser: state.user.infoUser,
-    userID: state.user.userID,
+    userInfo: userInfoSelector(state),
+    userID: userIDSelector(state),
+    blockedUsers: blockedUsersSelector(state),
   };
 };
 

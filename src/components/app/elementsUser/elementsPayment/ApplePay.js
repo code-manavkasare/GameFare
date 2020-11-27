@@ -165,7 +165,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(ApplePay);
+export default connect(mapStateToProps)(ApplePay);

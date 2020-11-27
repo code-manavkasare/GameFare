@@ -19,6 +19,12 @@ import ScrollView from '../../../layout/scrollViews/ScrollView2';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
+import {
+  isPrivateSelector,
+  permissionOtherUserToRecordSelector,
+  userIDSelector,
+} from '../../../../store/selectors/user';
+import {wifiAutoUploadSelector} from '../../../../store/selectors/appSettings';
 
 class AppSettings extends Component {
   constructor(props) {
@@ -150,11 +156,10 @@ class AppSettings extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    isPrivate: state.user.infoUser.userInfo.isPrivate,
-    permissionOtherUserToRecord:
-      state.user.infoUser.permissionOtherUserToRecord,
-    wifiAutoUpload: state.appSettings.wifiAutoUpload,
+    userID: userIDSelector(state),
+    isPrivate: isPrivateSelector(state),
+    permissionOtherUserToRecord: permissionOtherUserToRecordSelector(state),
+    wifiAutoUpload: wifiAutoUploadSelector(state),
   };
 };
 

@@ -11,11 +11,6 @@ import {
   Share,
 } from 'react-native';
 import {connect} from 'react-redux';
-import Orientation from 'react-native-orientation-locker';
-import Vitals from 'react-native-vitals';
-
-import {coachAction} from '../../store/actions/coachActions';
-import {layoutAction} from '../../store/actions/layoutActions';
 
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
@@ -25,7 +20,7 @@ import ScrollView from '../layout/scrollViews/ScrollView2';
 import HeaderBackButton from '../layout/headers/HeaderBackButton';
 import sizes from '../style/sizes';
 import ButtonNotification from './elementsUser/elementsProfile/ButtonNotification';
-import {navigate, clickNotification} from '../../../NavigationService';
+import {navigate} from '../../../NavigationService';
 import styleApp from '../style/style';
 import colors from '../style/colors';
 import AllIcons from '../layout/icons/AllIcons';
@@ -33,14 +28,15 @@ import ButtonColor from '../layout/Views/Button';
 import Button from '../layout/buttons/Button';
 import AsyncImage from '../layout/image/AsyncImage';
 
-import {userAction} from '../../store/actions/userActions';
+import {logout} from '../../store/actions/userActions';
 import {createInviteToAppBranchUrl} from '../database/branch';
 import {boolShouldComponentUpdate} from '../functions/redux';
-
-Vitals.getMemory().then((memory) => {
-  var {appUsed, systemTotal, systemFree, systemUsed} = memory;
-  console.log('Low memory warning triggered', memory);
-});
+import {
+  userConnectedSelector,
+  userIDSelector,
+  userInfoSelector,
+  walletSelector,
+} from '../../store/selectors/user';
 
 class MorePage extends Component {
   constructor(props) {
@@ -138,7 +134,10 @@ class MorePage extends Component {
               <Col size={20} style={styleApp.center3}>
                 {page === 'Wallet' ? (
                   <Text style={[styleApp.textBold, {color: colors.primary}]}>
-                    ${this.props.wallet.totalWallet}
+                    $
+                    {this.props.wallet.totalWallet
+                      ? Number(this.props.wallet.totalWallet).toFixed(1)
+                      : null}
                   </Text>
                 ) : null}
               </Col>
@@ -406,39 +405,6 @@ class MorePage extends Component {
             }),
         })} */}
 
-        {__DEV__
-          ? this.button2({
-              text: 'Log getMemory',
-              icon: {
-                name: 'user',
-                type: 'font',
-                size: 20,
-                color: colors.title,
-              },
-              click: () =>
-                Vitals.getMemory().then((memory) => {
-                  var {appUsed, systemTotal, systemFree, systemUsed} = memory;
-                  console.log('memory', memory);
-                }),
-            })
-          : null}
-        {__DEV__
-          ? this.button2({
-              text: 'Log getStorage',
-              icon: {
-                name: 'user',
-                type: 'font',
-                size: 20,
-                color: colors.title,
-              },
-              click: () =>
-                Vitals.getStorage().then((storage) => {
-                  var {total, free, used} = storage;
-                  console.log('storage', storage);
-                }),
-            })
-          : null}
-
         {/* {__DEV__ ? (
           <View>
             {this.button2({
@@ -548,7 +514,7 @@ class MorePage extends Component {
     );
   }
   async confirmLogout() {
-    await this.props.userAction('logout', {userID: this.props.userID});
+    await logout();
     return true;
   }
   render() {
@@ -628,14 +594,11 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
-    wallet: state.user.infoUser.wallet,
-    userConnected: state.user.userConnected,
+    userID: userIDSelector(state),
+    infoUser: userInfoSelector(state),
+    wallet: walletSelector(state),
+    userConnected: userConnectedSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {userAction, coachAction, layoutAction},
-)(MorePage);
+export default connect(mapStateToProps)(MorePage);

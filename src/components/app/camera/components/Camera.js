@@ -18,6 +18,10 @@ import {
 } from '../../../functions/videoManagement';
 import {logMixpanel} from '../../../functions/logs';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
+import {
+  cameraAvailabilitySelector,
+  currentScreenSizeSelector,
+} from '../../../../store/selectors/layout';
 
 class Camera extends Component {
   static propTypes = {
@@ -278,8 +282,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    cameraAvailability: state.layout.cameraAvailability,
-    currentScreenSize: state.layout.currentScreenSize,
+    cameraAvailability: cameraAvailabilitySelector(state),
+    currentScreenSize: currentScreenSizeSelector(state),
   };
 };
 

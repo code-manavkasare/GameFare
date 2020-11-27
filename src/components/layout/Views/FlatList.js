@@ -53,16 +53,16 @@ class FlatListComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      numberToRender: props.initialNumberToRender,
+      numberToRender: props.fetchData ? 0 : props.initialNumberToRender,
       list: props.list,
+      dataFetched: props.fetchData ? false : true,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    const {onRef} = this.props;
-    if (onRef) {
-      onRef(this);
-    }
+    const {onRef, fetchData} = this.props;
+    if (onRef) onRef(this);
+    if (fetchData) this.onEndReached();
   }
   static getDerivedStateFromProps(props, state) {
     const {noLazy, list} = props;
@@ -80,18 +80,19 @@ class FlatListComponent extends Component {
   }
 
   onEndReached = async () => {
-    const {list, incrementRendering, fetchData} = this.props;
+    const {list, incrementRendering, fetchData, lengthList} = this.props;
     const {numberToRender} = this.state;
-    const lengthList = list.length;
-    const nextNumberRender =
-      numberToRender + incrementRendering > lengthList
-        ? lengthList
-        : numberToRender + incrementRendering;
+
+    const nextNumberRender = !lengthList
+      ? numberToRender + incrementRendering
+      : numberToRender + incrementRendering > lengthList
+      ? lengthList
+      : numberToRender + incrementRendering;
     if (fetchData) await fetchData({numberToRender, nextNumberRender});
-    this.setState({numberToRender: nextNumberRender});
+    this.setState({numberToRender: nextNumberRender, dataFetched: true});
   };
   render() {
-    const {numberToRender, list} = this.state;
+    const {numberToRender, list, dataFetched} = this.state;
     let {
       AnimatedHeaderValue,
       cardList,
@@ -111,6 +112,7 @@ class FlatListComponent extends Component {
       showsVerticalScrollIndicator,
       styleContainer,
       keyExtractor,
+      lengthList,
     } = this.props;
 
     const containerStyle = {
@@ -124,7 +126,8 @@ class FlatListComponent extends Component {
     const viewLoader = () => {
       if (noLazy) return null;
       return (
-        <View style={[styleApp.center, {height: 35, marginTop: 20}]}>
+        <View
+          style={[styleApp.center, {height: 35, width: '100%', marginTop: 20}]}>
           <Loader size={40} color={colors.grey} />
         </View>
       );
@@ -134,9 +137,7 @@ class FlatListComponent extends Component {
         data={list}
         renderItem={({item, index}) => cardList({item, index})}
         ListFooterComponent={() =>
-          list.length > numberToRender && list.length !== 0
-            ? viewLoader()
-            : null
+          lengthList > numberToRender && lengthList !== 0 ? viewLoader() : null
         }
         scrollIndicatorInsets={{right: 1}}
         keyboardShouldPersistTaps="always"
@@ -171,54 +172,56 @@ class FlatListComponent extends Component {
         }
         onEndReached={() => this.onEndReached()}
         onEndReachedThreshold={0.1}
-        ListEmptyComponent={() => (
-          <View
-            style={[
-              styleApp.marginView,
-              styleApp.center,
-              {height: 250, marginTop: 20},
-            ]}>
-            <Image
-              source={ListEmptyComponent?.image}
-              style={{height: 50, width: 50, marginBottom: 20}}
-            />
-            <Text style={styleApp.textBold}>{ListEmptyComponent?.text}</Text>
-            {ListEmptyComponent?.clickButton ? (
-              <Button
-                backgroundColor="primary"
-                onPressColor={colors.primaryLight}
-                enabled={true}
-                text={ListEmptyComponent?.textButton}
-                icon={{
-                  name: ListEmptyComponent?.iconButton,
-                  size: 24,
-                  type: 'font',
-                  color: colors.white,
-                }}
-                styleButton={{height: 55, marginTop: 30}}
-                loader={false}
-                click={() => ListEmptyComponent?.clickButton()}
+        ListEmptyComponent={() =>
+          dataFetched && (
+            <View
+              style={[
+                styleApp.marginView,
+                styleApp.center,
+                {height: 250, marginTop: 20},
+              ]}>
+              <Image
+                source={ListEmptyComponent?.image}
+                style={{height: 50, width: 50, marginBottom: 20}}
               />
-            ) : null}
-            {ListEmptyComponent?.clickButton2 ? (
-              <Button
-                backgroundColor="green"
-                onPressColor={colors.greenLight}
-                enabled={true}
-                text={ListEmptyComponent?.textButton2}
-                icon={{
-                  name: ListEmptyComponent?.iconButton2,
-                  size: 24,
-                  type: 'font',
-                  color: colors.white,
-                }}
-                styleButton={{height: 55, marginTop: 30}}
-                loader={false}
-                click={() => ListEmptyComponent?.clickButton2()}
-              />
-            ) : null}
-          </View>
-        )}
+              <Text style={styleApp.textBold}>{ListEmptyComponent?.text}</Text>
+              {ListEmptyComponent?.clickButton ? (
+                <Button
+                  backgroundColor="primary"
+                  onPressColor={colors.primaryLight}
+                  enabled={true}
+                  text={ListEmptyComponent?.textButton}
+                  icon={{
+                    name: ListEmptyComponent?.iconButton,
+                    size: 24,
+                    type: 'font',
+                    color: colors.white,
+                  }}
+                  styleButton={{height: 55, marginTop: 30}}
+                  loader={false}
+                  click={() => ListEmptyComponent?.clickButton()}
+                />
+              ) : null}
+              {ListEmptyComponent?.clickButton2 ? (
+                <Button
+                  backgroundColor="green"
+                  onPressColor={colors.greenLight}
+                  enabled={true}
+                  text={ListEmptyComponent?.textButton2}
+                  icon={{
+                    name: ListEmptyComponent?.iconButton2,
+                    size: 24,
+                    type: 'font',
+                    color: colors.white,
+                  }}
+                  styleButton={{height: 55, marginTop: 30}}
+                  loader={false}
+                  click={() => ListEmptyComponent?.clickButton2()}
+                />
+              ) : null}
+            </View>
+          )
+        }
         onScroll={
           onScroll
             ? onScroll

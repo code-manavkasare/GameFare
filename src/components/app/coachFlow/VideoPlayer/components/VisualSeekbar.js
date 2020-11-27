@@ -16,6 +16,7 @@ import {displayTime} from '../../../../functions/coach';
 import ControlBar from './ControlBar';
 import Filmstrip from './Filmstrip';
 import {boolShouldComponentUpdate} from '../../../../functions/redux';
+import {currentScreenSizeSelector} from '../../../../../store/selectors/layout';
 
 class VisualSeekBar extends Component {
   constructor(props) {
@@ -524,11 +525,8 @@ VisualSeekBar.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    currentScreenSize: state.layout.currentScreenSize,
+    currentScreenSize: currentScreenSizeSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(VisualSeekBar);
+export default connect(mapStateToProps)(VisualSeekBar);

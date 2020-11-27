@@ -10,8 +10,7 @@ import colors from '../style/colors';
 import {getValueOnce} from '../database/firebase/methods';
 import {generateID} from './utility.js';
 import {getVideoUUID, generateThumbnail} from './pictures';
-import {minutes, seconds, milliSeconds} from './date';
-import {userObject} from './users';
+import {minutes, seconds, milliSeconds} from './date'; 
 
 import {store} from '../../store/reduxStore';
 import {
@@ -399,28 +398,7 @@ const setupOpentokStopRecordingFlow = async (
 };
 
 const getSortedSessions = (options) => {
-  let {coachSessions, sortBy, exclude} = options;
-  if (!coachSessions) {
-    return [];
-  }
-  return Object.values(coachSessions)
-    .filter((s) => {
-      return s?.id !== undefined;
-    })
-    .sort(function(a, b) {
-      const getTimestamp = ({id, timestamp}) => {
-        const session = store.getState().coachSessions[id];
-        const messages = store.getState().conversations[id];
-        if (!session?.members || sortBy === 'lastConnection') return timestamp;
-        return dateSession({session, messages, component: false});
-      };
-      const timestampA = getTimestamp(a) ?? a.timestamp;
-      const timestampB = getTimestamp(b) ?? b.timestamp;
-      return timestampB - timestampA;
-    })
-    .filter((s) => {
-      return exclude ? exclude.indexOf(s?.id) === -1 : true;
-    });
+  
 };
 
 const openSession = async (user, members) => {
@@ -438,15 +416,7 @@ const openSession = async (user, members) => {
   session = await createCoachSession(user, members);
   return session;
 };
-
-const isSessionFree = (session) => {
-  const coach = infoCoach(session.members);
-  if (!coach) {
-    return true;
-  }
-  return !coach.chargeForSession;
-};
-
+ 
 const infoCoach = (members) => {
   if (!members) {
     return false;
@@ -680,7 +650,7 @@ const addMembersToSessionByID = async (
   const members = infos.reduce((members, info, i) => {
     if (info) {
       const id = memberIDs[i];
-      const member = userObject(info, memberIDs[i]);
+      const member = {info,userID:memberIDs[i]};
       return {
         ...members,
         [id]: {

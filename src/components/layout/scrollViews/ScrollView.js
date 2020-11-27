@@ -14,7 +14,7 @@ import {
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {marginTopApp, marginTopAppLandscape} from '../../style/sizes';
 
-export default class ScrollViewPage extends PureComponent {
+export default class ScrollViewPage extends Component {
   constructor(props) {
     super(props);
     this.state = {

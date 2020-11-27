@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated} from 'react-native';
+import {View, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import isEqual from 'lodash.isequal';
 
 import styleApp from '../../../style/style';
 import sizes from '../../../style/sizes';
 
 import tabsGroups from '../../../navigation/MainApp/components/GroupsPage';
 import HeaderListStream from './components/HeaderListStream';
+import {userIDSelector} from '../../../../store/selectors/user';
+import {numberSessionsRequestsSelector} from '../../../../store/selectors/sessions';
 
 class StreamTab extends Component {
   constructor(props) {
@@ -15,24 +16,10 @@ class StreamTab extends Component {
     this.state = {};
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  shouldComponentUpdate(prevProps, prevState) {
-    const {coachSessionsRequests} = this.props;
-    if (
-      !isEqual(coachSessionsRequests, prevProps.coachSessionsRequests) ||
-      !isEqual(prevState, this.state)
-    )
-      return true;
-    return false;
-  }
-  coachSessionsRequestsArray() {
-    const {coachSessionsRequests} = this.props;
-    if (!coachSessionsRequests) return [];
-    return Object.values(coachSessionsRequests);
-  }
+
   render() {
-    const {navigation} = this.props;
-    const coachSessionsRequests = this.coachSessionsRequestsArray();
-    const tabBarVisible = coachSessionsRequests.length !== 0;
+    const {navigation, numberSessionsRequests} = this.props;
+    const tabBarVisible = numberSessionsRequests !== 0;
     return (
       <View style={styleApp.stylePage}>
         <HeaderListStream
@@ -49,8 +36,8 @@ class StreamTab extends Component {
         {tabsGroups({
           tabBarVisible,
           AnimatedHeaderValue:
-            coachSessionsRequests.length === 0 && this.AnimatedHeaderValue,
-          numberSesionRequests: coachSessionsRequests.length,
+            numberSessionsRequests === 0 && this.AnimatedHeaderValue,
+          numberSesionRequests: numberSessionsRequests,
         })}
       </View>
     );
@@ -59,12 +46,9 @@ class StreamTab extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    coachSessionsRequests: state.user.infoUser.coachSessionsRequest,
+    userID: userIDSelector(state),
+    numberSessionsRequests: numberSessionsRequestsSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(StreamTab);
+export default connect(mapStateToProps)(StreamTab);

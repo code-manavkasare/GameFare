@@ -10,6 +10,7 @@ import colors from '../../style/colors';
 import AllIcon from '../../layout/icons/AllIcons';
 import AsyncImage from '../image/AsyncImage';
 import styleApp from '../../style/style';
+import {silentFriendsSelector} from '../../../store/selectors/user';
 
 class CardUserSelect extends Component {
   static propTypes = {
@@ -90,7 +91,7 @@ class CardUserSelect extends Component {
                     {user?.info?.firstname} {user?.info?.lastname}
                   </Text>
                 </Col>
-                <Col size={10} style={styleApp.center3}>
+                <Col size={10} style={styleApp.center2}>
                   {isUserSelected ? (
                     <AllIcon
                       type={'font'}
@@ -124,7 +125,7 @@ class CardUserSelect extends Component {
 
 const styles = StyleSheet.create({
   cardUser: {
-    height: 60,
+    height: 65,
     borderRadius: 15,
     paddingLeft: '5%',
     paddingRight: '5%',
@@ -139,11 +140,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    silentFriends: state.user.infoUser.silentFriends ?? {},
+    silentFriends: silentFriendsSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(CardUserSelect);
+export default connect(mapStateToProps)(CardUserSelect);

@@ -12,7 +12,6 @@ import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 
 import {uploadPictureFirebase} from '../../../functions/pictures';
-import NavigationService from '../../../../../NavigationService';
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
 import sizes from '../../../style/sizes';
@@ -20,6 +19,10 @@ import sizes from '../../../style/sizes';
 import Button from '../../../layout/buttons/Button';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import ButtonAddImage from '../../../layout/buttons/ButtonAddImage';
+import {
+  userIDSelector,
+  userInfoSelector,
+} from '../../../../store/selectors/user';
 
 class EditProfilePage extends Component {
   constructor(props) {
@@ -173,32 +176,10 @@ class EditProfilePage extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  content: {
-    flex: 1,
-    width: '100%',
-    paddingLeft: 20,
-    paddingRight: 20,
-  },
-  buttonRound: {
-    width: '90%',
-    height: 120,
-    borderRadius: 10,
-  },
-  asyncImage: {
-    width: 90,
-    height: 90,
-    borderColor: colors.off,
-    borderRadius: 45,
-    position: 'absolute',
-    zIndex: 0,
-  },
-});
-
 const mapStateToProps = (state) => {
   return {
-    infoUser: state.user.infoUser.userInfo,
-    userID: state.user.userID,
+    infoUser: userInfoSelector(state),
+    userID: userIDSelector(state),
   };
 };
 

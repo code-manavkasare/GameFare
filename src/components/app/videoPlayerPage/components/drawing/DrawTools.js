@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, Image, Alert} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import {BlurView} from '@react-native-community/blur';
@@ -8,7 +8,11 @@ import ButtonColor from '../../../../layout/Views/Button';
 import AllIcons from '../../../../layout/icons/AllIcons';
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
-import {valueColor} from '../../../../functions/pictures';
+import {portraitSelector} from '../../../../../store/selectors/layout';
+import {
+  userIDSelector,
+  userInfoSelector,
+} from '../../../../../store/selectors/user';
 class DrawTools extends Component {
   constructor(props) {
     super(props);
@@ -307,15 +311,10 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
-    settings: state.coach.settings,
-    settingsDraw: state.coach.settingsDraw,
-    portrait: state.layout.currentScreenSize.portrait,
+    userID: userIDSelector(state),
+    infoUser: userInfoSelector(state),
+    portrait: portraitSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(DrawTools);
+export default connect(mapStateToProps)(DrawTools);

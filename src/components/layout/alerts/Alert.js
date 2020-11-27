@@ -40,7 +40,7 @@ export default class Alert extends Component {
   title() {
     const {title} = this.props.route.params;
     if (title) {
-      return <Text style={styleApp.title}>{title}</Text>;
+      return <Text style={[styleApp.title, {paddingRight: 50}]}>{title}</Text>;
     }
     return null;
   }
@@ -136,7 +136,7 @@ export default class Alert extends Component {
               onPress={() => this.close()}>
               <AllIcons
                 name="times"
-                size={13}
+                size={16}
                 color={colors.title}
                 type="font"
               />
@@ -305,14 +305,17 @@ const styles = StyleSheet.create({
   },
   buttonClose: {
     position: 'absolute',
-    width: 26,
-    height: 26,
+    width: 40,
+    height: 40,
     right: '5%',
     top: 15,
     zIndex: 30,
+    borderWidth: 1,
+    borderColor: colors.off,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 13,
+    borderRadius: 20,
+    backgroundColor: 'white',
   },
   viewIcon: {
     // position: 'absolute',

@@ -469,8 +469,6 @@ PODS:
     - React
   - react-native-video/Video (5.1.0-alpha8):
     - React
-  - react-native-vitals (2.0.1):
-    - React
   - React-RCTActionSheet (0.63.2):
     - React-Core/RCTActionSheetHeaders (= 0.63.2)
   - React-RCTAnimation (0.63.2):
@@ -693,7 +691,6 @@ DEPENDENCIES:
   - "react-native-statusbar (from `../node_modules/@react-native-community/status-bar`)"
   - react-native-video (from `../node_modules/gamefare-rn-video`)
   - react-native-video-cache (from `../node_modules/react-native-video-cache`)
-  - react-native-vitals (from `../node_modules/react-native-vitals`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
   - React-RCTBlob (from `../node_modules/react-native/Libraries/Blob`)
@@ -905,8 +902,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/gamefare-rn-video"
   react-native-video-cache:
     :path: "../node_modules/react-native-video-cache"
-  react-native-vitals:
-    :path: "../node_modules/react-native-vitals"
   React-RCTActionSheet:
     :path: "../node_modules/react-native/Libraries/ActionSheetIOS"
   React-RCTAnimation:
@@ -1095,7 +1090,6 @@ SPEC CHECKSUMS:
   react-native-statusbar: ee9cc04cf942791e3d10597280d0e1adc876b9e5
   react-native-video: dbb8df4f0bbdf80de6797c90fcad8bc12b19401d
   react-native-video-cache: 90b8857673151d2618fc61030f14d755d1e92d4e
-  react-native-vitals: 64f6d267e5a08041604aba1e963c42d93b4174b2
   React-RCTActionSheet: 910163b6b09685a35c4ebbc52b66d1bfbbe39fc5
   React-RCTAnimation: 9a883bbe1e9d2e158d4fb53765ed64c8dc2200c6
   React-RCTBlob: 39cf0ece1927996c4466510e25d2105f67010e13

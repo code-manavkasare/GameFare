@@ -28,7 +28,7 @@ async function subscribeToTopics(topics) {
 const refreshTokenOnDatabase = async (userID) => {
   const token = await messaging().getToken();
   await database()
-    .ref('users/' + userID + '/')
+    .ref('users/' + userID + '/settings')
     .update({FCMToken: token});
   return true;
 };

@@ -28,6 +28,11 @@ import {timing} from '../../animations/animations';
 import {timeout} from '../../functions/coach';
 
 import {marginTopApp} from '../../style/sizes';
+import {
+  numNotificationsSelector,
+  userIDSelector,
+} from '../../../store/selectors/user.js';
+import {notificationSelector} from '../../../store/selectors/layout.js';
 
 const heightNotif = 130;
 const initialTranslateY = -marginTopApp - heightNotif - 20;
@@ -73,10 +78,13 @@ class Notification extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {notification, notifications} = this.props;
-    if (!equal(prevProps.notification, notification) && notifications) {
+    const {notification, numNotifications} = this.props;
+    if (
+      !equal(prevProps.numNotifications, notification) &&
+      numNotifications !== 0
+    ) {
       notification.data.action === 'Conversation' &&
-        updateNotificationBadge(Object.values(notifications).length + 1);
+        updateNotificationBadge(numNotifications + 1);
       return this.openNotification();
     }
   }
@@ -190,13 +198,10 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    notification: state.layout.notification,
-    userID: state.user.userID,
-    notifications: state.user.infoUser.notifications,
+    notification: notificationSelector(state),
+    userID: userIDSelector(state),
+    numNotifications: numNotificationsSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(Notification);
+export default connect(mapStateToProps)(Notification);

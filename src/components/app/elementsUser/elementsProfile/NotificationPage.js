@@ -1,34 +1,41 @@
 import React, {Component} from 'react';
-import {Animated, StyleSheet, Text, View, AppState} from 'react-native';
+import {
+  Animated,
+  StyleSheet,
+  Text,
+  View,
+  AppState,
+  InteractionManager,
+} from 'react-native';
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import {connect} from 'react-redux';
 import {openSettings} from 'react-native-permissions';
 
 import Button from '../../../layout/buttons/Button';
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
+import Loader from '../../../layout/loaders/Loader';
 import AllIcons from '../../../layout/icons/AllIcons';
-import {heightHeaderHome} from '../../../style/sizes';
 import {permission} from '../../../functions/pictures';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
-import ScrollView from '../../../layout/scrollViews/ScrollView2';
-
-class NotificationPage extends Component {
+export default class NotificationPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       appState: AppState.currentState,
       permission: false,
+      loader: true,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
-    this.loadPermission();
+    InteractionManager.runAfterInteractions(async () => {
+      this.loadPermission();
+    });
     AppState.addEventListener('change', this._handleAppStateChange);
   }
   async loadPermission() {
     const permissionNotification = await permission('notification');
-    this.setState({permission: permissionNotification});
+    this.setState({permission: permissionNotification, loader: false});
   }
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
@@ -64,7 +71,12 @@ class NotificationPage extends Component {
   };
   rowIcon(icon, text) {
     return (
-      <Row style={{paddingTop: 5, paddingBottom: 5, marginBottom: 10}}>
+      <Row
+        style={{
+          paddingTop: 10,
+          paddingBottom: 10,
+          height: 40,
+        }}>
         <Col size={15} style={styleApp.center2}>
           <AllIcons name={icon} color={colors.grey} type="font" size={20} />
         </Col>
@@ -75,33 +87,43 @@ class NotificationPage extends Component {
     );
   }
   notificationView() {
-    const {permission} = this.state;
+    const {permission, loader} = this.state;
     return (
       <View style={{...styleApp.marginView, minHeight: 300, marginTop: 80}}>
-        <Row style={{height: 40}}>
-          <Col size={65}>
-            <Text style={[styleApp.title, {fontSize: 21, marginBottom: 5}]}>
-              Notifications are {permission ? 'enabled' : 'disabled'}.
-            </Text>
-            <Text style={styleApp.text}>
-              You {permission ? 'will' : "won't"} be alerted for the following
-              events:
-            </Text>
-          </Col>
-        </Row>
-        <View style={{height: 30, marginTop: 10}} />
+        {loader ? (
+          <Row style={{height: 60}}>
+            <Col style={styleApp.center}>
+              <Loader size={45} color={colors.grey} />
+            </Col>
+          </Row>
+        ) : (
+          <Row style={{height: 60}}>
+            <Col size={65} style={styleApp.center}>
+              <Text style={[styleApp.title, {fontSize: 24, marginBottom: 10}]}>
+                Notifications are {permission ? 'ON' : 'OFF'}
+              </Text>
+              <Text style={styleApp.text}>
+                You {permission ? 'will' : "won't"} be alerted for the following
+                events
+              </Text>
+            </Col>
+          </Row>
+        )}
+
+        <View style={{height: 20, marginTop: 0}} />
+        <View style={styleApp.divider2} />
         {this.rowIcon('comment-alt', 'New message')}
         {this.rowIcon('video', 'Invitation to a new session')}
         {this.rowIcon('plug', 'Someone connects to one of your sessions')}
-        <View style={{height: 40}} />
+
+        <View style={styleApp.divider2} />
+        <View style={{height: 20}} />
         {this.button('Settings', colors.green, () => openSettings())}
       </View>
     );
   }
 
   render() {
-    const {loader} = this.state;
-
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -109,7 +131,6 @@ class NotificationPage extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={''}
           inputRange={[5, 10]}
-          loader={loader}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
           initialBorderColorHeader={colors.white}
@@ -139,12 +160,3 @@ const styles = StyleSheet.create({
     backgroundColor: colors.grey,
   },
 });
-
-const mapStateToProps = (state) => {
-  return {
-    infoUser: state.user.infoUser,
-    userID: state.user.userID,
-  };
-};
-
-export default connect(mapStateToProps)(NotificationPage);

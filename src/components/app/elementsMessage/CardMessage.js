@@ -29,6 +29,7 @@ export default class CardMessage extends React.Component {
     };
     this.clickLink.bind(this);
   }
+
   urlify(text) {
     const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
     const that = this;
@@ -303,6 +304,7 @@ export default class CardMessage extends React.Component {
             return result;
           }, {})
       : [];
+
     return (
       <View>
         {this.renderMessage(this.props.message)}
@@ -314,8 +316,7 @@ export default class CardMessage extends React.Component {
                 <Row
                   style={{
                     height: 55,
-                    width: width,
-                    // backgroundColor: 'red',
+                    width,
                     position: 'absolute',
                     marginTop: 30,
                     zIndex: 100,

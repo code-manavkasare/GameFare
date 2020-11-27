@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {object, oneOfType, string, array} from 'prop-types';
-import {View, Animated} from 'react-native';
+import {View, Animated, Image} from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import {native} from '../../animations/animations';
@@ -24,15 +24,15 @@ export default class AsyncImage extends Component {
       zIndexCached: 10,
       checkToken: '',
     };
-    this.opacityFastImageCached = new Animated.Value(0);
+    this.opacityFastImageCached = new Animated.Value(1);
   }
   componentDidMount() {
-    this.preloadImage();
+    // this.preloadImage();
   }
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.mainImage !== prevProps.mainImage) {
-      this.preloadImage();
-    }
+    // if (this.props.mainImage !== prevProps.mainImage) {
+    //   this.preloadImage();
+    // }
   }
   async preloadImage() {
     await FastImage.preload([
@@ -64,10 +64,15 @@ export default class AsyncImage extends Component {
           height: style.height,
           width: style.width,
         }}>
-        <FastImage
+        <Image
+          source={{uri: imagePath}}
+          style={[style, {zIndex: 10, position: 'absolute', top: 0}]}
+        />
+        {/* <FastImage
           resizeMode={resizeMode ? resizeMode : 'cover'}
-          onLoadEnd={() => {
-            this.enterPictureCached();
+          onLoadEnd={(callback) => {
+            console.log('callback', callback);
+            // this.enterPictureCached();
           }}
           style={[style, {zIndex: 10, position: 'absolute', top: 0}]}
           source={{
@@ -83,7 +88,7 @@ export default class AsyncImage extends Component {
               state: this.state,
             });
           }}
-        />
+        /> */}
       </Animated.View>
     );
   }

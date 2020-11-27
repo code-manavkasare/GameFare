@@ -13,6 +13,10 @@ import colors from '../../../style/colors';
 import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import {isQueueVisible} from '../../../functions/upload';
+import {userIDSelector} from '../../../../store/selectors/user';
+import {currentScreenSizeSelector} from '../../../../store/selectors/layout';
+import {connectionTypeSelector} from '../../../../store/selectors/connectionType';
+import {uploadQueueSelector} from '../../../../store/selectors/uploadQueue';
 
 class UploadHeader extends Component {
   constructor(props) {
@@ -184,10 +188,10 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    currentScreenSize: state.layout.currentScreenSize,
-    uploadQueue: state.uploadQueue,
-    connectionType: state.connectionType.type,
+    userID: userIDSelector(state),
+    currentScreenSize: currentScreenSizeSelector(state),
+    uploadQueue: uploadQueueSelector(state),
+    connectionType: connectionTypeSelector(state),
   };
 };
 

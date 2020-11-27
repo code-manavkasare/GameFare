@@ -19,6 +19,8 @@ import RecordingComponent from './recording/index';
 import ControlButtonRecording from './recording/components/ControlButtonsRecording';
 import AllIcon from '../../../layout/icons/AllIcons';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
+import {archiveSelector} from '../../../../store/selectors/archives';
+import {userIDSelector} from '../../../../store/selectors/user';
 
 class SinglePlayer extends Component {
   static propTypes = {
@@ -243,7 +245,7 @@ class SinglePlayer extends Component {
       playRate,
       scale,
       position,
-    } = videoFromCloud;
+    } = videoFromCloud; 
     return (
       <View style={playerStyle} onLayout={this.onLayoutContainer}>
         {isDrawingEnabled && sizeVideo.height !== 0 ? (
@@ -394,10 +396,8 @@ class SinglePlayer extends Component {
 
 const mapStateToProps = (state, props) => {
   return {
-    userID: state.user.userID,
-    archive: props.nativeArchive
-      ? props.nativeArchive
-      : state.archives[props.id],
+    userID: userIDSelector(state),
+    archive: archiveSelector(state, props),
   };
 };
 
