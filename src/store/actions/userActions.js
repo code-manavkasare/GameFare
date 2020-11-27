@@ -6,13 +6,25 @@ import equal from 'fast-deep-equal';
 import RnBgTask from 'react-native-bg-thread';
 
 import {
-  HIDE_FOOTER_APP,
   RESET_USER_INFO,
   RESET_USER_MESSAGES,
-  SET_LAYOUT_SETTINGS,
   SET_USER_INFO,
+  SET_USER_CLOUD_ARCHIVES,
+  RESET_USER_CLOUD_ARCHIVES,
+  SET_USER_SESSIONS,
+  RESET_USER_SESSIONS,
+  SET_USER_SESSIONS_REQUESTS,
+  RESET_USER_SESSIONS_REQUESTS,
+  SET_USER_NOTIFICATIONS,
+  RESET_USER_NOTIFICATIONS,
+  SET_USER_BLOCKED_USERS,
+  RESET_USER_BLOCKED_USERS,
+  SET_USER_BLOCKED_BY_USERS,
+  RESET_USER_BLOCKED_BY_USERS,
+  SET_USER_SILENT_FRIENDS,
+  RESET_USER_SILENT_FRIENDS,
 } from '../types';
-import {store} from '../reduxStore'
+import {store} from '../reduxStore';
 
 import {resetDataCoachSession} from './coachActions';
 import {resetCloudArchives} from './archivesActions.js';
@@ -26,7 +38,6 @@ const setUserInfo = (value) => ({
   type: SET_USER_INFO,
   userInfo: value,
 });
-
 const resetUserInfo = () => ({
   type: RESET_USER_INFO,
 });
@@ -35,16 +46,67 @@ const resetMessages = () => ({
   type: RESET_USER_MESSAGES,
 });
 
-const setLayoutSettings = (value) => ({
-  type: SET_LAYOUT_SETTINGS,
-  layoutSettings: value,
+const setUserCloudArchives = (archives) => ({
+  type: SET_USER_CLOUD_ARCHIVES,
+  archives,
+});
+const resetUserCloudArchives = () => ({
+  type: RESET_USER_CLOUD_ARCHIVES,
 });
 
-const hideFooterApp = () => ({
-  type: HIDE_FOOTER_APP,
+const setUserSessions = (sessions) => ({
+  type: SET_USER_SESSIONS,
+  sessions,
+});
+const resetUserSessions = () => ({
+  type: RESET_USER_SESSIONS,
 });
 
-export const signIn = async ({firebaseSignInToken,countryCode,phoneNumber}) => {
+const setUserSessionsRequests = (sessions) => ({
+  type: SET_USER_SESSIONS_REQUESTS,
+  sessions,
+});
+const resetUserSessionsRequests = () => ({
+  type: RESET_USER_SESSIONS_REQUESTS,
+});
+
+const setUserNotifications = (notifications) => ({
+  type: SET_USER_NOTIFICATIONS,
+  notifications,
+});
+const resetUserNotifications = () => ({
+  type: RESET_USER_NOTIFICATIONS,
+});
+
+const setUserBlockedUsers = (users) => ({
+  type: SET_USER_BLOCKED_USERS,
+  users,
+});
+const resetUserBlockedUsers = () => ({
+  type: RESET_USER_BLOCKED_USERS,
+});
+
+const setUserBlockedByUsers = (users) => ({
+  type: SET_USER_BLOCKED_BY_USERS,
+  users,
+});
+const resetUserBlockedByUsers = () => ({
+  type: RESET_USER_BLOCKED_BY_USERS,
+});
+
+const setUserSilentFriends = (users) => ({
+  type: SET_USER_SILENT_FRIENDS,
+  users,
+});
+const resetUserSilentFriends = () => ({
+  type: RESET_USER_SILENT_FRIENDS,
+});
+
+export const signIn = async ({
+  firebaseSignInToken,
+  countryCode,
+  phoneNumber,
+}) => {
   const user = await auth().signInWithCustomToken(firebaseSignInToken);
   const userID = user.user.uid;
   await subscribeToTopics([userID]);
@@ -53,46 +115,98 @@ export const signIn = async ({firebaseSignInToken,countryCode,phoneNumber}) => {
   Mixpanel.set({userID});
   RnBgTask.runInBackground(() => {
     database()
-    .ref('users/' + userID)
-    .on('value', async function(snap) {
-      const infoUser = snap.val();
-      const currentInfoUser = store.getState().user.infoUser.userInfo;
+      .ref('users/' + userID)
+      .on('value', async function(snap) {
+        const {
+          notifications,
+          archivedStreams,
+          coachSessions,
+          coachSessionsRequests,
+          wallet,
+          userInfo,
+          silentFriends,
+          settings,
+          profileCompleted,
+          blockedUsers,
+          blockedByUsers,
+          permissionOtherUserToRecord,
+        } = snap.val();
 
-      if (!equal(currentInfoUser, infoUser))
-        await store.dispatch(setUserInfo({
-          userID,
-          infoUser,
-          userConnected:infoUser.profileCompleted?true:false,
-          phoneNumber,
-          countryCode,
-        }));
-    })
+        const prevNotifications = store.getState().userNotifications;
+        if (!equal(prevNotifications, notifications))
+          store.dispatch(setUserNotifications(notifications));
+
+        const prevCloudArchives = store.getState().userCloudArchives;
+        if (!equal(prevCloudArchives, archivedStreams))
+          store.dispatch(setUserCloudArchives(archivedStreams));
+
+        const prevUserSession = store.getState().userSessions;
+        if (!equal(prevUserSession, coachSessions))
+          store.dispatch(setUserSessions(coachSessions));
+
+        const prevSessionsRequests = store.getState().userSessionsRequests;
+        if (!equal(prevSessionsRequests, coachSessionsRequests))
+          store.dispatch(setUserSessionsRequests(coachSessionsRequests));
+
+        const prevBlockedUsers = store.getState().userBlockedUsers;
+        if (!equal(prevBlockedUsers, blockedUsers))
+          store.dispatch(setUserBlockedUsers(blockedUsers));
+
+        const prevBlockedByUsers = store.getState().userBlockedByUsers;
+        if (!equal(prevBlockedByUsers, blockedByUsers))
+          store.dispatch(setUserBlockedByUsers(blockedByUsers));
+
+        const prevSilentFriends = store.getState().userSilentFriends;
+        if (!equal(prevSilentFriends, silentFriends))
+          store.dispatch(setUserSilentFriends(silentFriends));
+
+        const currentInfoUser = store.getState().user;
+        if (!equal(currentInfoUser, coachSessionsRequests))
+          await store.dispatch(
+            setUserInfo({
+              userID,
+              infoUser: {userInfo, wallet, silentFriends},
+              settings,
+              userConnected: profileCompleted ? true : false,
+              phoneNumber,
+              countryCode,
+              permissionOtherUserToRecord,
+            }),
+          );
+      });
   });
-}
-
-const userAction = (val, data) => {
-  return async function(dispatch) {
-    if (val === 'signIn') {
-      await signIn(data)
-    } else if (val === 'logout') {
-      await messaging().unsubscribeFromTopic(data.userID);
-      await database()
-        .ref('users/' + data.userID)
-        .off('value');
-      await dispatch(resetUserInfo());
-      await dispatch(resetDataCoachSession());
-      await dispatch(resetCloudArchives());
-      await dispatch(resetSessions());
-      await dispatch(resetMessages());
-
-      return true;
-    } else if (val === 'setLayoutSettings') {
-      return dispatch(setLayoutSettings(data));
-    } else if (val === 'hideFooterApp') {
-      return dispatch(hideFooterApp());
-    }
-    return true;
-  };
 };
 
-export {userAction};
+const logout = async () => {
+  const {userID} = store.getState().user;
+  await messaging().unsubscribeFromTopic(userID);
+  await database()
+    .ref(`users/${userID}`)
+    .off('value');
+  await store.dispatch(resetUserInfo());
+  await store.dispatch(resetDataCoachSession());
+  await store.dispatch(resetCloudArchives());
+  await store.dispatch(resetSessions());
+  await store.dispatch(resetMessages());
+  await store.dispatch(resetUserCloudArchives());
+  await store.dispatch(resetUserSessions());
+  await store.dispatch(resetUserSessionsRequests());
+  await store.dispatch(resetUserNotifications());
+  await store.dispatch(resetUserBlockedUsers());
+  await store.dispatch(resetUserBlockedByUsers());
+  await store.dispatch(resetUserSilentFriends());
+
+  return true;
+};
+
+export {
+  setUserCloudArchives,
+  resetUserCloudArchives,
+  setUserSessions,
+  resetUserSessions,
+  setUserSessionsRequests,
+  resetUserSessionsRequests,
+  setUserNotifications,
+  resetUserNotifications,
+  logout,
+};

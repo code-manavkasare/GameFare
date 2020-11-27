@@ -17,6 +17,7 @@ import styleApp from '../../style/style';
 import AsyncImage from '../image/AsyncImage';
 import {logMixpanel} from '../../functions/logs';
 import {boolShouldComponentUpdate} from '../../functions/redux';
+import {currentScreenSizeSelector} from '../../../store/selectors/layout';
 
 class HeaderBackButton extends Component {
   constructor(props) {
@@ -124,7 +125,7 @@ class HeaderBackButton extends Component {
                 <AllIcons
                   name={icon1}
                   color={colorIcon1 ? colorIcon1 : colors.title}
-                  size={sizeIcon1 ? sizeIcon1 : 15}
+                  size={sizeIcon1 ? sizeIcon1 : 21}
                   type={typeIcon1 ? typeIcon1 : 'font'}
                 />
               );
@@ -610,11 +611,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    currentScreenSize: state.layout.currentScreenSize,
+    currentScreenSize: currentScreenSizeSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(HeaderBackButton);
+export default connect(mapStateToProps)(HeaderBackButton);

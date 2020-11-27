@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, Easing} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
@@ -8,15 +8,13 @@ import database from '@react-native-firebase/database';
 
 import ImageUser from '../../../../../../../layout/image/ImageUser';
 import AddFlagButton from './AddFlagButton';
-import {uploadQueueAction} from '../../../../../../../../store/actions/uploadQueueActions';
 import {arrayUploadFromSnippets} from '../../../../../../../functions/videoManagement';
-import {navigate} from '../../../../../../../../../NavigationService';
 
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 import Loader from '../../../../../../../layout/loaders/Loader';
 import Timer from './Timer';
-import {request} from 'react-native-permissions';
+import {userIDSelector} from '../../../../../../../../store/selectors/user';
 
 class MemberSource extends Component {
   constructor(props) {
@@ -279,11 +277,8 @@ MemberSource.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
+    userID: userIDSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {uploadQueueAction},
-)(MemberSource);
+export default connect(mapStateToProps)(MemberSource);

@@ -15,6 +15,13 @@ import MyTabs from '../../navigation/MainApp/components/TeamPage';
 import HeaderConversation from './HeaderConversation';
 import styleApp from '../../style/style';
 import sizes from '../../style/sizes';
+import {
+  userConnectedSelector,
+  userIDSelector,
+  userInfoSelector,
+} from '../../../store/selectors/user';
+import {sessionSelector} from '../../../store/selectors/sessions';
+import {messagesSelector} from '../../../store/selectors/conversations';
 
 class MessageTab extends React.Component {
   constructor(props) {
@@ -64,20 +71,13 @@ class MessageTab extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-  const {coachSessionID} = props.route.params;
-  const conversation = state.conversations[coachSessionID]
-  let messages = {}
-  if (conversation) messages = conversation.messages
   return {
-    userID: state.user.userID,
-    userConnected: state.user.userConnected,
-    infoUser: state.user.infoUser.userInfo,
-    session: state.coachSessions[coachSessionID],
-    messages,
+    userID: userIDSelector(state),
+    userConnected: userConnectedSelector(state),
+    infoUser: userInfoSelector(state),
+    session: sessionSelector(state, {id: props.route.params.coachSessionID}),
+    messages: messagesSelector(state, {id: props.route.params.coachSessionID}),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(MessageTab);
+export default connect(mapStateToProps)(MessageTab);

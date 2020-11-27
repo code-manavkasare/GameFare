@@ -74,7 +74,13 @@ export default class CardConversation extends PureComponent {
           // styleApp.cardConversation,
           styleApp.marginView,
           style,
-          {flex: 1, paddingTop: 10, paddingBottom: 10},
+          {
+            flex: 1,
+            paddingTop: 15,
+            paddingBottom: 15,
+            borderBottomWidth: 0,
+            borderColor: colors.off,
+          },
         ]}
         onPressColor={colors.off}
       />

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -522,10 +522,14 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					054C598F23EDA04F006D67F4 = {
+						DevelopmentTeam = GDMG8R7UAQ;
 						LastSwiftMigration = 1130;
+						ProvisioningStyle = Automatic;
 					};
 					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = GDMG8R7UAQ;
 						LastSwiftMigration = 1130;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 0;
@@ -1201,11 +1205,7 @@
 				);
 				INFOPLIST_FILE = gamefareTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-DFB_SONARKIT_ENABLED=1",
@@ -1232,11 +1232,7 @@
 				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = gamefareTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-DFB_SONARKIT_ENABLED=1",
@@ -1260,15 +1256,12 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15876517559;
+				CURRENT_PROJECT_VERSION = 15876517570;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = "gamefare-dev-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.3.8;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.3.9;
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-DFB_SONARKIT_ENABLED=1",
@@ -1298,14 +1291,11 @@
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 15876517559;
+				CURRENT_PROJECT_VERSION = 15876517570;
 				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = "gamefare-dev-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.3.8;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.3.9;
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-DFB_SONARKIT_ENABLED=1",
@@ -1335,15 +1325,12 @@
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1602731768;
+				CURRENT_PROJECT_VERSION = 15876517561;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = gamefare/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.3.8;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.3.9;
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-DFB_SONARKIT_ENABLED=1",
@@ -1373,14 +1360,11 @@
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefareRelease.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1602731768;
+				CURRENT_PROJECT_VERSION = 15876517561;
 				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = gamefare/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.3.8;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.3.9;
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-DFB_SONARKIT_ENABLED=1",

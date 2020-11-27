@@ -18,6 +18,10 @@ import {native} from '../../animations/animations';
 import Loader from '../../layout/loaders/Loader';
 import ButtonColor from '../../layout/Views/Button';
 import QueueList from './QueueList';
+import {
+  queueSelector,
+  statusUploadSelector,
+} from '../../../store/selectors/uploadQueue';
 
 class UploadButton extends Component {
   constructor(props) {
@@ -209,12 +213,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    status: state.uploadQueue.status,
-    queue: state.uploadQueue.queue,
+    status: statusUploadSelector(state),
+    queue: queueSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(UploadButton);
+export default connect(mapStateToProps)(UploadButton);

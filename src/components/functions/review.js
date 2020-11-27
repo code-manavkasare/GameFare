@@ -173,11 +173,10 @@ const addAudioRecordToUploadQueue = (audioFilePath, archiveId) => {
   );
 };
 
-const videoIsReview = (videosInfos) => {
-  for (const video of Object.values(videosInfos)) {
-    if (video.recordedActions) {
-      return true;
-    }
+const videoIsReview = (archives) => {
+  for (const id of archives) {
+    const archive = store.getState().archives[id];
+    if (archive.recordedActions) return true;
   }
 };
 

@@ -18,6 +18,8 @@ import sizes from '../../../../../../../style/sizes';
 import styleApp from '../../../../../../../style/style';
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
+import {userIDSelector} from '../../../../../../../../store/selectors/user';
+import {currentScreenSizeSelector} from '../../../../../../../../store/selectors/layout';
 
 class RecordingMenu extends Component {
   constructor(props) {
@@ -169,7 +171,7 @@ class RecordingMenu extends Component {
 
   render() {
     const {visible, members} = this.state;
-    const {members: propsMembers, currentScreenSize, userID} = this.props;
+    const {members: propsMembers, currentScreenSize} = this.props;
     const {selectMember, coachSessionID} = this.props;
     const {currentWidth: width, currentHeight: height} = currentScreenSize;
     const {length} = members;
@@ -305,8 +307,8 @@ RecordingMenu.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    currentScreenSize: state.layout.currentScreenSize,
+    userID: userIDSelector(state),
+    currentScreenSize: currentScreenSizeSelector(state),
   };
 };
 

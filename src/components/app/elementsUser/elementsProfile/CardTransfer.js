@@ -4,15 +4,12 @@ import {connect} from 'react-redux';
 import moment from 'moment';
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import AllIcons from '../../../layout/icons/AllIcons';
-
-import sizes from '../../../style/sizes';
 
 import styleApp from '../../../style/style';
 import ButtonColor from '../../../layout/Views/Button';
 import colors from '../../../style/colors';
 
-class CardTransfer extends Component {
+export default class CardTransfer extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -75,16 +72,3 @@ class CardTransfer extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  buttonCard: {},
-});
-
-const mapStateToProps = (state) => {
-  return {};
-};
-
-export default connect(
-  mapStateToProps,
-  {},
-)(CardTransfer);

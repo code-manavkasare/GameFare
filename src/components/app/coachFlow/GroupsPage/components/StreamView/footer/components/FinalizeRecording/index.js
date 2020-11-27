@@ -1,17 +1,9 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  StatusBar,
-  TouchableOpacity,
-} from 'react-native';
-import {connect} from 'react-redux';
-import {Col, Row} from 'react-native-easy-grid';
+import {View, Text, Animated, StatusBar} from 'react-native';
 import database from '@react-native-firebase/database';
 import isEqual from 'lodash.isequal';
 
+import {store} from '../../../../../../../../../store/reduxStore';
 import HeaderBackButton from '../../../../../../../../layout/headers/HeaderBackButton';
 import ScrollView from '../../../../../../../../layout/scrollViews/ScrollView2';
 import Button from '../../../../../../../../layout/buttons/Button';
@@ -24,7 +16,7 @@ import {
   heightFooterBooking,
 } from '../../../../../../../../style/sizes';
 
-class FinalizeRecording extends Component {
+export default class FinalizeRecording extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -46,7 +38,8 @@ class FinalizeRecording extends Component {
   }
   confirm = async () => {
     await this.setState({loader: true});
-    const {route, userID} = this.props;
+    const {userID} = store.getState().user;
+    const {route} = this.props;
     const {flagsSelected, member} = this.state;
     const {coachSessionID} = route.params;
     const {recording} = member;
@@ -239,21 +232,3 @@ class FinalizeRecording extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  button: {
-    height: 55,
-    width: 55,
-    borderRadius: 30,
-    borderWidth: 0,
-    borderColor: colors.off,
-  },
-});
-
-const mapStateToProps = (state) => {
-  return {
-    userID: state.user.userID,
-  };
-};
-
-export default connect(mapStateToProps)(FinalizeRecording);

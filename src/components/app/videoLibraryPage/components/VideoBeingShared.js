@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, Animated, ScrollView} from 'react-native';
+import {Text, StyleSheet, View} from 'react-native';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 
@@ -11,6 +11,11 @@ import ButtonColor from '../../../layout/Views/Button';
 import {openVideoPlayer} from '../../../functions/videoManagement';
 import styleApp from '../../../style/style';
 import AllIcon from '../../../layout/icons/AllIcons';
+import {
+  currentSessionIDSelector,
+  sessionSelector,
+} from '../../../../store/selectors/sessions';
+import {userIDSelector} from '../../../../store/selectors/user';
 
 class VideoBeingShared extends Component {
   constructor(props) {
@@ -120,13 +125,10 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, props) => {
   const {currentSessionID} = state.coach;
   return {
-    userID: state.user.userID,
-    currentSessionID,
-    session: state.coachSessions[currentSessionID],
+    userID: userIDSelector(state),
+    currentSessionID: currentSessionIDSelector(state),
+    session: sessionSelector(state, {id: currentSessionID}),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(VideoBeingShared);
+export default connect(mapStateToProps)(VideoBeingShared);

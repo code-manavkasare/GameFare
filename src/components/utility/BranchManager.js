@@ -17,6 +17,10 @@ import {navigate} from '../../../NavigationService';
 import {logMixpanel} from '../functions/logs';
 import {boolShouldComponentUpdate} from '../functions/redux';
 import {getValueOnce} from '../database/firebase/methods';
+import {
+  userConnectedSelector,
+  userIDSelector,
+} from '../../store/selectors/user';
 
 class BranchManager extends Component {
   constructor(props) {
@@ -130,12 +134,9 @@ class BranchManager extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    userConnected: state.user.userConnected,
+    userID: userIDSelector(state),
+    userConnected: userConnectedSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(BranchManager);
+export default connect(mapStateToProps)(BranchManager);

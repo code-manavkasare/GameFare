@@ -138,17 +138,7 @@ async function getPhotoUser() {
     assetType: 'All',
   });
   return edges;
-}
-
-const sortVideos = (videos) => {
-  if (!videos) {
-    videos = {};
-  }
-  return Object.values(videos).sort(
-    (a, b) => b.startTimestamp - a.startTimestamp,
-  );
-};
-
+} 
 const getLastVideo = async () => {
   const {edges} = await CameraRoll.getPhotos({
     first: 1,
@@ -349,8 +339,7 @@ export {
   pickLibrary,
   resize,
   rotateImage,
-  getPhotoUser,
-  sortVideos,
+  getPhotoUser, 
   getVideoInfo,
   getLastVideo,
   permission,

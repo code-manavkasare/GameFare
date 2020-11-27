@@ -11,6 +11,9 @@ import InputMessage from './InputMessage';
 import './Keyboard';
 import CardMessage from './CardMessage';
 import {FlatListComponent} from '../../layout/Views/FlatList';
+import {messagesSelector} from '../../../store/selectors/conversations';
+import {userIDSelector} from '../../../store/selectors/user';
+import {blockedUsersSelector} from '../../../store/selectors/blockedUsers';
 
 class ListMessages extends Component {
   constructor(props) {
@@ -30,11 +33,10 @@ class ListMessages extends Component {
     };
   }
   shouldComponentUpdate(prevProps, prevState) {
-    const {messages, blockedUsers, isSessionRequest} = this.props;
+    const {messages, blockedUsers} = this.props;
     if (
       !isEqual(messages, prevProps.messages) ||
       !isEqual(blockedUsers, prevProps.blockedUsers) ||
-      !isEqual(isSessionRequest, prevProps.isSessionRequest) ||
       !isEqual(prevState, this.state)
     )
       return true;
@@ -63,7 +65,6 @@ class ListMessages extends Component {
     return (
       <InputMessage
         discussion={session}
-        user={user}
         initialMessage={initialMessage}
         onRef={(ref) => (this.inputRef = ref)}
       />
@@ -73,51 +74,31 @@ class ListMessages extends Component {
     const {blockedUsers, user, session} = this.props;
     let {messages} = this.props;
     if (!messages) messages = {};
-    if (blockedUsers && includes(message.user.id, Object.keys(blockedUsers))) {
+    if (blockedUsers && includes(message.user.id, Object.keys(blockedUsers)))
       return null;
-    } else {
-      return (
-        <CardMessage
-          message={{
-            previousMessage: Object.values(messages)[i + 1]
-              ? Object.values(messages)[i + 1]
-              : null,
-            currentMessage: message,
-          }}
-          discussion={session}
-          user={user}
-          key={message.id}
-          index={i}
-        />
-      );
-    }
-  };
 
-  messagesArray = () => {
-    let {messages, isSessionRequest, session, userID} = this.props;
-    if (!messages) messages = {};
-    messages = Object.values(messages);
-    if (isSessionRequest) {
-      const {organizer} = session.info;
-      messages.unshift({
-        id: 'request',
-        text:
-          organizer !== userID
-            ? 'Unlock the conversation by sending the first message.'
-            : 'The conversation is currently locked.',
-        type: 'request',
-        timeStamp: Date.now(),
-        user: {},
-      });
-    }
-    return messages;
+    return (
+      <CardMessage
+        message={{
+          previousMessage: Object.values(messages)[i + 1]
+            ? Object.values(messages)[i + 1]
+            : null,
+          currentMessage: message,
+        }}
+        discussion={session}
+        user={user}
+        key={message.id}
+        index={i}
+      />
+    );
   };
 
   render() {
+    const {messages} = this.props;
     return (
       <View style={styles.container}>
         <FlatListComponent
-          list={this.messagesArray()}
+          list={messages}
           cardList={({item, index}) =>
             this.filterBlockedUserMessage(item, index)
           }
@@ -153,21 +134,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     width: '100%',
   },
-  messageScrollView: {paddingBottom: 20, paddingTop: 30, flex: 1},
 });
 
 const mapStateToProps = (state, props) => {
-  const isSessionRequest =
-    state.user.infoUser.coachSessionsRequests &&
-    state.user.infoUser.coachSessionsRequests[props.objectID];
-  const conversation = state.conversations[props.objectID]
-  let messages = {}
-  if (conversation) messages = conversation.messages
   return {
-    blockedUsers: state.user.infoUser.blockedUsers,
-    messages,
-    isSessionRequest: isSessionRequest ? isSessionRequest : null,
-    userID: state.user.userID,
+    blockedUsers: blockedUsersSelector(state),
+    messages: messagesSelector(state, {id: props.objectID}),
+    userID: userIDSelector(state),
   };
 };
 

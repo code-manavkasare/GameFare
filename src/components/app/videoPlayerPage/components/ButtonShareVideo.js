@@ -9,6 +9,9 @@ import {
   isVideosAreBeingShared,
 } from '../../../functions/coach';
 import colors from '../../../style/colors';
+import {portraitSelector} from '../../../../store/selectors/layout';
+import {sessionSelector} from '../../../../store/selectors/sessions';
+import {userIDSelector} from '../../../../store/selectors/user';
 class ButtonShareVideo extends Component {
   constructor(props) {
     super(props);
@@ -28,12 +31,12 @@ class ButtonShareVideo extends Component {
 
     const isVideosWereBeingShared = isVideosAreBeingShared({
       session: prevSession,
-      archives: Object.keys(archives),
+      archives,
       userIDSharing: prevPersonSharingScreen,
     });
     const isVideosBeingShared = isVideosAreBeingShared({
       session,
-      archives: Object.keys(archives),
+      archives,
       userIDSharing: personSharingScreen,
     });
 
@@ -43,11 +46,10 @@ class ButtonShareVideo extends Component {
 
   async startSharingVideo(value) {
     const {userID, coachSessionID, archives, getVideoState} = this.props;
-
     let updates = {};
     for (let i in archives) {
-      const {id} = archives[i];
-      const stateVideo = getVideoState(i);
+      const id = archives[i];
+      const stateVideo = getVideoState(id);
 
       const sharedVideosPath = `coachSessions/${coachSessionID}/sharedVideos/${id}`;
       const coachSessionMemberSharingPath = `coachSessions/${coachSessionID}/members/${userID}`;
@@ -69,8 +71,8 @@ class ButtonShareVideo extends Component {
 
     updates[
       `coachSessions/${coachSessionID}/members/${userID}/sharedVideos`
-    ] = Object.values(archives).reduce(function(result, item) {
-      result[item.id] = true;
+    ] = archives.reduce(function(result, item) {
+      result[item] = true;
       return result;
     }, {});
     await database()
@@ -154,13 +156,10 @@ class ButtonShareVideo extends Component {
 
 const mapStateToProps = (state, props) => {
   return {
-    userID: state.user.userID,
-    portrait: state.layout.currentScreenSize.portrait,
-    session: state.coachSessions[props.coachSessionID],
+    userID: userIDSelector(state),
+    portrait: portraitSelector(state),
+    session: sessionSelector(state, {id: props.coachSessionID}),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(ButtonShareVideo);
+export default connect(mapStateToProps)(ButtonShareVideo);

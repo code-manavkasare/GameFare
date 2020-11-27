@@ -10,7 +10,6 @@ import {getSortedMembers} from '../../../functions/session';
 import AllIcons from '../../../layout/icons/AllIcons';
 import AsyncImage from '../../../layout/image/AsyncImage';
 import ButtonColor from '../../../layout/Views/Button';
-import CardConversation from '../../elementsMessage/CardConversation';
 import {FlatListComponent} from '../../../layout/Views/FlatList';
 
 import {store} from '../../../../store/reduxStore';
@@ -227,7 +226,7 @@ const titleSession = (session, size, short) => {
   return names;
 };
 
-const dateSession = ({session, messages, component}) => {
+const dateSession = ({session, lastMessage, component, messages}) => {
   let {members, createdAt} = session;
   if (!members) {
     return formatDate(Date.now());
@@ -254,9 +253,8 @@ const dateSession = ({session, messages, component}) => {
       return 0;
     }
   })[0].disconnectionTimeStamp;
-
+  if (!lastMessage) lastMessage = lastMessageObject(messages);
   let dateLastMessage = 0;
-  const lastMessage = lastMessageObject(messages);
   if (lastMessage) {
     dateLastMessage = lastMessage.timeStamp;
   }
@@ -279,14 +277,24 @@ const sessionTitle = (session, styleText) => {
   );
 };
 
-const sessionDate = ({session, messages}) => {
+const lastMessageObject = (messages) => {
+  if (!messages) {
+    return false;
+  }
+  if (Object.keys(messages)[0] === 'noMessage') {
+    return false;
+  }
+  return Object.values(messages)[0];
+};
+
+const sessionDate = ({session, lastMessage, messages}) => {
   return (
     <Text
       style={[
         styleApp.text,
         {color: colors.greyDark, marginTop: 0, fontSize: 10},
       ]}>
-      {dateSession({session, messages, component: true})}
+      {dateSession({session, lastMessage, component: true, messages})}
     </Text>
   );
 };
@@ -303,26 +311,12 @@ const blueBadge = () => {
   return <View style={blueBadge} />;
 };
 
-const lastMessageObject = (messages) => {
-  if (!messages) {
-    return false;
-  }
-  if (Object.keys(messages)[0] === 'noMessage') {
-    return false;
-  }
-  return Object.values(messages)[0];
-};
-
-const lastMessage = (messages) => {
-  if (!messages) return null;
-  const userID = store.getState().user.userID;
-  const lastMessage = lastMessageObject(messages);
-  if (!lastMessage) {
-    return null;
-  }
-
-  const {user, timeStamp, images, type} = lastMessage;
+const lastMessageView = (lastMessage) => {
+  if (!lastMessage) return null;
+  const {userID} = store.getState().user;
+  const {user, images, type} = lastMessage;
   let {text} = lastMessage;
+  if (!text) text = '';
   text = text.replace(/(\r\n|\n|\r)/gm, ' ');
   if (images) {
     text = `${Object.values(images).length} file${
@@ -392,15 +386,6 @@ const lastMessage = (messages) => {
     textAlignVertical: 'center',
     marginRight: user.id === userID ? 5 : undefined,
   };
-  const notificationStyle = {
-    height: 17,
-    width: 17,
-    backgroundColor: colors.blue,
-    borderRadius: 15,
-    position: 'absolute',
-    right: -8,
-    top: -5,
-  };
   return (
     <Row style={containerStyle}>
       <View style={messageContainerStyle}>
@@ -411,7 +396,6 @@ const lastMessage = (messages) => {
             styleImgProps={profilePhotoStyle}
           />
         </View>
-        {/* {notification && <View style={notificationStyle} />} */}
         <Text style={nameTextStyle}>
           {user.id === userID
             ? 'You'
@@ -530,7 +514,6 @@ const hangupButton = (session) => {
     ...styleApp.center,
     borderRadius: 20,
   };
-  const styleText = {...styleApp.textBold, color: colors.white, fontSize: 10};
   return (
     <ButtonColor
       view={() => {
@@ -807,20 +790,6 @@ const ListPlayers = (props) => {
   );
 };
 
-const conversationView = (session) => {
-  const {objectID} = session;
-  return viewWithTitle({
-    view: <CardConversation objectID={objectID} />,
-    title: 'Chat',
-    icon: {
-      name: 'speech',
-      type: 'moon',
-      color: colors.title,
-      size: 20,
-    },
-  });
-};
-
 const contentView = (session) => {
   const {contents} = session;
 
@@ -841,10 +810,9 @@ module.exports = {
   blueBadge,
   buttonPlay,
   contentView,
-  conversationView,
   hangupButton,
   imageCardTeam,
-  lastMessage,
+  lastMessageView,
   ListContents,
   ListPlayers,
   rowTitle,

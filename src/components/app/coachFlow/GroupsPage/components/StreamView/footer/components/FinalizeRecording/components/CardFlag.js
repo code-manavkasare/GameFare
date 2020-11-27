@@ -17,7 +17,7 @@ import {
   duration,
 } from '../../../../../../../../../functions/date';
 
-class CardFlag extends Component {
+export default class CardFlag extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -278,11 +278,3 @@ const styles = StyleSheet.create({
     right: -5,
   },
 });
-
-const mapStateToProps = (state) => {
-  return {
-    userID: state.user.userID,
-  };
-};
-
-export default connect(mapStateToProps)(CardFlag);

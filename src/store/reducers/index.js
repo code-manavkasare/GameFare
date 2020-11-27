@@ -1,9 +1,16 @@
 import {combineReducers} from 'redux';
 import {reducer as network} from 'react-native-offline';
 
-import globaleVariablesReducer from './globaleVariablesReducer';
-import userReducer from './userReducer';
-import historicSearchReducer from './historicSearchReducer';
+import {
+  userReducer,
+  userCloudArchivesReducer,
+  userNotificationsReducer,
+  userSessionsReducer,
+  userSessionsRequestsReducer,
+  userBlockedUsersReducer,
+  userBlockedByUsersReducer,
+  userSilentFriendsReducer,
+} from './userReducer';
 import messageReducer from './messageReducer';
 import coachReducer from './coachReducer';
 import layoutReducer from './layoutReducer';
@@ -13,7 +20,6 @@ import localVideoLibraryReducer from './localVideoLibraryReducer';
 import {archivesReducer} from './archivesReducer';
 import {coachSessionsReducer} from './coachSessionsReducer';
 import {conversationsReducer} from './conversationsReducer';
-import phoneContactsReducer from './phoneContactsReducer';
 import connectionTypeReducer from './connectionTypeReducer';
 
 export default combineReducers({
@@ -23,13 +29,17 @@ export default combineReducers({
   coachSessions: coachSessionsReducer,
   connectionType: connectionTypeReducer,
   conversations: conversationsReducer,
-  globaleVariables: globaleVariablesReducer,
-  historicSearch: historicSearchReducer,
   layout: layoutReducer,
   localVideoLibrary: localVideoLibraryReducer,
   message: messageReducer,
   network,
-  phoneContacts: phoneContactsReducer,
   uploadQueue: uploadQueueReducer,
   user: userReducer,
+  userCloudArchives: userCloudArchivesReducer,
+  userNotifications: userNotificationsReducer,
+  userSessions: userSessionsReducer,
+  userSessionsRequests: userSessionsRequestsReducer,
+  userBlockedUsers: userBlockedUsersReducer,
+  userBlockedByUsers: userBlockedByUsersReducer,
+  userSilentFriends: userSilentFriendsReducer,
 });

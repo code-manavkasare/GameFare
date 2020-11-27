@@ -12,6 +12,8 @@ import {
   marginTopAppLandscape,
 } from '../../../../../../style/sizes';
 import AddFlagButton from '../footer/components/AddFlagButton';
+import {userIDSelector} from '../../../../../../../store/selectors/user';
+import {currentScreenSizeSelector} from '../../../../../../../store/selectors/layout';
 
 class MembersView extends Component {
   constructor(props) {
@@ -78,12 +80,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    currentScreenSize: state.layout.currentScreenSize,
+    userID: userIDSelector(state),
+    currentScreenSize: currentScreenSizeSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(MembersView);
+export default connect(mapStateToProps)(MembersView);

@@ -573,6 +573,8 @@ const styles = StyleSheet.create({
     height: 20,
     width: 20,
     borderRadius: 10,
+    paddingLeft: 1,
+    paddingTop: 1,
     backgroundColor: colors.blue,
   },
   absoluteViewBadge: {

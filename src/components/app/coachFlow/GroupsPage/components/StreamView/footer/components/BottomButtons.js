@@ -9,7 +9,6 @@ import {navigate} from '../../../../../../../../../NavigationService';
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
-import {uploadQueueAction} from '../../../../../../../../store/actions/uploadQueueActions';
 import {layoutAction} from '../../../../../../../../store/actions/layoutActions';
 import sizes from '../../../../../../../style/sizes';
 import {store} from '../../../../../../../../store/reduxStore';
@@ -36,6 +35,17 @@ import {
 } from '../../../../../../../functions/pictures';
 import isEqual from 'lodash.isequal';
 import {coachAction} from '../../../../../../../../store/actions/coachActions';
+import {
+  userConnectedSelector,
+  userIDSelector,
+  userInfoSelector,
+} from '../../../../../../../../store/selectors/user';
+import {
+  endCurrentSessionSelector,
+  reconnectingSelector,
+  recordingSessionSelector,
+} from '../../../../../../../../store/selectors/sessions';
+import {cloudVideosSelector} from '../../../../../../../../store/selectors/archives';
 
 class BottomButton extends Component {
   constructor(props) {
@@ -65,7 +75,7 @@ class BottomButton extends Component {
   }
   static getDerivedStateFromProps(props, state) {
     var newState = {};
-    const {members, userID, archivedStreams, coach} = props;
+    const {members, userID, archivedStreams, recording} = props;
     const {seenVideos, finalizeRecordingMember} = state;
     // unseen videos indicator
     const archivedVideosLength = archivedStreams
@@ -80,9 +90,9 @@ class BottomButton extends Component {
     const firebaseSelf = members ? members[userID] : undefined;
     if (firebaseSelf && firebaseSelf.recording) {
       const {isRecording} = firebaseSelf.recording;
-      if (isRecording && !coach.recording) {
+      if (isRecording && !recording) {
         newState = {...newState, shouldStartRecording: true};
-      } else if (!isRecording && coach.recording) {
+      } else if (!isRecording && recording) {
         newState = {...newState, shouldStopRecording: true};
       } else {
         newState = {
@@ -112,10 +122,13 @@ class BottomButton extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {layoutAction} = this.props;
-    const {endCurrentSession, currentSessionReconnecting} = this.props.coach;
+    const {
+      layoutAction,
+      endCurrentSession,
+      currentSessionReconnecting,
+    } = this.props;
     const {anyMemberRecording} = this.state;
-    if (!prevProps.coach.endCurrentSession && endCurrentSession) {
+    if (!prevProps.endCurrentSession && endCurrentSession) {
       this.onEndCurrentSession();
     }
     if (currentSessionReconnecting && this.recordingMenuRef.state.visible) {
@@ -226,7 +239,6 @@ class BottomButton extends Component {
       members,
       userID,
       coachSessionID,
-      uploadQueueAction,
       otPublisherRef,
       coachAction,
     } = this.props;
@@ -324,9 +336,9 @@ class BottomButton extends Component {
     }
   };
   async onEndCurrentSession() {
-    const {members, userID, coach} = this.props;
+    const {members, userID, recording} = this.props;
     const self = members[userID];
-    if (coach.recording) {
+    if (recording) {
       await this.setState({shouldStopRecording: true, discardFile: true});
       this.stopRemoteRecording(self);
     }
@@ -395,85 +407,7 @@ const styles = StyleSheet.create({
     width: 0.7 * sizes.width,
     paddingBottom: 20,
   },
-  CardUploading: {
-    position: 'absolute',
-    height: 70,
-    width: 200,
-    backgroundColor: colors.white,
-    borderRadius: 35,
-    borderColor: colors.off,
-    borderWidth: 1,
-    paddingLeft: 10,
-    paddingRight: 10,
-    top: -60,
-  },
-  whiteButtonRecording: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 55,
-    borderWidth: 5,
-    borderColor: colors.off,
-    width: 55,
-    borderRadius: 42.5,
-  },
-  buttonReconnecting: {
-    ...styleApp.center,
-    backgroundColor: colors.darkGray,
-    opacity: 0.5,
-    overflow: 'hidden',
-    height: 40,
-    width: 40,
-    borderRadius: 40,
-  },
-  buttonStartStreaming: {
-    ...styleApp.center,
-    backgroundColor: colors.transparent,
-    opacity: 0.8,
-    overflow: 'hidden',
-    height: 40,
-    width: 40,
-    borderRadius: 40,
-  },
-  buttonStopStreaming: {
-    ...styleApp.center,
-    backgroundColor: colors.greyDark,
-    opacity: 0.8,
-    overflow: 'hidden',
-    height: 25,
-    width: 25,
-    borderRadius: 5,
-  },
-  recordingOverlay: {
-    backgroundColor: colors.redLight,
-    height: '100%',
-    width: '100%',
-  },
-  unreadIndicator: {
-    ...styleApp.textBold,
-    height: 13,
-    width: 13,
-    position: 'absolute',
-    backgroundColor: colors.white,
-    top: -4,
-    left: 16,
-    borderRadius: 10,
-  },
-  unreadIndText: {
-    ...styleApp.textBold,
-    fontSize: 10,
-    marginTop: 0.5,
-    textAlign: 'center',
-  },
-  viewRecordingTime: {
-    position: 'absolute',
-    top: -20,
-    zIndex: 20,
-    width: 90,
-    height: 25,
-    borderRadius: 5,
-    ...styleApp.center,
-    backgroundColor: colors.red,
-  },
+
   buttonRound: {
     ...styleApp.fullSize,
     height: 55,
@@ -484,16 +418,17 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
-    coach: state.coach,
-    archivedStreams: state.user.infoUser.archivedStreams,
-    currentSessionConnected: state.coach.connected,
-    currentSessionReconnecting: state.coach.reconnecting,
+    userID: userIDSelector(state),
+    infoUser: userInfoSelector(state),
+    recording: recordingSessionSelector(state),
+    archivedStreams: cloudVideosSelector(state),
+    currentSessionConnected: userConnectedSelector(state),
+    currentSessionReconnecting: reconnectingSelector(state),
+    endCurrentSession: endCurrentSessionSelector(state),
   };
 };
 
 export default connect(
   mapStateToProps,
-  {coachAction, uploadQueueAction, layoutAction},
+  {coachAction, layoutAction},
 )(BottomButton);

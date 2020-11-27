@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, styleAppheet, StyleSheet, Animated} from 'react-native';
+import {Text, View, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {navigate} from '../../../../../../NavigationService';
 import Reanimated from 'react-native-reanimated';
@@ -11,6 +11,11 @@ import {heightFooter} from '../../../../style/sizes';
 import AllIcons from '../../../../layout/icons/AllIcons';
 import Button from '../../../../layout/Views/Button';
 import {logMixpanel} from '../../../../functions/logs';
+import {
+  numNotificationsSelector,
+  userConnectedSelector,
+} from '../../../../../store/selectors/user';
+import {generalSessionRecordingSelector} from '../../../../../store/selectors/layout';
 
 class FooterButton extends React.Component {
   constructor(props) {
@@ -201,12 +206,7 @@ const styles = StyleSheet.create({
     height: heightFooter,
     width: '100%',
   },
-  textButton: {
-    ...styleApp.footerText,
-    marginTop: 6,
-    marginBottom: 5,
-    fontSize: 12.5,
-  },
+
   inSessionView: {
     ...styleApp.center,
     ...styleApp.fullSize,
@@ -257,18 +257,11 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => {
-  const notifications = state.user.infoUser.notifications;
-
   return {
-    userConnected: state.user.userConnected,
-    generalSessionRecording: state.layout.generalSessionRecording,
-    numberNotifications: notifications
-      ? Object.values(notifications).length
-      : 0,
+    userConnected: userConnectedSelector(state),
+    generalSessionRecording: generalSessionRecordingSelector(state),
+    numberNotifications: numNotificationsSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(FooterButton);
+export default connect(mapStateToProps)(FooterButton);

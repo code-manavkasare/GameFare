@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Animated, Keyboard, Text} from 'react-native';
 import {connect} from 'react-redux';
-import Orientation from 'react-native-orientation-locker';
 import {BlurView} from '@react-native-community/blur';
 import {dissoc} from 'ramda';
 
@@ -22,6 +21,11 @@ import InvitationManager from '../../utility/InvitationManager';
 import ListVideoCalls from './components/ListVideoCalls';
 import UserSearchResults from '../userDirectory/components/UserSearchResults';
 import HeaderCallTab from './components/HeaderCallTab';
+import {
+  userConnectedSelector,
+  userIDSelector,
+  userInfoSelector,
+} from '../../../store/selectors/user';
 
 class CallTab extends Component {
   constructor(props) {
@@ -210,8 +214,8 @@ class CallTab extends Component {
   };
 
   header() {
-    const {actionHeader, modal, branchLink, inlineSearch} = this.state;
-    const {navigation, numberNotifications, userConnected, route} = this.props;
+    const {actionHeader, modal, inlineSearch} = this.state;
+    const {navigation, userConnected, route} = this.props;
     const {navigate, goBack} = navigation;
     return (
       <HeaderCallTab
@@ -237,19 +241,6 @@ class CallTab extends Component {
         sizeIcon2={24}
         colorIcon2={colors.title}
         clickButton2={() => navigate('Groups')}
-        badgeIcon2={
-          numberNotifications !== 0 && !modal ? (
-            <View style={[styleApp.viewBadge, {marginLeft: 30}]}>
-              <Text
-                style={[
-                  styleApp.textBold,
-                  {color: colors.white, fontSize: 10},
-                ]}>
-                {numberNotifications}
-              </Text>
-            </View>
-          ) : null
-        }
         searchBar={
           inlineSearch ? (
             <SearchInput
@@ -276,6 +267,7 @@ class CallTab extends Component {
       selectedSessions,
       selectedUsers,
     } = this.state;
+    console.log('render call tab');
     return (
       <View style={styleApp.stylePage}>
         {this.header()}
@@ -312,19 +304,11 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => {
-  const notifications = state.user.infoUser.notifications;
   return {
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
-    userConnected: state.user.userConnected,
-    currentSessionID: state.coach.currentSessionID,
-    numberNotifications: notifications
-      ? Object.values(notifications).length
-      : 0,
+    userID: userIDSelector(state),
+    infoUser: userInfoSelector(state),
+    userConnected: userConnectedSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(CallTab);
+export default connect(mapStateToProps)(CallTab);

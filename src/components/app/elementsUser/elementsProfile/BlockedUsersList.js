@@ -13,6 +13,8 @@ import Button from '../../../layout/buttons/Button';
 import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
+import {userIDSelector} from '../../../../store/selectors/user';
+import {blockedUsersSelector} from '../../../../store/selectors/blockedUsers';
 
 class BlockedUsersList extends Component {
   constructor(props) {
@@ -144,12 +146,9 @@ class BlockedUsersList extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    blockedUsersID: state.user.infoUser.blockedUsers,
+    userID: userIDSelector(state),
+    blockedUsersID: blockedUsersSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(BlockedUsersList);
+export default connect(mapStateToProps)(BlockedUsersList);

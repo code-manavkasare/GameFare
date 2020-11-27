@@ -5,6 +5,10 @@ import database from '@react-native-firebase/database';
 import Button from '../../../layout/buttons/Button';
 import colors from '../../../style/colors';
 import {isSomeoneSharingScreen} from '../../../functions/coach';
+import {
+  playbackLinkedSelector,
+  sessionSelector,
+} from '../../../../store/selectors/sessions';
 
 class ButtonShareVideo extends Component {
   constructor(props) {
@@ -122,14 +126,9 @@ class ButtonShareVideo extends Component {
 
 const mapStateToProps = (state, props) => {
   return {
-    portrait: state.layout.currentScreenSize.portrait,
-    session: state.coachSessions[props.coachSessionID],
-    isPlaybackLinked:
-      state.coachSessions[props.coachSessionID]?.sharedVideos?.isPlaybackLinked,
+    session: sessionSelector(state, {id: props.coachSessionID}),
+    isPlaybackLinked: playbackLinkedSelector(state, {id: props.coachSessionID}),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(ButtonShareVideo);
+export default connect(mapStateToProps)(ButtonShareVideo);

@@ -20,7 +20,6 @@ import {openVideoPlayer} from '../../../../../../../functions/videoManagement';
 
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 import AsyncImage from '../../../../../../../layout/image/AsyncImage';
-import {boolShouldComponentUpdate} from '../../../../../../../functions/redux';
 
 import {FormatDate, formatDuration} from '../../../../../../../functions/date';
 import Loader from '../../../../../../../layout/loaders/Loader';
@@ -29,6 +28,10 @@ import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 import {logMixpanel} from '../../../../../../../functions/logs';
 import {bindArchive} from '../../../../../../../database/firebase/bindings';
+
+import {userIDSelector} from '../../../../../../../../store/selectors/user';
+import {archiveSelector} from '../../../../../../../../store/selectors/archives';
+import {boolShouldComponentUpdate} from '../../../../../../../functions/redux';
 
 class CardArchive extends Component {
   static propTypes = {
@@ -73,6 +76,7 @@ class CardArchive extends Component {
 
   static getDerivedStateFromProps(props, state) {
     let {archive, isSelected} = props;
+
     const {archiveFromCameraroll, userID} = props;
 
     if (archiveFromCameraroll) {
@@ -120,9 +124,8 @@ class CardArchive extends Component {
       />
     );
   }
-
-  openVideo = async (archive) => {
-    const {coachSessionID, videosToOpen, disableClick} = this.props;
+  openVideo = async () => {
+    const {coachSessionID, videosToOpen, disableClick, archive} = this.props;
     const {url, id} = archive;
     if (url && url !== '' && !disableClick) {
       logMixpanel({
@@ -166,7 +169,6 @@ class CardArchive extends Component {
       return null;
     }
   }
-
   linearGradient() {
     return (
       <LinearGradient
@@ -472,10 +474,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, props) => {
   return {
-    userID: state.user.userID,
-    archive: props.nativeArchive
-      ? props.nativeArchive
-      : state.archives[props.id],
+    userID: userIDSelector(state),
+    archive: archiveSelector(state, props),
   };
 };
 

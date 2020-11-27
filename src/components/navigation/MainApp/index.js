@@ -16,7 +16,6 @@ import Groups from '../../app/coachFlow/GroupsPage/index';
 
 import SessionSettings from '../../app/TeamPage/components/SessionSettings';
 
-import initialPage from '../../app/initialPage';
 import sizes from '../../style/sizes';
 
 const Stack = createStackNavigator();
@@ -25,7 +24,6 @@ const MainApp = () => {
   const ModalSpec = DepthModal({top: 0, ignoreBackgroundScale: true});
   return (
     <Stack.Navigator initialRouteName="TabsApp" headerMode="none">
-      <Stack.Screen name="InitialPage" component={initialPage} />
       <Stack.Screen
         name="TabsApp"
         component={TabsApp}

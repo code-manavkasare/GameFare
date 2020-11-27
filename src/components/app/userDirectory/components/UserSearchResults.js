@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 
-import {autocompleteSearchUsers, userObject} from '../../../functions/users';
+import {autocompleteSearchUsers} from '../../../functions/users';
 import {store} from '../../../../store/reduxStore';
 import AllIcon from '../../../layout/icons/AllIcons';
 import ButtonColor from '../../../layout/Views/Button';
@@ -62,15 +62,16 @@ export default class UserSearchResults extends Component {
         false,
         blockedByUsers ? Object.keys(blockedByUsers) : false,
       );
-      const users = rawUsers.map((user) =>
-        userObject(user.info, user.objectID),
-      );
+      const users = rawUsers.map((user) => {
+        return {info: user.info, id: user.objectID};
+      });
       this.setState({users, displayMore: false, noResults: users.length === 0});
     }
   };
 
   userCard = (user) => {
     const {selectedUsers, onSelect} = this.props;
+    console.log('selectedUsers', selectedUsers);
     return (
       <View key={user.id} style={{marginBottom: 5}}>
         <CardUserSelect
