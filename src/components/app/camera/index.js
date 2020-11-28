@@ -44,7 +44,7 @@ export default class CameraPage extends Component {
         />
         <HeaderBackButton
           AnimatedHeaderValue={this.animatedHeaderValue}
-          inputRange={[5, 10]}
+          inputRange={[0, 100]}
           colorLoader={'white'}
           sizeLoader={40}
           initialBorderColorIcon={'transparent'}
