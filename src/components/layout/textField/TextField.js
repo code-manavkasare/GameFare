@@ -15,7 +15,6 @@ import {Grid,Row,Col} from 'react-native-easy-grid';
 import colors from '../../style/colors'
 import styleApp from '../../style/style'
 var  { height, width } = Dimensions.get('screen')
-import FastImage from 'react-native-fast-image'
 import AllIcons from '../icons/AllIcons'
 
 export default class TextField extends Component {
