@@ -156,9 +156,9 @@ class VideoLibraryPage extends Component {
               );
             }}
             style={styles.settingsRowButton}
-            color={colors.greyDarker}
+            color={colors.greyDark}
             click={this.goToEditProfile}
-            onPressColor={'transparent'}
+            onPressColor={colors.greyMidDark}
           />
           <ButtonColor
             view={() => {
@@ -172,9 +172,9 @@ class VideoLibraryPage extends Component {
               );
             }}
             style={styles.settingsRowButton}
-            color={colors.greyDarker}
+            color={colors.greyDark}
             click={() => navigation.navigate('MorePage')}
-            onPressColor={'transparent'}
+            onPressColor={colors.greyMidDark}
           />
           <ButtonColor
             view={() => {
@@ -191,7 +191,7 @@ class VideoLibraryPage extends Component {
             style={styles.settingsRowButton}
             color={colors.blue}
             click={selectVideosFromCameraRoll}
-            onPressColor={'transparent'}
+            onPressColor={colors.blueLight}
           />
         </Row>
       </View>
@@ -265,8 +265,8 @@ class VideoLibraryPage extends Component {
                     button: {
                       click: this.toggleSelectable,
                       text: !selectableMode ? 'Select' : 'Cancel',
-                      color: colors.greyMidDark,
-                      onPressColor: colors.greyDark,
+                      color: colors.greyDark,
+                      onPressColor: colors.greyMidDark,
                       fontSize: 12,
                       style: {
                         height: 25,
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
     width: 45,
     height: 45,
     borderRadius: 25,
-    ...styleApp.shadow,
+    ...styleApp.shadowWeak,
   },
 });
 const mapStateToProps = (state) => {
