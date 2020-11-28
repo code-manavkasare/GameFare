@@ -1,13 +1,6 @@
 import React, {Component} from 'react';
-import {
-  Animated,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  ScrollView,
-} from 'react-native';
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Animated, Text, TextInput, View, ScrollView} from 'react-native';
+import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 
@@ -95,12 +88,14 @@ class EditProfilePage extends Component {
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
+          marginTop={10}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Edit Profile'}
-          inputRange={[5, 10]}
+          inputRange={[0, 50]}
           initialBorderColorIcon={colors.white}
           initialBackgroundColor={'white'}
           icon1={'chevron-left'}
+          sizeIcon1={17}
           initialBorderColorHeader={colors.off}
           initialTitleOpacity={1}
           initialBorderWidth={1}
@@ -111,7 +106,7 @@ class EditProfilePage extends Component {
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome + 20}
+          marginTop={sizes.heightHeaderModal + 20}
           showsVerticalScrollIndicator={true}>
           <Row style={{paddingLeft: 20, paddingRight: 20, marginTop: 40}}>
             <Col size={20} style={styleApp.center2}>

@@ -46,33 +46,35 @@ class HeaderBackButton extends Component {
     const {
       AnimatedHeaderValue,
       inputRange,
+      initialTitleOpacity,
       initialBorderColorHeader,
       initialBorderWidth,
       initialBackgroundColor,
       initialBorderColorIcon,
     } = this.props;
-    const AnimateOpacityTitle = AnimatedHeaderValue.interpolate({
-      inputRange: [inputRange[1] + 10, inputRange[1] + 20],
-      outputRange: [this.props.initialTitleOpacity, 1],
+    const AnimateOpacityTitle = AnimatedHeaderValue?.interpolate({
+      inputRange: [inputRange[1] - 20, inputRange[1] + 20],
+      outputRange: [initialTitleOpacity, 1],
       extrapolate: 'clamp',
     });
-    const AnimateBackgroundView = AnimatedHeaderValue.interpolate({
-      inputRange: [inputRange[1] - 0.42, inputRange[1] - 0.1],
+    const AnimateOpacityBackground = AnimatedHeaderValue?.interpolate({
+      inputRange: [inputRange[1] - 20, inputRange[1] + 20],
+      outputRange: [0, 1],
+      extrapolate: 'clamp',
+    });
+    const AnimateBackgroundView = AnimatedHeaderValue?.interpolate({
+      inputRange: [inputRange[1] - 20, inputRange[1] + 20],
       outputRange: [initialBackgroundColor, colors.white],
       extrapolate: 'clamp',
     });
-    const borderWidth = AnimatedHeaderValue.interpolate({
+    const borderWidth = AnimatedHeaderValue?.interpolate({
       inputRange: inputRange,
       outputRange: [initialBorderWidth ? initialBorderWidth : 0, 1],
       extrapolate: 'clamp',
     });
-    const borderColorIcon = AnimatedHeaderValue.interpolate({
-      inputRange: inputRange,
-      outputRange: [initialBorderColorIcon, colors.white],
-      extrapolate: 'clamp',
-    });
-    const borderColorView = AnimatedHeaderValue.interpolate({
-      inputRange: inputRange,
+    const borderColorIcon = initialBorderColorIcon;
+    const borderColorView = AnimatedHeaderValue?.interpolate({
+      inputRange: [inputRange[1] - 20, inputRange[1] + 20],
       outputRange: [
         initialBorderColorHeader ? initialBorderColorHeader : colors.white,
         colors.off,
@@ -80,6 +82,7 @@ class HeaderBackButton extends Component {
       extrapolate: 'clamp',
     });
     return {
+      AnimateOpacityBackground,
       AnimateOpacityTitle,
       AnimateBackgroundView,
       borderWidth,
@@ -96,17 +99,19 @@ class HeaderBackButton extends Component {
       typeIcon1,
       onPressColorIcon1,
       badgeIcon1,
+      animateIcon1,
     } = this.props;
-    const {borderColorIcon} = this.animatedValues();
+    const {borderColorIcon, AnimateOpacityTitle} = this.animatedValues();
     if (icon1) {
       return (
         <Animated.View
           style={[
             styles.animatedButtonStyle,
             {
+              opacity: animateIcon1 ? AnimateOpacityTitle : 1,
               backgroundColor: backgroundColorIcon1
                 ? backgroundColorIcon1
-                : colors.white,
+                : 'transparent',
               borderColor: borderColorIcon,
             },
           ]}>
@@ -134,7 +139,7 @@ class HeaderBackButton extends Component {
               logMixpanel({label: 'Click Header: ' + icon1});
               this.props.clickButton1();
             }}
-            color={backgroundColorIcon1 ? backgroundColorIcon1 : colors.white}
+            color={backgroundColorIcon1 ? backgroundColorIcon1 : 'transparent'}
             style={[styles.buttonRight]}
             onPressColor={onPressColorIcon1 ? onPressColorIcon1 : colors.off}
           />
@@ -162,17 +167,19 @@ class HeaderBackButton extends Component {
       sizeIcon11,
       typeIcon11,
       nobackgroundColorIcon1,
+      animateIcon11,
     } = this.props;
-    const {borderColorIcon} = this.animatedValues();
+    const {borderColorIcon, AnimateOpacityTitle} = this.animatedValues();
     if (icon11) {
       return (
         <Animated.View
           style={[
             styles.animatedButtonStyle,
             {
+              opacity: animateIcon11 ? AnimateOpacityTitle : 1,
               backgroundColor: backgroundColorIcon11
                 ? backgroundColorIcon11
-                : colors.white,
+                : 'transparent',
               borderColor: borderColorIcon,
             },
           ]}>
@@ -191,7 +198,9 @@ class HeaderBackButton extends Component {
               logMixpanel({label: 'Click Header: ' + icon11});
               this.props.clickButton11();
             }}
-            color={backgroundColorIcon11 ? backgroundColorIcon11 : colors.white}
+            color={
+              backgroundColorIcon11 ? backgroundColorIcon11 : 'transparent'
+            }
             style={[styles.buttonRight]}
             onPressColor={colors.off}
           />
@@ -207,17 +216,19 @@ class HeaderBackButton extends Component {
       colorIcon12,
       sizeIcon12,
       typeIcon12,
+      animateIcon12,
     } = this.props;
-    const {borderColorIcon} = this.animatedValues();
+    const {borderColorIcon, AnimateOpacityTitle} = this.animatedValues();
     if (icon12) {
       return (
         <Animated.View
           style={[
             styles.animatedButtonStyle,
             {
+              opacity: animateIcon12 ? AnimateOpacityTitle : 1,
               backgroundColor: backgroundColorIcon12
                 ? backgroundColorIcon12
-                : colors.white,
+                : 'transparent',
               borderColor: borderColorIcon,
             },
           ]}>
@@ -236,7 +247,9 @@ class HeaderBackButton extends Component {
               logMixpanel({label: 'Click Header: ' + icon12});
               this.props.clickButton12();
             }}
-            color={backgroundColorIcon12 ? backgroundColorIcon12 : colors.white}
+            color={
+              backgroundColorIcon12 ? backgroundColorIcon12 : 'transparent'
+            }
             style={[styles.buttonRight]}
             onPressColor={colors.off}
           />
@@ -264,18 +277,20 @@ class HeaderBackButton extends Component {
       sizeIconOffset,
       typeIconOffset,
       customOffset,
+      animateIconOffset,
     } = this.props;
-    const {borderColorIcon} = this.animatedValues();
+    const {borderColorIcon, AnimateOpacityTitle} = this.animatedValues();
     if (iconOffset) {
       return (
         <Animated.View
           style={[
             styleButton,
             {
+              opacity: animateIconOffset ? AnimateOpacityTitle : 1,
               borderColor: borderColorIcon,
               backgroundColor: backgroundColorIconOffset
                 ? backgroundColorIconOffset
-                : colors.white,
+                : 'transparent',
             },
           ]}>
           {iconOffset === 'custom' ? (
@@ -312,7 +327,7 @@ class HeaderBackButton extends Component {
               color={
                 backgroundColorIconOffset
                   ? backgroundColorIconOffset
-                  : colors.white
+                  : 'transparent'
               }
             />
           )}
@@ -337,25 +352,27 @@ class HeaderBackButton extends Component {
       sizeIconOffset2,
       typeIconOffset2,
       nobackgroundColorIcon1,
+      animateIconOffset2,
     } = this.props;
-    const {borderColorIcon} = this.animatedValues();
+    const {borderColorIcon, AnimateOpacityTitle} = this.animatedValues();
     if (iconOffset2) {
       return (
         <Animated.View
           style={[
             styleButton,
             {
+              opacity: animateIconOffset2 ? AnimateOpacityTitle : 1,
               borderColor: borderColorIcon,
               backgroundColor: backgroundColorIconOffset
                 ? backgroundColorIconOffset
-                : colors.white,
+                : 'transparent',
             },
           ]}>
           <ButtonColor
             color={
               backgroundColorIconOffset
                 ? backgroundColorIconOffset
-                : colors.white
+                : 'transparent'
             }
             // color={nobackgroundColorIcon1 ? null : 'white'}
             view={() => {
@@ -395,8 +412,9 @@ class HeaderBackButton extends Component {
       text2Off,
       text2,
       badgeIcon2,
+      animateIcon2,
     } = this.props;
-    const {borderColorIcon} = this.animatedValues();
+    const {borderColorIcon, AnimateOpacityTitle} = this.animatedValues();
     if (loader) {
       return (
         <Loader
@@ -411,10 +429,11 @@ class HeaderBackButton extends Component {
           style={[
             styles.animatedButtonStyle,
             {
+              opacity: animateIcon2 ? AnimateOpacityTitle : 1,
               borderColor: borderColorIcon,
               backgroundColor: backgroundColorIcon2
                 ? colors.transparent
-                : colors.white,
+                : 'transparent',
             },
           ]}>
           <ButtonColor
@@ -449,7 +468,7 @@ class HeaderBackButton extends Component {
               logMixpanel({label: 'Click Header: ' + icon2});
               clickButton2();
             }}
-            color={backgroundColorIcon2 ? backgroundColorIcon2 : colors.white}
+            color={backgroundColorIcon2 ? backgroundColorIcon2 : 'transparent'}
             style={styles.buttonRight}
             onPressColor={
               backgroundColorIcon2 ? backgroundColorIcon2 : colors.off
@@ -486,33 +505,44 @@ class HeaderBackButton extends Component {
       containerStyle,
       marginTop: marginTopProp,
       searchBarStyle,
+      initialBackgroundColor,
     } = this.props;
     const {portrait} = currentScreenSize;
-    const marginTop = marginTopProp
-      ? marginTopProp
-      : portrait
-      ? marginTopApp
-      : marginTopAppLandscape;
+    const marginTop =
+      marginTopProp !== undefined
+        ? marginTopProp
+        : portrait
+        ? marginTopApp
+        : marginTopAppLandscape;
     const {
       AnimateOpacityTitle,
-      AnimateBackgroundView,
-      borderColorView,
-      borderWidth,
+      AnimateOpacityBackground,
     } = this.animatedValues();
     const styleHeader = {
       ...styles.header,
-      backgroundColor: AnimateBackgroundView,
-      marginTop: marginTop,
+      backgroundColor: initialBackgroundColor,
       opacity: opacityHeader ? opacityHeader : 1,
-      borderBottomWidth: borderWidth,
-      borderColor: borderColorView,
       width: '100%',
       ...containerStyle,
+    };
+    const styleRowHeader = {
+      ...styles.rowHeader,
+      marginTop,
+    };
+    const styleBackdrop = {
+      ...styleApp.fullSize,
+      width: '100%',
+      position: 'absolute',
+      zIndex: -5,
+      opacity: AnimateOpacityBackground,
+      backgroundColor: colors.white,
+      borderBottomWidth: 1,
+      borderColor: colors.off,
     };
 
     return (
       <Animated.View style={styleHeader}>
-        <Row>
+        <Row style={styleRowHeader}>
           {searchBar ? (
             <View style={{...styles.rowTextImgHeader, ...searchBarStyle}}>
               {searchBar}
@@ -562,6 +592,7 @@ class HeaderBackButton extends Component {
             {this.button2()}
           </Col>
         </Row>
+        <Animated.View style={styleBackdrop} />
       </Animated.View>
     );
   }
@@ -573,12 +604,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   header: {
+    position: 'absolute',
+    zIndex: 9,
+  },
+  rowHeader: {
     height: sizes.heightHeaderHome,
     paddingLeft: '5%',
     paddingRight: '5%',
-    borderBottomWidth: 1,
-    position: 'absolute',
-    zIndex: 9,
   },
   buttonRight: {
     ...styleApp.center,
@@ -597,7 +629,7 @@ const styles = StyleSheet.create({
   rowTextHeader: {
     height: '100%',
     position: 'absolute',
-    width: width * 0.9,
+    width: width,
     zIndex: -1,
   },
   rowTextImgHeader: {

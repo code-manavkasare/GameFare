@@ -3,17 +3,24 @@ import PropTypes from 'prop-types';
 import {View} from 'react-native';
 import {connect} from 'react-redux';
 
-import {selectVideosFromCameraRoll} from '../../../functions/videoManagement.js';
 import colors from '../../../style/colors';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
-import UploadHeader from './UploadHeader';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
 import {
   userIDSelector,
   userInfoSelector,
 } from '../../../../store/selectors/user';
 
-class HeaderVideoLibrary extends Component {
+class ClubsHeader extends Component {
+  static propTypes = {
+    loader: PropTypes.bool,
+    AnimatedHeaderValue: PropTypes.any,
+    navigation: PropTypes.object,
+    infoUser: PropTypes.object,
+    text: PropTypes.string,
+  };
+  static defaultProps = {};
+
   constructor(props) {
     super(props);
     this.state = {};
@@ -24,21 +31,16 @@ class HeaderVideoLibrary extends Component {
       nextProps,
       state: this.state,
       nextState,
-      component: 'HeaderVideoLibrary',
+      component: 'ClubsHeader',
     });
   }
   render() {
     const {
       loader,
-      selectableMode,
       AnimatedHeaderValue,
-      selectOnly,
       navigation,
       infoUser,
       text,
-      toggleSelectable,
-      selectVideosFromCameraRoll,
-      userID,
     } = this.props;
 
     return (
@@ -46,36 +48,17 @@ class HeaderVideoLibrary extends Component {
         <HeaderBackButton
           AnimatedHeaderValue={AnimatedHeaderValue}
           textHeader={text}
-          inputRange={[200, 280]}
+          inputRange={[250, 250]}
           loader={loader}
           initialBorderColorIcon={'transparent'}
           initialBackgroundColor={'transparent'}
           initialTitleOpacity={0}
           initialBorderWidth={1}
           initialBorderColorHeader={'transparent'}
-          icon1={'times'}
-          sizeIcon1={17}
-          clickButton1={() => navigation.goBack()}
-          typeIcon1={'font'}
-          icon2={selectOnly ? null : !selectableMode ? 'text' : 'text'}
-          text2={!selectableMode ? 'Select' : 'Cancel'}
-          animateIcon2
-          animateIconOffset
-          typeIcon2="font"
-          sizeIcon2={22}
-          marginTop={5}
-          colorIcon2={colors.title}
-          clickButton2={toggleSelectable}
-          clickButtonOffset={selectVideosFromCameraRoll}
-          iconOffset={!selectableMode && 'plus'}
-          typeIconOffset={'font'}
-          sizeIconOffset={17}
-        />
-
-        <UploadHeader
-          openQueue={() => {
-            navigation.navigate('UploadQueueList');
-          }}
+          icon1={infoUser?.picture ? infoUser?.picture : 'profileFooter'}
+          sizeIcon1={infoUser.picture ? 40 : 23}
+          clickButton1={() => navigation.navigate('VideoLibrary')}
+          typeIcon1={infoUser.picture ? 'image' : 'moon'}
         />
       </View>
     );
@@ -89,4 +72,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(HeaderVideoLibrary);
+export default connect(mapStateToProps)(ClubsHeader);

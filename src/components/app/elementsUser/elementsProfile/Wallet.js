@@ -64,8 +64,8 @@ class Wallet extends Component {
         {loader ? (
           this.placehoder()
         ) : listTransfers.length === 0 ? (
-          <Text style={[styleApp.text, {marginLeft: 20, marginTop: 10}]}>
-            You don't have any transfer yet.
+          <Text style={[styleApp.text, {marginLeft: 20, marginTop: 30}]}>
+            You don't have any transfers yet.
           </Text>
         ) : (
           listTransfers.map((transfer, i) => (
@@ -143,14 +143,16 @@ class Wallet extends Component {
     return this.refresh();
   }
   render() {
-    const {dismiss, goBack} = this.props.navigation;
+    const {goBack} = this.props.navigation;
     const {wallet} = this.props;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
+          marginTop={10}
+          sizeIdon1={17}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Wallet: $' + wallet.totalWallet}
-          inputRange={[5, 10]}
+          inputRange={[0, 50]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
           //     initialBorderColorHeader={colors.grey}
@@ -172,7 +174,7 @@ class Wallet extends Component {
           marginBottomScrollView={0}
           refreshControl={true}
           refresh={() => this.refresh()}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={sizes.heightHeaderModal}
           offsetBottom={sizes.heightFooter + 40}
           showsVerticalScrollIndicator={true}
         />

@@ -595,9 +595,10 @@ const rowTitle = ({
   titleStyle,
 }) => {
   const styleButton = {
-    height: 34,
+    height: 30,
     width: '100%',
-    borderRadius: 5,
+    borderRadius: 10,
+    ...button?.style,
   };
   const styleBadgeText = {
     fontSize:
@@ -633,16 +634,16 @@ const rowTitle = ({
                   <Text
                     style={[
                       styleApp.textBold,
-                      {color: colors.white, fontSize: 14},
+                      {color: colors.white, fontSize: button?.fontSize ?? 14},
                     ]}>
                     {button.text}
                   </Text>
                 );
               }}
-              color={colors.primary}
+              color={button.color ?? colors.primary}
               style={styleButton}
               click={() => button.click()}
-              onPressColor={colors.primaryLight}
+              onPressColor={button.onPressColor ?? colors.primaryLight}
             />
           ) : null}
         </Col>

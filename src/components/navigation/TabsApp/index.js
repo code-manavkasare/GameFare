@@ -6,7 +6,7 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 import Footer from './footer/index';
 import CallTabPage from '../../app/callTab';
 import Session from './components/Session';
-import VideoLibrary from './components/VideoLibrary';
+import Clubs from './components/Clubs';
 
 import colors from '../../style/colors';
 
@@ -35,9 +35,9 @@ class TabsApp extends React.Component {
           />
         )}>
         <Tab.Screen
-          name="VideoLibrary"
+          name="Clubs"
           options={{
-            pageStack: 'VideoLibrary',
+            pageStack: 'Clubs',
             label: 'Library',
             signInToPass: false,
             icon: {
@@ -47,7 +47,7 @@ class TabsApp extends React.Component {
               size: 23,
             },
           }}
-          component={VideoLibrary}
+          component={Clubs}
         />
 
         <Tab.Screen

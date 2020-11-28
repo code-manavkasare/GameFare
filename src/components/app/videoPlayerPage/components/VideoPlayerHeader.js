@@ -85,7 +85,7 @@ class VideoPlayerHeader extends React.Component {
     } = this.props;
     const {coachSessionID} = route.params;
     const sharedProps = {
-      inputRange: [5, 10],
+      inputRange: [100, 100],
       colorLoader: 'white',
       AnimatedHeaderValue: this.AnimatedHeaderValue,
       sizeLoader: 40,
@@ -94,6 +94,7 @@ class VideoPlayerHeader extends React.Component {
       nobackgroundColorIcon1: false,
       backgroundColorIcon1: 'transparent',
       initialBorderColorIcon: 'transparent',
+      initialBackgroundColor: 'transparent',
       sizeIcon1: 18,
       colorIcon1: colors.white,
       typeIcon1: 'font',

@@ -191,13 +191,15 @@ class ListEvent extends Component {
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
+          marginTop={10}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Payment methods'}
-          inputRange={[5, 10]}
+          inputRange={[0, 20]}
           initialTitleOpacity={0}
           initialBackgroundColor={'white'}
           initialBorderColorIcon={'white'}
-          icon1="times"
+          icon1="chevron-left"
+          sizeIcon1={17}
           clickButton1={() => navigation.dangerouslyGetParent().pop()}
         />
         <ScrollView
@@ -205,7 +207,7 @@ class ListEvent extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={this.payments.bind(this)}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={sizes.heightHeaderModal}
           offsetBottom={90 + 60}
           showsVerticalScrollIndicator={true}
         />

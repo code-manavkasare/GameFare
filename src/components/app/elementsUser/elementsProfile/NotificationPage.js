@@ -7,7 +7,7 @@ import {
   AppState,
   InteractionManager,
 } from 'react-native';
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Col, Row} from 'react-native-easy-grid';
 import {openSettings} from 'react-native-permissions';
 
 import Button from '../../../layout/buttons/Button';
@@ -20,10 +20,12 @@ import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 export default class NotificationPage extends Component {
   constructor(props) {
     super(props);
+    const {params} = props.route;
     this.state = {
       appState: AppState.currentState,
       permission: false,
       loader: true,
+      modalMode: params?.modal ? true : false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -99,7 +101,7 @@ export default class NotificationPage extends Component {
         ) : (
           <Row style={{height: 60}}>
             <Col size={65} style={styleApp.center}>
-              <Text style={[styleApp.title, {fontSize: 24, marginBottom: 10}]}>
+              <Text style={[styleApp.title, {fontSize: 22, marginBottom: 20}]}>
                 Notifications are {permission ? 'ON' : 'OFF'}
               </Text>
               <Text style={styleApp.text}>
@@ -110,33 +112,35 @@ export default class NotificationPage extends Component {
           </Row>
         )}
 
-        <View style={{height: 20, marginTop: 0}} />
+        <View style={{height: 30, marginTop: 0}} />
         <View style={styleApp.divider2} />
         {this.rowIcon('comment-alt', 'New message')}
         {this.rowIcon('video', 'Invitation to a new session')}
         {this.rowIcon('plug', 'Someone connects to one of your sessions')}
 
         <View style={styleApp.divider2} />
-        <View style={{height: 20}} />
+        <View style={{height: 40}} />
         {this.button('Settings', colors.green, () => openSettings())}
       </View>
     );
   }
 
   render() {
+    const {modalMode} = this.state;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
           marginTop={10}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={''}
-          inputRange={[5, 10]}
-          initialBorderColorIcon={'white'}
-          initialBackgroundColor={'white'}
-          initialBorderColorHeader={colors.white}
+          inputRange={[0, 50]}
+          initialBorderColorIcon={'transparent'}
+          initialBackgroundColor={'transparent'}
+          initialBorderColorHeader={'transparent'}
           initialTitleOpacity={1}
           initialBorderWidth={1}
-          icon1={'times'}
+          icon1={modalMode ? 'times' : 'chevron-left'}
+          sizeIcon1={17}
           clickButton1={() => this.props.navigation.goBack()}
         />
         {this.notificationView()}

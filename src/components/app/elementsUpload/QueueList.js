@@ -18,7 +18,7 @@ import TaskCard from './TaskCard';
 import * as Progress from 'react-native-progress';
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
-import {navigate} from '../../../../NavigationService';
+import {goBack} from '../../../../NavigationService';
 import {uploadQueueSelector} from '../../../store/selectors/uploadQueue';
 import {currentScreenSizeSelector} from '../../../store/selectors/layout';
 import {userIDSelector} from '../../../store/selectors/user';
@@ -69,7 +69,7 @@ class QueueList extends Component {
       setTimeout(() => {
         const {mounted} = this.state;
         if (mounted) {
-          navigate('TabsApp');
+          goBack();
         }
       }, 1200);
     }
@@ -92,7 +92,7 @@ class QueueList extends Component {
 
   close() {
     const {navigation} = this.props;
-    navigation.navigate('TabsApp');
+    navigation.goBack();
   }
 
   closeButton() {

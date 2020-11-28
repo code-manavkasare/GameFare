@@ -97,11 +97,13 @@ class BlockedUsersList extends Component {
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
+          marginTop={10}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Blocked Users'}
-          inputRange={[5, 10]}
+          inputRange={[0, 50]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
+          sizeIcon1={17}
           initialBorderColorHeader={colors.grey}
           initialTitleOpacity={1}
           initialBorderWidth={0.3}
@@ -117,7 +119,7 @@ class BlockedUsersList extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottomScrollView={0}
           refreshControl={false}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={sizes.heightHeaderModal}
           offsetBottom={sizes.heightFooter + 40}
           showsVerticalScrollIndicator={true}
         />

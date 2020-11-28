@@ -12,6 +12,7 @@ var heightFooter = 70;
 var marginTopApp = 10;
 let marginTopAppLandscape = 0;
 var heightHeaderHome = 70;
+var heightHeaderModal = 40;
 var heightHeaderFilter = 100;
 var heightHeaderHomeSearch = 130;
 var height0 = 50;
@@ -100,6 +101,7 @@ module.exports = {
   heightPicture: heightPicture,
   height0: height0,
   heightHeaderHome: heightHeaderHome,
+  heightHeaderModal,
   heightHeaderFilter: heightHeaderFilter,
   heightHeaderHomeSearch: heightHeaderHomeSearch,
   height: height,

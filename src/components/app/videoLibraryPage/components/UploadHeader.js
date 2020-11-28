@@ -84,7 +84,7 @@ class UploadHeader extends Component {
       marginBottom: -10,
       position: 'absolute',
       width,
-      ...styleApp.center3,
+      ...styleApp.center,
     };
     return (
       <View style={containerStyle}>
@@ -111,8 +111,7 @@ const styles = StyleSheet.create({
     borderColor: colors.off,
     width: 200,
     height: 40,
-    right: '5%',
-    top: sizes.marginTopApp + 75,
+    top: sizes.marginTopApp - 15,
     zIndex: 1,
     borderRadius: 25,
   },

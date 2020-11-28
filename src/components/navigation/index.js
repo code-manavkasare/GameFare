@@ -5,7 +5,6 @@ import {createStackNavigator} from '@react-navigation/stack';
 import MainApp from './MainApp/index';
 import SignIn from './SignIn/index';
 import ListCountry from '../login/elementsFlags/ListCountry';
-import Payments from './MainApp/components/Payments';
 import NewConversation from '../app/elementsMessage/NewConversation';
 import CallTabPage from '../app/callTab';
 import QueueList from '../app/elementsUpload/QueueList';
@@ -35,14 +34,6 @@ function InitialStack() {
       <Stack.Screen
         name="ListCountry"
         component={ListCountry}
-        options={{
-          gestureEnabled: false,
-        }}
-      />
-
-      <Stack.Screen
-        name="Payments"
-        component={Payments}
         options={{
           gestureEnabled: false,
         }}

@@ -42,7 +42,11 @@ const MainApp = () => {
 
       <Stack.Screen name="Webview" component={Webview} />
 
-      <Stack.Screen name="MorePage" component={Profile} options={ProfileSpec} />
+      <Stack.Screen
+        name="VideoLibrary"
+        component={Profile}
+        options={ProfileSpec}
+      />
 
       <Stack.Screen name="VideoPlayerPage" component={VideoPlayerPage} />
       <Stack.Screen name="Groups" component={Groups} />
