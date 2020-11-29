@@ -32,6 +32,7 @@ import {bindArchive} from '../../../../../../../database/firebase/bindings';
 import {userIDSelector} from '../../../../../../../../store/selectors/user';
 import {archiveSelector} from '../../../../../../../../store/selectors/archives';
 import {boolShouldComponentUpdate} from '../../../../../../../functions/redux';
+import {getDimention} from '../../../../../../../style/sizes';
 
 class CardArchive extends Component {
   static propTypes = {
@@ -232,10 +233,17 @@ class CardArchive extends Component {
   cardArchiveImage = () => {
     const {archive} = this.state;
     const {archiveFromCameraroll} = this.props;
-
+    const {width} = getDimention();
     if (archiveFromCameraroll) {
       const {url} = archiveFromCameraroll;
-      return <Image style={styleApp.fullSize} source={{uri: url}} />;
+      return (
+        <Image
+          style={{width: width / 3, height: styleApp.cardArchive.height}}
+          source={{
+            uri: url,
+          }}
+        />
+      );
     }
 
     const {thumbnail, local} = archive;

@@ -14,7 +14,7 @@ import database from '@react-native-firebase/database';
 import {uploadPictureFirebase} from '../../../functions/pictures';
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
-import sizes from '../../../style/sizes';
+import {heightHeaderHome, heightFooter} from '../../../style/sizes';
 
 import Button from '../../../layout/buttons/Button';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
@@ -111,7 +111,7 @@ class EditProfilePage extends Component {
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome + 20}
+          marginTop={heightHeaderHome + 20}
           showsVerticalScrollIndicator={true}>
           <Row style={{paddingLeft: 20, paddingRight: 20, marginTop: 40}}>
             <Col size={20} style={styleApp.center2}>
@@ -161,7 +161,7 @@ class EditProfilePage extends Component {
           style={[
             styleApp.footerBooking,
             styleApp.marginView,
-            {bottom: sizes.heightFooter + 20},
+            {bottom: heightFooter + 20},
           ]}>
           <Button
             text="Update Profile"

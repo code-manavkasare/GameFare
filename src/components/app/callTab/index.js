@@ -6,7 +6,7 @@ import {dissoc} from 'ramda';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
-import sizes from '../../style/sizes';
+import {heightHeaderHome,marginTopApp,heightFooter} from '../../style/sizes';
 
 import {getSelectionActionDecorations} from '../../functions/utility';
 import {isUserPrivate, userObject} from '../../functions/users';
@@ -285,7 +285,7 @@ class CallTab extends Component {
           }
           action={action}
           archivesToShare={archivesToShare}
-          bottomOffset={modal ? 55 : sizes.heightFooter}
+          bottomOffset={modal ? 55 : heightFooter}
         />
       </View>
     );
@@ -293,7 +293,7 @@ class CallTab extends Component {
 }
 
 const styles = StyleSheet.create({
-  bodyContainer: {marginTop: sizes.marginTopApp + sizes.heightHeaderHome},
+  bodyContainer: {marginTop: marginTopApp + heightHeaderHome},
   loaderStyle: {...styleApp.center, height: 120},
   inlineSearchContainer: {paddingBottom: 0},
   listVideoCallsBlur: {

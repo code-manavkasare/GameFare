@@ -10,8 +10,7 @@ import {boolShouldComponentUpdate} from '../../../functions/redux';
 
 import FooterButton from './components/Button';
 import colors from '../../../style/colors';
-import sizes from '../../../style/sizes';
-import {heightFooter, marginBottomApp} from '../../../style/sizes';
+import {heightFooter, marginBottomApp, width} from '../../../style/sizes';
 import {clickNotification} from '../../../../../NavigationService';
 import styleApp from '../../../style/style';
 import {currentSessionIDSelector} from '../../../../store/selectors/sessions';
@@ -144,9 +143,7 @@ class Footer extends React.Component {
     const translateYFooter = Animated.interpolate(wrappedPosition, {
       inputRange,
       outputRange: inputRange.map((i) =>
-        i === 1 && !disableAnimation
-          ? sizes.heightFooter + sizes.marginBottomApp
-          : 0,
+        i === 1 && !disableAnimation ? heightFooter + marginBottomApp : 0,
       ),
     });
     return (
@@ -170,10 +167,10 @@ class Footer extends React.Component {
       inputRange,
       outputRange: inputRange.map(
         (i) =>
-          (i * (sizes.width * 0.85)) / state.routes.length -
+          (i * (width * 0.85)) / state.routes.length -
           indicatorWidth / 2 +
           currentWidth * 0.2175 +
-          (0.85 * (currentWidth - sizes.width)) / state.routes.length,
+          (0.85 * (currentWidth - width)) / state.routes.length,
       ),
     });
     const widthIndicator = Animated.interpolate(position, {
@@ -341,7 +338,7 @@ const styles = StyleSheet.create({
   labelIndicatorContainer: {
     position: 'absolute',
     height: 5,
-    bottom: sizes.marginBottomApp - 10,
+    bottom: marginBottomApp - 10,
     width: '100%',
     zIndex: 0,
   },

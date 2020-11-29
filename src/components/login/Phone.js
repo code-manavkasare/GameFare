@@ -1,9 +1,8 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Animated} from 'react-native';
 
-import ScrollView from '../layout/scrollViews/ScrollView';
 import PhoneFields from './elementsLogin/PhoneFields';
-import sizes from '../style/sizes';
+import {marginTopApp} from '../style/sizes';
 
 import styleApp from '../style/style';
 import HeaderBackButton from '../layout/headers/HeaderBackButton';
@@ -21,8 +20,7 @@ export default class LoadingScreen extends React.Component {
     let country = false;
     if (params) country = params.country;
     return (
-      <View
-        style={{...styleApp.marginView, marginTop: sizes.marginTopApp + 80}}>
+      <View style={{...styleApp.marginView, marginTop: marginTopApp + 80}}>
         <Text
           style={[
             styleApp.title,

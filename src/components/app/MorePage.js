@@ -18,7 +18,7 @@ import Communications from 'react-native-communications';
 
 import ScrollView from '../layout/scrollViews/ScrollView2';
 import HeaderBackButton from '../layout/headers/HeaderBackButton';
-import sizes from '../style/sizes';
+import {heightHeaderHome} from '../style/sizes';
 import ButtonNotification from './elementsUser/elementsProfile/ButtonNotification';
 import {navigate} from '../../../NavigationService';
 import styleApp from '../style/style';
@@ -545,7 +545,7 @@ class MorePage extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.profile()}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome - 30}
+          marginTop={heightHeaderHome - 30}
           offsetBottom={70}
           showsVerticalScrollIndicator={true}
         />

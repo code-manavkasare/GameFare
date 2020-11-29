@@ -6,7 +6,7 @@ import {navigate} from '../../../../../NavigationService';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
-import sizes from '../../../style/sizes';
+import {heightFooter, marginBottomApp} from '../../../style/sizes';
 
 import {FlatListComponent} from '../../../layout/Views/FlatList';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
@@ -128,7 +128,7 @@ class ListVideoCalls extends Component {
           </View>
         }
         AnimatedHeaderValue={AnimatedHeaderValue}
-        paddingBottom={sizes.heightFooter + sizes.marginBottomApp + 90}
+        paddingBottom={heightFooter + marginBottomApp + 90}
       />
     );
   }

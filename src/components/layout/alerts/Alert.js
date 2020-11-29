@@ -20,7 +20,7 @@ import AlertAddImage from './AlertAddImage';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
-import sizes from '../../style/sizes';
+import {height} from '../../style/sizes';
 import {native} from '../../animations/animations';
 import {timeout} from '../../functions/coach';
 
@@ -105,7 +105,7 @@ export default class Alert extends Component {
     const closable = close !== undefined ? close : true;
     const translateY = this.alertAnimation.interpolate({
       inputRange: [0, 1],
-      outputRange: [sizes.height, 0],
+      outputRange: [height, 0],
     });
     return (
       <View style={[styleApp.stylePage, {backgroundColor: 'transparent'}]}>

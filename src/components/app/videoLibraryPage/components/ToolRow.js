@@ -17,7 +17,7 @@ import {boolShouldComponentUpdate} from '../../../functions/redux';
 import {currentSessionIDSelector} from '../../../../store/selectors/sessions';
 import {userIDSelector} from '../../../../store/selectors/user';
 
-const heightFooterFull = sizes.heightFooter + sizes.marginBottomApp;
+const heightFooterFull = heightFooter + marginBottomApp;
 
 class ToolRow extends Component {
   constructor(props) {

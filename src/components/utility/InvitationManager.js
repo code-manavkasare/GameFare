@@ -7,7 +7,7 @@ import isEqual from 'lodash.isequal';
 
 import {navigate, goBack} from '../../../NavigationService';
 
-import sizes from '../style/sizes';
+import {marginBottomApp, keyboardOffset, width} from '../style/sizes';
 import styleApp from '../style/style';
 import colors from '../style/colors';
 
@@ -270,8 +270,8 @@ class InvitationManager extends Component {
       inputRange: [0, 1, 2],
       outputRange: [
         75,
-        -(sizes.marginBottomApp + bottomOffset),
-        -(sizes.keyboardOffset + bottomOffset + 25),
+        -(marginBottomApp + bottomOffset),
+        -(keyboardOffset + bottomOffset + 25),
       ],
     });
     const buttonContainerStyle = {
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginLeft: '5%',
     marginRight: '4%',
-    width: sizes.width * 0.76,
+    width: width * 0.76,
   },
 });
 

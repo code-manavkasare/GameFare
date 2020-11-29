@@ -12,7 +12,7 @@ import {Row, Col} from 'react-native-easy-grid';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
-import sizes from '../../style/sizes';
+import {width} from '../../style/sizes';
 import {native} from '../../animations/animations';
 
 import Loader from '../../layout/loaders/Loader';
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
   fullPage: {
     position: 'absolute',
-    width: sizes.width,
+    width: width,
     height: 200000,
     backgroundColor: '#000000',
     zIndex: 10,

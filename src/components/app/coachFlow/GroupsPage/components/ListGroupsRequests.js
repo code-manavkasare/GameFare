@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import {} from 'react-native';
-import {connect} from 'react-redux'; 
+import {connect} from 'react-redux';
 
 import {navigate} from '../../../../../../NavigationService';
 import CardStreamView from './CardStreamView';
 import {FlatListComponent} from '../../../../layout/Views/FlatList';
-import sizes from '../../../../style/sizes';
+import {heightFooter, marginBottomApp} from '../../../../style/sizes';
 import {boolShouldComponentUpdate} from '../../../../functions/redux';
 import {sessionsRequestsSelector} from '../../../../../store/selectors/sessions';
 import {userConnectedSelector} from '../../../../../store/selectors/user';
@@ -56,7 +56,7 @@ class ListStreams extends Component {
         inverted={false}
         incrementRendering={6}
         initialNumberToRender={8}
-        paddingBottom={sizes.heightFooter + sizes.marginBottomApp}
+        paddingBottom={heightFooter + marginBottomApp}
       />
     );
   };

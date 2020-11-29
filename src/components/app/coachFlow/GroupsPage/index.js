@@ -3,7 +3,7 @@ import {View, Animated} from 'react-native';
 import {connect} from 'react-redux';
 
 import styleApp from '../../../style/style';
-import sizes from '../../../style/sizes';
+import {heightHeaderHome} from '../../../style/sizes';
 
 import tabsGroups from '../../../navigation/MainApp/components/GroupsPage';
 import HeaderListStream from './components/HeaderListStream';
@@ -29,7 +29,7 @@ class StreamTab extends Component {
         />
         <View
           style={{
-            height: tabBarVisible ? sizes.heightHeaderHome : 0,
+            height: tabBarVisible ? heightHeaderHome : 0,
           }}
         />
 

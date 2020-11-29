@@ -13,7 +13,7 @@ import {newConversation} from '../../../../functions/message';
 import {boolShouldComponentUpdate} from '../../../../functions/redux';
 import styleApp from '../../../../style/style';
 import colors from '../../../../style/colors';
-import sizes from '../../../../style/sizes';
+import {heightFooter,marginBottomApp} from '../../../../style/sizes';
 import Button from '../../../../layout/buttons/Button';
 import Loader from '../../../../layout/loaders/Loader';
 import {userConnectedSelector} from '../../../../../store/selectors/user';
@@ -149,7 +149,7 @@ class ListStreams extends Component {
         initialNumberToRender={8}
         styleContainer={{marginTop: 10}}
         AnimatedHeaderValue={AnimatedHeaderValue}
-        paddingBottom={sizes.heightFooter + sizes.marginBottomApp}
+        paddingBottom={heightFooter + marginBottomApp}
       />
     );
   };

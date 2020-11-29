@@ -6,7 +6,11 @@ import {connect} from 'react-redux';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
-import sizes from '../../../style/sizes';
+import {
+  marginTopApp,
+  marginTopAppLandscape,
+  heightHeaderHome,
+} from '../../../style/sizes';
 import {native} from '../../../animations/animations';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {createShareVideosBranchUrl} from '../../../database/branch';
@@ -191,13 +195,10 @@ class VideoPlayerHeader extends React.Component {
   render() {
     const {portrait} = this.props;
     const {translateY} = this;
-    const marginTop = portrait
-      ? sizes.marginTopApp
-      : sizes.marginTopAppLandscape;
-    let marginTopFloatingButtons = sizes.marginTopApp + sizes.heightHeaderHome;
+    const marginTop = portrait ? marginTopApp : marginTopAppLandscape;
+    let marginTopFloatingButtons = marginTopApp + heightHeaderHome;
     if (!portrait)
-      marginTopFloatingButtons =
-        sizes.marginTopAppLandscape + sizes.heightHeaderHome;
+      marginTopFloatingButtons = marginTopAppLandscape + heightHeaderHome;
     const headerTranslateY = translateY.interpolate({
       inputRange: [0, 1],
       outputRange: [-250, 0],

@@ -20,7 +20,7 @@ import colors from '../../style/colors';
 import ButtonColor from '../../layout/Views/Button';
 
 import styleApp from '../../style/style';
-import sizes from '../../style/sizes';
+import {heightHeaderHome} from '../../style/sizes';
 const ListCountry = require('./country.json');
 
 export default class SelectCountry extends Component {
@@ -156,7 +156,7 @@ export default class SelectCountry extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={this.contryComponent.bind(this)}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={heightHeaderHome}
           offsetBottom={180}
           showsVerticalScrollIndicator={true}
         />
