@@ -1,5 +1,5 @@
 import {TransitionSpecs} from '@react-navigation/stack';
-import sizes from '../../style/sizes';
+import {height, width, borderRadius} from '../../style/sizes';
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
 
@@ -7,8 +7,8 @@ const DepthModal = ({heightScale, bottom, top, ignoreBackgroundScale}) => {
   return {
     gestureDirection: 'vertical',
     gestureResponseDistance: {
-      horizontal: sizes.width,
-      vertical: sizes.height,
+      horizontal: width,
+      vertical: height,
     },
     transitionSpec: {
       open: TransitionSpecs.TransitionIOSSpec,
@@ -24,7 +24,7 @@ const DepthModal = ({heightScale, bottom, top, ignoreBackgroundScale}) => {
           borderRadius: next
             ? next.progress.interpolate({
                 inputRange: [0, 1],
-                outputRange: [sizes.borderRadius, 25],
+                outputRange: [borderRadius, 25],
               })
             : 25,
           overflow: 'hidden',

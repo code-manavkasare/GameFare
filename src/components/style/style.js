@@ -1,8 +1,14 @@
 import {StyleSheet, Dimensions} from 'react-native';
-import sizes from './sizes';
+import {
+  heightHeaderHome,
+  marginTopHeader,
+  marginTopApp,
+  height,
+  borderRadius,
+  heightFooterBooking,
+  width,
+} from './sizes';
 import colors from './colors';
-
-const {height, width} = Dimensions.get('screen');
 
 const font = 'Avenir-Book';
 const fontLight = 'Avenir-Light';
@@ -301,8 +307,8 @@ const styles = StyleSheet.create({
   headerBooking: {
     position: 'absolute',
     top: 0,
-    height: sizes.heightHeaderHome,
-    paddingTop: sizes.marginTopHeader - 5,
+    height: heightHeaderHome,
+    paddingTop: marginTopHeader - 5,
 
     borderBottomWidth: 0,
     backgroundColor: colors.primary,
@@ -364,7 +370,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     borderTopWidth: 0,
-    height: sizes.heightFooterBooking,
+    height: heightFooterBooking,
     paddingTop: 15,
     zIndex: 20,
     width: width,
@@ -502,9 +508,9 @@ const styles = StyleSheet.create({
   },
   stylePageModal: {
     flex: 1,
-    maxHeight: height - sizes.marginTopApp - 25,
+    maxHeight: height - marginTopApp - 25,
     borderLeftWidth: 0,
-    borderRadius: sizes.borderRadius,
+    borderRadius: borderRadius,
     borderColor: colors.off,
     backgroundColor: colors.white,
   },
@@ -535,8 +541,8 @@ const styles = StyleSheet.create({
   },
   fullAppModal: {
     width: '100%',
-    height: sizes.height - sizes.marginTopApp,
-    borderRadius: sizes.borderRadius,
+    height: height - marginTopApp,
+    borderRadius: borderRadius,
   },
   eventTitle: {
     color: colors.primary,

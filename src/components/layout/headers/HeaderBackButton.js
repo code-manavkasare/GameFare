@@ -4,10 +4,11 @@ import {connect} from 'react-redux';
 import {StyleSheet, Text, Animated, View, TouchableOpacity} from 'react-native';
 import {Row, Col} from 'react-native-easy-grid';
 
-import sizes, {
+import {
   marginTopApp,
   marginTopAppLandscape,
   width,
+  heightHeaderHome,
 } from '../../style/sizes';
 import Loader from '../loaders/Loader';
 import colors from '../../style/colors';
@@ -573,7 +574,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   header: {
-    height: sizes.heightHeaderHome,
+    height: heightHeaderHome,
     paddingLeft: '5%',
     paddingRight: '5%',
     borderBottomWidth: 1,

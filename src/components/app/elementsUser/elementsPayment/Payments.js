@@ -7,7 +7,7 @@ import AllIcons from '../../../layout/icons/AllIcons';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
 
-import sizes from '../../../style/sizes';
+import {heightHeaderHome} from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import ButtonColor from '../../../layout/Views/Button';
@@ -205,7 +205,7 @@ class ListEvent extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={this.payments.bind(this)}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={heightHeaderHome}
           offsetBottom={90 + 60}
           showsVerticalScrollIndicator={true}
         />

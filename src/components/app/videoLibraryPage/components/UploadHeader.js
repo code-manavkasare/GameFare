@@ -10,7 +10,7 @@ import {connect} from 'react-redux';
 import * as Progress from 'react-native-progress';
 
 import colors from '../../../style/colors';
-import sizes from '../../../style/sizes';
+import {offsetFooterStreaming, marginTopApp} from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import {isQueueVisible} from '../../../functions/upload';
 import {userIDSelector} from '../../../../store/selectors/user';
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 40,
     right: '5%',
-    top: sizes.marginTopApp + 75,
+    top: marginTopApp + 75,
     zIndex: 1,
     borderRadius: 25,
   },
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     paddingHorizontal: 10,
-    paddingBottom: 150 + sizes.offsetFooterStreaming,
+    paddingBottom: 150 + offsetFooterStreaming,
     backgroundColor: colors.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,

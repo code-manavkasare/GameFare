@@ -11,7 +11,7 @@ import CurrentTime from './CurrentTime';
 import {native} from '../../../../animations/animations';
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
-import sizes from '../../../../style/sizes';
+import {marginBottomApp} from '../../../../style/sizes';
 import {displayTime} from '../../../../functions/coach';
 import ControlBar from './ControlBar';
 import Filmstrip from './Filmstrip';
@@ -420,7 +420,7 @@ class VisualSeekBar extends Component {
 
     const translateY = this._revealSeekbar.interpolate({
       inputRange: [0, 1],
-      outputRange: [!small ? height + sizes.marginBottomApp + 5 : 0, 0],
+      outputRange: [!small ? height + marginBottomApp + 5 : 0, 0],
     });
     const opacity = this._revealSeekbar.interpolate({
       inputRange: [0, 1],

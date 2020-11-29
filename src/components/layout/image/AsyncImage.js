@@ -65,7 +65,7 @@ export default class AsyncImage extends Component {
           width: style.width,
         }}>
         <Image
-          source={{uri: imagePath}}
+          source={{uri: imagePath, cache: 'force-cache'}}
           style={[style, {zIndex: 10, position: 'absolute', top: 0}]}
         />
         {/* <FastImage

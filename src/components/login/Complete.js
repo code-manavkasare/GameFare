@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View, Animated} from 'react-native';
 
 import ScrollView from '../layout/scrollViews/ScrollView';
-import sizes from '../style/sizes';
+import {heightHeaderHome} from '../style/sizes';
 import CompleteFields from './elementsLogin/CompleteFields';
 
 import styleApp from '../style/style';
@@ -41,7 +41,7 @@ export default class Complete extends Component {
           )}
           marginBottomScrollView={0}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={heightHeaderHome}
           offsetBottom={0}
           showsVerticalScrollIndicator={true}
         />

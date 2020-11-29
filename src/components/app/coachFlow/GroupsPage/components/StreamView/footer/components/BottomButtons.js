@@ -10,7 +10,8 @@ import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
 import {layoutAction} from '../../../../../../../../store/actions/layoutActions';
-import sizes from '../../../../../../../style/sizes';
+import {getDimention} from '../../../../../../../style/sizes';
+const {width} = getDimention();
 import {store} from '../../../../../../../../store/reduxStore';
 
 import {
@@ -404,7 +405,7 @@ const styles = StyleSheet.create({
   rowButtons: {
     height: 100 + offsetFooterStreaming,
     paddingTop: 10,
-    width: 0.7 * sizes.width,
+    width: 0.7 * width,
     paddingBottom: 20,
   },
 

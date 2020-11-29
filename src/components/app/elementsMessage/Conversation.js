@@ -14,7 +14,7 @@ import MyTabs from '../../navigation/MainApp/components/TeamPage';
 
 import HeaderConversation from './HeaderConversation';
 import styleApp from '../../style/style';
-import sizes from '../../style/sizes';
+import {heightHeaderHome} from '../../style/sizes';
 import {
   userConnectedSelector,
   userIDSelector,
@@ -62,7 +62,7 @@ class MessageTab extends React.Component {
           session={session}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
         />
-        <View style={{height: sizes.heightHeaderHome}} />
+        <View style={{height: heightHeaderHome}} />
 
         {MyTabs({session, initialMessage, user, messages})}
       </View>

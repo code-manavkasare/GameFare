@@ -14,7 +14,7 @@ import {store} from '../../../../../../../../../../store/reduxStore';
 import {native} from '../../../../../../../../../animations/animations';
 import ButtonColor from '../../../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../../../layout/icons/AllIcons';
-import sizes from '../../../../../../../../../style/sizes';
+import {width,height} from '../../../../../../../../../style/sizes';
 import Button from '../../../../../../../../../layout/buttons/Button';
 
 import colors from '../../../../../../../../../style/colors';
@@ -394,7 +394,7 @@ export default class ExportQueue extends Component {
         pointerEvents={visible ? 'auto' : 'none'}
         style={{
           ...styles.container,
-          width: sizes.width * 0.93,
+          width: width * 0.93,
           transform: [{translateY: translateY}],
         }}>
         <ButtonColor
@@ -483,9 +483,9 @@ const styles = StyleSheet.create({
   },
   fullPage: {
     position: 'absolute',
-    width: sizes.width,
+    width: width,
     height: 200000,
-    top: -sizes.height,
+    top: -height,
     backgroundColor: 'transparent',
     zIndex: -1,
   },

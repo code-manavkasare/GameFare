@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
-import sizes from '../../../style/sizes';
+import {heightHeaderHome, height} from '../../../style/sizes';
 import {goBack} from '../../../../../NavigationService';
 
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
@@ -33,7 +33,7 @@ class SessionSettings extends Component {
     const {navigate} = navigation;
     const {objectID} = route.params;
     return (
-      <View style={{minHeight: sizes.height}}>
+      <View style={{minHeight: height}}>
         <View style={styleApp.marginView}>
           <Row style={{flex: 0, paddingTop: 20, paddingBottom: 20}}>
             <Col size={25} style={styleApp.center2}>
@@ -83,7 +83,7 @@ class SessionSettings extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.settings()}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={heightHeaderHome}
           offsetBottom={30}
           showsVerticalScrollIndicator={true}
         />

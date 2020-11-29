@@ -6,7 +6,7 @@ const {height, width} = Dimensions.get('screen');
 
 import ScrollView from '../../../layout/scrollViews/ScrollView';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
-import sizes from '../../../style/sizes';
+import {heightHeaderHome} from '../../../style/sizes';
 
 class ScanCard extends Component {
   constructor(props) {
@@ -51,7 +51,7 @@ class ScanCard extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={this.scan.bind(this)}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={heightHeaderHome}
           offsetBottom={90 + 60}
           showsVerticalScrollIndicator={true}
         />

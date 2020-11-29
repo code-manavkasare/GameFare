@@ -17,7 +17,12 @@ import ModalHeader from '../../layout/headers/ModalHeader';
 
 import {rowTitle} from '../TeamPage/components/elements';
 
-import sizes from '../../style/sizes';
+import {
+  heightFooter,
+  marginBottomApp,
+  marginTopApp,
+  heightHeaderHome,
+} from '../../style/sizes';
 import {
   openVideoPlayer,
   deleteVideos,
@@ -199,9 +204,7 @@ class VideoLibraryPage extends Component {
           initialNumberToRender={15}
           showsVerticalScrollIndicator={false}
           paddingBottom={
-            selectOnly
-              ? 0
-              : sizes.heightFooter + sizes.marginBottomApp + 30 + selectMargin
+            selectOnly ? 0 : heightFooter + marginBottomApp + 30 + selectMargin
           }
           AnimatedHeaderValue={this.AnimatedHeaderValue}
         />
@@ -262,7 +265,7 @@ class VideoLibraryPage extends Component {
       ? styleApp.stylePageModal
       : styleApp.stylePage;
     const listContainerStyle = {
-      marginTop: modalMode ? 0 : sizes.heightHeaderHome + sizes.marginTopApp,
+      marginTop: modalMode ? 0 : heightHeaderHome + marginTopApp,
       zIndex: 10,
     };
     return (

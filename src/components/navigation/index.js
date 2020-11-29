@@ -14,12 +14,12 @@ import NotificationPage from '../app/elementsUser/elementsProfile/NotificationPa
 import SelectVideosFromLibrary from '../app/videoLibraryPage/index';
 import Alert from '../layout/alerts/Alert';
 import {DepthModal} from './transitions/DepthModal';
-import sizes from '../style/sizes';
+import {marginTopApp} from '../style/sizes';
 const Stack = createStackNavigator();
 function InitialStack() {
   const AlertSpec = DepthModal({heightScale: 0});
-  const CallTabSpec = DepthModal({top: sizes.marginTopApp + 25});
-  const NotificationPageSpec = DepthModal({top: sizes.marginTopApp + 25});
+  const CallTabSpec = DepthModal({top: marginTopApp + 25});
+  const NotificationPageSpec = DepthModal({top: marginTopApp + 25});
   return (
     <Stack.Navigator
       initialRouteName="MainApp"

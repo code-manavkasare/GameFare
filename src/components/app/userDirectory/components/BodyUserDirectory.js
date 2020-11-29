@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import {navigate} from '../../../../../NavigationService';
 
 import styleApp from '../../../style/style';
-import sizes from '../../../style/sizes';
+import {heightHeaderHome, marginTopApp, marginLeft} from '../../../style/sizes';
 
 import {isUserPrivate, userObject} from '../../../functions/users';
 import {openSession} from '../../../functions/coach';
@@ -116,8 +116,8 @@ const styles = StyleSheet.create({
     ...styleApp.stylePage,
   },
   body: {
-    marginTop: sizes.heightHeaderHome + sizes.marginTopApp,
-    marginLeft: sizes.marginLeft,
+    marginTop: heightHeaderHome + marginTopApp,
+    marginLeft: marginLeft,
   },
   smallTopPad: {
     paddingTop: 6,

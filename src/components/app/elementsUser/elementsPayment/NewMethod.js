@@ -8,7 +8,7 @@ import ButtonColor from '../../../layout/Views/Button';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import AllIcons from '../../../layout/icons/AllIcons';
 
-import sizes from '../../../style/sizes';
+import {heightHeaderHome} from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import {cardIcon} from './iconCard';
@@ -87,7 +87,7 @@ class NewMethod extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={this.payments.bind(this)}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={heightHeaderHome}
           offsetBottom={90 + 60}
           showsVerticalScrollIndicator={true}
         />

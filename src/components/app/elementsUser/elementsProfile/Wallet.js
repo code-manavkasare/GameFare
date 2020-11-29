@@ -11,7 +11,7 @@ import ScrollView from '../../../layout/scrollViews/ScrollView2';
 import PlaceHolder from '../../../placeHolders/CardConversation';
 import Config from 'react-native-config';
 
-import sizes from '../../../style/sizes';
+import {heightHeaderHome,heightFooter} from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import CardTransfer from './CardTransfer';
@@ -172,8 +172,8 @@ class Wallet extends Component {
           marginBottomScrollView={0}
           refreshControl={true}
           refresh={() => this.refresh()}
-          marginTop={sizes.heightHeaderHome}
-          offsetBottom={sizes.heightFooter + 40}
+          marginTop={heightHeaderHome}
+          offsetBottom={heightFooter + 40}
           showsVerticalScrollIndicator={true}
         />
       </View>
