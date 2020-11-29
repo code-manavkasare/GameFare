@@ -310,8 +310,6 @@ const styles = StyleSheet.create({
     right: '5%',
     top: 15,
     zIndex: 30,
-    borderWidth: 1,
-    borderColor: colors.off,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 20,

@@ -116,6 +116,7 @@ class VideoLibraryPage extends Component {
           await this.setState({
             selectedVideos: [],
             selectableMode: false,
+            nonplayableVideos: 0,
           });
           return deleteVideos(selectedVideos);
         },
