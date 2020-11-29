@@ -2,14 +2,12 @@ import React, {Component} from 'react';
 import {
   Animated,
   Dimensions,
-  Image,
   StyleSheet,
   View,
-  Text,
   TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {Col, Row} from 'react-native-easy-grid';
+import {Row} from 'react-native-easy-grid';
 
 import CardArchive from '../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 import VideoBeingShared from './components/VideoBeingShared';
@@ -18,7 +16,6 @@ import Button from '../../layout/buttons/Button';
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 import ModalHeader from '../../layout/headers/ModalHeader';
-import AsyncImage from '../../layout/image/AsyncImage';
 
 import {rowTitle} from '../TeamPage/components/elements';
 
@@ -43,6 +40,7 @@ import {
 } from '../../../store/selectors/user';
 import CamerarollList from './components/CamerarollList';
 import {portraitSelector} from '../../../store/selectors/layout';
+import {profileHeader} from '../../layout/elements';
 
 class VideoLibraryPage extends Component {
   constructor(props) {
@@ -158,9 +156,9 @@ class VideoLibraryPage extends Component {
               );
             }}
             style={styles.settingsRowButton}
-            color={colors.greyDarker}
+            color={colors.greyDark}
             click={this.goToEditProfile}
-            onPressColor={'transparent'}
+            onPressColor={colors.greyMidDark}
           />
           <ButtonColor
             view={() => {
@@ -174,9 +172,9 @@ class VideoLibraryPage extends Component {
               );
             }}
             style={styles.settingsRowButton}
-            color={colors.greyDarker}
+            color={colors.greyDark}
             click={() => navigation.navigate('MorePage')}
-            onPressColor={'transparent'}
+            onPressColor={colors.greyMidDark}
           />
           <ButtonColor
             view={() => {
@@ -193,7 +191,7 @@ class VideoLibraryPage extends Component {
             style={styles.settingsRowButton}
             color={colors.blue}
             click={selectVideosFromCameraRoll}
-            onPressColor={'transparent'}
+            onPressColor={colors.blueLight}
           />
         </Row>
       </View>
@@ -266,9 +264,9 @@ class VideoLibraryPage extends Component {
                     },
                     button: {
                       click: this.toggleSelectable,
-                      text: 'Select',
-                      color: colors.greyMidDark,
-                      onPressColor: colors.greyDark,
+                      text: !selectableMode ? 'Select' : 'Cancel',
+                      color: colors.greyDark,
+                      onPressColor: colors.greyMidDark,
                       fontSize: 12,
                       style: {
                         height: 25,
@@ -338,45 +336,23 @@ class VideoLibraryPage extends Component {
     this.props.navigation.navigate('EditProfilePage');
   };
 
-  profilePhoto = () => {
-    let {infoUser} = this.props;
-    return infoUser.picture ? (
-      <AsyncImage style={styles.asyncImage} mainImage={infoUser.picture} />
-    ) : (
-      <View style={[styles.asyncImage, styleApp.center]}>
-        <Text style={styles.initialsText}>
-          {infoUser?.firstname[0] + infoUser.lastname[0]}
-        </Text>
-      </View>
-    );
-  };
-
   profileHeader = () => {
     let {infoUser} = this.props;
+    const containerStyle = {
+      marginTop: -45,
+    };
     return (
       <TouchableOpacity
         onPress={this.goToEditProfile}
-        style={{...styleApp.marginView, marginTop: -45}}
+        style={styleApp.marginView}
         activeOpacity={0.9}>
-        <Col>
-          <Col size={40} style={styleApp.center}>
-            {this.profilePhoto()}
-          </Col>
-          <Col size={60} style={{...styleApp.center, marginTop: 15}}>
-            <Text style={styleApp.title}>
-              {infoUser.firstname + ' ' + infoUser.lastname}
-            </Text>
-            <Text style={styles.phoneNumber}>
-              {infoUser.countryCode + ' ' + infoUser.phoneNumber}
-            </Text>
-          </Col>
-        </Col>
+        {profileHeader({infoUser, containerStyle})}
       </TouchableOpacity>
     );
   };
 
   render() {
-    const {navigation, position, videosArray, userConnected} = this.props;
+    const {navigation, position, videosArray} = this.props;
 
     const {
       selectableMode,
@@ -390,7 +366,7 @@ class VideoLibraryPage extends Component {
       ? styleApp.stylePageModal
       : styleApp.stylePage;
     const listContainerStyle = {
-      paddingTop: modalMode ? 0 : 0,
+      paddingTop: 0,
       zIndex: 10,
     };
     return (
@@ -479,29 +455,7 @@ const styles = StyleSheet.create({
     width: 45,
     height: 45,
     borderRadius: 25,
-    ...styleApp.shadow,
-  },
-  phoneNumber: {
-    ...styleApp.subtitle,
-    fontWeight: 'bold',
-    fontSize: 15,
-    marginTop: 2,
-    letterSpacing: 0.3,
-  },
-  asyncImage: {
-    width: 130,
-    height: 130,
-    borderColor: colors.greyMidDark,
-    borderRadius: 30,
-    backgroundColor: colors.greyMidDark,
     ...styleApp.shadowWeak,
-  },
-  initialsText: {
-    ...styleApp.textBold,
-    color: colors.greyLighter,
-    fontSize: 33,
-    letterSpacing: 1,
-    marginLeft: 4,
   },
 });
 const mapStateToProps = (state) => {
