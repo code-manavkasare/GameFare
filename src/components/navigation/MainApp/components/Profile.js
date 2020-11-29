@@ -9,11 +9,19 @@ import EditProfilePage from '../../../app/elementsUser/elementsProfile/EditProfi
 import AppSettings from '../../../app/elementsUser/elementsProfile/AppSettings';
 import NotificationPage from '../../../app/elementsUser/elementsProfile/NotificationPage';
 import Payments from './Payments';
+import sizes from '../../../style/sizes';
 
 const Stack = createStackNavigator();
 const OnBoarding = () => {
   return (
-    <Stack.Navigator initialRouteName="VideoLibrary" headerMode="none">
+    <Stack.Navigator
+      initialRouteName="VideoLibrary"
+      headerMode="none"
+      screenOptions={{
+        gestureResponseDistance: {
+          horizontal: sizes.width,
+        },
+      }}>
       <Stack.Screen name="VideoLibrary" component={VideoLibraryPage} />
       <Stack.Screen name="MorePage" component={MorePage} />
       <Stack.Screen name="Wallet" component={Wallet} />

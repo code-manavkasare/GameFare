@@ -38,10 +38,10 @@ class TabsApp extends React.Component {
           name="Clubs"
           options={{
             pageStack: 'Clubs',
-            label: 'Library',
+            label: 'Clubs',
             signInToPass: false,
             icon: {
-              name: 'film',
+              name: 'users',
               type: 'font',
 
               size: 23,
