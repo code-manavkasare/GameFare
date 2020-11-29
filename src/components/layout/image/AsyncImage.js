@@ -59,7 +59,7 @@ export default class AsyncImage extends Component {
           onLoadEnd={() => {
             this.enterPictureCached();
           }}
-          source={{uri: imagePath}}
+          source={{uri: imagePath, cache: 'force-cache'}}
           style={[style, {zIndex: 10, position: 'absolute', top: 0}]}
         />
       </Animated.View>
