@@ -6,7 +6,7 @@ const connectionTypeSelector = createSelector(
   connectionTypeSubSelector,
   (connectionType) => {
     if (connectionType === 'none' || connectionType === 'unknown') return false;
-    return true;
+    return connectionType;
   },
 );
 

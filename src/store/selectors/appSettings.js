@@ -1,10 +1,12 @@
 import {createSelector} from 'reselect';
-
-const wifiAutoUploadSubSelector = (state) => state.appSettings.wifiAutoUpload;
+import {infoUserSubSelector} from './user';
 
 const wifiAutoUploadSelector = createSelector(
-  wifiAutoUploadSubSelector,
-  (item) => item,
+  infoUserSubSelector,
+  (item) => {
+    if (!item.appSettings) return false;
+    return item.appSettings.wifiAutoUpload;
+  },
 );
 
 export {wifiAutoUploadSelector};

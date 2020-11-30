@@ -26,6 +26,7 @@ import {boolShouldComponentUpdate} from '../../functions/redux';
 import {
   isVideosAreBeingShared,
   isSomeoneSharingScreen,
+  timeout,
 } from '../../functions/coach';
 import {
   generatePreview,
@@ -176,6 +177,7 @@ class VideoPlayerPage extends Component {
     !isMicrophoneMuted && (await this.AudioRecorderPlayerRef?.stopRecording());
 
     this.videoPlayerRefs.forEach((ref) => {
+      console.log('ref', ref);
       ref?.videoPlayerRef?.setRecording(false);
     });
     await this.videoPlayerRefs[0].toggleVisibleSeekBar(false);
@@ -186,7 +188,7 @@ class VideoPlayerPage extends Component {
     await this.recordingMenuRef.setState({
       isMicrophoneMutedLastValue: isMicrophoneMuted,
     });
-
+    await timeout(700);
     this.videoPlayerRefs[0].replayRecording();
   };
 
@@ -365,7 +367,6 @@ class VideoPlayerPage extends Component {
       label: 'Save review',
       params: {userID, recordedActions},
     });
-
     const archive = getArchiveByID(archives[0]);
     if (archive.local) {
       await generatePreview({
@@ -387,7 +388,7 @@ class VideoPlayerPage extends Component {
         audioFilePath,
         isMicrophoneMuted: isMicrophoneMutedLastValue,
         userId: userID,
-        archive,
+        videoInfo: archive,
         recordedActions,
       });
       this.props.navigation.navigate('Alert', {

@@ -191,7 +191,10 @@ class SinglePlayer extends Component {
     this.recordingRef.previewRecording(props);
   };
   replayRecording = async () => {
-    this.recordingRef.launchIfPreview();
+    const {seekAudioPlayer, archive} = this.props;
+    await this.setState({isPlayingReview: false});
+    if (!archive.isMicrophoneMuted) await seekAudioPlayer(0);
+    this.recordingRef.launchIfPreview(true);
   };
   singlePlayer = () => {
     const {
@@ -245,7 +248,7 @@ class SinglePlayer extends Component {
       playRate,
       scale,
       position,
-    } = videoFromCloud; 
+    } = videoFromCloud;
     return (
       <View style={playerStyle} onLayout={this.onLayoutContainer}>
         {isDrawingEnabled && sizeVideo.height !== 0 ? (
@@ -262,11 +265,7 @@ class SinglePlayer extends Component {
           <ControlButtonRecording
             displayButtonReplay={displayButtonReplay}
             isPlayingReview={isPlayingReview}
-            replay={async () => {
-              await this.setState({isPlayingReview: false});
-              if (!archive.isMicrophoneMuted) await seekAudioPlayer(0);
-              this.recordingRef.launchIfPreview(true);
-            }}
+            replay={this.replayRecording}
             clickVideo={() => {
               clickVideo(index);
             }}
