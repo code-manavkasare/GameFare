@@ -7281,11 +7281,6 @@ react-native-fade-in-view@^1.1.0:
   resolved "https://registry.yarnpkg.com/react-native-fade-in-view/-/react-native-fade-in-view-1.1.0.tgz#9d7e39d09cbbd715c2e180151aa388d126d41cce"
   integrity sha512-1KOyRRgDdgN3X14bDjxXmZ4/La4DVZVBbr/aOpvzxDEDsQrq8uSCM+2hBcqC5mPGqTOcwKqVRtbzxRq145xxzA==
 
-react-native-fast-image@^8.3.2:
-  version "8.3.3"
-  resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-8.3.3.tgz#84c2a337a33d7663657d7cf8b8fd1210bf1a6c63"
-  integrity sha512-gVAgQdSgzmuBhwjCOxzwv55j/OJd0iJB15RgVk1FuDgq29DVcTeQgtC2Ici/ezaKaOWSgMmR8/wwUGjgIuJW9w==
-
 react-native-flipper@^0.61.0:
   version "0.61.0"
   resolved "https://registry.yarnpkg.com/react-native-flipper/-/react-native-flipper-0.61.0.tgz#9613f1e8a7f90d1564f44ffc9fd7ced4f366debc"
