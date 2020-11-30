@@ -188,15 +188,6 @@ PODS:
   - KTVHTTPCache (2.0.1):
     - KTVCocoaHTTPServer
   - leveldb-library (1.22)
-  - libwebp (1.1.0):
-    - libwebp/demux (= 1.1.0)
-    - libwebp/mux (= 1.1.0)
-    - libwebp/webp (= 1.1.0)
-  - libwebp/demux (1.1.0):
-    - libwebp/webp
-  - libwebp/mux (1.1.0):
-    - libwebp/demux
-  - libwebp/webp (1.1.0)
   - lottie-ios (3.1.9)
   - lottie-react-native (3.5.0):
     - lottie-ios (~> 3.1.8)
@@ -551,10 +542,6 @@ PODS:
     - React
   - RNDeviceInfo (5.6.5):
     - React
-  - RNFastImage (8.3.3):
-    - React-Core
-    - SDWebImage (~> 5.8)
-    - SDWebImageWebPCoder (~> 0.6.1)
   - RNFBApp (6.7.1):
     - Firebase/Core (~> 6.13.0)
     - React
@@ -606,12 +593,6 @@ PODS:
     - React
   - RNVideoProcessing (1.7.5):
     - React
-  - SDWebImage (5.9.5):
-    - SDWebImage/Core (= 5.9.5)
-  - SDWebImage/Core (5.9.5)
-  - SDWebImageWebPCoder (0.6.1):
-    - libwebp (~> 1.0)
-    - SDWebImage/Core (~> 5.7)
   - Sentry (6.0.8):
     - Sentry/Core (= 6.0.8)
   - Sentry/Core (6.0.8)
@@ -712,7 +693,6 @@ DEPENDENCIES:
   - "RNCPushNotificationIOS (from `../node_modules/@react-native-community/push-notification-ios`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
-  - RNFastImage (from `../node_modules/react-native-fast-image`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - "RNFBDatabase (from `../node_modules/@react-native-firebase/database`)"
@@ -768,15 +748,12 @@ SPEC REPOS:
     - KTVCocoaHTTPServer
     - KTVHTTPCache
     - leveldb-library
-    - libwebp
     - Mixpanel
     - nanopb
     - OpenSSL-Universal
     - OpenTok
     - PromisesObjC
     - Protobuf
-    - SDWebImage
-    - SDWebImageWebPCoder
     - Sentry
     - Stripe
     - YogaKit
@@ -944,8 +921,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/datetimepicker"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
-  RNFastImage:
-    :path: "../node_modules/react-native-fast-image"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBAuth:
@@ -1032,7 +1007,6 @@ SPEC CHECKSUMS:
   KTVCocoaHTTPServer: df8d7b861e603ff8037e9b2138aca2563a6b768d
   KTVHTTPCache: 588c3eb16f6bd1e6fde1e230dabfb7bd4e490a4d
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
-  libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
   lottie-ios: 3a3758ef5a008e762faec9c9d50a39842f26d124
   lottie-react-native: 1fb4ce21d6ad37dab8343eaff8719df76035bd93
   Mixpanel: 0e9d50ecc6398e1082e690ddedf6968e57e81935
@@ -1111,7 +1085,6 @@ SPEC CHECKSUMS:
   RNCPushNotificationIOS: 988c26325d0b7e7b54f818db35b8313d3a125f0c
   RNDateTimePicker: 968ccf716b3b6aee07849641966005924de5c0f9
   RNDeviceInfo: c5f8f3a456adcbba405ace475254b08febc4c095
-  RNFastImage: ff7e055d085abe465b358ce5aa51e3c6d64b1efd
   RNFBApp: a8a70521201eb3e75761e5495ebf3be319a3a9bc
   RNFBAuth: 3d3491cf27037c65a7f68bd77a990c15fd97ccec
   RNFBDatabase: 5cfc5a090c66c46dd325e0842378be69a1780d6f
@@ -1129,8 +1102,6 @@ SPEC CHECKSUMS:
   RNSVG: 67f1f12dae2cef6ed59a42cae74a6b8f5a9e7b46
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   RNVideoProcessing: 87e7cb7d5386bb5ea5149a9bb0c5f1bb59a22d06
-  SDWebImage: 0b2ba0d56479bf6a45ecddbfd5558bea93150d25
-  SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Sentry: 6ab9f44a413dec7ebf5e82b166048afb5f60b895
   Stripe: 4305b646743612854819fb5d5cf67aaeb93577c0
   tipsi-stripe: fb5b32e890a4528322c491e1827133a3cb919e0a

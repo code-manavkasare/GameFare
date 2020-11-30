@@ -30,6 +30,9 @@ let offsetBottomHeaderStream = 10;
 let heightCardSession = 90;
 let widthCardSession = width;
 
+let marginTopDrawing = 0;
+let marginLeftDrawing = 0;
+
 if (Platform.OS === 'ios') {
   height0 = 0;
   marginTopHeader = 24;
