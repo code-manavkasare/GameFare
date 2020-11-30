@@ -10,7 +10,7 @@ import {blockUnblockUser} from '../../../database/firebase/users';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
 
 import Button from '../../../layout/buttons/Button';
-import {heightHeaderHome, heightFooter} from '../../../style/sizes';
+import {heightHeaderModal, heightFooter} from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import {userIDSelector} from '../../../../store/selectors/user';
@@ -97,11 +97,13 @@ class BlockedUsersList extends Component {
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
+          marginTop={10}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Blocked Users'}
-          inputRange={[5, 10]}
+          inputRange={[0, 50]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
+          sizeIcon1={17}
           initialBorderColorHeader={colors.grey}
           initialTitleOpacity={1}
           initialBorderWidth={0.3}
@@ -117,7 +119,7 @@ class BlockedUsersList extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottomScrollView={0}
           refreshControl={false}
-          marginTop={heightHeaderHome}
+          marginTop={heightHeaderModal}
           offsetBottom={heightFooter + 40}
           showsVerticalScrollIndicator={true}
         />

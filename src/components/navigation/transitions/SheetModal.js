@@ -3,12 +3,18 @@ import {height, width, borderRadius} from '../../style/sizes';
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
 
-const DepthModal = ({heightScale, bottom, top, ignoreBackgroundScale}) => {
+const SheetModal = ({
+  heightScale,
+  bottom,
+  top,
+  ignoreBackgroundScale,
+  gestureHeight,
+}) => {
   return {
     gestureDirection: 'vertical',
     gestureResponseDistance: {
       horizontal: width,
-      vertical: height,
+      vertical: gestureHeight ? gestureHeight * height : height,
     },
     transitionSpec: {
       open: TransitionSpecs.TransitionIOSSpec,
@@ -76,5 +82,5 @@ const DepthModal = ({heightScale, bottom, top, ignoreBackgroundScale}) => {
   };
 };
 module.exports = {
-  DepthModal,
+  SheetModal,
 };

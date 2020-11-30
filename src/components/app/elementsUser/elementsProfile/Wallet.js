@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
+import {View, Text, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
-const {height, width} = Dimensions.get('screen');
+const {height} = Dimensions.get('screen');
 
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import axios from 'axios';
@@ -11,9 +11,8 @@ import ScrollView from '../../../layout/scrollViews/ScrollView2';
 import PlaceHolder from '../../../placeHolders/CardConversation';
 import Config from 'react-native-config';
 
-import {heightHeaderHome,heightFooter} from '../../../style/sizes';
+import {heightHeaderModal, heightFooter} from '../../../style/sizes';
 import styleApp from '../../../style/style';
-import colors from '../../../style/colors';
 import CardTransfer from './CardTransfer';
 import {userIDSelector, walletSelector} from '../../../../store/selectors/user';
 
@@ -64,8 +63,8 @@ class Wallet extends Component {
         {loader ? (
           this.placehoder()
         ) : listTransfers.length === 0 ? (
-          <Text style={[styleApp.text, {marginLeft: 20, marginTop: 10}]}>
-            You don't have any transfer yet.
+          <Text style={[styleApp.text, {marginLeft: 20, marginTop: 30}]}>
+            You don't have any transfers yet.
           </Text>
         ) : (
           listTransfers.map((transfer, i) => (
@@ -143,14 +142,16 @@ class Wallet extends Component {
     return this.refresh();
   }
   render() {
-    const {dismiss, goBack} = this.props.navigation;
+    const {goBack} = this.props.navigation;
     const {wallet} = this.props;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
+          marginTop={10}
+          sizeIdon1={17}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Wallet: $' + wallet.totalWallet}
-          inputRange={[5, 10]}
+          inputRange={[0, 50]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
           //     initialBorderColorHeader={colors.grey}
@@ -172,7 +173,7 @@ class Wallet extends Component {
           marginBottomScrollView={0}
           refreshControl={true}
           refresh={() => this.refresh()}
-          marginTop={heightHeaderHome}
+          marginTop={heightHeaderModal}
           offsetBottom={heightFooter + 40}
           showsVerticalScrollIndicator={true}
         />

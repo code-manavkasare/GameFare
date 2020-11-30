@@ -46,35 +46,30 @@ class HeaderVideoLibrary extends Component {
         <HeaderBackButton
           AnimatedHeaderValue={AnimatedHeaderValue}
           textHeader={text}
-          inputRange={[15, 20]}
+          inputRange={[200, 280]}
           loader={loader}
-          initialBorderColorIcon={'white'}
-          initialBackgroundColor={'white'}
+          initialBorderColorIcon={'transparent'}
+          initialBackgroundColor={'transparent'}
           initialTitleOpacity={0}
           initialBorderWidth={1}
-          initialBorderColorHeader={colors.white}
-          icon1={
-            selectOnly
-              ? 'chevron-left'
-              : infoUser?.picture
-              ? infoUser?.picture
-              : 'profileFooter'
-          }
-          sizeIcon1={selectOnly ? 21 : infoUser.picture ? 40 : 23}
-          clickButton1={() =>
-            selectOnly ? navigation.goBack() : navigation.navigate('MorePage')
-          }
-          typeIcon1={selectOnly ? 'font' : infoUser.picture ? 'image' : 'moon'}
+          initialBorderColorHeader={'transparent'}
+          icon1={'times'}
+          sizeIcon1={17}
+          clickButton1={() => navigation.goBack()}
+          typeIcon1={'font'}
           icon2={selectOnly ? null : !selectableMode ? 'text' : 'text'}
           text2={!selectableMode ? 'Select' : 'Cancel'}
+          animateIcon2
+          animateIconOffset
           typeIcon2="font"
           sizeIcon2={22}
+          marginTop={5}
           colorIcon2={colors.title}
           clickButton2={toggleSelectable}
           clickButtonOffset={selectVideosFromCameraRoll}
           iconOffset={!selectableMode && 'plus'}
           typeIconOffset={'font'}
-          sizeIconOffset={22}
+          sizeIconOffset={17}
         />
 
         <UploadHeader
