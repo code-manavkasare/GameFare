@@ -9,7 +9,7 @@ import EditProfilePage from '../../../app/elementsUser/elementsProfile/EditProfi
 import AppSettings from '../../../app/elementsUser/elementsProfile/AppSettings';
 import NotificationPage from '../../../app/elementsUser/elementsProfile/NotificationPage';
 import Payments from './Payments';
-import sizes from '../../../style/sizes';
+import {width} from '../../../style/sizes';
 
 const Stack = createStackNavigator();
 const OnBoarding = () => {
@@ -19,7 +19,7 @@ const OnBoarding = () => {
       headerMode="none"
       screenOptions={{
         gestureResponseDistance: {
-          horizontal: sizes.width,
+          horizontal: width,
         },
       }}>
       <Stack.Screen name="VideoLibrary" component={VideoLibraryPage} />

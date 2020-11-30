@@ -56,6 +56,9 @@ export default class AsyncImage extends Component {
           width: style.width,
         }}>
         <Image
+          onLoadEnd={() => {
+            this.enterPictureCached();
+          }}
           source={{uri: imagePath, cache: 'force-cache'}}
           style={[style, {zIndex: 10, position: 'absolute', top: 0}]}
         />
