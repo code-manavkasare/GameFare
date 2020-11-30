@@ -3,13 +3,9 @@ import PropTypes from 'prop-types';
 import {View} from 'react-native';
 import {connect} from 'react-redux';
 
-import colors from '../../../style/colors';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
-import {
-  userIDSelector,
-  userInfoSelector,
-} from '../../../../store/selectors/user';
+import {userInfoSelector} from '../../../../store/selectors/user';
 
 class ClubsHeader extends Component {
   static propTypes = {
@@ -67,7 +63,6 @@ class ClubsHeader extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userID: userIDSelector(state),
     infoUser: userInfoSelector(state),
   };
 };

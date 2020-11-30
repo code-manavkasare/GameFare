@@ -1,14 +1,10 @@
 import React, {Component} from 'react';
-import {Animated, StyleSheet, View} from 'react-native';
+import {Animated, View} from 'react-native';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
-import styleApp from '../../style/style';
+import {stylePage} from '../../style/style';
 import ClubsHeader from './components/ClubsHeader';
-import {
-  userConnectedSelector,
-  userInfoSelector,
-} from '../../../store/selectors/user';
 
 class ClubsPage extends Component {
   static propTypes = {
@@ -28,7 +24,7 @@ class ClubsPage extends Component {
   render() {
     const {navigation} = this.props;
     return (
-      <View style={styleApp.stylePage}>
+      <View style={stylePage}>
         <ClubsHeader
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           navigation={navigation}
@@ -38,13 +34,8 @@ class ClubsPage extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
-
 const mapStateToProps = (state) => {
-  return {
-    infoUser: userInfoSelector(state),
-    userConnected: userConnectedSelector(state),
-  };
+  return {};
 };
 
 export default connect(mapStateToProps)(ClubsPage);

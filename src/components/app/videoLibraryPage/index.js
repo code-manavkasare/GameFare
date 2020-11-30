@@ -199,14 +199,45 @@ class VideoLibraryPage extends Component {
     );
   };
 
+  libraryHeader = () => {
+    const {selectableMode, modalMode} = this.state;
+    if (modalMode) {
+      return null;
+    }
+    return (
+      <View>
+        {this.profileHeader()}
+        {this.settingsRow()}
+        {rowTitle({
+          hideDividerHeader: true,
+          title: !selectableMode ? 'Library' : 'Select Videos',
+          titleColor: colors.greyDarker,
+          titleStyle: {
+            fontWeight: '800',
+            fontSize: 17,
+          },
+          containerStyle: {
+            marginTop: 20,
+          },
+          button: {
+            click: this.toggleSelectable,
+            text: !selectableMode ? 'Select' : 'Cancel',
+            color: colors.greyDark,
+            onPressColor: colors.greyMidDark,
+            fontSize: 12,
+            style: {
+              height: 25,
+              width: '90%',
+            },
+          },
+        })}
+      </View>
+    );
+  };
+
   listVideos = () => {
     const {navigation, videosArray} = this.props;
-    const {
-      selectOnly,
-      selectableMode,
-      selectFromCameraRoll,
-      modalMode,
-    } = this.state;
+    const {selectOnly, selectableMode, selectFromCameraRoll} = this.state;
     const selectMargin = selectableMode ? 80 : 0;
 
     if (selectFromCameraRoll) {
@@ -249,33 +280,7 @@ class VideoLibraryPage extends Component {
           }}
           header={
             <View>
-              {!modalMode ? this.profileHeader() : null}
-              {!modalMode ? this.settingsRow() : null}
-              {!modalMode
-                ? rowTitle({
-                    hideDividerHeader: true,
-                    title: !selectableMode ? 'Library' : 'Select Videos',
-                    titleColor: colors.greyDarker,
-                    titleStyle: {
-                      fontWeight: '800',
-                      fontSize: 17,
-                    },
-                    containerStyle: {
-                      marginTop: 20,
-                    },
-                    button: {
-                      click: this.toggleSelectable,
-                      text: !selectableMode ? 'Select' : 'Cancel',
-                      color: colors.greyDark,
-                      onPressColor: colors.greyMidDark,
-                      fontSize: 12,
-                      style: {
-                        height: 25,
-                        width: '90%',
-                      },
-                    },
-                  })
-                : null}
+              {this.libraryHeader()}
               <VideoBeingShared />
             </View>
           }
