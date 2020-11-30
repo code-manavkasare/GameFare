@@ -138,7 +138,7 @@ async function getPhotoUser() {
     assetType: 'All',
   });
   return edges;
-} 
+}
 const getLastVideo = async () => {
   const {edges} = await CameraRoll.getPhotos({
     first: 1,
@@ -179,7 +179,7 @@ const generateThumbnail = async (videoPath, timeStamp) => {
     thumbnail.width,
     thumbnail.height,
     'JPEG',
-    80,
+    10,
   );
   await deleteLocalVideoFile(thumbnail.path);
   thumbnail.path = uri;
@@ -339,7 +339,7 @@ export {
   pickLibrary,
   resize,
   rotateImage,
-  getPhotoUser, 
+  getPhotoUser,
   getVideoInfo,
   getLastVideo,
   permission,

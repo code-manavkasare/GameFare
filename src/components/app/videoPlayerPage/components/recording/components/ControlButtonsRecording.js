@@ -42,8 +42,6 @@ export default class ControlButtonsRecording extends React.Component {
     if (clickVideo) clickVideo();
   };
   render() {
-    const {displayButtonReplay, isPlayingReview} = this.props;
-
     return (
       <TouchableOpacity
         activeOpacity={0.8}
@@ -57,29 +55,7 @@ export default class ControlButtonsRecording extends React.Component {
           <TouchableOpacity
             style={[styleApp.fullSize, styleApp.center]}
             activeOpacity={0.8}
-            onPress={() => this.onPress()}>
-            {/* {displayButtonReplay ? (
-              <AllIcons
-                name="undo-alt"
-                type="font"
-                size={30}
-                color={colors.white}
-              />
-            ) : isPlayingReview ? (
-              <AllIcons
-                name="pause"
-                type="font"
-                size={30}
-                color={colors.white}
-              />
-            ) : (
-              <AllIcons
-                name="play"
-                type="font"
-                size={30}
-                color={colors.white}
-              />
-            )} */}
+            onPress={this.onPress}>
             <AllIcons
               name="undo-alt"
               type="font"

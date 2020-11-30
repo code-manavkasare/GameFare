@@ -130,8 +130,8 @@ export const signIn = async ({
           blockedUsers,
           blockedByUsers,
           permissionOtherUserToRecord,
+          appSettings,
         } = snap.val();
-
         const prevNotifications = store.getState().userNotifications;
         if (!equal(prevNotifications, notifications))
           store.dispatch(setUserNotifications(notifications));
@@ -165,12 +165,17 @@ export const signIn = async ({
           await store.dispatch(
             setUserInfo({
               userID,
-              infoUser: {userInfo, wallet, silentFriends},
+              infoUser: {
+                userInfo,
+                wallet,
+                silentFriends,
+                appSettings,
+                permissionOtherUserToRecord,
+              },
               settings,
               userConnected: profileCompleted ? true : false,
               phoneNumber,
               countryCode,
-              permissionOtherUserToRecord,
             }),
           );
       });

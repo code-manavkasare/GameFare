@@ -2,7 +2,7 @@ import {createSelector} from 'reselect';
 
 const userConnectedSubSelector = (state) => state.user.userConnected;
 const userIDSubSelector = (state) => state.user.userID;
-const infoUserSubSelector = (state) => state.user.infoUser;
+export const infoUserSubSelector = (state) => state.user.infoUser;
 
 const notificationsSelector = (state) => state.notifications;
 const silentFriendsSubSelector = (state) => state.userSilentFriends;

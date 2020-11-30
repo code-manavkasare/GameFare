@@ -102,7 +102,6 @@ export default class RecordingMenu extends React.Component {
       recordedActions,
       startRecording,
       stopRecording,
-      toggleMuteMicrophone,
     } = this.props;
     const {isMicrophoneMuted} = this.state;
     if (!isEditMode) return null;
@@ -145,7 +144,7 @@ export default class RecordingMenu extends React.Component {
               backgroundColor: colors.title + '70',
               text: 'Save',
               onPressColor: colors.greyDark + '70',
-              click: this.saveReview,
+              click: this.clickSaveReview,
               icon: {
                 name: 'sd-card',
                 type: 'font',
