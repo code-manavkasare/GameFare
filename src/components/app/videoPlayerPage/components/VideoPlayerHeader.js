@@ -89,7 +89,7 @@ class VideoPlayerHeader extends React.Component {
     } = this.props;
     const {coachSessionID} = route.params;
     const sharedProps = {
-      inputRange: [5, 10],
+      inputRange: [100, 100],
       colorLoader: 'white',
       AnimatedHeaderValue: this.AnimatedHeaderValue,
       sizeLoader: 40,
@@ -98,7 +98,8 @@ class VideoPlayerHeader extends React.Component {
       nobackgroundColorIcon1: false,
       backgroundColorIcon1: 'transparent',
       initialBorderColorIcon: 'transparent',
-      sizeIcon1: 18,
+      initialBackgroundColor: 'transparent',
+      sizeIcon1: 17,
       colorIcon1: colors.white,
       typeIcon1: 'font',
       marginTop: -3,
@@ -115,12 +116,12 @@ class VideoPlayerHeader extends React.Component {
       backgroundColorIcon11: !isDrawingEnabled
         ? colors.secondary
         : 'transparent',
-      sizeIcon11: 21,
+      sizeIcon11: 17,
       clickButton11: () => setState({isDrawingEnabled: false}),
       icon12: 'paint-brush',
       colorIcon12: isDrawingEnabled ? colors.greyDarker : colors.white,
       typeIcon12: 'font',
-      sizeIcon12: 19,
+      sizeIcon12: 17,
       backgroundColorIcon12: isDrawingEnabled
         ? colors.secondary
         : 'transparent',
@@ -157,8 +158,8 @@ class VideoPlayerHeader extends React.Component {
           recordedActions.length > 0
         ) && addVideo();
       },
-      sizeIconOffset: 20,
-      icon1: 'chevron-left',
+      sizeIconOffset: 17,
+      icon1: 'times',
       clickButton1: () => close(),
     };
     return <HeaderBackButton {...sharedProps} />;

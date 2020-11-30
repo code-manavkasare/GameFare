@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import {navigate, goBack} from '../../../../../../NavigationService';
+import {navigate} from '../../../../../../NavigationService';
 
 import colors from '../../../../style/colors';
 import HeaderBackButton from '../../../../layout/headers/HeaderBackButton';
@@ -39,7 +38,7 @@ export default class HeaderListStream extends Component {
         typeIconOffset="font"
         sizeIconOffset={24}
         colorIconOffset={colors.title}
-        clickButtonOffset={() => navigate('NotificationPage')}
+        clickButtonOffset={() => navigate('NotificationPage', {modal: true})}
         icon2={'edit'}
         typeIcon2="font"
         sizeIcon2={21}
@@ -58,4 +57,3 @@ export default class HeaderListStream extends Component {
     return this.header();
   }
 }
-

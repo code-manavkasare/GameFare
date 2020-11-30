@@ -5,25 +5,33 @@ import TabsApp from '../TabsApp/index';
 
 import ProfilePage from '../../app/elementsUser/elementsProfile/ProfilePage';
 import Conversation from '../../app/elementsMessage/Conversation';
-
 import Profile from './components/Profile';
-
 import Webview from '../../layout/Views/Webview';
-import VideoPlayerPage from '../../app/videoPlayerPage/index';
-import {DepthModal} from '../transitions/DepthModal';
-
 import Groups from '../../app/coachFlow/GroupsPage/index';
-
 import SessionSettings from '../../app/TeamPage/components/SessionSettings';
-
-import {marginTopApp} from '../../style/sizes';
+import {SheetModal} from '../transitions/SheetModal';
+import {marginTopApp, width} from '../../style/sizes';
 
 const Stack = createStackNavigator();
 const MainApp = () => {
-  const ProfileSpec = DepthModal({top: marginTopApp + 25});
-  const ModalSpec = DepthModal({top: 0, ignoreBackgroundScale: true});
+  const ProfileSpec = SheetModal({
+    top: marginTopApp + 25,
+    gestureHeight: 1 / 3,
+  });
+  const ModalSpec = SheetModal({
+    top: 0,
+    ignoreBackgroundScale: true,
+    gestureHeight: 1 / 3,
+  });
   return (
-    <Stack.Navigator initialRouteName="TabsApp" headerMode="none">
+    <Stack.Navigator
+      initialRouteName="TabsApp"
+      headerMode="none"
+      screenOptions={{
+        gestureResponseDistance: {
+          horizontal: width,
+        },
+      }}>
       <Stack.Screen
         name="TabsApp"
         component={TabsApp}
@@ -42,9 +50,11 @@ const MainApp = () => {
 
       <Stack.Screen name="Webview" component={Webview} />
 
-      <Stack.Screen name="MorePage" component={Profile} options={ProfileSpec} />
-
-      <Stack.Screen name="VideoPlayerPage" component={VideoPlayerPage} />
+      <Stack.Screen
+        name="VideoLibrary"
+        component={Profile}
+        options={ProfileSpec}
+      />
       <Stack.Screen name="Groups" component={Groups} />
 
       <Stack.Screen name="SessionSettings" component={SessionSettings} />

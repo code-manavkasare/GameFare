@@ -11,7 +11,8 @@ var heightFooterBooking = 80;
 var heightFooter = 70;
 var marginTopApp = 10;
 let marginTopAppLandscape = 0;
-let heightHeaderHome = 70;
+var heightHeaderHome = 70;
+var heightHeaderModal = 40;
 var heightHeaderFilter = 100;
 let heightHeaderHomeSearch = 130;
 var height0 = 50;
@@ -28,9 +29,6 @@ let heightHeaderStream = 60;
 let offsetBottomHeaderStream = 10;
 let heightCardSession = 90;
 let widthCardSession = width;
-
-let marginTopDrawing = 0;
-let marginLeftDrawing = 0;
 
 if (Platform.OS === 'ios') {
   height0 = 0;
@@ -104,6 +102,7 @@ export {
   heightPicture,
   height0,
   heightHeaderHome,
+  heightHeaderModal,
   heightHeaderFilter,
   heightHeaderHomeSearch,
   height,
