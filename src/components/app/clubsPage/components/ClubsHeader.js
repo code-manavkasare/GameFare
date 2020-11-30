@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
+import {bool, any, object, string} from 'prop-types';
 import {View} from 'react-native';
 import {connect} from 'react-redux';
 
@@ -9,11 +9,11 @@ import {userInfoSelector} from '../../../../store/selectors/user';
 
 class ClubsHeader extends Component {
   static propTypes = {
-    loader: PropTypes.bool,
-    AnimatedHeaderValue: PropTypes.any,
-    navigation: PropTypes.object,
-    infoUser: PropTypes.object,
-    text: PropTypes.string,
+    loader: bool,
+    AnimatedHeaderValue: any,
+    navigation: object,
+    infoUser: object,
+    text: string,
   };
   static defaultProps = {};
 
