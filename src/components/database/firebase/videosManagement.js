@@ -81,9 +81,10 @@ const createCloudVideo = async (videoInfo) => {
       local: false,
       fromNativeLibrary: false,
       uploadedByUser: true,
-      url: false,
       sourceUser: userID,
     };
+    delete firebaseVideoInfo.url;
+    delete firebaseVideoInfo.thumbnail;
     const newFirebaseVideoInfo = await mergeInfoWithExistingCloudVideo(
       firebaseVideoInfo,
     );
