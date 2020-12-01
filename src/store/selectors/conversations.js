@@ -18,6 +18,7 @@ const messagesSelector = createSelector(
   sessionSelector,
   userIDSelector,
   (conversation, isSessionRequest, session, userID) => {
+    if (!session) return [];
     if (!conversation?.messages) return [];
     const messages = Object.values(conversation.messages);
     if (isSessionRequest) {

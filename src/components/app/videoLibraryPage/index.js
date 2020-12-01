@@ -82,7 +82,10 @@ class VideoLibraryPage extends Component {
   }
   toggleSelectable = (force) => {
     const {selectableMode} = this.state;
-    this.setState({selectableMode: force ? false : !selectableMode});
+    this.setState({
+      selectableMode: force ? false : !selectableMode,
+      selectedVideos: [],
+    });
   };
   playSelectedVideos = ({forceSharing}) => {
     const {selectedVideos, nonplayableVideos} = this.state;
@@ -355,7 +358,7 @@ class VideoLibraryPage extends Component {
         onPress={this.goToEditProfile}
         style={styleApp.marginView}
         activeOpacity={0.9}>
-        {profileHeader({infoUser, containerStyle})}
+        {/* {profileHeader({infoUser, containerStyle})} */}
       </TouchableOpacity>
     );
   };

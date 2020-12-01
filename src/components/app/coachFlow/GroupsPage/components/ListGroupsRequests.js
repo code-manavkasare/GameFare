@@ -30,16 +30,8 @@ class ListStreams extends Component {
     });
   }
 
-  sessionsArray = () => {
-    let {coachSessions} = this.props;
-    if (!coachSessions) return [];
-    return Object.values(coachSessions).sort(function(a, b) {
-      return b.timestamp - a.timestamp;
-    });
-  };
   list = () => {
-    const coachSessions = this.sessionsArray();
-    const {AnimatedHeaderValue} = this.props;
+    const {AnimatedHeaderValue, coachSessions} = this.props;
 
     return (
       <FlatListComponent

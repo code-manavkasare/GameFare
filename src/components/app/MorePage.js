@@ -320,7 +320,7 @@ class MorePage extends Component {
           initialBorderWidth={0}
           icon1={'chevron-left'}
           typeIcon1="font"
-          sizeIcon1={17}
+          sizeIcon1={21}
           colorIcon1={colors.title}
           clickButton1={() => goBack()}
         />
