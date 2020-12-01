@@ -161,10 +161,19 @@ const styles = StyleSheet.create({
     color: colors.title,
   },
   input: {
-    fontSize: 15,
+    fontSize: 17,
     fontFamily: font,
     fontWeight: '600',
     color: colors.title,
+  },
+  inputBox: {
+    height: 55,
+    backgroundColor: colors.white,
+    borderRadius: 0,
+    borderColor: colors.off,
+    // paddingLeft: 10,
+    marginTop: 10,
+    borderBottomWidth: 1,
   },
   inputOff: {
     color: '#C7C7CC',

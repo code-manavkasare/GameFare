@@ -15,6 +15,8 @@ import {
   RESET_USER_BLOCKED_BY_USERS,
   SET_USER_SILENT_FRIENDS,
   RESET_USER_SILENT_FRIENDS,
+  SET_USER_CLUBS,
+  RESET_USER_CLUBS,
 } from '../types';
 
 const initialState = {
@@ -141,6 +143,18 @@ const userSilentFriendsReducer = (state = initialSilentFriends, action) => {
   }
 };
 
+const initialClubs = {};
+const userClubsReducer = (state = initialClubs, action) => {
+  switch (action.type) {
+    case SET_USER_CLUBS:
+      return {...action.clubs};
+    case RESET_USER_CLUBS:
+      return initialClubs;
+    default:
+      return state;
+  }
+};
+
 export {
   userReducer,
   userCloudArchivesReducer,
@@ -150,4 +164,5 @@ export {
   userBlockedUsersReducer,
   userBlockedByUsersReducer,
   userSilentFriendsReducer,
+  userClubsReducer,
 };

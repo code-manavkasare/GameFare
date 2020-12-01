@@ -20,14 +20,17 @@ const fetchArchives = async ({listIds, fetchAll}) => {
       if (!archiveInStore) listIdsToFetch.push(archiveID);
     }
   const url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}getAllElements`;
-  const {data} = await axios.post(url, {
-    ids: listIdsToFetch,
-    path: 'archivedStreams',
-  });
-  const archives = data.response;
+  if (listIdsToFetch.length > 0) {
+    const {data} = await axios.post(url, {
+      ids: listIdsToFetch,
+      path: 'archivedStreams',
+    });
+    const archives = data.response;
 
-  await store.dispatch(setArchives(archives));
-  await timeout(400);
+    await store.dispatch(setArchives(archives));
+    await timeout(400);
+  }
+
   return true;
 };
 

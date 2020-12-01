@@ -263,15 +263,15 @@ class VideoLibraryPage extends Component {
           onRef={(ref) => {
             this.flatListRef = ref;
           }}
-          fetchData={async ({numberToRender, nextNumberRender}) => {
-            if (nextNumberRender !== videosArray.length)
-              await fetchArchives({
-                listIds: videosArray.slice(
-                  numberToRender === 0 ? 0 : numberToRender - 1,
-                  nextNumberRender,
-                ),
-              });
-          }}
+          // fetchData={async ({numberToRender, nextNumberRender}) => {
+          //   if (nextNumberRender !== videosArray.length)
+          //     await fetchArchives({
+          //       listIds: videosArray.slice(
+          //         numberToRender === 0 ? 0 : numberToRender - 1,
+          //         nextNumberRender,
+          //       ),
+          //     });
+          // }}
           ListEmptyComponent={{
             clickButton: () => navigation.navigate('Session'),
             textButton: 'Record',

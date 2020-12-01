@@ -2,11 +2,13 @@ import database from '@react-native-firebase/database';
 import moment from 'moment';
 import RnBgTask from 'react-native-bg-thread';
 import equal from 'fast-deep-equal';
+import isEqual from 'lodash.isequal';
 
 import {store} from '../../../store/reduxStore';
 import {setSession} from '../../../store/actions/coachSessionsActions';
 import {setConversation} from '../../../store/actions/conversationsActions';
 import {setArchive} from '../../../store/actions/archivesActions';
+import {setClub} from '../../../store/actions/clubsActions';
 
 const bindSession = (sessionID) => {
   RnBgTask.runInBackground(() => {
@@ -22,6 +24,25 @@ const bindSession = (sessionID) => {
 const unbindSession = async (sessionID) => {
   await database()
     .ref(`coachSessions/${sessionID}`)
+    .off();
+};
+
+const bindClub = (objectID) => {
+  RnBgTask.runInBackground(() => {
+    database()
+      .ref(`clubs/${objectID}`)
+      .on('value', function(snapshot) {
+        const newClub = snapshot.val();
+        const currentClub = store.getState().clubs[objectID];
+        if (newClub && !isEqual(currentClub, newClub))
+          store.dispatch(setClub(newClub));
+      });
+  });
+};
+
+const unbindClub = async (objectID) => {
+  await database()
+    .ref(`clubs/${objectID}`)
     .off();
 };
 
@@ -99,4 +120,6 @@ export {
   unbindArchive,
   bindConversation,
   unbindConversation,
+  bindClub,
+  unbindClub,
 };

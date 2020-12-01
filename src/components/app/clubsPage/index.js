@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
-import {Animated, View} from 'react-native';
+import {Animated, View, Text} from 'react-native';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
-import {stylePage} from '../../style/style';
+import styleApp from '../../style/style';
 import ClubsHeader from './components/ClubsHeader';
+import {userClubsSelector} from '../../../store/selectors/clubs';
+import CardClub from './components/CardClub';
 
 class ClubsPage extends Component {
   static propTypes = {
@@ -22,20 +24,32 @@ class ClubsPage extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   render() {
-    const {navigation} = this.props;
+    const {navigation, clubs} = this.props;
     return (
-      <View style={stylePage}>
+      <View style={styleApp.stylePage}>
         <ClubsHeader
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           navigation={navigation}
         />
+
+        <Text
+          style={{marginTop: 200}}
+          onPress={() => navigation.navigate('CreateClub')}>
+          Create a club
+        </Text>
+
+        {clubs.map(({id}) => (
+          <CardClub key={id} id={id} />
+        ))}
       </View>
     );
   }
 }
 
 const mapStateToProps = (state) => {
-  return {};
+  return {
+    clubs: userClubsSelector(state),
+  };
 };
 
 export default connect(mapStateToProps)(ClubsPage);

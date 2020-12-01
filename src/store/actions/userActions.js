@@ -2,7 +2,7 @@ import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import messaging from '@react-native-firebase/messaging';
 import Mixpanel from 'react-native-mixpanel';
-import equal from 'fast-deep-equal';
+import isEqual from 'lodash.isequal';
 import RnBgTask from 'react-native-bg-thread';
 
 import {
@@ -23,6 +23,8 @@ import {
   RESET_USER_BLOCKED_BY_USERS,
   SET_USER_SILENT_FRIENDS,
   RESET_USER_SILENT_FRIENDS,
+  SET_USER_CLUBS,
+  RESET_USER_CLUBS,
 } from '../types';
 import {store} from '../reduxStore';
 
@@ -102,6 +104,14 @@ const resetUserSilentFriends = () => ({
   type: RESET_USER_SILENT_FRIENDS,
 });
 
+const setUserClubs = (clubs) => ({
+  type: SET_USER_CLUBS,
+  clubs,
+});
+const resetUserClubs = () => ({
+  type: RESET_USER_CLUBS,
+});
+
 export const signIn = async ({
   firebaseSignInToken,
   countryCode,
@@ -131,37 +141,41 @@ export const signIn = async ({
           blockedByUsers,
           permissionOtherUserToRecord,
           appSettings,
+          clubs,
         } = snap.val();
         const prevNotifications = store.getState().userNotifications;
-        if (!equal(prevNotifications, notifications))
+        if (!isEqual(prevNotifications, notifications))
           store.dispatch(setUserNotifications(notifications));
 
         const prevCloudArchives = store.getState().userCloudArchives;
-        if (!equal(prevCloudArchives, archivedStreams))
+        if (!isEqual(prevCloudArchives, archivedStreams))
           store.dispatch(setUserCloudArchives(archivedStreams));
 
         const prevUserSession = store.getState().userSessions;
-        if (!equal(prevUserSession, coachSessions))
+        if (!isEqual(prevUserSession, coachSessions))
           store.dispatch(setUserSessions(coachSessions));
 
         const prevSessionsRequests = store.getState().userSessionsRequests;
-        if (!equal(prevSessionsRequests, coachSessionsRequests))
+        if (!isEqual(prevSessionsRequests, coachSessionsRequests))
           store.dispatch(setUserSessionsRequests(coachSessionsRequests));
 
         const prevBlockedUsers = store.getState().userBlockedUsers;
-        if (!equal(prevBlockedUsers, blockedUsers))
+        if (!isEqual(prevBlockedUsers, blockedUsers))
           store.dispatch(setUserBlockedUsers(blockedUsers));
 
         const prevBlockedByUsers = store.getState().userBlockedByUsers;
-        if (!equal(prevBlockedByUsers, blockedByUsers))
+        if (!isEqual(prevBlockedByUsers, blockedByUsers))
           store.dispatch(setUserBlockedByUsers(blockedByUsers));
 
         const prevSilentFriends = store.getState().userSilentFriends;
-        if (!equal(prevSilentFriends, silentFriends))
+        if (!isEqual(prevSilentFriends, silentFriends))
           store.dispatch(setUserSilentFriends(silentFriends));
 
+        const prevClubs = store.getState().userClubs;
+        if (!isEqual(prevClubs, clubs)) store.dispatch(setUserClubs(clubs));
+
         const currentInfoUser = store.getState().user;
-        if (!equal(currentInfoUser, coachSessionsRequests))
+        if (!isEqual(currentInfoUser, coachSessionsRequests))
           await store.dispatch(
             setUserInfo({
               userID,

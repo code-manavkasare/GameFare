@@ -10,6 +10,7 @@ import {
   userBlockedUsersReducer,
   userBlockedByUsersReducer,
   userSilentFriendsReducer,
+  userClubsReducer,
 } from './userReducer';
 import messageReducer from './messageReducer';
 import coachReducer from './coachReducer';
@@ -21,6 +22,10 @@ import {archivesReducer} from './archivesReducer';
 import {coachSessionsReducer} from './coachSessionsReducer';
 import {conversationsReducer} from './conversationsReducer';
 import connectionTypeReducer from './connectionTypeReducer';
+import {clubsReducer} from './clubsReducer';
+import {servicesReducer} from './servicesReducer';
+import {bookingsReducer} from './bookingsReducer';
+import {postsReducer} from './postsReducer';
 
 export default combineReducers({
   appSettings: appSettingsReducer,
@@ -42,4 +47,9 @@ export default combineReducers({
   userBlockedUsers: userBlockedUsersReducer,
   userBlockedByUsers: userBlockedByUsersReducer,
   userSilentFriends: userSilentFriendsReducer,
+  userClubs: userClubsReducer,
+  clubs: clubsReducer,
+  services: servicesReducer,
+  bookings: bookingsReducer,
+  posts: postsReducer,
 });

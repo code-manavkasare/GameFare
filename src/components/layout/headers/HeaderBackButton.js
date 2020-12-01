@@ -521,6 +521,7 @@ class HeaderBackButton extends Component {
     } = this.animatedValues();
     const styleHeader = {
       ...styles.header,
+      marginTop,
       backgroundColor: initialBackgroundColor,
       opacity: opacityHeader ? opacityHeader : 1,
       width: '100%',
@@ -528,7 +529,6 @@ class HeaderBackButton extends Component {
     };
     const styleRowHeader = {
       ...styles.rowHeader,
-      marginTop,
     };
     const styleBackdrop = {
       ...styleApp.fullSize,
@@ -543,36 +543,31 @@ class HeaderBackButton extends Component {
 
     return (
       <Animated.View style={styleHeader}>
-        <Row style={styleRowHeader}>
-          {searchBar ? (
-            <View style={{...styles.rowTextImgHeader, ...searchBarStyle}}>
-              {searchBar}
-            </View>
-          ) : (
-            <TouchableOpacity
-              onPress={() => clickImgHeader && this.clickImgHeader()}
-              activeOpacity={0.7}
-              style={
-                imgHeader ? styles.rowTextImgHeader : styles.rowTextHeader
-              }>
-              <Row>
-                {imgHeader ? (
-                  <Col size={25} style={styleApp.center2}>
-                    {imgHeader}
-                  </Col>
-                ) : null}
-                <Col
-                  size={70}
-                  style={imgHeader ? styleApp.center2 : styleApp.center}>
-                  <Animated.Text
-                    style={[styleApp.textBold, {opacity: AnimateOpacityTitle}]}>
-                    {textHeader}
-                  </Animated.Text>
+        {searchBar ? (
+          <View style={{...styles.rowTextImgHeader}}>{searchBar}</View>
+        ) : (
+          <TouchableOpacity
+            onPress={() => clickImgHeader && this.clickImgHeader()}
+            activeOpacity={0.7}
+            style={imgHeader ? styles.rowTextImgHeader : styles.rowTextHeader}>
+            <Row>
+              {imgHeader ? (
+                <Col size={25} style={styleApp.center2}>
+                  {imgHeader}
                 </Col>
-              </Row>
-            </TouchableOpacity>
-          )}
-
+              ) : null}
+              <Col
+                size={70}
+                style={imgHeader ? styleApp.center2 : styleApp.center}>
+                <Animated.Text
+                  style={[styleApp.textBold, {opacity: AnimateOpacityTitle}]}>
+                  {textHeader}
+                </Animated.Text>
+              </Col>
+            </Row>
+          </TouchableOpacity>
+        )}
+        <Row style={styleRowHeader}>
           <Col size={15} style={styleApp.center2} activeOpacity={0.4}>
             {this.button1()}
           </Col>
@@ -637,7 +632,7 @@ const styles = StyleSheet.create({
     height: '100%',
     position: 'absolute',
     width: '65%',
-    marginLeft: '17.5%',
+    left: '17.5%',
     zIndex: 10,
   },
 });
