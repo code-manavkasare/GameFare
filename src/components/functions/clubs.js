@@ -2,7 +2,6 @@ import database from '@react-native-firebase/database';
 
 import {generateID} from './utility.js';
 import {setClubs} from '../../store/actions/clubsActions';
-import {getValueOnce} from '../database/firebase/methods';
 import {store} from '../../store/reduxStore';
 
 const createClub = async ({title, description}) => {

@@ -23,6 +23,9 @@ class FlatListComponent extends Component {
     AnimatedHeaderValue: object,
     cardList: func.isRequired,
     header: element,
+    headerStyle: object,
+    footer: element,
+    footerStyle: object,
     incrementRendering: number,
     initialNumberToRender: number,
     inverted: bool,
@@ -98,6 +101,8 @@ class FlatListComponent extends Component {
       cardList,
       header,
       headerStyle,
+      footer,
+      footerStyle,
       horizontal,
       inverted,
       ListEmptyComponent,
@@ -118,7 +123,6 @@ class FlatListComponent extends Component {
     const containerStyle = {
       paddingBottom: paddingBottom ? paddingBottom : 60,
       backgroundColor: colors.white,
-
       width: horizontal ? list.length * 100 : '100%',
       ...styleContainer,
     };
@@ -136,9 +140,15 @@ class FlatListComponent extends Component {
       <FlatList
         data={list}
         renderItem={({item, index}) => cardList({item, index})}
-        ListFooterComponent={() =>
-          lengthList > numberToRender && lengthList !== 0 ? viewLoader() : null
+        ListFooterComponent={
+          footer
+            ? footer
+            : () =>
+                lengthList > numberToRender && lengthList !== 0
+                  ? viewLoader()
+                  : null
         }
+        ListFooterComponentStyle={footerStyle}
         scrollIndicatorInsets={{right: 1}}
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="interactive"

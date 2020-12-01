@@ -142,7 +142,7 @@ class AppSettings extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.settings()}
           marginBottomScrollView={0}
-          marginTop={heightHeaderModal}
+          marginTop={heightHeaderModal + 5}
           offsetBottom={heightFooter + 90}
           showsVerticalScrollIndicator={false}
         />

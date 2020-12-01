@@ -148,7 +148,7 @@ class VideoLibraryPage extends Component {
   };
 
   settingsRow = () => {
-    const {navigation} = this.props;
+    const {navigation, userConnected} = this.props;
     return (
       <View style={styles.settingsRowContainer}>
         <Row style={styles.settingsRow}>
@@ -159,7 +159,7 @@ class VideoLibraryPage extends Component {
                   type={'font'}
                   color={colors.white}
                   size={16}
-                  name={'pen'}
+                  name={userConnected ? 'pen' : 'sign-in-alt'}
                   solid
                 />
               );
@@ -345,6 +345,8 @@ class VideoLibraryPage extends Component {
   };
 
   goToEditProfile = () => {
+    const {userConnected} = this.props;
+    if (!userConnected) return this.props.navigation.navigate('SignIn');
     this.props.navigation.navigate('EditProfilePage');
   };
 
@@ -358,7 +360,7 @@ class VideoLibraryPage extends Component {
         onPress={this.goToEditProfile}
         style={styleApp.marginView}
         activeOpacity={0.9}>
-        {/* {profileHeader({infoUser, containerStyle})} */}
+        {profileHeader({infoUser, containerStyle})}
       </TouchableOpacity>
     );
   };

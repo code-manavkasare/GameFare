@@ -6,7 +6,7 @@ import {dissoc} from 'ramda';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
-import {heightHeaderHome,marginTopApp,heightFooter} from '../../style/sizes';
+import {heightHeaderHome, marginTopApp, heightFooter} from '../../style/sizes';
 
 import {getSelectionActionDecorations} from '../../functions/utility';
 import {isUserPrivate, userObject} from '../../functions/users';
@@ -229,8 +229,8 @@ class CallTab extends Component {
         initialBorderWidth={1}
         loader={false}
         icon1={!userConnected ? null : inlineSearch ? 'times' : 'search'}
-        sizeIcon1={24}
-        colorIcon1={colors.title}
+        sizeIcon1={19}
+        colorIcon1={colors.greyDarker}
         clickButton1={
           inlineSearch ? () => goBack() : () => this.openUserDirectory()
         }
@@ -238,8 +238,8 @@ class CallTab extends Component {
         modal={modal}
         icon2={!userConnected ? null : modal ? 'share' : 'comment-alt'}
         typeIcon2={modal ? 'moon' : 'font'}
-        sizeIcon2={24}
-        colorIcon2={colors.title}
+        sizeIcon2={21}
+        colorIcon2={colors.greyDarker}
         clickButton2={() => navigate('Groups')}
         searchBar={
           inlineSearch ? (

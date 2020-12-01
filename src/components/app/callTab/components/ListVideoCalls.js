@@ -97,7 +97,7 @@ class ListVideoCalls extends Component {
             {rowTitle({
               hideDividerHeader: true,
               title: headerTitle,
-              titleColor: colors.black,
+              titleColor: colors.greyDarker,
               titleStyle: {
                 fontWeight: '800',
                 fontSize: 23,

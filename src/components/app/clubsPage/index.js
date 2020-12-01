@@ -1,18 +1,16 @@
 import React, {Component} from 'react';
-import {Animated, View, Text} from 'react-native';
+import {Animated, View} from 'react-native';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
+import {object, bool} from 'prop-types';
 
 import styleApp from '../../style/style';
 import ClubsHeader from './components/ClubsHeader';
-import {userClubsSelector} from '../../../store/selectors/clubs';
-import CardClub from './components/CardClub';
 
 class ClubsPage extends Component {
   static propTypes = {
-    navigation: PropTypes.object,
-    infoUser: PropTypes.object,
-    userConnected: PropTypes.bool,
+    navigation: object,
+    infoUser: object,
+    userConnected: bool,
   };
   static defaultProps = {};
 
@@ -20,36 +18,30 @@ class ClubsPage extends Component {
     super(props);
     this.state = {
       loader: false,
+      currentClub: undefined,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
+  changeFocusedClub = (clubID) => {
+    console.log(clubID);
+    this.setState({currentClub: clubID});
+  };
   render() {
-    const {navigation, clubs} = this.props;
+    const {navigation} = this.props;
     return (
       <View style={styleApp.stylePage}>
         <ClubsHeader
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           navigation={navigation}
+          selectClub={this.changeFocusedClub}
         />
-
-        <Text
-          style={{marginTop: 200}}
-          onPress={() => navigation.navigate('CreateClub')}>
-          Create a club
-        </Text>
-
-        {clubs.map(({id}) => (
-          <CardClub key={id} id={id} />
-        ))}
       </View>
     );
   }
 }
 
 const mapStateToProps = (state) => {
-  return {
-    clubs: userClubsSelector(state),
-  };
+  return {};
 };
 
 export default connect(mapStateToProps)(ClubsPage);

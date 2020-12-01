@@ -4,10 +4,13 @@ import {Col} from 'react-native-easy-grid';
 
 import styleApp from '../style/style';
 import AsyncImage from '../layout/image/AsyncImage';
+import AllIcons from '../layout/icons/AllIcons';
 import colors from '../style/colors';
+import {store} from '../../store/reduxStore';
 
 const profilePhoto = ({infoUser, imageStyle, initialsTextStyle}) => {
   const {picture} = infoUser;
+  const {userConnected} = store.getState().user;
   imageStyle = {
     width: 130,
     height: 130,
@@ -26,29 +29,45 @@ const profilePhoto = ({infoUser, imageStyle, initialsTextStyle}) => {
     marginLeft: 4,
     ...initialsTextStyle,
   };
-  return picture ? (
+  return !userConnected ? (
+    <View style={imageStyle}>
+      <AllIcons
+        type={'font'}
+        color={colors.white}
+        size={60}
+        name={'user'}
+        solid
+      />
+    </View>
+  ) : picture ? (
     <AsyncImage style={imageStyle} mainImage={picture} />
   ) : (
     <View style={imageStyle}>
       <Text style={initialsTextStyle}>
-        {infoUser?.firstname[0] + infoUser.lastname[0]}
+        {infoUser.firstname && infoUser.lastname
+          ? infoUser?.firstname[0] + infoUser.lastname[0]
+          : null}
       </Text>
     </View>
   );
 };
 
-const profileHeader = ({
+const userTitle = ({
   infoUser,
-  containerStyle,
+  textContainerStyle,
   titleStyle,
   subtitleStyle,
-  imageStyle,
-  initialsTextStyle,
 }) => {
   const {firstname, lastname, countryCode, phoneNumber} = infoUser;
+  const {userConnected} = store.getState().user;
+  textContainerStyle = {
+    ...styleApp.center,
+    marginTop: !userConnected ? 5 : 15,
+    ...textContainerStyle,
+  };
   titleStyle = {
     ...styleApp.title,
-    titleStyle,
+    ...titleStyle,
   };
   subtitleStyle = {
     ...styleApp.subtitle,
@@ -58,16 +77,35 @@ const profileHeader = ({
     letterSpacing: 0.3,
     ...subtitleStyle,
   };
-  const textStyle = {...styleApp.center, marginTop: 15};
+  const title = !userConnected ? '' : firstname + ' ' + lastname;
+  const subtitle = !userConnected
+    ? 'Sign Into GameFare'
+    : countryCode + ' ' + phoneNumber;
+  return (
+    <View style={textContainerStyle}>
+      <Text style={titleStyle}>{title}</Text>
+      <Text style={subtitleStyle}>{subtitle}</Text>
+    </View>
+  );
+};
+
+const profileHeader = ({
+  infoUser,
+  containerStyle,
+  textContainerStyle,
+  titleStyle,
+  subtitleStyle,
+  imageStyle,
+  initialsTextStyle,
+}) => {
+  containerStyle = {
+    ...styleApp.center,
+    ...containerStyle,
+  };
   return (
     <Col style={containerStyle}>
-      <Col size={40} style={styleApp.center}>
-        {profilePhoto({infoUser, imageStyle, initialsTextStyle})}
-      </Col>
-      <Col size={60} style={textStyle}>
-        <Text style={titleStyle}>{firstname + ' ' + lastname}</Text>
-        <Text style={subtitleStyle}>{countryCode + ' ' + phoneNumber}</Text>
-      </Col>
+      {profilePhoto({infoUser, imageStyle, initialsTextStyle})}
+      {userTitle({infoUser, textContainerStyle, titleStyle, subtitleStyle})}
     </Col>
   );
 };
