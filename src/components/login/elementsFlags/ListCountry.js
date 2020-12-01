@@ -141,7 +141,7 @@ export default class SelectCountry extends Component {
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Select your country'}
-          inputRange={[5, 10]}
+          inputRange={[25, 30]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
           initialTitleOpacity={0}

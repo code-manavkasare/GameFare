@@ -14,6 +14,7 @@ import SelectVideosFromLibrary from '../app/videoLibraryPage/index';
 import Alert from '../layout/alerts/Alert';
 import {SheetModal} from './transitions/SheetModal';
 import {marginTopApp} from '../style/sizes';
+import CreateClub from '../app/clubsPage/components/CreateClub';
 
 const Stack = createStackNavigator();
 function InitialStack() {
@@ -94,6 +95,12 @@ function InitialStack() {
         name="NotificationPage"
         component={NotificationPage}
         options={NotificationPageSpec}
+      />
+
+      <Stack.Screen
+        name="CreateClub"
+        component={CreateClub}
+        options={SheetModalSpec}
       />
     </Stack.Navigator>
   );
