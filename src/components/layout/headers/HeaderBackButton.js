@@ -456,12 +456,22 @@ class HeaderBackButton extends Component {
                   ]}>
                   {text2}
                 </Text>
+              ) : typeIcon2 === 'image' ? (
+                <AsyncImage
+                  mainImage={icon2}
+                  style={{
+                    width: sizeIcon2,
+                    height: sizeIcon2,
+                    borderRadius: sizeIcon2 / 2,
+                  }}
+                />
               ) : (
                 <AllIcons
                   name={icon2}
                   color={colorIcon2 ? colorIcon2 : colors.title}
                   size={sizeIcon2 ? sizeIcon2 : 15}
                   type={typeIcon2 ? typeIcon2 : 'font'}
+                  solid
                 />
               );
             }}
@@ -472,7 +482,7 @@ class HeaderBackButton extends Component {
             color={backgroundColorIcon2 ? backgroundColorIcon2 : 'transparent'}
             style={styles.buttonRight}
             onPressColor={
-              backgroundColorIcon2 ? backgroundColorIcon2 : colors.off
+              backgroundColorIcon2 ? backgroundColorIcon2 : 'transparent'
             }
           />
           {badgeIcon2 ? (
@@ -505,8 +515,8 @@ class HeaderBackButton extends Component {
       searchBar,
       containerStyle,
       marginTop: marginTopProp,
-      searchBarStyle,
       initialBackgroundColor,
+      children,
     } = this.props;
     const {portrait} = currentScreenSize;
     const marginTop =
@@ -521,7 +531,6 @@ class HeaderBackButton extends Component {
     } = this.animatedValues();
     const styleHeader = {
       ...styles.header,
-      marginTop,
       backgroundColor: initialBackgroundColor,
       opacity: opacityHeader ? opacityHeader : 1,
       width: '100%',
@@ -529,10 +538,10 @@ class HeaderBackButton extends Component {
     };
     const styleRowHeader = {
       ...styles.rowHeader,
+      marginTop,
     };
     const styleBackdrop = {
       ...styleApp.fullSize,
-      width: '100%',
       position: 'absolute',
       zIndex: -5,
       opacity: AnimateOpacityBackground,
@@ -540,16 +549,24 @@ class HeaderBackButton extends Component {
       borderBottomWidth: 1,
       borderColor: colors.off,
     };
+    const rowTextImgHeaderStyle = {
+      ...styles.rowTextImgHeader,
+      marginTop,
+    };
+    const rowTextHeaderStyle = {
+      ...styles.rowTextHeader,
+      marginTop,
+    };
 
     return (
       <Animated.View style={styleHeader}>
         {searchBar ? (
-          <View style={{...styles.rowTextImgHeader}}>{searchBar}</View>
+          <View style={{...rowTextImgHeaderStyle}}>{searchBar}</View>
         ) : (
           <TouchableOpacity
             onPress={() => clickImgHeader && this.clickImgHeader()}
             activeOpacity={0.7}
-            style={imgHeader ? styles.rowTextImgHeader : styles.rowTextHeader}>
+            style={imgHeader ? rowTextImgHeaderStyle : rowTextHeaderStyle}>
             <Row>
               {imgHeader ? (
                 <Col size={25} style={styleApp.center2}>
@@ -589,6 +606,7 @@ class HeaderBackButton extends Component {
           </Col>
         </Row>
         <Animated.View style={styleBackdrop} />
+        {children}
       </Animated.View>
     );
   }
@@ -610,26 +628,26 @@ const styles = StyleSheet.create({
   },
   buttonRight: {
     ...styleApp.center,
-    height: 46,
-    width: 46,
+    height: 45,
+    width: 45,
     borderRadius: 23,
     borderWidth: 0,
   },
   animatedButtonStyle: {
-    height: 48,
-    width: 48,
+    height: 45,
+    width: 45,
     borderRadius: 24,
     borderWidth: 1,
     backgroundColor: 'white',
   },
   rowTextHeader: {
-    height: '100%',
+    height: heightHeaderHome,
     position: 'absolute',
     width: width,
     zIndex: -1,
   },
   rowTextImgHeader: {
-    height: '100%',
+    height: heightHeaderHome,
     position: 'absolute',
     width: '65%',
     left: '17.5%',

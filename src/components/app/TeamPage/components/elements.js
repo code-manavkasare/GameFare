@@ -23,6 +23,7 @@ import {createInviteToSessionBranchUrl} from '../../../database/branch';
 import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 import ImageUser from '../../../layout/image/ImageUser';
 import AllIcon from '../../../layout/icons/AllIcons';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const imageCardTeam = (session, size, hideDots, color) => {
   let scale = 1;
@@ -584,7 +585,6 @@ const iconWithBadge = (icon, badgeNumber) => {
 };
 
 const rowTitle = ({
-  icon,
   badge,
   title,
   hideDividerHeader,
@@ -593,7 +593,9 @@ const rowTitle = ({
   customButton,
   containerStyle,
   titleStyle,
+  clickOnRow,
 }) => {
+  const icon = button?.icon;
   const styleButton = {
     height: 30,
     width: '100%',
@@ -611,7 +613,12 @@ const rowTitle = ({
     paddingTop: 10,
   };
   return (
-    <View style={styleContainer}>
+    <TouchableOpacity
+      style={styleContainer}
+      onPress={() => {
+        clickOnRow && button.click();
+      }}
+      activeOpacity={0.9}>
       <Row>
         <Col size={1} />
         <Col size={55} style={styleApp.center2}>
@@ -630,7 +637,7 @@ const rowTitle = ({
           ) : button ? (
             <ButtonColor
               view={() => {
-                return (
+                return button.text ? (
                   <Text
                     style={[
                       styleApp.textBold,
@@ -638,7 +645,16 @@ const rowTitle = ({
                     ]}>
                     {button.text}
                   </Text>
-                );
+                ) : icon ? (
+                  <AllIcon
+                    name={icon.name}
+                    solid
+                    size={icon.size ?? 17}
+                    color={icon.color ?? colors.white}
+                    type={icon.type}
+                    style={icon.style}
+                  />
+                ) : null;
               }}
               color={button.color ?? colors.primary}
               style={styleButton}
@@ -653,7 +669,7 @@ const rowTitle = ({
       ) : (
         <View style={{height: 20}} />
       )}
-    </View>
+    </TouchableOpacity>
   );
 };
 

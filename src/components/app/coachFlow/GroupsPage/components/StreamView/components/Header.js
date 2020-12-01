@@ -29,7 +29,7 @@ class HeaderStreamView extends Component {
     return (
       <HeaderBackButton
         AnimatedHeaderValue={this.AnimatedHeaderValue}
-        inputRange={[5, 10]}
+        inputRange={[0, 100]}
         colorLoader={'white'}
         sizeLoader={40}
         initialBorderColorIcon={'transparent'}

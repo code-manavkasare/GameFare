@@ -27,7 +27,7 @@ export default class HeaderListStream extends Component {
       <HeaderBackButton
         AnimatedHeaderValue={AnimatedHeaderValue}
         textHeader={''}
-        inputRange={[0, 0]}
+        inputRange={[0, 100]}
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
         loader={loader}

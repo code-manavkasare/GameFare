@@ -1,13 +1,11 @@
 import React, {Component} from 'react';
-import {Animated, View, Text, TextInput, StyleSheet} from 'react-native';
+import {Animated, View, TextInput, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
-import {Col, Row} from 'react-native-easy-grid';
+import {object} from 'prop-types';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import {heightHeaderModal} from '../../../style/sizes';
-import {store} from '../../../../store/reduxStore';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import ScrollView from '../../../layout/scrollViews/ScrollView';
 import {createClub} from '../../../functions/clubs';
@@ -16,7 +14,7 @@ import Button from '../../../layout/buttons/Button';
 
 class CreateClub extends Component {
   static propTypes = {
-    navigation: PropTypes.object,
+    navigation: object,
   };
   static defaultProps = {};
 
@@ -24,7 +22,6 @@ class CreateClub extends Component {
     super(props);
     this.state = {
       loader: false,
-      // title: props.infoUser.firstname + ' ' + props.infoUser.lastname,
       title: '',
       description: '',
     };
@@ -79,7 +76,7 @@ class CreateClub extends Component {
           onPressColor={colors.primaryLight}
           enabled={true}
           disabled={title === '' || description === ''}
-          text={'Create club'}
+          text={'Create Club'}
           styleButton={{height: 55, marginTop: 30}}
           loader={loader}
           click={this.createClub}
@@ -94,7 +91,7 @@ class CreateClub extends Component {
         <HeaderBackButton
           marginTop={10}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Create club'}
+          textHeader={'Create a Club'}
           inputRange={[10, 20]}
           initialBorderColorIcon={'transparent'}
           initialBackgroundColor={'transparent'}
@@ -102,6 +99,7 @@ class CreateClub extends Component {
           initialBorderWidth={1}
           initialBorderColorHeader={'transparent'}
           icon1={'times'}
+          sizeIcon1={17}
           clickButton1={navigation.goBack}
         />
         <ScrollView
