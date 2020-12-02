@@ -130,13 +130,13 @@ class ClubsHeader extends Component {
           initialBorderColorHeader={'transparent'}
           icon1={'shopping-cart'}
           typeIcon1={'font'}
-          sizeIcon1={17}
+          sizeIcon1={21}
           colorIcon1={colors.greyDarker}
           backgroundColorIcon1={'transparent'}
           clickButton1={() => {
             /// navigate to requests page
           }}
-          icon11={'dollar-sign'}
+          // icon11={'dollar-sign'}
           typeIcon11={'font'}
           sizeIcon11={17}
           colorIcon11={colors.greyDarker}

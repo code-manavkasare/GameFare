@@ -15,4 +15,15 @@ const clubSelector = createSelector(
   (item) => item,
 );
 
-export {userClubsSelector, clubSelector};
+const servicesSelector = createSelector(
+  clubSelector,
+  (clubs) => {
+    if (!clubs) return [];
+    if (!clubs.services) return [];
+    return Object.values(clubs.services).sort(
+      (a, b) => b.timestamp - a.timestamp,
+    );
+  },
+);
+
+export {userClubsSelector, clubSelector, servicesSelector};

@@ -11,6 +11,7 @@ import {
   userBlockedByUsersReducer,
   userSilentFriendsReducer,
   userClubsReducer,
+  userBookingsReducer,
 } from './userReducer';
 import messageReducer from './messageReducer';
 import coachReducer from './coachReducer';
@@ -52,4 +53,5 @@ export default combineReducers({
   services: servicesReducer,
   bookings: bookingsReducer,
   posts: postsReducer,
+  userBookings: userBookingsReducer,
 });

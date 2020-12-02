@@ -267,7 +267,7 @@ class CallTab extends Component {
       selectedSessions,
       selectedUsers,
     } = this.state;
-    console.log('render call tab');
+    console.log('render call tab', this.props);
     return (
       <View style={styleApp.stylePage}>
         {this.header()}

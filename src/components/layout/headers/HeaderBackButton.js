@@ -416,14 +416,7 @@ class HeaderBackButton extends Component {
       animateIcon2,
     } = this.props;
     const {borderColorIcon, AnimateOpacityTitle} = this.animatedValues();
-    if (loader) {
-      return (
-        <Loader
-          color={colorLoader ? colorLoader : colors.green}
-          size={sizeLoader ? sizeLoader : 35}
-        />
-      );
-    }
+
     if (icon2) {
       return (
         <Animated.View
@@ -440,7 +433,10 @@ class HeaderBackButton extends Component {
           <ButtonColor
             view={() => {
               return loader ? (
-                <Loader size={30} color={colors.primary} />
+                <Loader
+                  color={colorLoader ? colorLoader : colors.green}
+                  size={sizeLoader ? sizeLoader : 35}
+                />
               ) : icon2 === 'text' ? (
                 <Text
                   style={[

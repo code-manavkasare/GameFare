@@ -5,12 +5,13 @@ import {bool, string, object} from 'prop-types';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
+import {navigate} from '../../../../../NavigationService';
 
 import {bindClub} from '../../../database/firebase/bindings';
 import {clubSelector} from '../../../../store/selectors/clubs';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
+import {userIDSelector} from '../../../../store/selectors/user';
 import AllIcon from '../../../layout/icons/AllIcons';
-import {navigate} from '../../../../../NavigationService';
 
 class CardClub extends Component {
   static propTypes = {
@@ -58,10 +59,11 @@ class CardClub extends Component {
     );
   };
   render() {
-    const {club, addClub, selectClub} = this.props;
+    const {club, addClub, selectClub, userID} = this.props;
     if (addClub) return this.addClubCard();
     if (!club) return <View />;
-    const {title, description} = club.info;
+    const {info, owner, id} = club;
+    const {title, description} = info;
     return (
       <TouchableOpacity
         activeOpacity={0.9}
@@ -69,6 +71,15 @@ class CardClub extends Component {
         style={styleApp.cardClub}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.subtitle}>{description}</Text>
+        {owner === userID ? (
+          <Text
+            style={{color: 'white'}}
+            onPress={() =>
+              navigate('Club', {screen: 'ClubSettings', params: {id}})
+            }>
+            settings
+          </Text>
+        ) : null}
       </TouchableOpacity>
     );
   }
@@ -103,6 +114,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, props) => {
   return {
     club: clubSelector(state, props),
+    userID: userIDSelector(state),
   };
 };
 

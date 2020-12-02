@@ -33,6 +33,7 @@ import {userIDSelector} from '../../../../../../../../store/selectors/user';
 import {archiveSelector} from '../../../../../../../../store/selectors/archives';
 import {boolShouldComponentUpdate} from '../../../../../../../functions/redux';
 import {getDimention} from '../../../../../../../style/sizes';
+import {unbindArchive} from '../../../../../../../../store/actions/archivesActions';
 
 class CardArchive extends Component {
   static propTypes = {
@@ -113,6 +114,10 @@ class CardArchive extends Component {
       bindArchive(id);
     }
   }
+  componentWillUnmount = () => {
+    const {id} = this.props;
+    unbindArchive(id);
+  };
 
   placeholder() {
     const {style} = this.props;
@@ -309,6 +314,8 @@ class CardArchive extends Component {
     } = this.state;
     const {id, localIdentifier} = archive;
     const {selectableMode, unclickable, selectVideo} = this.props;
+    console.log('archive', archive);
+    return;
     if (unclickable) {
       return;
     } else if (selectableMode) {
