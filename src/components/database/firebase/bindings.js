@@ -8,7 +8,9 @@ import {store} from '../../../store/reduxStore';
 import {setSession} from '../../../store/actions/coachSessionsActions';
 import {setConversation} from '../../../store/actions/conversationsActions';
 import {setArchive} from '../../../store/actions/archivesActions';
-import {setClub} from '../../../store/actions/clubsActions';
+import {setClubs} from '../../../store/actions/clubsActions';
+import {setBookings} from '../../../store/actions/bookingsActions';
+import {setServices} from '../../../store/actions/servicesActions';
 
 const bindSession = (sessionID) => {
   RnBgTask.runInBackground(() => {
@@ -33,9 +35,10 @@ const bindClub = (objectID) => {
       .ref(`clubs/${objectID}`)
       .on('value', function(snapshot) {
         const newClub = snapshot.val();
+        console.log('newClubnewClubnewClub', newClub);
         const currentClub = store.getState().clubs[objectID];
         if (newClub && !isEqual(currentClub, newClub))
-          store.dispatch(setClub(newClub));
+          store.dispatch(setClubs({[objectID]: newClub}));
       });
   });
 };
@@ -43,6 +46,44 @@ const bindClub = (objectID) => {
 const unbindClub = async (objectID) => {
   await database()
     .ref(`clubs/${objectID}`)
+    .off();
+};
+
+const bindService = (objectID) => {
+  RnBgTask.runInBackground(() => {
+    database()
+      .ref(`services/${objectID}`)
+      .on('value', function(snapshot) {
+        const newService = snapshot.val();
+        const currentService = store.getState().services[objectID];
+        if (newService && !isEqual(currentService, newService))
+          store.dispatch(setServices({[objectID]: newService}));
+      });
+  });
+};
+
+const unbindService = async (objectID) => {
+  await database()
+    .ref(`services/${objectID}`)
+    .off();
+};
+
+const bindBooking = (objectID) => {
+  RnBgTask.runInBackground(() => {
+    database()
+      .ref(`bookings/${objectID}`)
+      .on('value', function(snapshot) {
+        const newBooking = snapshot.val();
+        const currentBooking = store.getState().bookings[objectID];
+        if (newBooking && !isEqual(currentBooking, newBooking))
+          store.dispatch(setBookings({[objectID]: newBooking}));
+      });
+  });
+};
+
+const unbindBooking = async (objectID) => {
+  await database()
+    .ref(`bookings/${objectID}`)
     .off();
 };
 
@@ -122,4 +163,8 @@ export {
   unbindConversation,
   bindClub,
   unbindClub,
+  bindService,
+  unbindService,
+  bindBooking,
+  unbindBooking,
 };

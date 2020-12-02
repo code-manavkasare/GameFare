@@ -25,6 +25,8 @@ import {
   RESET_USER_SILENT_FRIENDS,
   SET_USER_CLUBS,
   RESET_USER_CLUBS,
+  SET_USER_BOOKINGS,
+  RESET_USER_BOOKINGS,
 } from '../types';
 import {store} from '../reduxStore';
 
@@ -112,6 +114,14 @@ const resetUserClubs = () => ({
   type: RESET_USER_CLUBS,
 });
 
+const setUserBookings = (bookings) => ({
+  type: SET_USER_BOOKINGS,
+  bookings,
+});
+const resetUserBookings = () => ({
+  type: RESET_USER_BOOKINGS,
+});
+
 export const signIn = async ({
   firebaseSignInToken,
   countryCode,
@@ -142,6 +152,7 @@ export const signIn = async ({
           permissionOtherUserToRecord,
           appSettings,
           clubs,
+          bookings,
         } = snap.val();
         const prevNotifications = store.getState().userNotifications;
         if (!isEqual(prevNotifications, notifications))
@@ -173,6 +184,10 @@ export const signIn = async ({
 
         const prevClubs = store.getState().userClubs;
         if (!isEqual(prevClubs, clubs)) store.dispatch(setUserClubs(clubs));
+
+        const prevBookings = store.getState().userBookings;
+        if (!isEqual(prevBookings, bookings))
+          store.dispatch(setUserBookings(bookings));
 
         const currentInfoUser = store.getState().user;
         if (!isEqual(currentInfoUser, coachSessionsRequests))
@@ -214,6 +229,8 @@ const logout = async () => {
   await store.dispatch(resetUserBlockedUsers());
   await store.dispatch(resetUserBlockedByUsers());
   await store.dispatch(resetUserSilentFriends());
+  await store.dispatch(resetUserClubs());
+  await store.dispatch(resetUserBookings());
 
   return true;
 };

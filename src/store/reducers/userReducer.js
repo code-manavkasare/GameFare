@@ -17,6 +17,8 @@ import {
   RESET_USER_SILENT_FRIENDS,
   SET_USER_CLUBS,
   RESET_USER_CLUBS,
+  SET_USER_BOOKINGS,
+  RESET_USER_BOOKINGS,
 } from '../types';
 
 const initialState = {
@@ -155,6 +157,18 @@ const userClubsReducer = (state = initialClubs, action) => {
   }
 };
 
+const initialBookings = {};
+const userBookingsReducer = (state = initialBookings, action) => {
+  switch (action.type) {
+    case SET_USER_BOOKINGS:
+      return {...action.bookings};
+    case RESET_USER_BOOKINGS:
+      return initialBookings;
+    default:
+      return state;
+  }
+};
+
 export {
   userReducer,
   userCloudArchivesReducer,
@@ -165,4 +179,5 @@ export {
   userBlockedByUsersReducer,
   userSilentFriendsReducer,
   userClubsReducer,
+  userBookingsReducer,
 };

@@ -398,6 +398,16 @@ const styles = StyleSheet.create({
     width: width,
     borderColor: '#EAEAEA',
   },
+  footerModal: {
+    position: 'absolute',
+    bottom: marginTopApp + 25,
+    borderTopWidth: 0,
+    height: heightFooterBooking,
+    paddingTop: 15,
+    zIndex: 20,
+    width: width,
+    borderColor: '#EAEAEA',
+  },
   cardSelect: {
     height: 55,
     marginTop: 0,

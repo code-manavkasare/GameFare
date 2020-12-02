@@ -28,7 +28,7 @@ export default class RowPlusMinus extends Component {
           activeOpacity={0.7}
           onPress={() => alert && NavigationService.navigate('Alert', alert)}
           style={styleApp.center2}
-          size={30}>
+          size={5}>
           <AllIcons
             type={'font'}
             name={'info-circle'}
@@ -77,7 +77,7 @@ export default class RowPlusMinus extends Component {
           />
         </Col>
         <Col style={styleApp.center3} size={25}>
-          <Text style={styleApp.title}>{textValue}</Text>
+          <Text style={[styleApp.textBold, {fontSize: 19}]}>{textValue}</Text>
         </Col>
       </Row>
     );
