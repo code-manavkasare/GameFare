@@ -315,7 +315,7 @@ class CardArchive extends Component {
     const {id, localIdentifier} = archive;
     const {selectableMode, unclickable, selectVideo} = this.props;
     console.log('archive', archive);
-    return;
+
     if (unclickable) {
       return;
     } else if (selectableMode) {
