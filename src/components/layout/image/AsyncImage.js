@@ -46,7 +46,7 @@ export default class AsyncImage extends Component {
     return mainImage;
   }
   imgDisplay() {
-    const {style} = this.props;
+    const {style, resizeMode} = this.props;
     const {imagePath} = this.state;
     return (
       <Animated.View
@@ -61,6 +61,7 @@ export default class AsyncImage extends Component {
           }}
           source={{uri: imagePath, cache: 'force-cache'}}
           style={[style, {zIndex: 10, position: 'absolute', top: 0}]}
+          resizeMode={resizeMode}
         />
       </Animated.View>
     );

@@ -11,6 +11,8 @@ import {setArchive} from '../../../store/actions/archivesActions';
 import {setClubs} from '../../../store/actions/clubsActions';
 import {setBookings} from '../../../store/actions/bookingsActions';
 import {setServices} from '../../../store/actions/servicesActions';
+import {setPosts} from '../../../store/actions/postsActions';
+import {setUsers} from '../../../store/actions/usersActions';
 
 const bindSession = (sessionID) => {
   RnBgTask.runInBackground(() => {
@@ -35,7 +37,6 @@ const bindClub = (objectID) => {
       .ref(`clubs/${objectID}`)
       .on('value', function(snapshot) {
         const newClub = snapshot.val();
-        console.log('newClubnewClubnewClub', newClub);
         const currentClub = store.getState().clubs[objectID];
         if (newClub && !isEqual(currentClub, newClub))
           store.dispatch(setClubs({[objectID]: newClub}));
@@ -46,6 +47,44 @@ const bindClub = (objectID) => {
 const unbindClub = async (objectID) => {
   await database()
     .ref(`clubs/${objectID}`)
+    .off();
+};
+
+const bindPost = (objectID) => {
+  RnBgTask.runInBackground(() => {
+    database()
+      .ref(`posts/${objectID}`)
+      .on('value', function(snapshot) {
+        const newPost = snapshot.val();
+        const currentPost = store.getState().posts[objectID];
+        if (newPost && !isEqual(currentPost, newPost))
+          store.dispatch(setPosts({[objectID]: newPost}));
+      });
+  });
+};
+
+const unbindPost = async (objectID) => {
+  await database()
+    .ref(`posts/${objectID}`)
+    .off();
+};
+
+const bindUserInfo = (objectID) => {
+  RnBgTask.runInBackground(() => {
+    database()
+      .ref(`users/${objectID}/userInfo`)
+      .on('value', function(snapshot) {
+        const newUser = snapshot.val();
+        const currentUser = store.getState().users[objectID];
+        if (newUser && !isEqual(currentUser, newUser))
+          store.dispatch(setUsers({[objectID]: newUser}));
+      });
+  });
+};
+
+const unbindUserInfo = async (objectID) => {
+  await database()
+    .ref(`users/${objectID}/userInfo`)
     .off();
 };
 
@@ -167,4 +206,8 @@ export {
   unbindService,
   bindBooking,
   unbindBooking,
+  bindPost,
+  unbindPost,
+  bindUserInfo,
+  unbindUserInfo,
 };

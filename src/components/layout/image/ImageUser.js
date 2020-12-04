@@ -14,22 +14,20 @@ export default class ImageUser extends Component {
     super(props);
   }
   image() {
-    const {user} = this.props;
-    if (user.info && user.info.picture)
+    const {info} = this.props;
+    const {picture, firstname, lastname} = info;
+    if (picture)
       return (
         <AsyncImage
           style={styleApp.fullSize}
-          mainImage={user.info.picture}
-          imgInitial={user.info.picture}
+          mainImage={picture}
+          imgInitial={picture}
         />
       );
     return (
       <View style={[styleApp.fullSize, styleApp.center]}>
         <Text style={[styleApp.textBold, {fontSize: 10, color: colors.white}]}>
-          {user.info &&
-            user.info.firstname &&
-            user.info.lastname &&
-            user?.info?.firstname[0] + user.info.lastname[0]}
+          {firstname && lastname ? firstname[0] + lastname[0] : null}
         </Text>
       </View>
     );
@@ -62,5 +60,5 @@ export default class ImageUser extends Component {
 const styles = StyleSheet.create({});
 
 ImageUser.propTypes = {
-  user: PropTypes.object.isRequired,
+  info: PropTypes.object.isRequired,
 };

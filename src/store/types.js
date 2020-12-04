@@ -106,3 +106,10 @@ export const RESET_SERVICES = 'RESET_SERVICES';
 
 export const SET_USER_BOOKINGS = 'SET_USER_BOOKINGS';
 export const RESET_USER_BOOKINGS = 'RESET_USER_BOOKINGS';
+
+export const SET_POSTS = 'SET_POSTS';
+export const DELETE_POSTS = 'DELETE_POSTS';
+export const RESET_POSTS = 'RESET_POSTS';
+
+export const SET_USERS = 'SET_USERS';
+export const RESET_USERS = 'RESET_USERS';

@@ -3,7 +3,6 @@ import {Platform, PermissionsAndroid, Dimensions} from 'react-native';
 import moment from 'moment';
 import {request, PERMISSIONS} from 'react-native-permissions';
 
-
 const minutes = (time) => {
   return Math.floor(time / 60);
 };
@@ -80,7 +79,7 @@ const formatDuration = (duration, numerical) => {
 
 class FormatDate extends Component {
   //// Required props: date
-  // This component re-renders every 60 seconds
+  // This component re-renders every 60 seconds if it's within the last hour
   // and formats the date in a nice way
 
   // Within 1 minute : 'Just now'
@@ -94,12 +93,16 @@ class FormatDate extends Component {
   constructor(props) {
     super(props);
   }
-  // componentDidMount() {
-  //   this.interval = setInterval(() => this.tick(), 60000);
-  // }
-  // componentWillUnmount() {
-  //   clearInterval(this.interval);
-  // }
+  componentDidMount() {
+    const {date} = this.props;
+    let earlier = moment(Date.now()).subtract(1, 'hour');
+    if (date > earlier) { 
+      setInterval(() => this.tick(), 60000);
+    }
+  }
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
   tick() {
     const {date} = this.props;
     let earlier = moment(Date.now()).subtract(7, 'days');

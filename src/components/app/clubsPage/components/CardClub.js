@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
-import {bool, string, object} from 'prop-types';
+import {bool, string, object, func} from 'prop-types';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
@@ -11,6 +11,7 @@ import {bindClub} from '../../../database/firebase/bindings';
 import {clubSelector} from '../../../../store/selectors/clubs';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
 import {userIDSelector} from '../../../../store/selectors/user';
+import ButtonColor from '../../../layout/Views/Button';
 import AllIcon from '../../../layout/icons/AllIcons';
 
 class CardClub extends Component {
@@ -18,6 +19,8 @@ class CardClub extends Component {
     navigation: object,
     id: string,
     addClub: bool,
+    selectClub: func,
+    selectedClubID: string,
   };
   static defaultProps = {};
 
@@ -41,6 +44,11 @@ class CardClub extends Component {
   addClub = () => {
     navigate('CreateClub');
   };
+  goToSettings = () => {
+    const {club} = this.props;
+    const {id} = club;
+    navigate('Club', {screen: 'ClubSettings', params: {id}});
+  };
   addClubCard = () => {
     return (
       <TouchableOpacity
@@ -58,28 +66,45 @@ class CardClub extends Component {
       </TouchableOpacity>
     );
   };
+  settingsButton = () => {
+    const {club, userID} = this.props;
+    const {owner} = club;
+    if (owner !== userID) return;
+    return (
+      <ButtonColor
+        style={styles.settingsButton}
+        click={this.goToSettings}
+        color={colors.greyLight}
+        onPressColor={colors.greyLighter}>
+        <AllIcon
+          name={'ellipsis-h'}
+          size={14}
+          color={colors.greyDarker}
+          type="font"
+          solid
+        />
+      </ButtonColor>
+    );
+  };
   render() {
-    const {club, addClub, selectClub, userID} = this.props;
+    const {club, addClub, selectClub, selectedClubID} = this.props;
     if (addClub) return this.addClubCard();
     if (!club) return <View />;
-    const {info, owner, id} = club;
+    const {info} = club;
     const {title, description} = info;
+    const isSelected = selectedClubID === club?.id;
+    const selectionIndicationStyle = isSelected
+      ? styles.selectionIndication
+      : undefined;
     return (
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={selectClub}
         style={styleApp.cardClub}>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>{description}</Text>
-        {owner === userID ? (
-          <Text
-            style={{color: 'white'}}
-            onPress={() =>
-              navigate('Club', {screen: 'ClubSettings', params: {id}})
-            }>
-            settings
-          </Text>
-        ) : null}
+        {/* <Text style={styles.subtitle}>{description}</Text> */}
+        {this.settingsButton()}
+        <View style={selectionIndicationStyle} />
       </TouchableOpacity>
     );
   }
@@ -108,6 +133,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
     color: colors.greyLighter,
+  },
+  settingsButton: {
+    position: 'absolute',
+    width: 28,
+    height: 28,
+    ...styleApp.center,
+    borderRadius: 15,
+    right: 0,
+    bottom: 0,
+    zIndex: 5,
+  },
+  selectionIndication: {
+    ...styleApp.fullSize,
+    position: 'absolute',
+    borderRadius: 100,
+    borderWidth: 5,
+    borderColor: colors.primary,
   },
 });
 

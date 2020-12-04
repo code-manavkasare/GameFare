@@ -37,10 +37,9 @@ export default class HeaderClubSettings extends Component {
         initialBorderWidth={1}
         initialBorderColorHeader={'transparent'}
         icon1={'times'}
-        sizeIcon1={17}
         icon2={'share'}
         typeIcon2="moon"
-        sizeIcon2={19}
+        sizeIcon2={21}
         clickButton1={navigation.goBack}
         loader={loader}
         colorLoader={colors.title}

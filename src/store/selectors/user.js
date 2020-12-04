@@ -3,9 +3,11 @@ import {createSelector} from 'reselect';
 const userConnectedSubSelector = (state) => state.user.userConnected;
 const userIDSubSelector = (state) => state.user.userID;
 export const infoUserSubSelector = (state) => state.user.infoUser;
+const infoUserByIdSubSelector = (state, props) => state.users[props.id];
 
 const notificationsSelector = (state) => state.notifications;
 const silentFriendsSubSelector = (state) => state.userSilentFriends;
+const userBookingsSubSelector = (state) => state.userBookings;
 
 const userConnectedSelector = createSelector(
   userConnectedSubSelector,
@@ -76,6 +78,23 @@ const numNotificationsSelector = createSelector(
   (notifications) => (!notifications ? 0 : Object.values(notifications).length),
 );
 
+const infoUserByIdSelector = createSelector(
+  infoUserByIdSubSelector,
+  (item) => item,
+);
+
+const totalWalletSelector = createSelector(
+  infoUserSubSelector,
+  (item) => item.wallet.totalWallet,
+);
+
+const userBookingsSelector = createSelector(
+  userBookingsSubSelector,
+  (bookings) => {
+    return Object.values(bookings).sort((a, b) => b.timestamp - a.timestamp);
+  },
+);
+
 export {
   userConnectedSelector,
   userIDSelector,
@@ -88,4 +107,7 @@ export {
   userSettingsSelector,
   permissionOtherUserToRecordSelector,
   isPrivateSelector,
+  infoUserByIdSelector,
+  totalWalletSelector,
+  userBookingsSelector,
 };

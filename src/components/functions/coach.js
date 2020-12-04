@@ -10,7 +10,7 @@ import colors from '../style/colors';
 import {getValueOnce} from '../database/firebase/methods';
 import {generateID} from './utility.js';
 import {getVideoUUID, generateThumbnail} from './pictures';
-import {minutes, seconds, milliSeconds} from './date'; 
+import {minutes, seconds, milliSeconds} from './date';
 
 import {store} from '../../store/reduxStore';
 import {
@@ -397,9 +397,7 @@ const setupOpentokStopRecordingFlow = async (
   return thumbnailUploadTasks;
 };
 
-const getSortedSessions = (options) => {
-  
-};
+const getSortedSessions = (options) => {};
 
 const openSession = async (user, members) => {
   const allSessions = store.getState().coachSessions;
@@ -416,7 +414,7 @@ const openSession = async (user, members) => {
   session = await createCoachSession(user, members);
   return session;
 };
- 
+
 const infoCoach = (members) => {
   if (!members) {
     return false;
@@ -490,7 +488,7 @@ const openMemberAcceptCharge = async (
     displayList: true,
     disableClickOnBackdrop: true,
     close: false,
-    icon: <ImageUser user={coach} />,
+    icon: <ImageUser info={coach.info} />,
     componentAdded: <CardCreditCard />,
     listOptions: [
       {
@@ -650,7 +648,7 @@ const addMembersToSessionByID = async (
   const members = infos.reduce((members, info, i) => {
     if (info) {
       const id = memberIDs[i];
-      const member = {info,userID:memberIDs[i]};
+      const member = {info, userID: memberIDs[i]};
       return {
         ...members,
         [id]: {

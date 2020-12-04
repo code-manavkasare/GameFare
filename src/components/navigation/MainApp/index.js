@@ -9,12 +9,16 @@ import Profile from './components/Profile';
 import Webview from '../../layout/Views/Webview';
 import Groups from '../../app/coachFlow/GroupsPage/index';
 import SessionSettings from '../../app/TeamPage/components/SessionSettings';
+import CreateClub from '../../app/clubsPage/components/CreateClub';
+import Club from '../MainApp/components/Club';
 import {SheetModal} from '../transitions/SheetModal';
 import {marginTopApp, width} from '../../style/sizes';
+import CreatePost from '../../app/clubsPage/components/CreatePost';
+import Bookings from './components/Bookings';
 
 const Stack = createStackNavigator();
 const MainApp = () => {
-  const ProfileSpec = SheetModal({
+  const SheetModalSpec = SheetModal({
     top: marginTopApp + 25,
     gestureHeight: 1 / 3,
   });
@@ -53,11 +57,25 @@ const MainApp = () => {
       <Stack.Screen
         name="VideoLibrary"
         component={Profile}
-        options={ProfileSpec}
+        options={SheetModalSpec}
       />
       <Stack.Screen name="Groups" component={Groups} />
 
       <Stack.Screen name="SessionSettings" component={SessionSettings} />
+
+      <Stack.Screen
+        name="CreateClub"
+        component={CreateClub}
+        options={SheetModalSpec}
+      />
+      <Stack.Screen
+        name="CreatePost"
+        component={CreatePost}
+        options={SheetModalSpec}
+      />
+
+      <Stack.Screen name="Club" component={Club} options={SheetModalSpec} />
+      <Stack.Screen name="Bookings" component={Bookings} options={SheetModalSpec} />
     </Stack.Navigator>
   );
 };

@@ -37,9 +37,9 @@ class CreateClub extends Component {
   createClubForm = () => {
     const {title, description, loader} = this.state;
     return (
-      <View style={[styleApp.marginView, {marginTop: 0}]}>
+      <View style={[styleApp.marginView, {marginTop: 15}]}>
         <TextInput
-          style={styles.textField}
+          style={styleApp.textField}
           placeholder="Club name"
           autoFocus={true}
           autoCorrect={true}
@@ -55,7 +55,7 @@ class CreateClub extends Component {
           value={title}
         />
         <TextInput
-          style={[styles.textField, {height: 100, paddingTop: 5}]}
+          style={[styleApp.textField, {height: 100, paddingTop: 10}]}
           placeholder="Description"
           multiline={true}
           autoCorrect={true}
@@ -70,14 +70,21 @@ class CreateClub extends Component {
           onChangeText={(text) => this.setState({description: text})}
           value={description}
         />
-
+        {this.confirmButton()}
+      </View>
+    );
+  };
+  confirmButton = () => {
+    const {title, description, loader} = this.state;
+    return (
+      <View style={{marginTop: 20}}>
         <Button
           backgroundColor="primary"
           onPressColor={colors.primaryLight}
           enabled={true}
           disabled={title === '' || description === ''}
           text={'Create Club'}
-          styleButton={{height: 55, marginTop: 30}}
+          styleButton={{height: 55}}
           loader={loader}
           click={this.createClub}
         />
@@ -111,17 +118,11 @@ class CreateClub extends Component {
           offsetBottom={0}
           showsVerticalScrollIndicator={true}
         />
+        {this.confirmButton()}
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  textField: {
-    ...styleApp.inputBox,
-    ...styleApp.input,
-  },
-});
 
 const mapStateToProps = (state) => {
   return {

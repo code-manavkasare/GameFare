@@ -1,4 +1,5 @@
 import {createSelector} from 'reselect';
+import {userIDSelector} from './user';
 
 const userClubsSubSelector = (state) => state.userClubs;
 const clubSubSelector = (state, props) => state.clubs[props.id];
@@ -15,6 +16,20 @@ const clubSelector = createSelector(
   (item) => item,
 );
 
+const postListSelector = createSelector(
+  clubSubSelector,
+  (item) =>
+    item?.posts
+      ? Object.values(item.posts).sort((a, b) => b.timestamp - a.timestamp)
+      : [],
+);
+
+const isClubOwnerSelector = createSelector(
+  clubSubSelector,
+  userIDSelector,
+  (club, userID) => club?.owner === userID,
+);
+
 const servicesSelector = createSelector(
   clubSelector,
   (clubs) => {
@@ -26,4 +41,10 @@ const servicesSelector = createSelector(
   },
 );
 
-export {userClubsSelector, clubSelector, servicesSelector};
+export {
+  userClubsSelector,
+  clubSelector,
+  servicesSelector,
+  postListSelector,
+  isClubOwnerSelector,
+};

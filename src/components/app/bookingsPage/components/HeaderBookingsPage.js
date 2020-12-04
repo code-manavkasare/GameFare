@@ -5,7 +5,7 @@ import {createInviteToClubBranchUrl} from '../../../database/branch';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import colors from '../../../style/colors';
 
-export default class HeaderClubSettings extends Component {
+export default class HeaderBookingsPage extends Component {
   static propTypes = {};
   static defaultProps = {};
 
@@ -33,12 +33,11 @@ export default class HeaderClubSettings extends Component {
         inputRange={[10, 20]}
         initialBorderColorIcon={'transparent'}
         initialBackgroundColor={'transparent'}
-        initialTitleOpacity={1}
+        initialTitleOpacity={0}
         initialBorderWidth={1}
         initialBorderColorHeader={'transparent'}
         icon1={'times'}
-        sizeIcon1={17}
-        icon2={'share'}
+        // icon2={'share'}
         typeIcon2="moon"
         sizeIcon2={19}
         clickButton1={navigation.goBack}

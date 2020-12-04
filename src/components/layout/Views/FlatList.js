@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {
   array,
   bool,
-  elementType,
   func,
   element,
   number,
@@ -12,12 +11,14 @@ import {
 } from 'prop-types';
 import {Text, View, Animated, FlatList, Image} from 'react-native';
 import isEqual from 'lodash.isequal';
+import Reanimated from 'react-native-reanimated';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
 import Button from '../../layout/buttons/Button';
 import Loader from '../../layout/loaders/Loader';
 
+const ReanimatedFlatList = Reanimated.createAnimatedComponent(FlatList);
 class FlatListComponent extends Component {
   static propTypes = {
     AnimatedHeaderValue: object,
@@ -48,6 +49,9 @@ class FlatListComponent extends Component {
     showsHorizontalScrollIndicator: bool,
     styleContainer: object,
     keyExtractor: func,
+    reanimated: bool,
+    scrollEnabled: bool,
+    onRef: func,
   };
   static defaultProps = {
     incrementRendering: 12,
@@ -83,7 +87,7 @@ class FlatListComponent extends Component {
   }
 
   onEndReached = async () => {
-    const {list, incrementRendering, fetchData, lengthList} = this.props;
+    const {incrementRendering, fetchData, lengthList} = this.props;
     const {numberToRender} = this.state;
 
     const nextNumberRender = !lengthList
@@ -94,6 +98,11 @@ class FlatListComponent extends Component {
     if (fetchData) await fetchData({numberToRender, nextNumberRender});
     this.setState({numberToRender: nextNumberRender, dataFetched: true});
   };
+
+  jumpToTop() {
+    this.flatListRef?.getNode().scrollToOffset({animated: false, offset: 0});
+  }
+
   render() {
     const {numberToRender, list, dataFetched} = this.state;
     let {
@@ -118,6 +127,8 @@ class FlatListComponent extends Component {
       styleContainer,
       keyExtractor,
       lengthList,
+      reanimated,
+      scrollEnabled,
     } = this.props;
 
     const containerStyle = {
@@ -136,121 +147,128 @@ class FlatListComponent extends Component {
         </View>
       );
     };
-    return (
-      <FlatList
-        data={list}
-        renderItem={({item, index}) => cardList({item, index})}
-        ListFooterComponent={
-          footer
-            ? footer
-            : () =>
-                lengthList > numberToRender && lengthList !== 0
-                  ? viewLoader()
-                  : null
-        }
-        ListFooterComponentStyle={footerStyle}
-        scrollIndicatorInsets={{right: 1}}
-        keyboardShouldPersistTaps="always"
-        keyboardDismissMode="interactive"
-        keyExtractor={
-          keyExtractor
-            ? keyExtractor
-            : (item) => (item.id ? item.id : item.toString())
-        }
-        numColumns={numColumns}
-        scrollEnabled={true}
-        horizontal={horizontal}
-        inverted={inverted}
-        refreshControl={refreshControl}
-        onScrollEndDrag={onScrollEndDrag}
-        onScrollBeginDrag={onScrollBeginDrag}
-        contentContainerStyle={containerStyle}
-        ListHeaderComponent={header}
-        ListHeaderComponentStyle={{
-          ...styleApp.marginView,
-          ...headerStyle,
-        }}
-        showsHorizontalScrollIndicator={
-          showsHorizontalScrollIndicator === undefined
-            ? true
-            : showsHorizontalScrollIndicator
-        }
-        showsVerticalScrollIndicator={
-          showsVerticalScrollIndicator === undefined
-            ? true
-            : showsVerticalScrollIndicator
-        }
-        onEndReached={() => this.onEndReached()}
-        onEndReachedThreshold={0.1}
-        ListEmptyComponent={() =>
-          dataFetched && (
-            <View
-              style={[
-                styleApp.marginView,
-                styleApp.center,
-                {height: 250, marginTop: 20},
-              ]}>
-              <Image
-                source={ListEmptyComponent?.image}
-                style={{height: 50, width: 50, marginBottom: 20}}
-              />
-              <Text style={styleApp.textBold}>{ListEmptyComponent?.text}</Text>
-              {ListEmptyComponent?.clickButton ? (
-                <Button
-                  backgroundColor="primary"
-                  onPressColor={colors.primaryLight}
-                  enabled={true}
-                  text={ListEmptyComponent?.textButton}
-                  icon={{
-                    name: ListEmptyComponent?.iconButton,
-                    size: 24,
-                    type: 'font',
-                    color: colors.white,
-                  }}
-                  styleButton={{height: 55, marginTop: 30}}
-                  loader={false}
-                  click={() => ListEmptyComponent?.clickButton()}
-                />
-              ) : null}
-              {ListEmptyComponent?.clickButton2 ? (
-                <Button
-                  backgroundColor="green"
-                  onPressColor={colors.greenLight}
-                  enabled={true}
-                  text={ListEmptyComponent?.textButton2}
-                  icon={{
-                    name: ListEmptyComponent?.iconButton2,
-                    size: 24,
-                    type: 'font',
-                    color: colors.white,
-                  }}
-                  styleButton={{height: 55, marginTop: 30}}
-                  loader={false}
-                  click={() => ListEmptyComponent?.clickButton2()}
-                />
-              ) : null}
-            </View>
-          )
-        }
-        onScroll={
-          onScroll
-            ? onScroll
-            : Animated.event(
-                [
-                  {
-                    nativeEvent: {
-                      contentOffset: {
-                        y: AnimatedHeaderValue
-                          ? AnimatedHeaderValue
-                          : this.AnimatedHeaderValue,
-                      },
-                    },
+
+    const scrollEvent =
+      onScroll ?? reanimated
+        ? Reanimated.event([
+            {
+              nativeEvent: {
+                contentOffset: {y: AnimatedHeaderValue},
+              },
+            },
+          ])
+        : Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    y: AnimatedHeaderValue
+                      ? AnimatedHeaderValue
+                      : this.AnimatedHeaderValue,
                   },
-                ],
-                {useNativeDriver: false},
-              )
-        }
-      />
+                },
+              },
+            ],
+            {useNativeDriver: false},
+          );
+
+    const sharedProps = {
+      ref: (ref) => {
+        this.flatListRef = ref;
+      },
+      data: list,
+      renderItem: ({item, index}) => cardList({item, index}),
+      ListFooterComponent: footer
+        ? footer
+        : () =>
+            lengthList > numberToRender && lengthList !== 0
+              ? viewLoader()
+              : null,
+      ListFooterComponentStyle: footerStyle,
+      scrollIndicatorInsets: {right: 1},
+      onScroll: scrollEvent,
+      keyboardShouldPersistTaps: 'always',
+      keyboardDismissMode: 'interactive',
+      keyExtractor: keyExtractor
+        ? keyExtractor
+        : (item) => (item.id ? item.id : item.toString()),
+      numColumns,
+      scrollEnabled: scrollEnabled ?? true,
+      horizontal,
+      inverted,
+      refreshControl,
+      onScrollEndDrag,
+      onScrollBeginDrag,
+      contentContainerStyle: containerStyle,
+      ListHeaderComponent: header,
+      ListHeaderComponentStyle: {
+        ...styleApp.marginView,
+        ...headerStyle,
+      },
+      showsHorizontalScrollIndicator:
+        showsHorizontalScrollIndicator === undefined
+          ? true
+          : showsHorizontalScrollIndicator,
+      showsVerticalScrollIndicator:
+        showsVerticalScrollIndicator === undefined
+          ? true
+          : showsVerticalScrollIndicator,
+      onEndReached: () => this.onEndReached(),
+      onEndReachedThreshold: 0.1,
+      ListEmptyComponent: () =>
+        dataFetched && (
+          <View
+            style={[
+              styleApp.marginView,
+              styleApp.center,
+              {height: 250, marginTop: 20},
+            ]}>
+            <Image
+              source={ListEmptyComponent?.image}
+              style={{height: 50, width: 50, marginBottom: 20}}
+            />
+            <Text style={styleApp.textBold}>{ListEmptyComponent?.text}</Text>
+            {ListEmptyComponent?.clickButton ? (
+              <Button
+                backgroundColor="primary"
+                onPressColor={colors.primaryLight}
+                enabled={true}
+                text={ListEmptyComponent?.textButton}
+                icon={{
+                  name: ListEmptyComponent?.iconButton,
+                  size: 24,
+                  type: 'font',
+                  color: colors.white,
+                }}
+                styleButton={{height: 55, marginTop: 30}}
+                loader={false}
+                click={() => ListEmptyComponent?.clickButton()}
+              />
+            ) : null}
+            {ListEmptyComponent?.clickButton2 ? (
+              <Button
+                backgroundColor="green"
+                onPressColor={colors.greenLight}
+                enabled={true}
+                text={ListEmptyComponent?.textButton2}
+                icon={{
+                  name: ListEmptyComponent?.iconButton2,
+                  size: 24,
+                  type: 'font',
+                  color: colors.white,
+                }}
+                styleButton={{height: 55, marginTop: 30}}
+                loader={false}
+                click={() => ListEmptyComponent?.clickButton2()}
+              />
+            ) : null}
+          </View>
+        ),
+    };
+    return reanimated ? (
+      <ReanimatedFlatList {...sharedProps} />
+    ) : (
+      <FlatList {...sharedProps} />
     );
   }
 }

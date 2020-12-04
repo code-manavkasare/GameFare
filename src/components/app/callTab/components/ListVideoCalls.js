@@ -56,10 +56,8 @@ class ListVideoCalls extends Component {
       inlineSearch,
       liveSessionHeader,
     } = this.props;
-
     const currentlyInSession =
       currentSessionID && liveSessionHeader && !inlineSearch;
-    console.log('render list video call', coachSessions);
     return (
       <FlatListComponent
         list={coachSessions}

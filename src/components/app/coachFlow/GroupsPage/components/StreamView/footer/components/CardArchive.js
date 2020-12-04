@@ -238,12 +238,11 @@ class CardArchive extends Component {
   cardArchiveImage = () => {
     const {archive} = this.state;
     const {archiveFromCameraroll} = this.props;
-    const {width} = getDimention();
     if (archiveFromCameraroll) {
       const {url} = archiveFromCameraroll;
       return (
         <Image
-          style={{width: width / 3, height: styleApp.cardArchive.height}}
+          style={styleApp.fullSize}
           source={{
             uri: url,
           }}
@@ -314,18 +313,17 @@ class CardArchive extends Component {
     } = this.state;
     const {id, localIdentifier} = archive;
     const {selectableMode, unclickable, selectVideo} = this.props;
-    console.log('archive', archive);
 
     if (unclickable) {
       return;
     } else if (selectableMode) {
-      this.setState({isSelected: !isSelected});
-      selectVideo({
+      const newSelected = selectVideo({
         id,
         isSelected: !isSelected,
         localIdentifier,
         playable: !videoUnavailable && !currentlyUploading,
       });
+      this.setState({isSelected: newSelected});
     } else if (videoUnavailable) {
       navigate('Alert', {
         title: 'This video is unavailable.',

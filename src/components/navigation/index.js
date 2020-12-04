@@ -14,8 +14,8 @@ import SelectVideosFromLibrary from '../app/videoLibraryPage/index';
 import Alert from '../layout/alerts/Alert';
 import {SheetModal} from './transitions/SheetModal';
 import {marginTopApp} from '../style/sizes';
-import CreateClub from '../app/clubsPage/components/CreateClub';
-import Club from './MainApp/components/Club';
+
+import Payments from './MainApp/components/Payments';
 
 const Stack = createStackNavigator();
 function InitialStack() {
@@ -99,12 +99,10 @@ function InitialStack() {
       />
 
       <Stack.Screen
-        name="CreateClub"
-        component={CreateClub}
-        options={SheetModalSpec}
+        name="Payments"
+        component={Payments}
+        options={FullScreenModalSpec}
       />
-
-      <Stack.Screen name="Club" component={Club} options={SheetModalSpec} />
     </Stack.Navigator>
   );
 }

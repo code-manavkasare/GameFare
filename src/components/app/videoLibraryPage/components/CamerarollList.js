@@ -63,6 +63,7 @@ export default class CamerarollList extends Component {
     } else if (lengthVideos > 0 && !canExportVideos) {
       this.setState({canExportVideos: true});
     }
+    return isSelected;
   };
 
   renderCardArchive = (video, index) => {

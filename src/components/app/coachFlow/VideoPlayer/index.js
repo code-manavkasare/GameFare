@@ -429,7 +429,6 @@ export default class VideoPlayer extends Component {
     const connectedToSession =
       coachSessionID !== false && coachSessionID !== undefined;
 
-    console.log('localUri', proxySource);
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {buttonTopRight ? buttonTopRight() : null}

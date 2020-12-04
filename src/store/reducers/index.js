@@ -27,6 +27,7 @@ import {clubsReducer} from './clubsReducer';
 import {servicesReducer} from './servicesReducer';
 import {bookingsReducer} from './bookingsReducer';
 import {postsReducer} from './postsReducer';
+import {usersReducer} from './usersReducer';
 
 export default combineReducers({
   appSettings: appSettingsReducer,
@@ -54,4 +55,5 @@ export default combineReducers({
   bookings: bookingsReducer,
   posts: postsReducer,
   userBookings: userBookingsReducer,
+  users: usersReducer,
 });
