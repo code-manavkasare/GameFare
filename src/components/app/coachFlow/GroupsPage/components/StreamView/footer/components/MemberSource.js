@@ -170,7 +170,7 @@ class MemberSource extends Component {
       <View key={member.id} style={styles.cardUser}>
         <Row>
           <Col size={15} style={styleApp.center2}>
-            <ImageUser user={member} />
+            <ImageUser info={member.info} />
           </Col>
 
           <Col size={2} />

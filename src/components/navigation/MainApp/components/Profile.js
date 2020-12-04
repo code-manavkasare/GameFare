@@ -8,7 +8,7 @@ import MorePage from '../../../app/MorePage';
 import EditProfilePage from '../../../app/elementsUser/elementsProfile/EditProfilePage';
 import AppSettings from '../../../app/elementsUser/elementsProfile/AppSettings';
 import NotificationPage from '../../../app/elementsUser/elementsProfile/NotificationPage';
-import Payments from './Payments';
+
 import {width} from '../../../style/sizes';
 
 const Stack = createStackNavigator();
@@ -30,7 +30,6 @@ const OnBoarding = () => {
       <Stack.Screen name="EditProfilePage" component={EditProfilePage} />
       <Stack.Screen name="AppSettings" component={AppSettings} />
 
-      <Stack.Screen name="Payments" component={Payments} />
       <Stack.Screen name="NotificationPage" component={NotificationPage} />
     </Stack.Navigator>
   );

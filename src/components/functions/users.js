@@ -1,6 +1,7 @@
 import {indexUsers, client} from '../database/algolia';
 import database from '@react-native-firebase/database';
 import {store} from '../../store/reduxStore';
+import {setUsers} from '../../store/actions/usersActions';
 
 const autocompleteSearchUsers = async (
   search,
@@ -81,7 +82,13 @@ const isUserPrivate = (user) => {
   return false;
 };
 
-module.exports = {
+const fetchUser = async (id) => {
+  const {info} = await indexUsers.getObject(id);
+  const currentUser = store.getState().users[id];
+  if (!currentUser) store.dispatch(setUsers({[id]: {...info, id}}));
+};
+
+export {
   autocompleteSearchUsers,
   userObject,
   messageAvatar,
@@ -89,4 +96,5 @@ module.exports = {
   formatPhoneNumber,
   toggleUserPublic,
   isUserPrivate,
+  fetchUser,
 };

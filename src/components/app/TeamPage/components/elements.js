@@ -393,7 +393,7 @@ const lastMessageView = (lastMessage) => {
         <View style={styleProfilePhotoContainer}>
           <ImageUser
             onClick={() => true}
-            user={user}
+            info={user.info}
             styleImgProps={profilePhotoStyle}
           />
         </View>
@@ -601,6 +601,7 @@ const rowTitle = ({
     width: '100%',
     borderRadius: 10,
     ...button?.style,
+    zIndex: 10,
   };
   const styleBadgeText = {
     fontSize:
@@ -613,13 +614,12 @@ const rowTitle = ({
     paddingTop: 10,
   };
   return (
-    <TouchableOpacity
-      style={styleContainer}
-      onPress={() => {
-        clickOnRow && button.click();
-      }}
-      activeOpacity={0.9}>
-      <Row>
+    <View style={styleContainer}>
+      <Row
+        activeOpacity={1}
+        onPress={() => {
+          clickOnRow && button.click();
+        }}>
         <Col size={1} />
         <Col size={55} style={styleApp.center2}>
           <Text
@@ -658,7 +658,9 @@ const rowTitle = ({
               }}
               color={button.color ?? colors.primary}
               style={styleButton}
-              click={() => button.click()}
+              click={() => {
+                button.click();
+              }}
               onPressColor={button.onPressColor ?? colors.primaryLight}
             />
           ) : null}
@@ -669,7 +671,7 @@ const rowTitle = ({
       ) : (
         <View style={{height: 20}} />
       )}
-    </TouchableOpacity>
+    </View>
   );
 };
 

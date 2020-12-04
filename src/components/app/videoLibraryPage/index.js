@@ -132,19 +132,24 @@ class VideoLibraryPage extends Component {
     }
   };
   selectVideo = ({id, playable}) => {
+    const {selectOne} = this.state;
     let nextSelectedVideos = this.state.selectedVideos.slice();
     let {nonplayableVideos} = this.state;
-    if (nextSelectedVideos.filter((idVideo) => idVideo === id).length === 0) {
-      nextSelectedVideos.push(id);
-      if (playable === false) nonplayableVideos++;
-    } else {
+    let selected = false;
+    if (nextSelectedVideos.filter((idVideo) => idVideo === id).length > 0) {
       nextSelectedVideos = nextSelectedVideos.filter(
         (idVideo) => idVideo !== id,
       );
       if (playable === false) nonplayableVideos--;
+    } else if (selectOne && nextSelectedVideos.length === 1) {
+      return selected;
+    } else {
+      nextSelectedVideos.push(id);
+      if (playable === false) nonplayableVideos++;
+      selected = true;
     }
-
     this.setState({selectedVideos: nextSelectedVideos, nonplayableVideos});
+    return selected;
   };
 
   settingsRow = () => {
@@ -208,7 +213,7 @@ class VideoLibraryPage extends Component {
   };
 
   libraryHeader = () => {
-    const {selectableMode, modalMode} = this.state;
+    const {selectableMode, modalMode, selectOne} = this.state;
     if (modalMode) {
       return null;
     }
@@ -218,7 +223,11 @@ class VideoLibraryPage extends Component {
         {this.settingsRow()}
         {rowTitle({
           hideDividerHeader: true,
-          title: !selectableMode ? 'Library' : 'Select Videos',
+          title: !selectableMode
+            ? 'Library'
+            : selectOne
+            ? 'Select a Video'
+            : 'Select Videos',
           titleColor: colors.greyDarker,
           titleStyle: {
             fontWeight: '800',
@@ -375,6 +384,7 @@ class VideoLibraryPage extends Component {
       selectOnly,
       selectFromCameraRoll,
       modalMode,
+      selectOne,
     } = this.state;
     const containerStyle = modalMode
       ? styleApp.stylePageModal
@@ -390,6 +400,8 @@ class VideoLibraryPage extends Component {
             title={
               selectFromCameraRoll
                 ? 'Add from Camera Roll'
+                : selectOne
+                ? 'Select a Video'
                 : selectableMode
                 ? 'Select Videos'
                 : 'Library'
@@ -400,7 +412,13 @@ class VideoLibraryPage extends Component {
             AnimatedHeaderValue={this.AnimatedHeaderValue}
             navigation={navigation}
             selectOnly={selectOnly}
-            text={!selectableMode ? 'Library' : 'Select Videos'}
+            text={
+              !selectableMode
+                ? 'Library'
+                : selectOne
+                ? 'Select a Video'
+                : 'Select Videos'
+            }
             selectableMode={selectableMode}
             toggleSelectable={this.toggleSelectable}
             selectVideosFromCameraRoll={selectVideosFromCameraRoll}

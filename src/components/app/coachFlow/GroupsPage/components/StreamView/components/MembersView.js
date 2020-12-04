@@ -27,7 +27,7 @@ class MembersView extends Component {
         <Col size={50} style={styleApp.center2}>
           <ImageUser
             styleImgProps={{height: 45, width: 45, borderRadius: 30}}
-            user={member}
+            info={member.info}
           />
         </Col>
         <Col size={50} style={styleApp.center}>

@@ -27,6 +27,7 @@ class HeaderBackButton extends Component {
       enableClickButton: true,
     };
     this.componentDidMount = this.componentDidMount.bind(this);
+    this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
     const {loaderOn, onRef} = this.props;
@@ -44,7 +45,7 @@ class HeaderBackButton extends Component {
     });
   }
   animatedValues() {
-    const {
+    let {
       AnimatedHeaderValue,
       inputRange,
       initialTitleOpacity,
@@ -53,6 +54,7 @@ class HeaderBackButton extends Component {
       initialBackgroundColor,
       initialBorderColorIcon,
     } = this.props;
+    if (!AnimatedHeaderValue) AnimatedHeaderValue = this.AnimatedHeaderValue;
     const AnimateOpacityTitle = AnimatedHeaderValue?.interpolate({
       inputRange: [inputRange[1] - 20, inputRange[1] + 20],
       outputRange: [initialTitleOpacity, 1],

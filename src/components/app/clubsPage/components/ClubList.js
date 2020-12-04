@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Animated} from 'react-native';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
+import {object, string, func} from 'prop-types';
 
 import styleApp from '../../../style/style';
 import {userClubsSelector} from '../../../../store/selectors/clubs';
@@ -10,30 +10,32 @@ import {FlatListComponent} from '../../../layout/Views/FlatList';
 
 class ClubList extends Component {
   static propTypes = {
-    clubs: PropTypes.object,
+    clubs: object,
+    selectClub: func,
+    selectedClubID: string,
   };
   static defaultProps = {};
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      loader: false,
-    };
-    this.AnimatedHeaderValue = new Animated.Value(0);
-  }
   selectClub = (clubID) => {
     const {selectClub} = this.props;
     return selectClub(clubID);
   };
-  renderClub = ({item: {id: clubID}}) => (
-    <CardClub id={clubID} selectClub={() => this.selectClub(clubID)} />
-  );
+  renderClub = ({item: {id: clubID}}) => {
+    const {selectedClubID} = this.props;
+    return (
+      <CardClub
+        id={clubID}
+        selectClub={() => this.selectClub(clubID)}
+        selectedClubID={selectedClubID}
+      />
+    );
+  };
   renderAddClub = () => <CardClub addClub />;
   render() {
     const {clubs} = this.props;
     const flatListStyle = {
       paddingHorizontal: '5%',
-      width: clubs.length * 100 + 150,
+      width: clubs.length ? clubs.length * 100 + 150 : 0,
     };
     return (
       <FlatListComponent

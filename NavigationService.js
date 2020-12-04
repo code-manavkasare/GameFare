@@ -53,6 +53,10 @@ const dismiss = () => {
   navigationRef.dangerouslyGetParent().pop();
 };
 
+const popToTop = () => {
+  navigationRef.current.popToTop();
+};
+
 const setParams = ({routeKey, params}) => {
   if (navigationRef.current) return navigationRef.current.setParams(params);
 
@@ -92,4 +96,5 @@ export {
   setParams,
   clickNotification,
   getCurrentRoute,
+  popToTop,
 };

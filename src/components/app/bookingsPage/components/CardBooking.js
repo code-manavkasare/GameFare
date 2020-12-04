@@ -8,22 +8,26 @@ import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import {navigate} from '../../../../../NavigationService';
 
-import {bindService, unbindService} from '../../../database/firebase/bindings';
+import {
+  bindBooking,
+  bindService,
+  unbindBooking,
+  unbindService,
+} from '../../../database/firebase/bindings';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
 import {userIDSelector} from '../../../../store/selectors/user';
 import {removeService} from '../../../functions/clubs';
 import AllIcon from '../../../layout/icons/AllIcons';
-import {serviceSelector} from '../../../../store/selectors/services';
+import {
+  bookingSelector,
+  bookingSubSelector,
+} from '../../../../store/selectors/bookings';
 import CardUser from '../../../layout/cards/CardUser';
+import CardService from '../../clubSettings/components/CardService';
 
-class CardService extends Component {
+class CardBooking extends Component {
   static propTypes = {
-    navigation: object,
     id: string,
-    clubID: string,
-    book: bool,
-    displayOwner: bool,
-    hideButtons: bool,
   };
   static defaultProps = {};
 
@@ -33,11 +37,11 @@ class CardService extends Component {
   }
   componentDidMount = () => {
     const {id} = this.props;
-    id && bindService(id);
+    id && bindBooking(id);
   };
   componentWillUnmount = () => {
     const {id} = this.props;
-    id && unbindService(id);
+    id && unbindBooking(id);
   };
   shouldComponentUpdate(nextProps, nextState) {
     return boolShouldComponentUpdate({
@@ -45,25 +49,10 @@ class CardService extends Component {
       nextProps,
       state: this.state,
       nextState,
-      component: 'CardService',
+      component: 'CardBooking',
     });
   }
-  editService = () => {
-    const {service, clubID} = this.props;
-    const {id} = service;
-    navigate('Club', {
-      screen: 'CreateService',
-      params: {id: clubID, serviceID: id, edit: true},
-    });
-  };
-  bookService = () => {
-    const {service, clubID} = this.props;
-    const {id} = service;
-    navigate('Club', {
-      screen: 'BookingSummary',
-      params: {clubID, serviceID: id},
-    });
-  };
+
   removeService = () => {
     const {service, clubID} = this.props;
     const {id, title} = service;
@@ -77,46 +66,23 @@ class CardService extends Component {
     });
   };
   render() {
-    const {service, userID, book, displayOwner, hideButtons} = this.props;
+    const {booking, userID} = this.props;
 
-    if (!service) return <View />;
-    const {title, price, duration, owner, id} = service;
-    const {unit: unitPrice, value: valuePrice} = price;
-    const {unit: unitDuration, value: valueDuration} = duration;
-    const isUserOwner = owner === userID;
+    if (!booking) return <View />;
+    const {serviceID, status} = booking;
     return (
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={() => true}
         style={styles.card}>
-        {displayOwner && <CardUser id={owner} />}
-        <Row>
+        <CardService id={serviceID} displayOwner={true} hideButtons={true} />
+        <Row style={{marginTop: 20}}>
           <Col size={60}>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.subtitle}>
-              {unitPrice}
-              {valuePrice} • {valueDuration}
-              {unitDuration}
-            </Text>
+            <Text style={styles.title}>Status: {status}</Text>
+            <Text style={styles.subtitle} />
           </Col>
-          <Col size={20} style={styleApp.center3}>
-            {isUserOwner && !hideButtons ? (
-              <Text style={styleApp.smallText} onPress={this.editService}>
-                Edit
-              </Text>
-            ) : null}
-          </Col>
-          <Col size={20} style={styleApp.center3}>
-            {hideButtons ? null : book ? (
-              <Text style={styleApp.smallText} onPress={this.bookService}>
-                Book
-              </Text>
-            ) : isUserOwner ? (
-              <Text style={styleApp.smallText} onPress={this.removeService}>
-                Delete
-              </Text>
-            ) : null}
-          </Col>
+          <Col size={20} style={styleApp.center3} />
+          <Col size={20} style={styleApp.center3} />
         </Row>
       </TouchableOpacity>
     );
@@ -125,6 +91,7 @@ class CardService extends Component {
 
 const styles = StyleSheet.create({
   card: {
+    ...styleApp.marginView,
     flex: 1,
     paddingTop: 10,
     paddingBottom: 10,
@@ -146,9 +113,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, props) => {
   return {
-    service: serviceSelector(state, props),
+    booking: bookingSelector(state, props),
     userID: userIDSelector(state),
   };
 };
 
-export default connect(mapStateToProps)(CardService);
+export default connect(mapStateToProps)(CardBooking);

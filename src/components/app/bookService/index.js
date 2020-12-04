@@ -13,8 +13,8 @@ import {
 import ScrollView from '../../layout/scrollViews/ScrollView';
 import Button from '../../layout/buttons/Button';
 import {clubSelector, servicesSelector} from '../../../store/selectors/clubs';
-import CardService from './components/CardService';
-import HeaderClubSettings from './components/HeaderClubSettings';
+import CardService from '../clubSettings/components/CardService';
+import HeaderBookService from './components/HeaderBookService';
 
 class ClubSettings extends Component {
   static propTypes = {
@@ -35,7 +35,13 @@ class ClubSettings extends Component {
     return (
       <View style={[styleApp.marginView]}>
         {services.map(({id}) => (
-          <CardService key={id} id={id} clubID={clubID} />
+          <CardService
+            key={id}
+            id={id}
+            clubID={clubID}
+            book={true}
+            displayOwner={true}
+          />
         ))}
       </View>
     );
@@ -48,25 +54,12 @@ class ClubSettings extends Component {
       params: {id},
     });
   };
-  confirmButton = () => {
-    return (
-      <View style={[styleApp.footerModal, styleApp.marginView]}>
-        <Button
-          backgroundColor="primary"
-          onPressColor={colors.primaryLight}
-          enabled={true}
-          text={'Add a Service'}
-          click={this.createService}
-        />
-      </View>
-    );
-  };
   render() {
     const {navigation, club} = this.props;
     const {title} = club.info;
     return (
       <View style={styleApp.stylePage}>
-        <HeaderClubSettings
+        <HeaderBookService
           title={title}
           navigation={navigation}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -81,7 +74,6 @@ class ClubSettings extends Component {
           offsetBottom={heightFooterBooking + marginBottomApp + 50}
           showsVerticalScrollIndicator={true}
         />
-        {this.confirmButton()}
       </View>
     );
   }
