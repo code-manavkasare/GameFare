@@ -105,7 +105,7 @@ class CreatePost extends Component {
           backgroundColor="primary"
           onPressColor={colors.primaryLight}
           enabled={true}
-          disabled={text === '' && !video}
+          disabled={!video}
           text={'Post to Club'}
           styleButton={{height: 55}}
           loader={loader}
@@ -141,7 +141,6 @@ class CreatePost extends Component {
           offsetBottom={0}
           showsVerticalScrollIndicator={true}
         />
-        {this.confirmButton()}
       </View>
     );
   }

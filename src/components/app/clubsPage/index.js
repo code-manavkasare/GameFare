@@ -20,8 +20,9 @@ class ClubsPage extends Component {
 
   constructor(props) {
     super(props);
+    const {params} = props?.route;
     this.state = {
-      currentClubID: undefined,
+      currentClubID: params?.clubID ?? undefined,
     };
     this.AnimatedScrollValue = new Animated.Value(0);
   }
@@ -40,40 +41,47 @@ class ClubsPage extends Component {
     const {currentClubID} = this.state;
     if (!currentClubID) return null;
     return (
-      <View>
-        <PostFeed
-          currentClubID={currentClubID}
-          AnimatedScrollValue={this.AnimatedScrollValue}
+      <PostFeed
+        currentClubID={currentClubID}
+        AnimatedScrollValue={this.AnimatedScrollValue}
+      />
+    );
+  }
+  bookButton() {
+    const {currentClubID} = this.state;
+    if (!currentClubID) return null;
+    return (
+      <View style={[styleApp.footerBook, styleApp.marginView]}>
+        <Button
+          backgroundColor="primary"
+          onPressColor={colors.primaryLight}
+          enabled={true}
+          text={'Book'}
+          styleButton={styleApp.shade}
+          icon={{
+            name: 'store-alt',
+            size: 24,
+            type: 'font',
+            color: colors.white,
+          }}
+          click={this.book}
         />
-        <View style={[styleApp.footerBook, styleApp.marginView]}>
-          <Button
-            backgroundColor="primary"
-            onPressColor={colors.primaryLight}
-            enabled={true}
-            text={'Book'}
-            styleButton={styleApp.shade}
-            icon={{
-              name: 'store-alt',
-              size: 24,
-              type: 'font',
-              color: colors.white,
-            }}
-            click={this.book}
-          />
-        </View>
       </View>
     );
   }
   render() {
     const {navigation} = this.props;
+    const {currentClubID} = this.state;
     return (
       <View style={styleApp.stylePage}>
         <ClubsHeader
           AnimatedScrollValue={this.AnimatedScrollValue}
           navigation={navigation}
           selectClub={this.changeFocusedClub}
+          currentClubID={currentClubID}
         />
         {this.feedView()}
+        {this.bookButton()}
       </View>
     );
   }

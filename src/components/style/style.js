@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
   },
   footerBook: {
     position: 'absolute',
-    bottom: heightFooter + marginBottomApp + 30,
+    bottom: heightFooter + marginBottomApp + 10,
     borderTopWidth: 0,
     height: 75,
     paddingTop: 10,

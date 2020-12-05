@@ -116,6 +116,9 @@ class ProfilePage extends Component {
   };
 
   profilePage() {
+    const {userProfile} = this.state;
+    console.log(userProfile);
+    if (!userProfile?.info) return null;
     const {
       firstname,
       lastname,

@@ -7,6 +7,8 @@ import {setServices} from '../../store/actions/servicesActions.js';
 import {chargeUser} from './stripe.js';
 import {setPosts} from '../../store/actions/postsActions.js';
 import {setBookings} from '../../store/actions/bookingsActions.js';
+import {createInviteToClubBranchUrl} from '../database/branch';
+import {goBack, navigate} from '../../../NavigationService';
 
 const createClub = async ({title, description}) => {
   const {userID} = store.getState().user;
@@ -117,6 +119,17 @@ const createPost = async ({clubID, text, video}) => {
     .update(postCreation);
 };
 
+const removePost = async ({postID, clubID}) => {
+  const postDeletion = {
+    [`posts/${postID}/`]: null,
+    [`clubs/${clubID}/posts/${postID}`]: null,
+  };
+  await database()
+    .ref()
+    .update(postDeletion);
+  return true;
+};
+
 const confirmBookingService = async ({clubID, serviceID}) => {
   const service = store.getState().services[serviceID];
   const {userID} = store.getState().user;
@@ -158,6 +171,34 @@ const confirmBookingService = async ({clubID, serviceID}) => {
   return {response: true};
 };
 
+const inviteUsersToClub = async ({clubID}) => {
+  const branchLink = await createInviteToClubBranchUrl(clubID)
+    .then((r) => r)
+    .catch(() => null);
+  navigate('UserDirectory', {
+    action: 'inviteToClub',
+    branchLink: branchLink,
+    clubID,
+    onConfirm: async ({users}) => {
+      goBack();
+      if (users) {
+        const userIDs = Object.keys(users);
+        const timestamp = Date.now();
+        let updates = {};
+        userIDs.map((userID) => {
+          updates[`users/${userID}/clubs/${clubID}`] = {
+            id: clubID,
+            timestamp,
+          };
+        });
+        await database()
+          .ref()
+          .update(updates);
+      }
+    },
+  });
+};
+
 export {
   createClub,
   createService,
@@ -165,4 +206,6 @@ export {
   removeService,
   confirmBookingService,
   createPost,
+  removePost,
+  inviteUsersToClub,
 };

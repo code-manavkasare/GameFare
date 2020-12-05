@@ -118,7 +118,6 @@ class CreateClub extends Component {
           offsetBottom={0}
           showsVerticalScrollIndicator={true}
         />
-        {this.confirmButton()}
       </View>
     );
   }

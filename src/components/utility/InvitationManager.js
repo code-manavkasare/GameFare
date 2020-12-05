@@ -260,12 +260,14 @@ class InvitationManager extends Component {
     } else if (userArray.length > 0) {
       this.confirmUserInvites();
     }
-    onConfirmInvites && onConfirmInvites();
+    onConfirmInvites &&
+      onConfirmInvites({sessions: selectedSessions, users: selectedUsers});
   }
 
   button = () => {
-    const {bottomOffset} = this.props;
+    const {bottomOffset, action} = this.props;
     const {buttonText} = this.state;
+    const {icon} = getSelectionActionDecorations(action);
     const translateY = this.buttonReveal.interpolate({
       inputRange: [0, 1, 2],
       outputRange: [
@@ -307,10 +309,11 @@ class InvitationManager extends Component {
               <View style={styleApp.fullSize}>
                 <Row style={styleApp.center}>
                   <AllIcon
-                    type={'font'}
-                    color={colors.white}
-                    size={18}
-                    name={'video'}
+                    type={icon.type}
+                    color={icon.color ?? colors.white}
+                    size={icon.size ?? 18}
+                    name={icon.name}
+                    solid
                   />
                   <Text style={styles.buttonTextStyle}>{buttonText}</Text>
                 </Row>

@@ -14,13 +14,20 @@ export default class userDirectoryPage extends Component {
       action: props.route?.params?.action ?? 'call',
       archivesToShare: props.route?.params?.archivesToShare ?? [],
       sessionToInvite: props.route?.params?.sessionToInvite ?? '',
+      onConfirm: props.route?.params?.onConfirm ?? null,
       branchLink: props.route?.params?.branchLink ?? null,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
 
   render() {
-    const {action, archivesToShare, sessionToInvite, branchLink} = this.state;
+    const {
+      action,
+      archivesToShare,
+      sessionToInvite,
+      onConfirm,
+      branchLink,
+    } = this.state;
     const {goBack} = this.props.navigation;
     return (
       <View style={styleApp.stylePage}>
@@ -44,6 +51,7 @@ export default class userDirectoryPage extends Component {
           }}
           archivesToShare={archivesToShare}
           sessionToInvite={sessionToInvite}
+          onConfirm={onConfirm}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
         />
       </View>

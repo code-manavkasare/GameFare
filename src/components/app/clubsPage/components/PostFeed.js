@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import {any, string} from 'prop-types';
+import {Row} from 'react-native-easy-grid';
 
 import styleApp from '../../../style/style';
 import {
@@ -17,8 +18,10 @@ import {
   marginBottomApp,
   marginTopApp,
 } from '../../../style/sizes';
-import Button from '../../../layout/buttons/Button';
 import {navigate} from '../../../../../NavigationService';
+import ButtonColor from '../../../layout/Views/Button';
+import AllIcons from '../../../layout/icons/AllIcons';
+import {inviteUsersToClub} from '../../../functions/clubs';
 
 class PostFeed extends Component {
   static propTypes = {
@@ -44,27 +47,78 @@ class PostFeed extends Component {
     const {currentClubID} = this.props;
     navigate('CreatePost', {clubID: currentClubID});
   };
-  renderClub = ({item: {id: postID}}) => <CardPost id={postID} />;
-  renderAddPost = () => (
-    <Button
-      backgroundColor="primary"
-      styleButton={styles.postButton}
-      textButton={{
-        fontSize: 15,
-        color: colors.white,
-      }}
-      click={this.createPost}
-      icon={{
-        name: 'plus',
-        size: 15,
-        type: 'font',
-        color: colors.white,
-      }}
-      onPressColor={colors.primaryLight}
-      enabled={true}
-      text="Post to your club"
-    />
-  );
+  goToSettings = () => {
+    const {currentClubID} = this.props;
+    navigate('Club', {screen: 'ClubSettings', params: {id: currentClubID}});
+  };
+  inviteUsersToClub = () => {
+    const {currentClubID} = this.props;
+    inviteUsersToClub({clubID: currentClubID});
+  };
+  renderClub = ({item: {id: postID}}) => {
+    const {currentClubID} = this.props;
+    return <CardPost id={postID} clubID={currentClubID} />;
+  };
+  settingsRow = () => {
+    const {isClubOwner} = this.props;
+    if (!isClubOwner) return null;
+    return (
+      <View style={styles.settingsRowContainer}>
+        <Row style={styles.settingsRow}>
+          <ButtonColor
+            view={() => {
+              return (
+                <AllIcons
+                  type={'font'}
+                  color={colors.white}
+                  size={16}
+                  name={'user-plus'}
+                  solid
+                />
+              );
+            }}
+            style={styles.settingsRowButton}
+            color={colors.greyDark}
+            click={this.inviteUsersToClub}
+            onPressColor={colors.greyMidDark}
+          />
+          <ButtonColor
+            view={() => {
+              return (
+                <AllIcons
+                  type={'font'}
+                  color={colors.white}
+                  size={16}
+                  name={'cog'}
+                />
+              );
+            }}
+            style={styles.settingsRowButton}
+            color={colors.greyDark}
+            click={this.goToSettings}
+            onPressColor={colors.greyMidDark}
+          />
+          <ButtonColor
+            view={() => {
+              return (
+                <AllIcons
+                  type={'font'}
+                  color={colors.white}
+                  size={16}
+                  name={'plus'}
+                  solid
+                />
+              );
+            }}
+            style={styles.settingsRowButton}
+            color={colors.blue}
+            click={this.createPost}
+            onPressColor={colors.blueLight}
+          />
+        </Row>
+      </View>
+    );
+  };
   emptyList = () => {
     const {isClubOwner} = this.props;
     let config = {
@@ -91,8 +145,8 @@ class PostFeed extends Component {
         reanimated
         AnimatedHeaderValue={AnimatedScrollValue}
         styleContainer={{
-          paddingTop: marginTopApp + heightHeaderHome + 60,
-          paddingBottom: heightFooter + marginBottomApp + 160,
+          paddingTop: marginTopApp + heightHeaderHome + 35,
+          paddingBottom: heightFooter + marginBottomApp + 90,
         }}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={this.emptyList()}
@@ -100,7 +154,7 @@ class PostFeed extends Component {
         lengthList={posts.length}
         cardList={this.renderClub}
         keyExtractor={(item, index) => item.id}
-        header={posts.length > 0 ? this.renderAddPost : null}
+        header={this.settingsRow}
         headerStyle={styleApp.center}
         scrollEnabled={posts.length > 0}
       />
@@ -115,8 +169,27 @@ const styles = StyleSheet.create({
     borderColor: colors.off,
     borderRadius: 15,
     height: 40,
-    marginBottom: 20,
+    marginBottom: 30,
     shadowOpacity: 0,
+  },
+  settingsRowContainer: {
+    height: 70,
+    width: '100%',
+    ...styleApp.center2,
+  },
+  settingsRow: {
+    width: '50%',
+    maxWidth: 240,
+    minHeight: 55,
+    ...styleApp.center,
+    justifyContent: 'space-between',
+  },
+  settingsRowButton: {
+    width: 45,
+    height: 45,
+    borderRadius: 25,
+    marginTop: -10,
+    ...styleApp.shadowWeak,
   },
 });
 
