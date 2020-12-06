@@ -1,24 +1,21 @@
 import React, {Component} from 'react';
-import {StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import {any, string} from 'prop-types';
 
-import styleApp from '../../../style/style';
+import {FlatListComponent} from '../../../layout/Views/FlatList';
+import CardPost from './CardPost';
+import OptionsRow from './OptionsRow';
 import {
   postListSelector,
   isClubOwnerSelector,
 } from '../../../../store/selectors/clubs';
-import {FlatListComponent} from '../../../layout/Views/FlatList';
-import CardPost from './CardPost';
-import colors from '../../../style/colors';
+import styleApp from '../../../style/style';
 import {
   heightFooter,
   heightHeaderHome,
   marginBottomApp,
   marginTopApp,
 } from '../../../style/sizes';
-import Button from '../../../layout/buttons/Button';
-import {navigate} from '../../../../../NavigationService';
 
 class PostFeed extends Component {
   static propTypes = {
@@ -40,31 +37,14 @@ class PostFeed extends Component {
       this.flatListRef?.jumpToTop();
     }
   }
-  createPost = () => {
+  renderClub = ({item: {id: postID}}) => {
     const {currentClubID} = this.props;
-    navigate('CreatePost', {clubID: currentClubID});
+    return <CardPost id={postID} clubID={currentClubID} />;
   };
-  renderClub = ({item: {id: postID}}) => <CardPost id={postID} />;
-  renderAddPost = () => (
-    <Button
-      backgroundColor="primary"
-      styleButton={styles.postButton}
-      textButton={{
-        fontSize: 15,
-        color: colors.white,
-      }}
-      click={this.createPost}
-      icon={{
-        name: 'plus',
-        size: 15,
-        type: 'font',
-        color: colors.white,
-      }}
-      onPressColor={colors.primaryLight}
-      enabled={true}
-      text="Post to your club"
-    />
-  );
+  settingsRow = () => {
+    const {currentClubID} = this.props;
+    return <OptionsRow currentClubID={currentClubID} />;
+  };
   emptyList = () => {
     const {isClubOwner} = this.props;
     let config = {
@@ -91,8 +71,8 @@ class PostFeed extends Component {
         reanimated
         AnimatedHeaderValue={AnimatedScrollValue}
         styleContainer={{
-          paddingTop: marginTopApp + heightHeaderHome + 60,
-          paddingBottom: heightFooter + marginBottomApp + 160,
+          paddingTop: marginTopApp + heightHeaderHome + 35,
+          paddingBottom: heightFooter + marginBottomApp + 90,
         }}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={this.emptyList()}
@@ -100,25 +80,13 @@ class PostFeed extends Component {
         lengthList={posts.length}
         cardList={this.renderClub}
         keyExtractor={(item, index) => item.id}
-        header={posts.length > 0 ? this.renderAddPost : null}
+        header={this.settingsRow}
         headerStyle={styleApp.center}
         scrollEnabled={posts.length > 0}
       />
     );
   }
 }
-
-const styles = StyleSheet.create({
-  postButton: {
-    width: '100%',
-    borderBottomWidth: 0,
-    borderColor: colors.off,
-    borderRadius: 15,
-    height: 40,
-    marginBottom: 20,
-    shadowOpacity: 0,
-  },
-});
 
 const mapStateToProps = (state, props) => {
   return {

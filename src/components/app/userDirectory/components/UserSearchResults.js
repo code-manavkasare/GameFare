@@ -171,7 +171,7 @@ export default class UserSearchResults extends Component {
 
 const styles = StyleSheet.create({
   results: {
-    marginTop: 20,
+    marginTop: 0,
     marginLeft: 10,
     marginRight: 10,
   },

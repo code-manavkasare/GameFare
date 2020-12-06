@@ -91,7 +91,7 @@ class CardClub extends Component {
     if (addClub) return this.addClubCard();
     if (!club) return <View />;
     const {info} = club;
-    const {title, description} = info;
+    const {title} = info;
     const isSelected = selectedClubID === club?.id;
     const selectionIndicationStyle = isSelected
       ? styles.selectionIndication
@@ -102,8 +102,6 @@ class CardClub extends Component {
         onPress={selectClub}
         style={styleApp.cardClub}>
         <Text style={styles.title}>{title}</Text>
-        {/* <Text style={styles.subtitle}>{description}</Text> */}
-        {this.settingsButton()}
         <View style={selectionIndicationStyle} />
       </TouchableOpacity>
     );
@@ -133,16 +131,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
     color: colors.greyLighter,
-  },
-  settingsButton: {
-    position: 'absolute',
-    width: 28,
-    height: 28,
-    ...styleApp.center,
-    borderRadius: 15,
-    right: 0,
-    bottom: 0,
-    zIndex: 5,
   },
   selectionIndication: {
     ...styleApp.fullSize,

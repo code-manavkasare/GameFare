@@ -78,6 +78,12 @@ class BodyUserDirectory extends Component {
     }
   }
 
+  onConfirm = ({users}) => {
+    const {onConfirm} = this.props;
+    onConfirm && onConfirm({users});
+    this.setState({selectedUsers: {}});
+  };
+
   render() {
     const {selectedUsers, searchText} = this.state;
     const {
@@ -99,7 +105,7 @@ class BodyUserDirectory extends Component {
         <InvitationManager
           selectedUsers={selectedUsers}
           onClearInvites={() => this.setState({selectedUsers: {}})}
-          onConfirmInvites={() => this.setState({selectedUsers: {}})}
+          onConfirmInvites={this.onConfirm}
           action={action}
           archivesToShare={archivesToShare}
           sessionToInvite={sessionToInvite}

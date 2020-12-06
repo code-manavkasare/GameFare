@@ -13,11 +13,11 @@ import {reanimatedTiming} from '../../../animations/animations';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
 import {userInfoSelector} from '../../../../store/selectors/user';
-import {store} from '../../../../store/reduxStore';
 import ClubList from './ClubList';
+import {clubSelector} from '../../../../store/selectors/clubs';
 
 const ROW_HEIGHT = 60;
-const EXPANDED_ROW_HEIGHT = 180;
+const EXPANDED_ROW_HEIGHT = 170;
 class ClubsHeader extends Component {
   static propTypes = {
     loader: bool,
@@ -46,14 +46,9 @@ class ClubsHeader extends Component {
   animatedValues = () => {
     const {headerAnimatedValue} = this;
     const {AnimatedScrollValue} = this.props;
-    const headerHeight = Animated.interpolate(headerAnimatedValue, {
+    const headerRowHeight = Animated.interpolate(headerAnimatedValue, {
       inputRange: [0, 1],
       outputRange: [ROW_HEIGHT, EXPANDED_ROW_HEIGHT],
-      extrapolate: 'clamp',
-    });
-    const headerBorderWidth = Animated.interpolate(headerAnimatedValue, {
-      inputRange: [0, 1],
-      outputRange: [0, 1],
       extrapolate: 'clamp',
     });
     const headerScrollBorderWidth = Animated.interpolate(AnimatedScrollValue, {
@@ -62,8 +57,7 @@ class ClubsHeader extends Component {
       extrapolate: 'clamp',
     });
     return {
-      headerHeight,
-      headerBorderWidth,
+      headerRowHeight,
       headerScrollBorderWidth,
     };
   };
@@ -79,7 +73,8 @@ class ClubsHeader extends Component {
     this.setState({listVisible: !listVisible});
   };
   headerTitle = () => {
-    const {listVisible, currentClub} = this.state;
+    const {listVisible} = this.state;
+    const {currentClub} = this.props;
     const title = currentClub?.info?.title;
     return rowTitle({
       hideDividerHeader: true,
@@ -113,22 +108,15 @@ class ClubsHeader extends Component {
   };
   selectClub = (id) => {
     const {selectClub} = this.props;
-    const club = store.getState().clubs[id];
     selectClub(id);
     this.toggleListView();
-    this.setState({currentClub: club});
   };
   clubsListView() {
-    const {currentClub} = this.state;
-    const {
-      headerHeight,
-      headerScrollBorderWidth,
-      headerBorderWidth,
-    } = this.animatedValues();
+    const {currentClubID} = this.props;
+    const {headerRowHeight, headerScrollBorderWidth} = this.animatedValues();
     const clubsListContainerStyle = {
       ...styles.clubsListContainer,
-      height: headerHeight,
-      borderBottomWidth: headerBorderWidth,
+      height: headerRowHeight,
     };
     const borderRender = {
       ...styleApp.fullSize,
@@ -141,11 +129,19 @@ class ClubsHeader extends Component {
           {this.headerTitle()}
           <ClubList
             selectClub={this.selectClub}
-            selectedClubID={currentClub?.id}
+            selectedClubID={currentClubID}
           />
         </Animated.View>
       </Animated.View>
     );
+  }
+  offsetAnimation() {
+    const {headerRowHeight} = this.animatedValues();
+    const offsetContainerStyle = {
+      height: headerRowHeight,
+      marginTop: -heightHeaderHome + 30,
+    };
+    return <Animated.View style={offsetContainerStyle} />;
   }
   render() {
     const {loader, navigation, infoUser, text} = this.props;
@@ -182,6 +178,7 @@ class ClubsHeader extends Component {
           typeIcon2={infoUser.picture ? 'image' : 'font'}
         />
         {this.clubsListView()}
+        {this.offsetAnimation()}
       </View>
     );
   }
@@ -202,9 +199,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
   return {
     infoUser: userInfoSelector(state),
+    currentClub: clubSelector(state, {id: props.currentClubID}),
   };
 };
 

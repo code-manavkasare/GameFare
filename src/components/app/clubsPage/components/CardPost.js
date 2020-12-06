@@ -1,17 +1,22 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
-import {string} from 'prop-types';
+import {string, func} from 'prop-types';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 
 import {bindPost} from '../../../database/firebase/bindings';
 import {postSelector} from '../../../../store/selectors/posts';
+import {isClubOwnerSelector} from '../../../../store/selectors/clubs';
+import {removePost} from '../../../functions/clubs';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
+import ButtonColor from '../../../layout/Views/Button';
+import AllIcon from '../../../layout/icons/AllIcons';
 import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 import CardUser from '../../../layout/cards/CardUser';
 import {FormatDate} from '../../../functions/date';
+import {navigate} from '../../../../../NavigationService';
 
 class CardClub extends Component {
   static propTypes = {
@@ -36,6 +41,38 @@ class CardClub extends Component {
       component: 'CardClub',
     });
   }
+  openPostOptions = () => {
+    const {post, clubID} = this.props;
+    const {id: postID} = post;
+    return navigate('Alert', {
+      textButton: 'Delete',
+      colorButton: 'red',
+      onPressColor: 'red',
+      onGoBack: () => removePost({clubID, postID}),
+      title: 'Are you sure you want to delete this post?',
+    });
+  };
+  optionsButton = () => {
+    const {isClubOwner} = this.props;
+    if (!isClubOwner) return null;
+    return (
+      <View style={styles.settingsButtonContainer}>
+        <ButtonColor
+          style={styles.settingsButton}
+          click={this.openPostOptions}
+          color={'transparent'}
+          onPressColor={'transparent'}>
+          <AllIcon
+            name={'ellipsis-h'}
+            size={15}
+            color={colors.greyDark}
+            type="font"
+            solid
+          />
+        </ButtonColor>
+      </View>
+    );
+  };
   captionView = () => {
     const {post} = this.props;
     const {text, timestamp} = post;
@@ -54,6 +91,7 @@ class CardClub extends Component {
     const {video, userID} = post;
     return (
       <View style={styleApp.cardPost}>
+        {this.optionsButton()}
         <CardUser
           id={userID}
           style={styles.cardUser}
@@ -72,7 +110,7 @@ class CardClub extends Component {
 }
 
 const styles = StyleSheet.create({
-  cardUser: {...styleApp.marginView, marginBottom: 0, marginTop: -10},
+  cardUser: {...styleApp.marginView},
   captionView: {...styleApp.marginView, marginTop: 15},
   caption: {...styleApp.text},
   date: {
@@ -81,11 +119,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.greyDark,
   },
+  settingsButtonContainer: {
+    height: 65,
+    position: 'absolute',
+    zIndex: 1,
+    right: '5%',
+    ...styleApp.center2,
+  },
+  settingsButton: {
+    height: 30,
+    width: 30,
+    borderRadius: 15,
+  },
 });
 
 const mapStateToProps = (state, props) => {
   return {
     post: postSelector(state, props),
+    isClubOwner: isClubOwnerSelector(state, {id: props.clubID}),
   };
 };
 
