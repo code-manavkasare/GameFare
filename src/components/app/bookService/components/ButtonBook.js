@@ -5,6 +5,7 @@ import {string} from 'prop-types';
 
 import {navigate, popToTop} from '../../../../../NavigationService';
 import {serviceSelector} from '../../../../store/selectors/services';
+import {defaultCardSelector} from '../../../../store/selectors/user';
 import {confirmBookingService} from '../../../functions/clubs';
 
 import Button from '../../../layout/buttons/Button';
@@ -37,7 +38,8 @@ class ButtonBook extends Component {
   };
   render() {
     const {loader} = this.state;
-    const {service} = this.props;
+    const {service, defaultCard} = this.props;
+    console.log('defaultCard', defaultCard);
     const {unit, value} = service.price;
     return (
       <Button
@@ -46,6 +48,7 @@ class ButtonBook extends Component {
         enabled={true}
         loader={loader}
         text={`Confirm ${unit}${value}`}
+        disabled={!defaultCard}
         icon={{
           name: 'lock',
           size: 24,
@@ -63,6 +66,7 @@ const mapStateToProps = (state, props) => {
 
   return {
     service: serviceSelector(state, {id: serviceID}),
+    defaultCard: defaultCardSelector(state),
   };
 };
 

@@ -780,7 +780,7 @@ const ListPlayers = (props) => {
             paddingTop: 10,
             paddingBottom: 10,
           }}
-          click={() => navigate('ProfilePage', {user: member})}
+          click={() => navigate('ProfilePage', {id: member.id})}
           onPressColor={colors.off2}
         />
       )}

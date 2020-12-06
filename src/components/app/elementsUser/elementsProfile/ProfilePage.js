@@ -6,7 +6,6 @@ import {connect} from 'react-redux';
 import {blockUnblockUser} from '../../../database/firebase/users';
 
 import AsyncImage from '../../../layout/image/AsyncImage';
-import ButtonColor from '../../../layout/Views/Button';
 import Button from '../../../layout/buttons/Button';
 
 import colors from '../../../style/colors';
@@ -22,12 +21,15 @@ import {
   FocusView,
 } from '../../coachingTab/components/ComponentsCard';
 
-import {getValueOnce} from '../../../database/firebase/methods';
 import {
+  infoUserByIdSelector,
   userIDSelector,
-  userInfoSelector,
 } from '../../../../store/selectors/user';
-import {blockedUsersSelector} from '../../../../store/selectors/blockedUsers';
+import {isUserBlockedSelector} from '../../../../store/selectors/blockedUsers';
+import {
+  bindUserInfo,
+  unbindUserInfo,
+} from '../../../database/firebase/bindings';
 
 class ProfilePage extends Component {
   constructor(props) {
@@ -35,49 +37,27 @@ class ProfilePage extends Component {
     this.state = {
       loader: false,
       initialLoader: true,
-      userProfile: {
-        info: {
-          firstname: '',
-          lastname: '',
-          picture: false,
-        },
-        id: '',
-      },
       isBlocked: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  static getDerivedStateFromProps(props, state) {
-    const {route} = props;
-    const user = route.params.user;
-    const {initialLoader, userProfile} = state;
-    if (initialLoader) {
-      return {userProfile: user, initialLoader: false};
-    }
-    return {userProfile: userProfile};
-  }
-  componentDidMount = async () => {
-    const {route, blockedUsers} = this.props;
-    let userProfile = route.params.user;
-    if (!userProfile.id) userProfile.id = userProfile.objectID;
-    let isBlocked = false;
-    if (blockedUsers[userProfile.id]) {
-      isBlocked = true;
-    }
-    const userInfo = await getValueOnce(`users/${userProfile.id}/userInfo`);
-    this.setState({
-      userProfile: {
-        id: userProfile.id,
-        info: userInfo,
-      },
-      isBlocked,
-    });
+
+  componentDidMount = () => {
+    const {route} = this.props;
+    const {id} = route.params;
+    console.log('id', id);
+    bindUserInfo(id);
+  };
+  componentWillUnmount = () => {
+    const {route} = this.props;
+    const {id} = route.params;
+    unbindUserInfo(id);
   };
 
   blockUnblockUser = async (block) => {
-    const {userID} = this.props;
-    const {userProfile} = this.state;
-    await blockUnblockUser(block, userID, userProfile.id);
+    const {userID, route} = this.props;
+    const {id} = route.params;
+    await blockUnblockUser(block, userID, id);
     this.setState({isBlocked: block});
   };
 
@@ -93,32 +73,32 @@ class ProfilePage extends Component {
   };
 
   blockButton = () => {
-    const {isBlocked, userProfile} = this.state;
+    const {isUserBlocked} = this.state;
+    const {route} = this.props;
+    const {id} = route.params;
     const {userID} = this.props;
-    if (userID !== userProfile.id) {
+    if (userID !== id) {
       return (
         <Button
-          text={isBlocked ? 'Unblock' : 'Block user'}
+          text={isUserBlocked ? 'Unblock' : 'Block user'}
           icon={{
             name: 'hand-paper',
             size: 22,
             type: 'font',
             color: colors.title,
           }}
-          styleButton={{borderWidth: 0}}
           textButton={{color: colors.title}}
           color={colors.white}
           onPressColor={colors.off}
-          click={() => this.blockUnblockUser(!isBlocked)}
+          click={() => this.blockUnblockUser(!isUserBlocked)}
         />
       );
     }
   };
 
   profilePage() {
-    const {userProfile} = this.state;
-    console.log(userProfile);
-    if (!userProfile?.info) return null;
+    const {infoUser} = this.props;
+    if (!infoUser) return null;
     const {
       firstname,
       lastname,
@@ -130,7 +110,7 @@ class ProfilePage extends Component {
       badges,
       biography,
       levelCoached,
-    } = this.state.userProfile.info;
+    } = infoUser;
     return (
       <View style={styleApp.marginView}>
         <Row>
@@ -252,11 +232,12 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
+  const {id} = props.route.params;
   return {
-    userInfo: userInfoSelector(state),
+    infoUser: infoUserByIdSelector(state, {id}),
     userID: userIDSelector(state),
-    blockedUsers: blockedUsersSelector(state),
+    isUserBlocked: isUserBlockedSelector(state, {id}),
   };
 };
 

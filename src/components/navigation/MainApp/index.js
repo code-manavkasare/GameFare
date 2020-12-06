@@ -3,7 +3,6 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import TabsApp from '../TabsApp/index';
 
-import ProfilePage from '../../app/elementsUser/elementsProfile/ProfilePage';
 import Conversation from '../../app/elementsMessage/Conversation';
 import Profile from './components/Profile';
 import Webview from '../../layout/Views/Webview';
@@ -46,12 +45,6 @@ const MainApp = () => {
       />
       <Stack.Screen name="Conversation" component={Conversation} />
 
-      <Stack.Screen
-        name="ProfilePage"
-        component={ProfilePage}
-        options={ModalSpec}
-      />
-
       <Stack.Screen name="Webview" component={Webview} />
 
       <Stack.Screen
@@ -75,7 +68,11 @@ const MainApp = () => {
       />
 
       <Stack.Screen name="Club" component={Club} options={SheetModalSpec} />
-      <Stack.Screen name="Bookings" component={Bookings} options={SheetModalSpec} />
+      <Stack.Screen
+        name="Bookings"
+        component={Bookings}
+        options={SheetModalSpec}
+      />
     </Stack.Navigator>
   );
 };

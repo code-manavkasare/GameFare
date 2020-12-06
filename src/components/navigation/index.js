@@ -16,6 +16,7 @@ import {SheetModal} from './transitions/SheetModal';
 import {marginTopApp} from '../style/sizes';
 
 import Payments from './MainApp/components/Payments';
+import ProfilePage from '../app/elementsUser/elementsProfile/ProfilePage';
 
 const Stack = createStackNavigator();
 function InitialStack() {
@@ -101,6 +102,12 @@ function InitialStack() {
       <Stack.Screen
         name="Payments"
         component={Payments}
+        options={FullScreenModalSpec}
+      />
+
+      <Stack.Screen
+        name="ProfilePage"
+        component={ProfilePage}
         options={FullScreenModalSpec}
       />
     </Stack.Navigator>
