@@ -118,7 +118,7 @@ export default class CardMessage extends React.Component {
   };
   goToProfilePage = () => {
     navigate('ProfilePage', {
-      user: this.props.message.currentMessage.user,
+      id: this.props.message.currentMessage.user.id,
     });
   };
   displayPictureUser = (props) => {

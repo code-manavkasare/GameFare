@@ -44,7 +44,7 @@ export default class ImageUser extends Component {
       <TouchableOpacity
         onPress={() => {
           if (onClick) return onClick();
-          else navigate('ProfilePage', {user: user});
+          else navigate('ProfilePage', {id: user.id});
         }}
         activeOpacity={0.9}
         style={styleImg}>

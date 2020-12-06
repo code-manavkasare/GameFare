@@ -36,7 +36,7 @@ class CardUser extends Component {
     unbindUserInfo(id);
   };
   render() {
-    const {infoUser, onClick, style, styleText} = this.props;
+    const {infoUser, onClick, style, styleText, id} = this.props;
     if (!infoUser) return null;
     const {picture, firstname, lastname} = infoUser;
     const containerStyle = {
@@ -67,7 +67,8 @@ class CardUser extends Component {
           );
         }}
         click={() => {
-          navigate('ProfilePage', {user: {id: infoUser.id, info: infoUser}});
+          console.log('infoUser', infoUser);
+          navigate('ProfilePage', {id});
         }}
         color={colors.white}
         style={containerStyle}

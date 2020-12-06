@@ -1,7 +1,7 @@
 import {createSelector} from 'reselect';
 
 const userConnectedSubSelector = (state) => state.user.userConnected;
-const userIDSubSelector = (state) => state.user.userID;
+export const userIDSubSelector = (state) => state.user.userID;
 export const infoUserSubSelector = (state) => state.user.infoUser;
 const infoUserByIdSubSelector = (state, props) => state.users[props.id];
 
@@ -88,6 +88,11 @@ const totalWalletSelector = createSelector(
   (item) => item.wallet.totalWallet,
 );
 
+const defaultCardSelector = createSelector(
+  infoUserSubSelector,
+  (item) => item.wallet.defaultCard,
+);
+
 const userBookingsSelector = createSelector(
   userBookingsSubSelector,
   (bookings) => {
@@ -110,4 +115,5 @@ export {
   infoUserByIdSelector,
   totalWalletSelector,
   userBookingsSelector,
+  defaultCardSelector,
 };
