@@ -274,7 +274,7 @@ class CardArchive extends Component {
               ? null
               : formatDuration(durationSeconds * 1000, true)}
           </Text>
-          <Text style={styles.durationText}>{id}</Text>
+          {__DEV__ && <Text style={styles.durationText}>{id}</Text>}
           <Text style={styles.dateText}>
             {videoUnavailable ? null : progress ? (
               'Uploading...'
