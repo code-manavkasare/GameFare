@@ -153,6 +153,23 @@ export default class CardMessage extends React.Component {
       </View>
     );
   }
+  viewBookingStatus(props) {
+    const {currentMessage} = props;
+    const {text} = currentMessage;
+    return (
+      <View style={[styleApp.center, {height: 15, marginTop: 20}]}>
+        <Text style={[styleApp.subtitle, {fontSize: 12}]}>
+          <AllIcon
+            name="shopping-cart"
+            size={12}
+            color={styleApp.subtitle.color}
+            type="font"
+          />
+          {'  '} {text}
+        </Text>
+      </View>
+    );
+  }
   viewRequest(props) {
     const {currentMessage} = props;
     const {text} = currentMessage;
@@ -187,6 +204,8 @@ export default class CardMessage extends React.Component {
         {this.rowDay(props)}
         {type === 'connection' ? (
           this.viewUserConnect(props)
+        ) : type === 'bookingStatus' ? (
+          this.viewBookingStatus(props)
         ) : type === 'request' ? (
           this.viewRequest(props)
         ) : (

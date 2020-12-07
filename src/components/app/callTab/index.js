@@ -87,7 +87,7 @@ class CallTab extends Component {
                 [user.id]: user,
               });
               navigate('Conversation', {
-                coachSessionID: session.objectID,
+                id: session.objectID,
               });
             },
           },

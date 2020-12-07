@@ -33,25 +33,26 @@ class MessageTab extends React.Component {
   }
   componentDidMount = async () => {
     InteractionManager.runAfterInteractions(async () => {
-      const {coachSessionID} = this.props.route.params;
+      const {id} = this.props.route.params;
       let {notifications} = store.getState().user.infoUser;
       if (!notifications) notifications = [];
       notifications = Object.values(notifications);
       const {userID} = this.props;
-      await deleteNotifications(userID, coachSessionID, notifications);
+      await deleteNotifications(userID, id, notifications);
       updateNotificationBadge(notifications.length);
       this.bindSession();
     });
   };
   bindSession() {
-    const {coachSessionID} = this.props.route.params;
-    bindSession(coachSessionID);
-    bindConversation(coachSessionID);
+    const {id} = this.props.route.params;
+    bindSession(id);
+    bindConversation(id);
   }
   render() {
     const {infoUser, userID, navigation, session, route, messages} = this.props;
     const {initialMessage} = route.params;
     const {loader} = this.state;
+    console.log('session', session);
     if (!session) return null;
     const user = userObject(infoUser, userID);
     return (
@@ -71,12 +72,13 @@ class MessageTab extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
+  const {id} = props.route.params;
   return {
     userID: userIDSelector(state),
     userConnected: userConnectedSelector(state),
     infoUser: userInfoSelector(state),
-    session: sessionSelector(state, {id: props.route.params.coachSessionID}),
-    messages: messagesSelector(state, {id: props.route.params.coachSessionID}),
+    session: sessionSelector(state, {id}),
+    messages: messagesSelector(state, {id}),
   };
 };
 

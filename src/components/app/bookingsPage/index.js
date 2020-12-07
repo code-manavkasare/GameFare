@@ -82,10 +82,11 @@ class BookingsPage extends Component {
               marginTop: 0,
             },
           })}
+          paddingBottom={120}
           list={bookings}
           lengthList={bookings.length}
           cardList={this.renderBooking}
-          keyExtractor={(item, index) => `${item.id}-${index}`}
+          keyExtractor={(item) => item.id}
           scrollEnabled={bookings.length > 0}
         />
       </View>

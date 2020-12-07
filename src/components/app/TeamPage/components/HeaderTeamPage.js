@@ -32,7 +32,7 @@ export default class HeaderTeamPage extends Component {
         sizeIcon1={17}
         clickButton2={async () =>
           navigate('Conversation', {
-            coachSessionID: session.objectID,
+            id: session.objectID,
           })
         }
         clickButton1={() => navigation.goBack()}
