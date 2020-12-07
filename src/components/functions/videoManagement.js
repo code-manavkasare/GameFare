@@ -2,6 +2,7 @@ import {ProcessingManager} from 'react-native-video-processing';
 import RNFS from 'react-native-fs';
 import database from '@react-native-firebase/database';
 import {DocumentDirectoryPath} from 'react-native-fs';
+import {unzip} from 'react-native-zip-archive';
 import {assoc} from 'ramda';
 import {getPhotos} from '@react-native-community/cameraroll';
 
@@ -558,15 +559,67 @@ const addVideosFromCamerarollToApp = async (videos) => {
     videos.map((localIdentifier) => getNativeVideoInfo(localIdentifier)),
   );
   videosInfos.forEach((video) => {
+    video.url = `file://${video.url}`;
     addLocalVideo({video, backgroundUpload: true});
   });
   goToLibraryPage();
   openVideoPlayerIfOneVideoImported(videosInfos);
 };
+
+const checkIfThumbnailsSeekBarExist = async (videoId) => {
+  const tempPath = `${RNFS.TemporaryDirectoryPath}/${videoId}/thumbnails`;
+  const folderExist = await RNFS.exists(tempPath);
+  return folderExist;
+};
+const checkFetchAndSaveThumbnailsForSeekBar = async ({archiveId, url}) => {
+  const folderExist = await checkIfThumbnailsSeekBarExist(archiveId);
+  const thumbnailsPath = `${
+    RNFS.TemporaryDirectoryPath
+  }${archiveId}/thumbnails`;
+
+  if (!folderExist && url) {
+    await downloadAndUnzip(url, thumbnailsPath);
+  }
+  return getAllFilesInDirPath(thumbnailsPath);
+};
+
+const downloadAndUnzip = async (url, destination) => {
+  return new Promise(async (resolve, reject) => {
+    const tempZipPath = `${destination}/tempFile.zip`;
+    await RNFS.mkdir(destination);
+    RNFS.downloadFile({
+      fromUrl: url,
+      toFile: tempZipPath,
+    }).promise.then(() => {
+      unzip(tempZipPath, destination)
+        .then(async (path) => {
+          console.log(`unzip completed at ${path}`);
+          await RNFS.unlink(tempZipPath);
+
+          const folderInfo = await RNFS.readdir(destination);
+          console.log('folderInfo: ', folderInfo);
+          resolve();
+        })
+        .catch((error) => {
+          console.error(error);
+          reject(error);
+        });
+    });
+  });
+};
+
+const getAllFilesInDirPath = async (dirPath) => {
+  const filesName = await RNFS.readdir(dirPath);
+  const filesPathArray = await filesName.map((filesName) => {
+    return `${dirPath}/${filesName}`;
+  });
+  return filesPathArray;
+};
 export {
   addVideosFromCamerarollToApp,
   addLocalVideo,
   arrayUploadFromSnippets,
+  checkFetchAndSaveThumbnailsForSeekBar,
   deleteLocalVideoFile,
   deleteVideos,
   dimensionRectangle,
