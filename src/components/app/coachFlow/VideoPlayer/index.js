@@ -113,7 +113,8 @@ export default class VideoPlayer extends Component {
 
   getProxySource = async () => {
     const {archive} = this.props;
-    const {url} = archive;
+    const {url, local} = archive;
+    if (local) return;
     const proxySource = await convertToProxyURL(url);
     this.setState({proxySource});
   };
@@ -410,7 +411,7 @@ export default class VideoPlayer extends Component {
     } = this.props;
     let {recordedActions} = this.props;
 
-    let {thumbnail, url, durationSeconds} = archive;
+    let {thumbnail, url, durationSeconds, local} = archive;
 
     const {
       currentTime,
@@ -480,7 +481,7 @@ export default class VideoPlayer extends Component {
                       connectedToSession ? undefined : allowRecording
                     }
                     source={{
-                      uri: proxySource,
+                      uri: !local ? proxySource : url,
                     }}
                     style={styleApp.fullSize}
                     ref={(ref) => {
