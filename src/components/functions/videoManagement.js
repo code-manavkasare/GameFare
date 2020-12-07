@@ -571,6 +571,7 @@ const checkIfThumbnailsSeekBarExist = async (videoId) => {
   const folderExist = await RNFS.exists(tempPath);
   return folderExist;
 };
+
 const checkFetchAndSaveThumbnailsForSeekBar = async ({archiveId, url}) => {
   const folderExist = await checkIfThumbnailsSeekBarExist(archiveId);
   const thumbnailsPath = `${
@@ -610,6 +611,7 @@ const downloadAndUnzip = async (url, destination) => {
 
 const getAllFilesInDirPath = async (dirPath) => {
   const filesName = await RNFS.readdir(dirPath);
+  filesName.sort();
   const filesPathArray = await filesName.map((filesName) => {
     return `${dirPath}/${filesName}`;
   });
