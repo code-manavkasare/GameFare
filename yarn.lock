@@ -7549,6 +7549,11 @@ react-native-windows@^0.62.0-0:
     uuid "^3.3.2"
     xml-parser "^1.2.1"
 
+react-native-zip-archive@^5.0.6:
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-zip-archive/-/react-native-zip-archive-5.0.6.tgz#2d4f98e8d16df88638540db672e59a6d79fad0ca"
+  integrity sha512-AKc8qk2JlCwoijnwxzt0BRwCl6LOcMAGgd0+aF51LOZEeL+ePJzDBzZLkcIB1z2tnMtdpDUG3q/4O8Q49wgC0Q==
+
 react-native@0.63.2:
   version "0.63.2"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.63.2.tgz#eaebf3430577b37fbd66ef228a86b3408259ef8e"

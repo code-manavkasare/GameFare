@@ -265,7 +265,7 @@ class CardArchive extends Component {
 
   infoRow = () => {
     const {archive, videoUnavailable} = this.state;
-    const {startTimestamp, durationSeconds, progress} = archive;
+    const {startTimestamp, durationSeconds, progress, id} = archive;
     return (
       <View pointerEvents="none" style={styles.infoRow}>
         <Col>
@@ -274,6 +274,7 @@ class CardArchive extends Component {
               ? null
               : formatDuration(durationSeconds * 1000, true)}
           </Text>
+          <Text style={styles.durationText}>{id}</Text>
           <Text style={styles.dateText}>
             {videoUnavailable ? null : progress ? (
               'Uploading...'

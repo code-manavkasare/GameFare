@@ -593,9 +593,17 @@ PODS:
     - React
   - RNVideoProcessing (1.7.5):
     - React
+  - RNZipArchive (5.0.6):
+    - React
+    - RNZipArchive/Core (= 5.0.6)
+    - SSZipArchive (= 2.2.2)
+  - RNZipArchive/Core (5.0.6):
+    - React
+    - SSZipArchive (= 2.2.2)
   - Sentry (6.0.8):
     - Sentry/Core (= 6.0.8)
   - Sentry/Core (6.0.8)
+  - SSZipArchive (2.2.2)
   - Stripe (14.0.1)
   - tipsi-stripe (7.5.3):
     - React
@@ -710,6 +718,7 @@ DEPENDENCIES:
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - RNVideoProcessing (from `../node_modules/react-native-video-processing`)
+  - RNZipArchive (from `../node_modules/react-native-zip-archive`)
   - Stripe
   - tipsi-stripe (from `../node_modules/tipsi-stripe`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -755,6 +764,7 @@ SPEC REPOS:
     - PromisesObjC
     - Protobuf
     - Sentry
+    - SSZipArchive
     - Stripe
     - YogaKit
 
@@ -955,6 +965,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-vector-icons"
   RNVideoProcessing:
     :path: "../node_modules/react-native-video-processing"
+  RNZipArchive:
+    :path: "../node_modules/react-native-zip-archive"
   tipsi-stripe:
     :path: "../node_modules/tipsi-stripe"
   Yoga:
@@ -1102,7 +1114,9 @@ SPEC CHECKSUMS:
   RNSVG: 67f1f12dae2cef6ed59a42cae74a6b8f5a9e7b46
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   RNVideoProcessing: 87e7cb7d5386bb5ea5149a9bb0c5f1bb59a22d06
+  RNZipArchive: 9dfdaa1d1ad49a423e83df505f292e0ae8126a5d
   Sentry: 6ab9f44a413dec7ebf5e82b166048afb5f60b895
+  SSZipArchive: fa16b8cc4cdeceb698e5e5d9f67e9558532fbf23
   Stripe: 4305b646743612854819fb5d5cf67aaeb93577c0
   tipsi-stripe: fb5b32e890a4528322c491e1827133a3cb919e0a
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598

@@ -2,8 +2,12 @@ import React, {Component} from 'react';
 import {View, StyleSheet, Animated, FlatList, Image} from 'react-native';
 import {isEqual} from 'lodash';
 import styleApp from '../../../../style/style';
-import {generateThumbnailSet} from '../../../../functions/videoManagement';
+import {
+  checkFetchAndSaveThumbnailsForSeekBar,
+  generateThumbnailSet,
+} from '../../../../functions/videoManagement';
 import {getArchiveByID} from '../../../../functions/archive';
+import {timing} from '../../../../animations/animations';
 
 export default class Filmstrip extends Component {
   constructor(props) {
@@ -16,8 +20,6 @@ export default class Filmstrip extends Component {
       count: 13,
       loadedThumbs: 0,
     };
-
-    this.loadedThumbs = 0;
     this.opacity = new Animated.Value(0);
   }
 
@@ -27,50 +29,37 @@ export default class Filmstrip extends Component {
     }
     const {archiveId} = this.props;
     let archive = await getArchiveByID(archiveId);
+    const {durationSeconds, local, size} = archive;
     this.setState({
-      timeBounds: [0, archive.durationSeconds],
-      thumbnailAspect: archive.size.height / archive.size.width,
+      timeBounds: [0, durationSeconds],
+      thumbnailAspect: size.height / size.width,
       thumbnails: archive.initialSeekbarThumbnails,
     });
-    if (!archive.initialSeekbarThumbnails) {
+    console.log('archive: ', archive);
+    if (!local) {
+      console.log('fetch Thumbnails');
+      const {thumbnailsSeekBar} = archive;
+      const thumbnails = await checkFetchAndSaveThumbnailsForSeekBar({
+        archiveId,
+        url: thumbnailsSeekBar,
+      });
+      await this.setState({thumbnails});
+      console.log('thumbnailsPath: ', thumbnails);
+    }
+    if (local) {
+      //TODO make local thumbnail generation work with new architecture
       // const thumbnails = await this.fetchThumbnails({});
-      // store.dispatch(
-      //   setArchive({
-      //     ...archive,
-      //     initialSeekbarThumbnails: thumbnails,
-      //   }),
-      // );
+      // console.log('thumbnails: ', thumbnails);
     }
   };
 
   async componentDidUpdate(prevProps, prevState) {
-    // const {onFilmstripLoad, source} = this.props;
-    // const {loadedThumbs, count, thumbnails} = this.state;
-    // const {source: prevSource} = prevProps;
-    // if (onFilmstripLoad && loadedThumbs === count) {
-    //   Animated.timing(this.opacity, timing(1, 150)).start();
-    //   onFilmstripLoad();
-    //   const {archiveId} = this.props;
-    //   let archive = await getArchiveByID(archiveId);
-    //   store.dispatch(
-    //     setArchive({
-    //       ...archive,
-    //       initialSeekbarThumbnails: thumbnails,
-    //     }),
-    //   );
-    // } else if (source !== prevSource) {
-    //   const {archiveId} = this.props;
-    //   // let archive = await getArchiveByID(archiveId);
-    //   if (!archive.initialSeekbarThumbnails) {
-    //     // const thumbnails = await this.fetchThumbnails({});
-    //     // store.dispatch(
-    //     //   setArchive({
-    //     //     ...archive,
-    //     //     initialSeekbarThumbnails: thumbnails,
-    //     //   }),
-    //     // );
-    //   }
-    // }
+    const {onFilmstripLoad} = this.props;
+    const {loadedThumbs, count} = this.state;
+    if (onFilmstripLoad && loadedThumbs === count) {
+      Animated.timing(this.opacity, timing(1, 150)).start();
+      onFilmstripLoad();
+    }
   }
 
   shouldComponentUpdate(prevProps, prevState) {
@@ -121,11 +110,10 @@ export default class Filmstrip extends Component {
     }
   };
 
-  thumbnail(response) {
+  thumbnail = (response) => {
     const {count} = this.state;
     const {seekbar} = this.props;
-    const {item, index} = response;
-    const {path} = item;
+    const {item: path, index} = response;
     const width = seekbar.width.interpolate({
       inputRange: [0, 1],
       outputRange: [0, 1 / count],
@@ -133,10 +121,11 @@ export default class Filmstrip extends Component {
     const opacity = this.opacity;
     return (
       <Animated.View style={{opacity, width}}>
-        {/* <Image
+        <Image
           source={{uri: path}}
           style={styles.thumbnail}
           onError={(e) => {
+            console.log('error thumbnail ', e);
             this.fetchThumbnails({index});
           }}
           onLoad={(res) => {
@@ -145,23 +134,24 @@ export default class Filmstrip extends Component {
               loadedThumbs: loadedThumbs + 1,
             });
           }}
-        /> */}
+        />
       </Animated.View>
     );
-  }
+  };
 
   render() {
     const {thumbnails} = this.state;
-    return (
+
+    return thumbnails !== [] ? (
       <View style={styles.container}>
         <FlatList
           data={thumbnails}
-          renderItem={this.thumbnail.bind(this)}
-          keyExtractor={(item) => item.path}
+          renderItem={(item) => this.thumbnail(item)}
+          keyExtractor={(item) => item}
           horizontal={true}
         />
       </View>
-    );
+    ) : null;
   }
 }
 
