@@ -71,7 +71,6 @@ export default class UserSearchResults extends Component {
 
   userCard = (user) => {
     const {selectedUsers, onSelect} = this.props;
-    console.log('selectedUsers', selectedUsers);
     return (
       <View key={user.id} style={{marginBottom: 5}}>
         <CardUserSelect

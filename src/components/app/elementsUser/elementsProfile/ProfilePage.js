@@ -45,7 +45,6 @@ class ProfilePage extends Component {
   componentDidMount = () => {
     const {route} = this.props;
     const {id} = route.params;
-    console.log('id', id);
     bindUserInfo(id);
   };
   componentWillUnmount = () => {

@@ -38,7 +38,6 @@ class ButtonBook extends Component {
   render() {
     const {loader} = this.state;
     const {service, defaultCard} = this.props;
-    console.log('defaultCard', defaultCard);
     const {unit, value} = service.price;
     return (
       <Button

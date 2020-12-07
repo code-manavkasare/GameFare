@@ -177,7 +177,6 @@ class VideoPlayerPage extends Component {
     !isMicrophoneMuted && (await this.AudioRecorderPlayerRef?.stopRecording());
 
     this.videoPlayerRefs.forEach((ref) => {
-      console.log('ref', ref);
       ref?.videoPlayerRef?.setRecording(false);
     });
     await this.videoPlayerRefs[0].toggleVisibleSeekBar(false);

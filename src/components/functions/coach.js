@@ -553,7 +553,6 @@ const sessionOpening = async (session) => {
     'VideoChat',
     'AllowBluetooth',
   );
-  console.log('Open session');
   logMixpanel({
     label: 'Open session ' + session.objectID,
     params: {coachSessionID: session.objectID},

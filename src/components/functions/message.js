@@ -71,19 +71,6 @@ const sendNewMessage = async ({
   type,
   content,
 }) => {
-  console.log('new Message!!!', {
-    user,
-    text,
-    type,
-    images,
-    content,
-    createdAt: new Date(),
-    timeStamp: Date.now(),
-    usersRead: {
-      [user.id]: true,
-    },
-  });
-  console.log('objectID,', objectID);
   await database()
     .ref('messagesCoachSession/' + objectID)
     .push({

@@ -182,6 +182,9 @@ const confirmBookingService = async ({serviceID}) => {
       members: membersBooking,
       objectID: id,
       isBooking: true,
+      info: {
+        organizer: userID,
+      },
     },
   };
 
