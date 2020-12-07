@@ -34,7 +34,6 @@ const chargeUser = async (amount) => {
       cardID: defaultCard.id,
     },
   });
-  console.log('data', data);
   return data;
 };
 

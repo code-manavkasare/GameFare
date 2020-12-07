@@ -61,7 +61,6 @@ class CardBooking extends Component {
   };
   openConversation = () => {
     const {id} = this.props.booking;
-    console.log('id', id);
     navigate('Conversation', {
       id,
     });

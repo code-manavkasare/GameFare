@@ -19,8 +19,11 @@ import {
   userIDSelector,
   userInfoSelector,
 } from '../../../../../store/selectors/user';
-import {cloudVideosSelector} from '../../../../../store/selectors/archives';
-import {drawingsSelector} from '../../../../../store/selectors/sessions';
+
+import {
+  drawingsSelector,
+  sharedVideoSelector,
+} from '../../../../../store/selectors/sessions';
 
 class DrawView extends Component {
   static propTypes = {
@@ -63,7 +66,6 @@ class DrawView extends Component {
 
     let stateDrawings = state.drawings;
     if (!stateDrawings) stateDrawings = {};
-
     let newDrawings = Object.values(stateDrawings)
       .filter((drawing) => {
         if (!videoBeingShared) return true;
@@ -90,7 +92,6 @@ class DrawView extends Component {
         result[item.id] = item;
         return result;
       }, {});
-
     return {drawings: {...drawingsInCloudButNoLocally, ...newDrawings}};
   }
   clear = async () => {
@@ -607,7 +608,10 @@ const mapStateToProps = (state, props) => {
     }),
     userID: userIDSelector(state),
     infoUser: userInfoSelector(state),
-    cloudVideo: cloudVideosSelector(state),
+    cloudVideo: sharedVideoSelector(state, {
+      id: props.coachSessionID,
+      archiveID: props.archiveID,
+    }),
   };
 };
 

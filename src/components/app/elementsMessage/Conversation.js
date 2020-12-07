@@ -52,7 +52,6 @@ class MessageTab extends React.Component {
     const {infoUser, userID, navigation, session, route, messages} = this.props;
     const {initialMessage} = route.params;
     const {loader} = this.state;
-    console.log('session', session);
     if (!session) return null;
     const user = userObject(infoUser, userID);
     return (

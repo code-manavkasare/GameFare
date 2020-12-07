@@ -25,6 +25,18 @@ const drawingsSelector = createSelector(
     if (!session) return {};
     if (!session.sharedVideos) return {};
     if (!session.sharedVideos[archiveID]) return {};
+    if (!session.sharedVideos[archiveID].drawings) return {};
+    return session.sharedVideos[archiveID].drawings;
+  },
+);
+
+const sharedVideoSelector = createSelector(
+  sessionSubSelector,
+  archiveIDSubSelector,
+  (session, archiveID) => {
+    if (!session) return {};
+    if (!session.sharedVideos) return {};
+    if (!session.sharedVideos[archiveID]) return {};
     return session.sharedVideos[archiveID];
   },
 );
@@ -144,4 +156,5 @@ export {
   playbackLinkedSelector,
   recordingSessionSelector,
   endCurrentSessionSelector,
+  sharedVideoSelector,
 };

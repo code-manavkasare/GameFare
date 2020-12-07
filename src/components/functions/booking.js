@@ -40,7 +40,6 @@ const updateBookingStatusAlert = ({bookingID, status}) => {
 };
 
 const updateBookingStatus = async ({bookingID, status}) => {
-  console.log('updateBookingStatus', status, bookingID);
   await database()
     .ref(`bookings/${bookingID}/`)
     .update({

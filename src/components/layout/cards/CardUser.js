@@ -66,10 +66,7 @@ class CardUser extends Component {
             </View>
           );
         }}
-        click={() => {
-          console.log('infoUser', infoUser);
-          navigate('ProfilePage', {id});
-        }}
+        click={() => navigate('ProfilePage', {id})}
         color={colors.white}
         style={containerStyle}
         onPressColor={colors.off2}

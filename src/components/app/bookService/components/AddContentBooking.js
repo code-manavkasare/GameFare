@@ -31,7 +31,6 @@ export default class AddContentBooking extends Component {
   addContentToBooking = async () => {
     const {route} = this.props;
     const {bookingID} = route.params;
-    console.log('bookingID', bookingID);
     const {text, video} = this.state;
     await this.setState({loader: true});
     await addContentToBooking({text, video, bookingID});
