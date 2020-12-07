@@ -185,7 +185,7 @@ class InvitationManager extends Component {
     if (action === 'invite') {
       if (sessionToInvite && sessionToInvite !== '') {
         await addMembersToSession(sessionToInvite, selectedUsers);
-        navigate('Conversation', {coachSessionID: sessionToInvite});
+        navigate('Conversation', {id: sessionToInvite});
       } else if (currentSessionID && currentSessionID !== '') {
         await addMembersToSession(currentSessionID, selectedUsers);
         navigate('Session');
@@ -199,14 +199,14 @@ class InvitationManager extends Component {
       if (action === 'shareArchives') {
         if (archivesToShare && archivesToShare.length > 0) {
           shareVideosWithTeams(archivesToShare, [session.objectID]);
-          navigate('Conversation', {coachSessionID: session.objectID});
+          navigate('Conversation', {id: session.objectID});
         } else {
           console.log(
             'ERROR InvitationManager, action is "shareVideos" but empty/no prop "archivesToShare" provided',
           );
         }
       } else if (action === 'message') {
-        navigate('Conversation', {coachSessionID: session.objectID});
+        navigate('Conversation', {id: session.objectID});
       } else if (action === 'call') {
         sessionOpening(session);
       }
@@ -225,7 +225,7 @@ class InvitationManager extends Component {
       if (archivesToShare && archivesToShare.length > 0) {
         shareVideosWithTeams(archivesToShare, sessionIDs);
         if (sessionIDs.length === 1) {
-          navigate('Conversation', {coachSessionID: sessionIDs[0]});
+          navigate('Conversation', {id: sessionIDs[0]});
         } else {
           goBack();
         }
@@ -245,7 +245,7 @@ class InvitationManager extends Component {
         );
       }
     } else if (action === 'message') {
-      navigate('Conversation', {coachSessionID: sessionIDs[0]});
+      navigate('Conversation', {id: sessionIDs[0]});
     } else if (action === 'call') {
       sessionOpening(Object.values(selectedSessions)[0]);
     }

@@ -20,6 +20,7 @@ const bindSession = (sessionID) => {
       .ref(`coachSessions/${sessionID}`)
       .on('value', function(snapshot) {
         const newSession = snapshot.val();
+        console.log('bindSession', newSession);
         if (newSession) store.dispatch(setSession(newSession));
       });
   });

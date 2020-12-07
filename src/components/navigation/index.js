@@ -14,6 +14,8 @@ import SelectVideosFromLibrary from '../app/videoLibraryPage/index';
 import Alert from '../layout/alerts/Alert';
 import {SheetModal} from './transitions/SheetModal';
 import {marginTopApp} from '../style/sizes';
+import Conversation from '../app/elementsMessage/Conversation';
+import SessionSettings from '../app/TeamPage/components/SessionSettings';
 
 import Payments from './MainApp/components/Payments';
 import ProfilePage from '../app/elementsUser/elementsProfile/ProfilePage';
@@ -37,7 +39,8 @@ function InitialStack() {
     <Stack.Navigator
       initialRouteName="MainApp"
       headerMode="none"
-      mode={'modal'}>
+      //  mode={'modal'}
+    >
       <Stack.Screen
         name="MainApp"
         component={MainApp}
@@ -110,6 +113,9 @@ function InitialStack() {
         component={ProfilePage}
         options={FullScreenModalSpec}
       />
+
+      <Stack.Screen name="Conversation" component={Conversation} />
+      <Stack.Screen name="SessionSettings" component={SessionSettings} />
     </Stack.Navigator>
   );
 }

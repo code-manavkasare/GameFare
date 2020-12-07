@@ -26,15 +26,14 @@ class ButtonBook extends Component {
     };
   }
   confirmBooking = async () => {
-    const {serviceID, clubID, navigation} = this.props;
+    const {serviceID} = this.props;
 
     await this.setState({loader: true});
-    const {response, error} = await confirmBookingService({serviceID, clubID});
+    const {response, error, id} = await confirmBookingService({
+      serviceID,
+    });
     await this.setState({loader: false, error});
-    if (response) {
-      await navigate('ClubsPage');
-      navigate('Bookings');
-    }
+    if (response) navigate('AddContentBooking', {serviceID, bookingID: id});
   };
   render() {
     const {loader} = this.state;

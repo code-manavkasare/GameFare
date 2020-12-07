@@ -136,7 +136,7 @@ class CardStream extends Component {
           if (onClick) {
             onClick(session);
           } else {
-            navigate('Conversation', {coachSessionID: coachSessionID});
+            navigate('Conversation', {id: coachSessionID});
           }
         }}
         color={colors.white}

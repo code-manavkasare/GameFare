@@ -3,11 +3,9 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import TabsApp from '../TabsApp/index';
 
-import Conversation from '../../app/elementsMessage/Conversation';
 import Profile from './components/Profile';
 import Webview from '../../layout/Views/Webview';
 import Groups from '../../app/coachFlow/GroupsPage/index';
-import SessionSettings from '../../app/TeamPage/components/SessionSettings';
 import CreateClub from '../../app/clubsPage/components/CreateClub';
 import Club from '../MainApp/components/Club';
 import {SheetModal} from '../transitions/SheetModal';
@@ -43,7 +41,7 @@ const MainApp = () => {
           animationEnabled: false,
         }}
       />
-      <Stack.Screen name="Conversation" component={Conversation} />
+      
 
       <Stack.Screen name="Webview" component={Webview} />
 
@@ -54,7 +52,7 @@ const MainApp = () => {
       />
       <Stack.Screen name="Groups" component={Groups} />
 
-      <Stack.Screen name="SessionSettings" component={SessionSettings} />
+      
 
       <Stack.Screen
         name="CreateClub"

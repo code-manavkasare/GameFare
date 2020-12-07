@@ -9,6 +9,7 @@ import {setPosts} from '../../store/actions/postsActions.js';
 import {setBookings} from '../../store/actions/bookingsActions.js';
 import {createInviteToClubBranchUrl} from '../database/branch';
 import {goBack, navigate} from '../../../NavigationService';
+import {getValueOnce} from '../database/firebase/methods.js';
 
 const createClub = async ({title, description}) => {
   const {userID} = store.getState().user;
@@ -130,9 +131,11 @@ const removePost = async ({postID, clubID}) => {
   return true;
 };
 
-const confirmBookingService = async ({clubID, serviceID}) => {
+const confirmBookingService = async ({serviceID}) => {
   const service = store.getState().services[serviceID];
-  const {userID} = store.getState().user;
+  const {userID, infoUser} = store.getState().user;
+  const userInfo = {infoUser};
+  const ownerInfo = await getValueOnce(`users/${service.owner}/userInfo`);
 
   ///// charge user //////
   const {value: chargeAmount} = service.price;
@@ -142,13 +145,25 @@ const confirmBookingService = async ({clubID, serviceID}) => {
   ////// create new booking ////////
   const id = generateID();
   const timestamp = Date.now();
+  const membersBooking = {
+    [userID]: {
+      id: userID,
+      info: userInfo,
+      timestamp,
+    },
+    [service.owner]: {
+      id: service.owner,
+      info: ownerInfo,
+      timestamp,
+    },
+  };
   const newBooking = {
     id,
     userID,
     serviceID,
     serviceOwnerID: service.owner,
     requestorID: userID,
-    members: {[userID]: true},
+    members: membersBooking,
     status: 'pending',
     timestamp,
   };
@@ -162,13 +177,20 @@ const confirmBookingService = async ({clubID, serviceID}) => {
       id,
       timestamp,
     },
+    // create new conversation
+    [`coachSessions/${id}/`]: {
+      members: membersBooking,
+      objectID: id,
+      isBooking: true,
+    },
   };
+
   await store.dispatch(setBookings({[id]: newBooking}));
   await database()
     .ref()
     .update(bookingCreation);
 
-  return {response: true};
+  return {response: true, id};
 };
 
 const inviteUsersToClub = async ({clubID}) => {

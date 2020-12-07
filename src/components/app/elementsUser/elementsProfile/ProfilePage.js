@@ -73,8 +73,7 @@ class ProfilePage extends Component {
   };
 
   blockButton = () => {
-    const {isUserBlocked} = this.state;
-    const {route} = this.props;
+    const {route, isUserBlocked} = this.props;
     const {id} = route.params;
     const {userID} = this.props;
     if (userID !== id) {

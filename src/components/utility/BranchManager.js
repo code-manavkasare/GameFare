@@ -70,7 +70,7 @@ class BranchManager extends Component {
         logMixpanel({
           label: 'Open invite conversation link ' + session.objectID,
         });
-        navigate('Conversation', {coachSessionID: session.objectID});
+        navigate('Conversation', {id: session.objectID});
         break;
       }
       case 'session': {
@@ -115,7 +115,7 @@ class BranchManager extends Component {
       ) {
         sessionOpening(coachSessionFirebase);
       } else {
-        navigate('Conversation', {coachSessionID: sessionID});
+        navigate('Conversation', {id: sessionID});
       }
     } else {
       const session = await createCoachSessionFromUserIDs(
@@ -123,7 +123,7 @@ class BranchManager extends Component {
         [userID],
         sessionID,
       );
-      navigate('Conversation', {coachSessionID: session.objectID});
+      navigate('Conversation', {id: session.objectID});
     }
   }
 
