@@ -134,7 +134,7 @@ const removePost = async ({postID, clubID}) => {
 const confirmBookingService = async ({serviceID}) => {
   const service = store.getState().services[serviceID];
   const {userID, infoUser} = store.getState().user;
-  const userInfo = {infoUser};
+  const {userInfo} = infoUser;
   const ownerInfo = await getValueOnce(`users/${service.owner}/userInfo`);
 
   ///// charge user //////

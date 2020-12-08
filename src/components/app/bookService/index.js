@@ -15,6 +15,7 @@ import Button from '../../layout/buttons/Button';
 import {clubSelector, servicesSelector} from '../../../store/selectors/clubs';
 import CardService from '../clubSettings/components/CardService';
 import HeaderBookService from './components/HeaderBookService';
+import CardUser from '../../layout/cards/CardUser';
 
 class ClubSettings extends Component {
   static propTypes = {
@@ -30,17 +31,20 @@ class ClubSettings extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   clubSettings = () => {
-    const {route, services} = this.props;
+    const {route, services, club} = this.props;
     const {id: clubID} = route.params;
+    const {owner} = club;
     return (
       <View style={[styleApp.marginView]}>
+        <CardUser id={owner} />
+        <View style={[styleApp.divider, {marginBottom: 0}]} />
         {services.map(({id}) => (
           <CardService
             key={id}
             id={id}
             clubID={clubID}
             book={true}
-            displayOwner={true}
+            displayOwner={false}
           />
         ))}
       </View>
