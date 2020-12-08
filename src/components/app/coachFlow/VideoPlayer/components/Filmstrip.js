@@ -43,13 +43,13 @@ export default class Filmstrip extends Component {
         archiveId,
         url: thumbnailsSeekBar,
       });
-      await this.setState({thumbnails});
-      console.log('thumbnailsPath: ', thumbnails);
+      this.setState({thumbnails});
     }
     if (local) {
-      //TODO make local thumbnail generation work with new architecture
-      // const thumbnails = await this.fetchThumbnails({});
-      // console.log('thumbnails: ', thumbnails);
+      const thumbnails = this.sanitizeThumbnailsLocalsPath(
+        await this.fetchThumbnails({}),
+      );
+      this.setState({thumbnails});
     }
   };
 
@@ -61,6 +61,12 @@ export default class Filmstrip extends Component {
       onFilmstripLoad();
     }
   }
+
+  sanitizeThumbnailsLocalsPath = (thumbnails) => {
+    return thumbnails.map((thumbnailInfo) => {
+      return thumbnailInfo.path;
+    });
+  };
 
   shouldComponentUpdate(prevProps, prevState) {
     const {loadedThumbs} = this.state;
@@ -95,17 +101,6 @@ export default class Filmstrip extends Component {
       } else {
         thumbnails = thumbnailSet;
       }
-      let nextState = {
-        thumbnails,
-        timeBounds,
-      };
-      if (index === undefined) {
-        nextState = {
-          ...nextState,
-          loadedThumbs: 0,
-        };
-      }
-      this?.setState(nextState);
       return thumbnails;
     }
   };
@@ -126,7 +121,6 @@ export default class Filmstrip extends Component {
           style={styles.thumbnail}
           onError={(e) => {
             console.log('error thumbnail ', e);
-            this.fetchThumbnails({index});
           }}
           onLoad={(res) => {
             const {loadedThumbs} = this.state;
