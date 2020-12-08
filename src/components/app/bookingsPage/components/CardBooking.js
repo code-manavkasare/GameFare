@@ -18,6 +18,7 @@ import CardService from '../../clubSettings/components/CardService';
 import Button from '../../../layout/buttons/Button';
 import {updateBookingStatusAlert} from '../../../functions/booking';
 import {capitalize} from '../../../functions/coach';
+import CardUser from '../../../layout/cards/CardUser';
 
 class CardBooking extends Component {
   static propTypes = {
@@ -102,16 +103,19 @@ class CardBooking extends Component {
     );
   };
   render() {
-    const {booking} = this.props;
-
+    const {booking, userID} = this.props;
+    console.log('booking', booking);
     if (!booking) return <View />;
-    const {serviceID, status} = booking;
+    const {serviceID, status, serviceOwnerID, requestorID} = booking;
     return (
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={() => true}
         style={styles.card}>
-        <CardService id={serviceID} displayOwner={true} hideButtons={true} />
+        <CardUser
+          id={serviceOwnerID === userID ? requestorID : serviceOwnerID}
+        />
+        <CardService id={serviceID} disableBookButton={true} />
         <Row
           style={{
             marginTop: 20,

@@ -15,6 +15,7 @@ import {removeService} from '../../../functions/clubs';
 import {formatDuration} from '../../../functions/date';
 import {serviceSelector} from '../../../../store/selectors/services';
 import CardUser from '../../../layout/cards/CardUser';
+import ButtonColor from '../../../layout/Views/Button';
 
 class CardService extends Component {
   static propTypes = {
@@ -23,7 +24,7 @@ class CardService extends Component {
     clubID: string,
     book: bool,
     displayOwner: bool,
-    hideButtons: bool,
+    disableBookButton: bool,
   };
   static defaultProps = {};
 
@@ -57,7 +58,8 @@ class CardService extends Component {
     });
   };
   bookService = () => {
-    const {service, clubID} = this.props;
+    const {service, clubID, disableBookButton} = this.props;
+    if (disableBookButton) return;
     const {id} = service;
     navigate('Club', {
       screen: 'BookingSummary',
@@ -77,10 +79,10 @@ class CardService extends Component {
     });
   };
   render() {
-    const {service, userID, book, displayOwner, hideButtons} = this.props;
+    const {service, userID, displayOwner} = this.props;
 
     if (!service) return <View />;
-    const {title, price, duration, owner, id} = service;
+    const {title, price, duration, owner} = service;
     const {unit: unitPrice, value: valuePrice} = price;
     const {unit: unitDuration, value: valueDuration} = duration;
     const isUserOwner = owner === userID;
@@ -92,10 +94,24 @@ class CardService extends Component {
         {displayOwner && <CardUser id={owner} />}
         <Row>
           <Col size={60}>
-            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.title}>
+              {title}{' '}
+              {isUserOwner ? (
+                <Text
+                  style={[styleApp.smallText, {fontWeight: 'normal'}]}
+                  onPress={this.editService}>
+                  Edit
+                </Text>
+              ) : null}{' '}
+              {isUserOwner ? (
+                <Text
+                  style={[styleApp.smallText, {fontWeight: 'normal'}]}
+                  onPress={this.removeService}>
+                  Delete
+                </Text>
+              ) : null}
+            </Text>
             <Text style={styles.subtitle}>
-              {unitPrice}
-              {valuePrice} •{' '}
               {formatDuration({
                 duration: valueDuration,
                 inputUnit: unitDuration,
@@ -103,23 +119,22 @@ class CardService extends Component {
               })}
             </Text>
           </Col>
+          <Col size={20} style={styleApp.center3} />
           <Col size={20} style={styleApp.center3}>
-            {isUserOwner && !hideButtons ? (
-              <Text style={styleApp.smallText} onPress={this.editService}>
-                Edit
-              </Text>
-            ) : null}
-          </Col>
-          <Col size={20} style={styleApp.center3}>
-            {hideButtons ? null : book ? (
-              <Text style={styleApp.smallText} onPress={this.bookService}>
-                Book
-              </Text>
-            ) : isUserOwner ? (
-              <Text style={styleApp.smallText} onPress={this.removeService}>
-                Delete
-              </Text>
-            ) : null}
+            <ButtonColor
+              view={() => {
+                return (
+                  <Text style={styles.textPrice}>
+                    {unitPrice}
+                    {valuePrice}
+                  </Text>
+                );
+              }}
+              click={this.bookService}
+              color={colors.off2}
+              style={styles.price}
+              onPressColor={colors.off}
+            />
           </Col>
         </Row>
       </TouchableOpacity>
@@ -145,6 +160,21 @@ const styles = StyleSheet.create({
     color: colors.title,
     fontSize: 11,
     marginTop: 4,
+  },
+  textPrice: {
+    ...styleApp.textBold,
+    color: colors.title,
+    fontSize: 13,
+    marginTop: 4,
+  },
+  price: {
+    height: 35,
+    width: 55,
+    backgroundColor: colors.off2,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.grey,
+    ...styleApp.center,
   },
 });
 
