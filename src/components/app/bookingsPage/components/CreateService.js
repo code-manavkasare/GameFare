@@ -95,7 +95,7 @@ class CreateService extends Component {
           increment={duration.increment}
           textValue={formatDuration({
             duration: duration.value,
-            inputUnit: 'hour',
+            inputUnit: duration.unit,
             formatType: 'text',
           })}
         />
