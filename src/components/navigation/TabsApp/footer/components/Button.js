@@ -202,7 +202,6 @@ const styles = StyleSheet.create({
   buttonView: {
     ...styleApp.shadowWeak,
     ...styleApp.center,
-    marginTop: 40,
     height: heightFooter,
     width: '100%',
   },

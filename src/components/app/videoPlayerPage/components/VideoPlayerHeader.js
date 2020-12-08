@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Animated} from 'react-native';
+import {View, Animated, StatusBar} from 'react-native';
 import PropTypes from 'prop-types';
 import {BlurView} from '@react-native-community/blur';
 import {connect} from 'react-redux';
@@ -41,11 +41,13 @@ class VideoPlayerHeader extends React.Component {
     const videoIndex = this.videoClicks.indexOf(index);
     let toValue = 1;
     if (videoIndex === -1) {
+      StatusBar.setHidden(false, 'fade');
       this.videoClicks.push(index);
     } else {
       this.videoClicks.splice(videoIndex, 1);
     }
     if (this.videoClicks.length === 0) {
+      StatusBar.setHidden(true, 'fade');
       toValue = 0;
     }
 

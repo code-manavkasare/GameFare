@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {StatusBar} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import TabsApp from '../TabsApp/index';
@@ -19,19 +20,14 @@ const MainApp = () => {
     top: marginTopApp + 25,
     gestureHeight: 1 / 3,
   });
-  const ModalSpec = SheetModal({
-    top: 0,
-    ignoreBackgroundScale: true,
-    gestureHeight: 1 / 3,
-  });
   return (
     <Stack.Navigator
       initialRouteName="TabsApp"
-      headerMode="none"
       screenOptions={{
         gestureResponseDistance: {
           horizontal: width,
         },
+        header: () => <StatusBar barStyle={'dark-content'} />,
       }}>
       <Stack.Screen
         name="TabsApp"
@@ -41,7 +37,6 @@ const MainApp = () => {
           animationEnabled: false,
         }}
       />
-      
 
       <Stack.Screen name="Webview" component={Webview} />
 
@@ -51,8 +46,6 @@ const MainApp = () => {
         options={SheetModalSpec}
       />
       <Stack.Screen name="Groups" component={Groups} />
-
-      
 
       <Stack.Screen
         name="CreateClub"

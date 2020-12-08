@@ -272,7 +272,11 @@ class CardArchive extends Component {
           <Text style={styles.durationText}>
             {videoUnavailable
               ? null
-              : formatDuration(durationSeconds * 1000, true)}
+              : formatDuration({
+                  duration: durationSeconds,
+                  inputUnit: 'second',
+                  formatType: 'numerical',
+                })}
           </Text>
           {__DEV__ && <Text style={styles.durationText}>{id}</Text>}
           <Text style={styles.dateText}>

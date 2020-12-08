@@ -12,7 +12,7 @@ import {bindService, unbindService} from '../../../database/firebase/bindings';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
 import {userIDSelector} from '../../../../store/selectors/user';
 import {removeService} from '../../../functions/clubs';
-import AllIcon from '../../../layout/icons/AllIcons';
+import {formatDuration} from '../../../functions/date';
 import {serviceSelector} from '../../../../store/selectors/services';
 import CardUser from '../../../layout/cards/CardUser';
 
@@ -95,8 +95,12 @@ class CardService extends Component {
             <Text style={styles.title}>{title}</Text>
             <Text style={styles.subtitle}>
               {unitPrice}
-              {valuePrice} • {valueDuration}
-              {unitDuration}
+              {valuePrice} •{' '}
+              {formatDuration({
+                duration: valueDuration,
+                inputUnit: unitDuration,
+                formatType: 'text',
+              })}
             </Text>
           </Col>
           <Col size={20} style={styleApp.center3}>

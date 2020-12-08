@@ -157,7 +157,11 @@ export default class CardFlag extends Component {
                     {!id.includes('fullVideo') && endTime
                       ? duration(startTime) + ' to ' + duration(endTime)
                       : flagTime && stopTimestamp
-                      ? formatDuration(flagTime)
+                      ? formatDuration({
+                          duration: flagTime,
+                          inputUnit: 'second',
+                          formatType: 'textBrief',
+                        })
                       : 'Loading...'}
                   </Text>
                 </Col>
@@ -199,7 +203,11 @@ export default class CardFlag extends Component {
                       {!id.includes('fullVideo') && endTime
                         ? duration(startTime) + ' to ' + duration(endTime)
                         : flagTime
-                        ? formatDuration(flagTime)
+                        ? formatDuration({
+                            duration: flagTime,
+                            inputUnit: 'second',
+                            formatType: 'textBrief',
+                          })
                         : 'Loading...'}
                     </Text>
                   </Col>
