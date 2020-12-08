@@ -1,3 +1,5 @@
+import React from 'react';
+import {StatusBar} from 'react-native';
 import {TransitionSpecs} from '@react-navigation/stack';
 import {height, width, borderRadius} from '../../style/sizes';
 import colors from '../../style/colors';
@@ -9,6 +11,7 @@ const SheetModal = ({
   top,
   ignoreBackgroundScale,
   gestureHeight,
+  statusBar,
 }) => {
   return {
     gestureDirection: 'vertical',
@@ -23,6 +26,9 @@ const SheetModal = ({
     cardStyle: {
       backgroundColor: 'transparent',
     },
+    header: () => (
+      <StatusBar barStyle={statusBar ?? 'light-content'} animation={'fade'} />
+    ),
     cardOverlayEnabled: true,
     cardStyleInterpolator: ({current, next, layouts}) => {
       return {

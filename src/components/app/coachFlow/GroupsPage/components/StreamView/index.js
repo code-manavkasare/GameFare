@@ -564,7 +564,7 @@ class GroupsPage extends Component {
     const {navigation} = this.props;
     return (
       <View style={styleApp.stylePage}>
-        <FocusListeners navigation={navigation} />
+        <FocusListeners navigation={navigation} statusBarOnFocus />
         <KeepAwake />
         {this.streamPage()}
       </View>

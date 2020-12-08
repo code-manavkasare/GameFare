@@ -12,7 +12,7 @@ import {bindService, unbindService} from '../../../database/firebase/bindings';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
 import {userIDSelector} from '../../../../store/selectors/user';
 import {removeService} from '../../../functions/clubs';
-import AllIcon from '../../../layout/icons/AllIcons';
+import {formatDuration} from '../../../functions/date';
 import {serviceSelector} from '../../../../store/selectors/services';
 import CardUser from '../../../layout/cards/CardUser';
 import ButtonColor from '../../../layout/Views/Button';
@@ -79,10 +79,10 @@ class CardService extends Component {
     });
   };
   render() {
-    const {service, userID, displayOwner, disableBookButton} = this.props;
+    const {service, userID, displayOwner} = this.props;
 
     if (!service) return <View />;
-    const {title, price, duration, owner, id} = service;
+    const {title, price, duration, owner} = service;
     const {unit: unitPrice, value: valuePrice} = price;
     const {unit: unitDuration, value: valueDuration} = duration;
     const isUserOwner = owner === userID;
@@ -102,25 +102,25 @@ class CardService extends Component {
                   onPress={this.editService}>
                   Edit
                 </Text>
+              ) : null}{' '}
+              {isUserOwner ? (
+                <Text
+                  style={[styleApp.smallText, {fontWeight: 'normal'}]}
+                  onPress={this.removeService}>
+                  Delete
+                </Text>
               ) : null}
             </Text>
             <Text style={styles.subtitle}>
-              {valueDuration}
-              {unitDuration}
+              {formatDuration({
+                duration: valueDuration,
+                inputUnit: unitDuration,
+                formatType: 'text',
+              })}
             </Text>
           </Col>
           <Col size={20} style={styleApp.center3} />
           <Col size={20} style={styleApp.center3}>
-            {/* {hideButtons ? null : book ? (
-              <Text style={styleApp.smallText} onPress={this.bookService}>
-                Book
-              </Text>
-            ) : isUserOwner ? (
-              <Text style={styleApp.smallText} onPress={this.removeService}>
-                Delete
-              </Text>
-            ) : null} */}
-
             <ButtonColor
               view={() => {
                 return (

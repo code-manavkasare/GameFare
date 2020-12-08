@@ -1,13 +1,11 @@
 import React, {Component} from 'react';
-import {Animated, View, Text, TextInput, StyleSheet} from 'react-native';
+import {Animated, View, TextInput, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {Col, Row} from 'react-native-easy-grid';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import {heightHeaderModal} from '../../../style/sizes';
-import {store} from '../../../../store/reduxStore';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import ScrollView from '../../../layout/scrollViews/ScrollView';
 import {createService, editService} from '../../../functions/clubs';
@@ -15,6 +13,7 @@ import {userInfoSelector} from '../../../../store/selectors/user';
 import Button from '../../../layout/buttons/Button';
 import RowPlusMinus from '../../../layout/rows/RowPlusMinus';
 import {serviceSelector} from '../../../../store/selectors/services';
+import {formatDuration} from '../../../functions/date';
 
 class CreateService extends Component {
   static propTypes = {
@@ -94,7 +93,11 @@ class CreateService extends Component {
           add={(value) => this.setState({duration: {...duration, value}})}
           value={duration.value}
           increment={duration.increment}
-          textValue={`${duration.value} hour${duration.value > 1 ? 's' : ''}`}
+          textValue={formatDuration({
+            duration: duration.value,
+            inputUnit: duration.unit,
+            formatType: 'text',
+          })}
         />
         {this.confirmButton()}
       </View>

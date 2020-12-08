@@ -10,7 +10,7 @@ import {boolShouldComponentUpdate} from '../../../functions/redux';
 
 import FooterButton from './components/Button';
 import colors from '../../../style/colors';
-import {heightFooter, marginBottomApp, width} from '../../../style/sizes';
+import {heightFooter, marginBottomApp} from '../../../style/sizes';
 import {clickNotification} from '../../../../../NavigationService';
 import styleApp from '../../../style/style';
 import {currentSessionIDSelector} from '../../../../store/selectors/sessions';
@@ -130,74 +130,50 @@ class Footer extends React.Component {
       return clickNotification(notificationOpen);
     }
   }
-  backdrop() {
+  animatedValues() {
     const {state, position} = this.props;
     const {disableAnimation} = this.state;
     let inputRange = state.routes.map((_, i) => i);
-    inputRange.unshift(-1);
-    inputRange.push(state.routes.length);
     const wrappedPosition = block([
       call([position], (r) => this.handleCameraAnimated(r)),
       position,
     ]);
-    const translateYFooter = Animated.interpolate(wrappedPosition, {
+    const heightContainer = Animated.interpolate(position, {
+      inputRange,
+      outputRange: inputRange.map((i) => {
+        return i === 1
+          ? heightFooter + marginBottomApp + 30
+          : heightFooter + marginBottomApp;
+      }),
+      extrapolate: 'clamp',
+    });
+    const paddingTopContainer = Animated.interpolate(position, {
+      inputRange,
+      outputRange: inputRange.map((i) => {
+        return i === 1 ? 30 : 0;
+      }),
+      extrapolate: 'clamp',
+    });
+    const translateYBackdrop = Animated.interpolate(wrappedPosition, {
       inputRange,
       outputRange: inputRange.map((i) =>
         i === 1 && !disableAnimation ? heightFooter + marginBottomApp : 0,
       ),
+      extrapolate: 'clamp',
     });
-    return (
-      <Animated.View
-        style={{
-          ...styles.backdrop,
-          transform: [{translateY: translateYFooter}],
-        }}
-      />
-    );
-  }
-  labelIndicator() {
-    const {state, position} = this.props;
-    const {disableAnimation} = this.state;
-    const {width: currentWidth} = Dimensions.get('screen');
-    const indicatorWidth = 50;
-    let inputRange = state.routes.map((_, i) => i);
-    inputRange.unshift(-1);
-    inputRange.push(3);
-    const translateXIndicator = Animated.interpolate(position, {
-      inputRange,
-      outputRange: inputRange.map(
-        (i) =>
-          (i * (width * 0.85)) / state.routes.length -
-          indicatorWidth / 2 +
-          currentWidth * 0.2175 +
-          (0.85 * (currentWidth - width)) / state.routes.length,
-      ),
-    });
-    const widthIndicator = Animated.interpolate(position, {
-      inputRange,
-      outputRange: inputRange.map((i) => {
-        return i === 1 ? indicatorWidth : indicatorWidth;
-      }),
-    });
-    const opacityIndicator = Animated.interpolate(position, {
-      inputRange,
-      outputRange: inputRange.map((i) => {
-        return i === 1 && !disableAnimation ? 0 : 0;
-      }),
-    });
-
-    const indicatorStyle = {
-      ...styles.labelIndicator,
-      width: widthIndicator,
-      opacity: opacityIndicator,
-      transform: [{translateX: translateXIndicator}],
+    return {
+      heightContainer,
+      paddingTopContainer,
+      translateYBackdrop,
     };
-
-    return (
-      <View style={styles.labelIndicatorContainer}>
-        <Animated.View style={indicatorStyle} />
-      </View>
-    );
+  }
+  backdrop() {
+    const {translateYBackdrop: translateY} = this.animatedValues();
+    const animatedStyle = {
+      ...styles.backdrop,
+      transform: [{translateY}],
+    };
+    return <Animated.View style={animatedStyle} />;
   }
   footer = () => {
     const {
@@ -210,8 +186,13 @@ class Footer extends React.Component {
     } = this.props;
     const {disableAnimation} = this.state;
     const {width: currentWidth} = Dimensions.get('screen');
+    const {
+      heightContainer: height,
+      paddingTopContainer: paddingTop,
+    } = this.animatedValues();
     return (
-      <View style={[styles.footer, {width: currentWidth}]}>
+      <Animated.View
+        style={[styles.footer, {width: currentWidth, height, paddingTop}]}>
         <Row style={[styles.footerBody, {width: currentWidth * 0.85}]}>
           {state.routes.map((route, index) => {
             const {options} = descriptors[route.key];
@@ -228,8 +209,6 @@ class Footer extends React.Component {
             }
             const isFocused = state.index === index;
             let inputRange = state.routes.map((_, i) => i);
-            inputRange.unshift(-1);
-            inputRange.push(state.routes.length);
             const inSession = currentSessionID && index === 1;
             const buttonColor = Animated.interpolateColors(position, {
               inputRange,
@@ -244,18 +223,21 @@ class Footer extends React.Component {
                     : propColors.inactive;
                 }
               }),
+              extrapolate: 'clamp',
             });
             const inSessionIndication = Animated.interpolate(position, {
               inputRange,
               outputRange: inputRange.map((i) => {
                 return i === 1 && !disableAnimation ? 0 : 1;
               }),
+              extrapolate: 'clamp',
             });
             const scale =
               index === 1 &&
               Animated.interpolate(position, {
                 inputRange,
                 outputRange: inputRange.map((i) => (i === 1 ? 1 : 0.7)),
+                extrapolate: 'clamp',
               });
             return (
               <Col key={index}>
@@ -280,9 +262,8 @@ class Footer extends React.Component {
             );
           })}
         </Row>
-        {this.labelIndicator()}
         {this.backdrop()}
-      </View>
+      </Animated.View>
     );
   };
 
@@ -293,10 +274,8 @@ class Footer extends React.Component {
 
 const styles = StyleSheet.create({
   footer: {
-    // ...styleApp.shadowWeak,
     ...styleApp.center2,
     flexDirection: 'row',
-    height: heightFooter + marginBottomApp + 30,
     position: 'absolute',
     zIndex: 1,
     width: '100%',
@@ -318,9 +297,8 @@ const styles = StyleSheet.create({
   },
   footerBody: {
     ...styleApp.fullSize,
-    overflow: 'hidden',
     marginTop: 0,
-    paddingTop: 15,
+    paddingTop: 5,
     zIndex: 2,
   },
   absoluteButtonMoving: {

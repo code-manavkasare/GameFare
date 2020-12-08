@@ -63,7 +63,11 @@ class TaskCard extends Component {
       <View style={{width: '100%'}}>
         <Text style={{...styleApp.title, fontSize: 15, marginBottom: 5}}>
           {type === 'video'
-            ? formatDuration(task?.videoInfo?.durationSeconds)
+            ? formatDuration({
+                duration: task?.videoInfo?.durationSeconds,
+                inputUnit: 'second',
+                formatType: 'textBrief',
+              })
             : ''}
         </Text>
         <Text style={{...styleApp.text, fontSize: 15, marginBottom: 15}}>

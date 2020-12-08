@@ -1,4 +1,5 @@
 import React from 'react';
+import {StatusBar} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import MainApp from './MainApp/index';
@@ -26,6 +27,12 @@ function InitialStack() {
   const FullScreenModalSpec = SheetModal({
     heightScale: 0,
     gestureHeight: 1 / 6,
+    statusBar: 'dark-content',
+  });
+  const VideoPlayerSpec = SheetModal({
+    heightScale: 0,
+    gestureHeight: 1 / 6,
+    statusBar: 'light-content',
   });
   const SheetModalSpec = SheetModal({
     top: marginTopApp + 25,
@@ -38,9 +45,9 @@ function InitialStack() {
   return (
     <Stack.Navigator
       initialRouteName="MainApp"
-      headerMode="none"
-      //  mode={'modal'}
-    >
+      screenOptions={{
+        header: () => <StatusBar barStyle={'dark-content'} />,
+      }}>
       <Stack.Screen
         name="MainApp"
         component={MainApp}
@@ -59,7 +66,7 @@ function InitialStack() {
       <Stack.Screen
         name="VideoPlayerPage"
         component={VideoPlayerPage}
-        options={FullScreenModalSpec}
+        options={VideoPlayerSpec}
       />
 
       <Stack.Screen
