@@ -574,14 +574,16 @@ const checkIfThumbnailsSeekBarExist = async (videoId) => {
 
 const checkFetchAndSaveThumbnailsForSeekBar = async ({archiveId, url}) => {
   const folderExist = await checkIfThumbnailsSeekBarExist(archiveId);
-  const thumbnailsPath = `${
-    RNFS.TemporaryDirectoryPath
-  }${archiveId}/thumbnails`;
+  const thumbnailsPath = getThumbnailsPath(archiveId);
 
   if (!folderExist && url) {
     await downloadAndUnzip(url, thumbnailsPath);
   }
   return getAllFilesInDirPath(thumbnailsPath);
+};
+
+const getThumbnailsPath = (archiveId) => {
+  return `${RNFS.TemporaryDirectoryPath}${archiveId}/thumbnails`;
 };
 
 const downloadAndUnzip = async (url, destination) => {
