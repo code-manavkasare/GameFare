@@ -44,8 +44,9 @@ class CardUser extends Component {
       ...style,
     };
     const textStyle = {
-      ...styleApp.text,
+      ...styleApp.textBold,
       ...styleText,
+      fontSize: 17,
     };
     return (
       <ButtonColor
@@ -54,7 +55,10 @@ class CardUser extends Component {
             <View style={styleApp.fullSize}>
               <Row>
                 <Col size={15} style={styleApp.center2}>
-                  <ImageUser info={infoUser} />
+                  <ImageUser
+                    info={infoUser}
+                    //    styleImgProps={{borderRadius: 5}}
+                  />
                 </Col>
                 <Col size={65} style={styleApp.center2}>
                   <Text style={textStyle}>
