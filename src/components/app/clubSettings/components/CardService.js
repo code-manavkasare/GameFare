@@ -93,7 +93,7 @@ class CardService extends Component {
         style={styles.card}>
         {displayOwner && <CardUser id={owner} />}
         <Row>
-          <Col size={60}>
+          <Col size={80}>
             <Text style={styles.title}>
               {title}{' '}
               {isUserOwner ? (
@@ -119,7 +119,6 @@ class CardService extends Component {
               })}
             </Text>
           </Col>
-          <Col size={20} style={styleApp.center3} />
           <Col size={20} style={styleApp.center3}>
             <ButtonColor
               view={() => {
