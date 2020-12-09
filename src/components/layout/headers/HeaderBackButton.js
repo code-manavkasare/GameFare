@@ -49,48 +49,24 @@ class HeaderBackButton extends Component {
       AnimatedHeaderValue,
       inputRange,
       initialTitleOpacity,
-      initialBorderColorHeader,
-      initialBorderWidth,
-      initialBackgroundColor,
       initialBorderColorIcon,
     } = this.props;
     if (!AnimatedHeaderValue) AnimatedHeaderValue = this.AnimatedHeaderValue;
     const AnimateOpacityTitle = AnimatedHeaderValue?.interpolate({
-      inputRange: [inputRange[1] - 20, inputRange[1] + 20],
+      inputRange: [inputRange[1], inputRange[1] + 20],
       outputRange: [initialTitleOpacity, 1],
       extrapolate: 'clamp',
     });
     const AnimateOpacityBackground = AnimatedHeaderValue?.interpolate({
-      inputRange: [inputRange[1] - 20, inputRange[1] + 20],
+      inputRange: [inputRange[1], inputRange[1] + 20],
       outputRange: [0, 1],
       extrapolate: 'clamp',
     });
-    const AnimateBackgroundView = AnimatedHeaderValue?.interpolate({
-      inputRange: [inputRange[1] - 20, inputRange[1] + 20],
-      outputRange: [initialBackgroundColor, colors.white],
-      extrapolate: 'clamp',
-    });
-    const borderWidth = AnimatedHeaderValue?.interpolate({
-      inputRange: inputRange,
-      outputRange: [initialBorderWidth ? initialBorderWidth : 0, 1],
-      extrapolate: 'clamp',
-    });
     const borderColorIcon = initialBorderColorIcon;
-    const borderColorView = AnimatedHeaderValue?.interpolate({
-      inputRange: [inputRange[1] - 20, inputRange[1] + 20],
-      outputRange: [
-        initialBorderColorHeader ? initialBorderColorHeader : colors.white,
-        colors.off,
-      ],
-      extrapolate: 'clamp',
-    });
     return {
       AnimateOpacityBackground,
       AnimateOpacityTitle,
-      AnimateBackgroundView,
-      borderWidth,
       borderColorIcon,
-      borderColorView,
     };
   }
   button1() {

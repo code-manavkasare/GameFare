@@ -14,7 +14,10 @@ import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
 import {userInfoSelector} from '../../../../store/selectors/user';
 import ClubList from './ClubList';
-import {clubSelector} from '../../../../store/selectors/clubs';
+import {
+  clubSelector,
+  userClubInvitesSelector,
+} from '../../../../store/selectors/clubs';
 
 const ROW_HEIGHT = 60;
 const EXPANDED_ROW_HEIGHT = 170;
@@ -74,7 +77,7 @@ class ClubsHeader extends Component {
   };
   headerTitle = () => {
     const {listVisible} = this.state;
-    const {currentClub} = this.props;
+    const {currentClub, clubInvites} = this.props;
     const title = currentClub?.info?.title;
     return rowTitle({
       hideDividerHeader: true,
@@ -93,8 +96,15 @@ class ClubsHeader extends Component {
         click: this.toggleListView,
         icon: {
           type: 'font',
-          color: colors.greyDarker,
-          name: listVisible ? 'chevron-up' : 'chevron-down',
+          color:
+            listVisible || !clubInvites.length
+              ? colors.greyDarker
+              : colors.primary,
+          name: listVisible
+            ? 'chevron-up'
+            : clubInvites.length
+            ? 'circle'
+            : 'chevron-down',
         },
         color: 'transparent',
         onPressColor: 'transparent',
@@ -203,6 +213,7 @@ const mapStateToProps = (state, props) => {
   return {
     infoUser: userInfoSelector(state),
     currentClub: clubSelector(state, {id: props.currentClubID}),
+    clubInvites: userClubInvitesSelector(state),
   };
 };
 

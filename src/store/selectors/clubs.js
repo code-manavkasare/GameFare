@@ -7,7 +7,18 @@ const clubSubSelector = (state, props) => state.clubs[props.id];
 const userClubsSelector = createSelector(
   userClubsSubSelector,
   (clubs) => {
-    return Object.values(clubs).sort((a, b) => b.timestamp - a.timestamp);
+    return Object.values(clubs)
+      .filter((club) => !club?.pending)
+      .sort((a, b) => b.timestamp - a.timestamp);
+  },
+);
+
+const userClubInvitesSelector = createSelector(
+  userClubsSubSelector,
+  (clubs) => {
+    return Object.values(clubs)
+      .filter((club) => club?.pending)
+      .sort((a, b) => b.timestamp - a.timestamp);
   },
 );
 
@@ -43,6 +54,7 @@ const servicesSelector = createSelector(
 
 export {
   userClubsSelector,
+  userClubInvitesSelector,
   clubSelector,
   servicesSelector,
   postListSelector,

@@ -98,6 +98,7 @@ const removeService = async ({clubID, serviceID}) => {
 
 const createPost = async ({clubID, text, video}) => {
   const {userID} = store.getState().user;
+  const {members} = store.getState().clubs[clubID];
   const id = generateID();
   const timestamp = Date.now();
   const newPost = {
@@ -107,13 +108,18 @@ const createPost = async ({clubID, text, video}) => {
     video,
     timestamp,
   };
-  const postCreation = {
+  let postCreation = {
     [`posts/${id}/`]: newPost,
     [`clubs/${clubID}/posts/${id}`]: {
       id,
       timestamp,
     },
   };
+  if (members) {
+    Object.keys(members).map((userID) => {
+      postCreation[`users/${userID}/clubs/${clubID}/timestamp`] = timestamp;
+    });
+  }
   await store.dispatch(setPosts({[id]: newPost}));
   await database()
     .ref()
@@ -214,6 +220,7 @@ const inviteUsersToClub = async ({clubID}) => {
           updates[`users/${userID}/clubs/${clubID}`] = {
             id: clubID,
             timestamp,
+            pending: true,
           };
         });
         await database()
@@ -224,17 +231,46 @@ const inviteUsersToClub = async ({clubID}) => {
   });
 };
 
-const addUserToClub = async ({id, userID}) => {
+const addUserToClub = async ({clubID, userID}) => {
   const timestamp = Date.now();
+  const updates = {
+    [`users/${userID}/clubs/${clubID}`]: {
+      clubID,
+      timestamp,
+    },
+    [`clubs/${clubID}/members/${userID}`]: true,
+  };
   await database()
     .ref()
-    .update({
-      [`users/${userID}/clubs/${id}`]: {
-        id,
-        timestamp,
-      },
-      [`clubs/${id}/members/${userID}`]: true,
-    });
+    .update(updates);
+};
+
+const acceptInvite = async ({clubID}) => {
+  const {userID} = store.getState().user;
+  if (!userID || !clubID) return false;
+  const timestamp = Date.now();
+  let updates = {
+    [`users/${userID}/clubs/${clubID}`]: {
+      id: clubID,
+      timestamp,
+      pending: null,
+    },
+    [`clubs/${clubID}/members/${userID}`]: true,
+  };
+  return await database()
+    .ref()
+    .update(updates);
+};
+
+const declineInvite = async ({clubID}) => {
+  const {userID} = store.getState().user;
+  if (!userID || !clubID) return false;
+  let updates = {
+    [`users/${userID}/clubs/${clubID}`]: null,
+  };
+  return await database()
+    .ref()
+    .update(updates);
 };
 
 export {
@@ -247,4 +283,6 @@ export {
   removePost,
   inviteUsersToClub,
   addUserToClub,
+  acceptInvite,
+  declineInvite,
 };

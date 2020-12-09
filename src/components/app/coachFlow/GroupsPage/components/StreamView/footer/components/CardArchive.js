@@ -269,6 +269,9 @@ class CardArchive extends Component {
     return (
       <View pointerEvents="none" style={styles.infoRow}>
         <Col>
+          {__DEV__ && (
+            <Text style={{...styles.durationText, fontSize: 9}}>{id}</Text>
+          )}
           <Text style={styles.durationText}>
             {videoUnavailable
               ? null
@@ -278,7 +281,6 @@ class CardArchive extends Component {
                   formatType: 'numerical',
                 })}
           </Text>
-          {__DEV__ && <Text style={styles.durationText}>{id}</Text>}
           <Text style={styles.dateText}>
             {videoUnavailable ? null : progress ? (
               'Uploading...'

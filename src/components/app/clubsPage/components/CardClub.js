@@ -5,22 +5,21 @@ import {bool, string, object, func} from 'prop-types';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
-import {navigate} from '../../../../../NavigationService';
 
 import {bindClub} from '../../../database/firebase/bindings';
 import {clubSelector} from '../../../../store/selectors/clubs';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
 import {userIDSelector} from '../../../../store/selectors/user';
-import ButtonColor from '../../../layout/Views/Button';
-import AllIcon from '../../../layout/icons/AllIcons';
+import {acceptInvite, declineInvite} from '../../../functions/clubs';
+import CardInvitation from './CardInvitation';
 
 class CardClub extends Component {
   static propTypes = {
     navigation: object,
     id: string,
-    addClub: bool,
     selectClub: func,
     selectedClubID: string,
+    displayAsInvitation: bool,
   };
   static defaultProps = {};
 
@@ -41,54 +40,31 @@ class CardClub extends Component {
       component: 'CardClub',
     });
   }
-  addClub = () => {
-    navigate('CreateClub');
+  declineInvite = () => {
+    const {id} = this.props;
+    declineInvite({clubID: id});
   };
-  goToSettings = () => {
+  acceptInvite = () => {
+    const {id} = this.props;
+    acceptInvite({clubID: id});
+  };
+  invitationCard() {
     const {club} = this.props;
-    const {id} = club;
-    navigate('Club', {screen: 'ClubSettings', params: {id}});
-  };
-  addClubCard = () => {
+    const {info, owner} = club;
+    const {title, description} = info;
     return (
-      <TouchableOpacity
-        activeOpacity={0.9}
-        onPress={this.addClub}
-        style={styles.addClubContainer}>
-        <AllIcon
-          name={'plus'}
-          size={21}
-          color={styles.addClubSubtitle.color}
-          type="font"
-          solid
-        />
-        <Text style={styles.addClubSubtitle}>Create a Club</Text>
-      </TouchableOpacity>
+      <CardInvitation
+        user={{userID: owner, prefix: 'Invite from '}}
+        title={title}
+        description={description}
+        buttonNo={{action: this.declineInvite}}
+        buttonYes={{action: this.acceptInvite}}
+      />
     );
-  };
-  settingsButton = () => {
-    const {club, userID} = this.props;
-    const {owner} = club;
-    if (owner !== userID) return;
-    return (
-      <ButtonColor
-        style={styles.settingsButton}
-        click={this.goToSettings}
-        color={colors.greyLight}
-        onPressColor={colors.greyLighter}>
-        <AllIcon
-          name={'ellipsis-h'}
-          size={14}
-          color={colors.greyDarker}
-          type="font"
-          solid
-        />
-      </ButtonColor>
-    );
-  };
+  }
   render() {
-    const {club, addClub, selectClub, selectedClubID} = this.props;
-    if (addClub) return this.addClubCard();
+    const {club, selectClub, selectedClubID, displayAsInvitation} = this.props;
+    if (displayAsInvitation) return this.invitationCard();
     if (!club) return <View />;
     const {info} = club;
     const {title} = info;
@@ -100,7 +76,7 @@ class CardClub extends Component {
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={selectClub}
-        style={styleApp.cardClub}>
+        style={styleApp.cardClubSmall}>
         <Text style={styles.title}>{title}</Text>
         <View style={selectionIndicationStyle} />
       </TouchableOpacity>
@@ -120,17 +96,6 @@ const styles = StyleSheet.create({
     color: colors.greyMidDark,
     fontSize: 11,
     textAlign: 'center',
-  },
-  addClubContainer: {
-    ...styleApp.cardClub,
-    backgroundColor: colors.greyDark,
-  },
-  addClubSubtitle: {
-    ...styleApp.textBold,
-    fontSize: 11,
-    textAlign: 'center',
-    marginTop: 10,
-    color: colors.greyLighter,
   },
   selectionIndication: {
     ...styleApp.fullSize,

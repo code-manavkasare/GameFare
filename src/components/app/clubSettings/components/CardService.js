@@ -25,6 +25,8 @@ class CardService extends Component {
     book: bool,
     displayOwner: bool,
     disableBookButton: bool,
+    disableEdit: bool,
+    disableDelete: bool,
   };
   static defaultProps = {};
 
@@ -79,31 +81,39 @@ class CardService extends Component {
     });
   };
   render() {
-    const {service, userID, displayOwner} = this.props;
+    const {
+      service,
+      userID,
+      displayOwner,
+      styleContainer,
+      disableEdit,
+      disableDelete,
+    } = this.props;
 
     if (!service) return <View />;
     const {title, price, duration, owner} = service;
     const {unit: unitPrice, value: valuePrice} = price;
     const {unit: unitDuration, value: valueDuration} = duration;
     const isUserOwner = owner === userID;
+    const containerStyle = {
+      ...styles.card,
+      ...styleContainer,
+    };
     return (
-      <TouchableOpacity
-        activeOpacity={0.9}
-        onPress={() => true}
-        style={styles.card}>
+      <View activeOpacity={0.9} onPress={() => true} style={containerStyle}>
         {displayOwner && <CardUser id={owner} />}
         <Row>
           <Col size={80}>
             <Text style={styles.title}>
               {title}{' '}
-              {isUserOwner ? (
+              {isUserOwner && !disableEdit ? (
                 <Text
                   style={[styleApp.smallText, {fontWeight: 'normal'}]}
                   onPress={this.editService}>
                   Edit
                 </Text>
               ) : null}{' '}
-              {isUserOwner ? (
+              {isUserOwner && !disableDelete ? (
                 <Text
                   style={[styleApp.smallText, {fontWeight: 'normal'}]}
                   onPress={this.removeService}>
@@ -136,7 +146,7 @@ class CardService extends Component {
             />
           </Col>
         </Row>
-      </TouchableOpacity>
+      </View>
     );
   }
 }
@@ -144,10 +154,7 @@ class CardService extends Component {
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    paddingTop: 10,
-    paddingBottom: 10,
-    borderBottomWidth: 1,
-    borderColor: colors.off,
+    paddingVertical: 10,
   },
   title: {
     ...styleApp.textBold,
@@ -158,7 +165,7 @@ const styles = StyleSheet.create({
     ...styleApp.textBold,
     color: colors.title,
     fontSize: 11,
-    marginTop: 4,
+    marginTop: 5,
   },
   textPrice: {
     ...styleApp.textBold,
