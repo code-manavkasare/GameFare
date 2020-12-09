@@ -64,8 +64,8 @@ class CardClub extends Component {
   }
   render() {
     const {club, selectClub, selectedClubID, displayAsInvitation} = this.props;
-    if (displayAsInvitation) return this.invitationCard();
     if (!club) return <View />;
+    if (displayAsInvitation) return this.invitationCard();
     const {info} = club;
     const {title} = info;
     const isSelected = selectedClubID === club?.id;
