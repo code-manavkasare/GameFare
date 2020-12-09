@@ -8,6 +8,7 @@ import Profile from './components/Profile';
 import Webview from '../../layout/Views/Webview';
 import Groups from '../../app/coachFlow/GroupsPage/index';
 import CreateClub from '../../app/clubsPage/components/CreateClub';
+import ClubInvites from '../../app/clubsPage/components/ClubInvites';
 import Club from '../MainApp/components/Club';
 import {SheetModal} from '../transitions/SheetModal';
 import {marginTopApp, width} from '../../style/sizes';
@@ -47,6 +48,11 @@ const MainApp = () => {
       />
       <Stack.Screen name="Groups" component={Groups} />
 
+      <Stack.Screen
+        name="ClubInvites"
+        component={ClubInvites}
+        options={SheetModalSpec}
+      />
       <Stack.Screen
         name="CreateClub"
         component={CreateClub}

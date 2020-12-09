@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     width: width,
     marginBottom: 25,
   },
-  cardClub: {
+  cardClubSmall: {
     width: 90,
     height: 90,
     borderRadius: 45,
@@ -273,6 +273,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.greyDarker,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.06,
+    shadowRadius: 7,
+  },
+  cardInvitation: {
+    width: '100%',
+    paddingVertical: 10,
+    borderRadius: 15,
+    marginBottom: 25,
+    backgroundColor: colors.greyLight,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0.06,
@@ -401,8 +414,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
     backgroundColor: colors.off2,
-    borderWidth: 0.5,
-    borderColor: colors.grey,
   },
   viewNumber: {
     height: 30,

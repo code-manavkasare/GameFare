@@ -235,6 +235,7 @@ class VideoLibraryPage extends Component {
           },
           containerStyle: {
             marginTop: 20,
+            ...styleApp.marginView,
           },
           button: {
             click: this.toggleSelectable,

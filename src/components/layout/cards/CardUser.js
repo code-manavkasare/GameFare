@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Animated} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import {string, object} from 'prop-types';
@@ -7,11 +7,9 @@ import {string, object} from 'prop-types';
 import {navigate} from '../../../../NavigationService';
 import ButtonColor from '../Views/Button';
 import colors from '../../style/colors';
-import AllIcon from '../../layout/icons/AllIcons';
 import styleApp from '../../style/style';
 import ImageUser from '../image/ImageUser';
 import {infoUserByIdSelector} from '../../../store/selectors/user';
-import {fetchUser} from '../../functions/users';
 import {bindUserInfo, unbindUserInfo} from '../../database/firebase/bindings';
 
 class CardUser extends Component {
@@ -36,9 +34,17 @@ class CardUser extends Component {
     unbindUserInfo(id);
   };
   render() {
-    const {infoUser, onClick, style, styleText, id} = this.props;
+    const {
+      infoUser,
+      style,
+      styleText,
+      styleImg,
+      id,
+      suffix,
+      prefix,
+    } = this.props;
     if (!infoUser) return null;
-    const {picture, firstname, lastname} = infoUser;
+    const {firstname, lastname} = infoUser;
     const containerStyle = {
       ...styles.cardUser,
       ...style,
@@ -55,14 +61,16 @@ class CardUser extends Component {
             <View style={styleApp.fullSize}>
               <Row>
                 <Col size={15} style={styleApp.center2}>
-                  <ImageUser
-                    info={infoUser}
-                    //    styleImgProps={{borderRadius: 5}}
-                  />
+                  <ImageUser info={infoUser} styleImgProps={styleImg} />
                 </Col>
                 <Col size={65} style={styleApp.center2}>
-                  <Text style={textStyle}>
+                  <Text
+                    style={textStyle}
+                    numberOfLines={1}
+                    ellipsizeMode="tail">
+                    {prefix}
                     {firstname} {lastname}
+                    {suffix}
                   </Text>
                 </Col>
                 <Col size={10} style={styleApp.center2} />
@@ -71,7 +79,7 @@ class CardUser extends Component {
           );
         }}
         click={() => navigate('ProfilePage', {id})}
-        color={colors.white}
+        color={'transparent'}
         style={containerStyle}
         onPressColor={colors.off2}
       />

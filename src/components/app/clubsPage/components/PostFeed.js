@@ -81,7 +81,7 @@ class PostFeed extends Component {
         cardList={this.renderClub}
         keyExtractor={(item, index) => item.id}
         header={this.settingsRow}
-        headerStyle={styleApp.center}
+        headerStyle={styleApp.marginView}
         scrollEnabled={posts.length > 0}
       />
     );

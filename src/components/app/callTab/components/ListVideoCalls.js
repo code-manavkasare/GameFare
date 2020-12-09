@@ -125,6 +125,7 @@ class ListVideoCalls extends Component {
             ) : null}
           </View>
         }
+        headerStyle={styleApp.marginView}
         AnimatedHeaderValue={AnimatedHeaderValue}
         paddingBottom={heightFooter + marginBottomApp + 90}
       />

@@ -201,10 +201,7 @@ class FlatListComponent extends Component {
       onScrollBeginDrag,
       contentContainerStyle: containerStyle,
       ListHeaderComponent: header,
-      ListHeaderComponentStyle: {
-        ...styleApp.marginView,
-        ...headerStyle,
-      },
+      ListHeaderComponentStyle: headerStyle,
       showsHorizontalScrollIndicator:
         showsHorizontalScrollIndicator === undefined
           ? true

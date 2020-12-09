@@ -67,6 +67,7 @@ class BookingsPage extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           styleContainer={{
             paddingTop: marginTopApp + heightHeaderModal,
+            ...styleApp.marginView,
           }}
           showsVerticalScrollIndicator={false}
           header={rowTitle({
