@@ -10,7 +10,7 @@ import PostFeed from './components/PostFeed';
 import Button from '../../layout/buttons/Button';
 import colors from '../../style/colors';
 
-class ClubsPage extends Component {
+export default class ClubsPage extends Component {
   static propTypes = {
     navigation: object,
     infoUser: object,
@@ -23,9 +23,21 @@ class ClubsPage extends Component {
     const {params} = props?.route;
     this.state = {
       currentClubID: params?.clubID ?? undefined,
+      lastPropsUpdate: null,
     };
     this.AnimatedScrollValue = new Animated.Value(0);
   }
+  static getDerivedStateFromProps = (props, state) => {
+    const {currentClubID, lastPropsUpdate} = state;
+    const timestamp = props.route.params?.timestamp;
+    const clubID = props.route.params?.clubID;
+    
+    // store timestamp of branch link click in order to update the clubID only once
+    if (lastPropsUpdate !== timestamp) {
+      return {currentClubID: clubID, lastPropsUpdate: timestamp};
+    }
+    return {currentClubID};
+  };
   changeFocusedClub = (clubID) => {
     this.setState({currentClubID: clubID});
   };
@@ -86,9 +98,3 @@ class ClubsPage extends Component {
     );
   }
 }
-
-const mapStateToProps = (state) => {
-  return {};
-};
-
-export default connect(mapStateToProps)(ClubsPage);

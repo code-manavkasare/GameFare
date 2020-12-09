@@ -224,6 +224,19 @@ const inviteUsersToClub = async ({clubID}) => {
   });
 };
 
+const addUserToClub = async ({id, userID}) => {
+  const timestamp = Date.now();
+  await database()
+    .ref()
+    .update({
+      [`users/${userID}/clubs/${id}`]: {
+        id,
+        timestamp,
+      },
+      [`clubs/${id}/members/${userID}`]: true,
+    });
+};
+
 export {
   createClub,
   createService,
@@ -233,4 +246,5 @@ export {
   createPost,
   removePost,
   inviteUsersToClub,
+  addUserToClub,
 };

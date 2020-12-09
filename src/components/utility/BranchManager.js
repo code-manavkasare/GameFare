@@ -21,6 +21,7 @@ import {
   userConnectedSelector,
   userIDSelector,
 } from '../../store/selectors/user';
+import {addUserToClub} from '../functions/clubs';
 
 class BranchManager extends Component {
   constructor(props) {
@@ -63,7 +64,7 @@ class BranchManager extends Component {
     const {branchParams} = this.state;
     const {userID} = this.props;
 
-    const {type, sentBy} = branchParams;
+    const {type, sentBy, id} = branchParams;
     switch (type) {
       case 'invite': {
         const session = await createCoachSessionFromUserIDs(sentBy, [userID]);
@@ -80,6 +81,16 @@ class BranchManager extends Component {
         });
         if (sessionID) {
           this.handleSessionInvite(sessionID, userID, sentBy);
+        }
+        break;
+      }
+      case 'club': {
+        logMixpanel({
+          label: 'Open invite club link ' + id,
+        });
+        if (id) {
+          await addUserToClub({id, userID});
+          navigate('ClubsPage', {clubID: id, timestamp: Date.now()});
         }
         break;
       }
@@ -126,6 +137,7 @@ class BranchManager extends Component {
       navigate('Conversation', {id: session.objectID});
     }
   }
+  handleClubInvite = (clubID) => {};
 
   render = () => {
     return null;
