@@ -89,7 +89,7 @@ class BranchManager extends Component {
           label: 'Open invite club link ' + id,
         });
         if (id) {
-          await addUserToClub({id, userID});
+          await addUserToClub({clubID: id, userID});
           navigate('ClubsPage', {clubID: id, timestamp: Date.now()});
         }
         break;
