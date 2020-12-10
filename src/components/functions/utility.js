@@ -41,7 +41,7 @@ const getSelectionActionDecorations = (action) => {
         actionHeader: 'Share',
         icon: {
           type: 'font',
-          name: 'photo-video',
+          name: 'comment-alt',
         },
       };
     case 'inviteToClub':

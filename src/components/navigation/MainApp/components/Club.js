@@ -7,6 +7,7 @@ import CreateService from '../../../app/clubSettings/components/CreateService';
 import BookService from '../../../app/bookService/index';
 import BookingSummary from '../../../app/bookService/components/BookingSummary';
 import AddContentBooking from '../../../app/bookService/components/AddContentBooking';
+import EditClub from '../../../app/clubsPage/components/ClubForm';
 
 const Stack = createStackNavigator();
 const OnBoarding = () => {
@@ -23,6 +24,7 @@ const OnBoarding = () => {
       <Stack.Screen name="CreateService" component={CreateService} />
       <Stack.Screen name="BookService" component={BookService} />
       <Stack.Screen name="BookingSummary" component={BookingSummary} />
+      <Stack.Screen name="EditClub" component={EditClub} />
       <Stack.Screen
         name="AddContentBooking"
         component={AddContentBooking}

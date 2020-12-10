@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   button: {height: 40},
   childrenView: {
     ...styleApp.marginView,
-    height: 50,
+    paddingVertical: 5,
     width: '100%',
   },
   statusIndicator: {

@@ -36,9 +36,14 @@ const SheetModal = ({
           borderRadius: next
             ? next.progress.interpolate({
                 inputRange: [0, 1],
-                outputRange: [borderRadius, 25],
+                outputRange: [
+                  borderRadius,
+                  (heightScale !== 0 && top !== 0) || next ? 25 : borderRadius,
+                ],
               })
-            : 25,
+            : (heightScale !== 0 && top !== 0) || next
+            ? 25
+            : borderRadius,
           overflow: 'hidden',
           transform: [
             {

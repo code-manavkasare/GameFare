@@ -7,7 +7,7 @@ import TabsApp from '../TabsApp/index';
 import Profile from './components/Profile';
 import Webview from '../../layout/Views/Webview';
 import Groups from '../../app/coachFlow/GroupsPage/index';
-import CreateClub from '../../app/clubsPage/components/CreateClub';
+import ClubForm from '../../app/clubsPage/components/ClubForm';
 import ClubInvites from '../../app/clubsPage/components/ClubInvites';
 import Club from '../MainApp/components/Club';
 import {SheetModal} from '../transitions/SheetModal';
@@ -54,8 +54,8 @@ const MainApp = () => {
         options={SheetModalSpec}
       />
       <Stack.Screen
-        name="CreateClub"
-        component={CreateClub}
+        name="ClubForm"
+        component={ClubForm}
         options={SheetModalSpec}
       />
       <Stack.Screen
