@@ -118,7 +118,6 @@ class ClubForm extends Component {
             <Picker.Item key={index} label={i} value={i} />
           ))}
         </Picker>
-        {this.confirmButton()}
       </View>
     );
   };
