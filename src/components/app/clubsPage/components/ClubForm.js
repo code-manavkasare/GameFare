@@ -11,10 +11,10 @@ import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import ScrollView from '../../../layout/scrollViews/ScrollView';
 import {createClub, deleteClub, editClub} from '../../../functions/clubs';
 import {userInfoSelector} from '../../../../store/selectors/user';
-import Button from '../../../layout/buttons/Button';
 import {getSportTypes} from '../../../database/firebase/fetchData';
 import {clubSelector} from '../../../../store/selectors/clubs';
 import {navigate} from '../../../../../NavigationService';
+import KeyboardAwareButton from '../../../layout/buttons/KeyboardAwareButton';
 
 class ClubForm extends Component {
   static propTypes = {
@@ -80,7 +80,7 @@ class ClubForm extends Component {
           autoFocus={true}
           autoCorrect={true}
           underlineColorAndroid="rgba(0,0,0,0)"
-          blurOnSubmit={false}
+          blurOnSubmit={true}
           returnKeyType={'done'}
           placeholderTextColor={colors.greyDark}
           ref={(input) => {
@@ -97,7 +97,7 @@ class ClubForm extends Component {
           multiline={true}
           autoCorrect={true}
           underlineColorAndroid="rgba(0,0,0,0)"
-          blurOnSubmit={false}
+          blurOnSubmit={true}
           returnKeyType={'done'}
           placeholderTextColor={colors.greyDark}
           ref={(input) => {
@@ -125,18 +125,17 @@ class ClubForm extends Component {
   confirmButton = () => {
     const {title, description, loader, editMode} = this.state;
     return (
-      <View style={{marginTop: 20}}>
-        <Button
-          backgroundColor="primary"
-          onPressColor={colors.primaryLight}
-          enabled={true}
-          disabled={title === '' || description === ''}
-          text={editMode ? 'Apply Changes' : 'Create Club'}
-          styleButton={{height: 55}}
-          loader={loader}
-          click={editMode ? this.editClub : this.createClub}
-        />
-      </View>
+      <KeyboardAwareButton
+        disabled={title === '' || description === ''}
+        loader={loader}
+        click={editMode ? this.editClub : this.createClub}
+        styleFooter={styleApp.footerModal}
+        text={editMode ? 'Apply Changes' : 'Create Club'}
+        styleButton={{height: 55}}
+        nativeID="title"
+        backgroundColor="primary"
+        onPressColor={colors.primaryLight}
+      />
     );
   };
   render() {
@@ -173,6 +172,7 @@ class ClubForm extends Component {
           offsetBottom={50}
           showsVerticalScrollIndicator={true}
         />
+        {this.confirmButton()}
       </View>
     );
   }

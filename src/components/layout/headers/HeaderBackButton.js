@@ -118,7 +118,7 @@ class HeaderBackButton extends Component {
               logMixpanel({label: 'Click Header: ' + icon1});
               this.props.clickButton1();
             }}
-            color={backgroundColorIcon1 ? backgroundColorIcon1 : 'transparent'}
+            color={backgroundColorIcon1 ? backgroundColorIcon1 : 'white'}
             style={[styles.buttonRight]}
             onPressColor={onPressColorIcon1 ? onPressColorIcon1 : colors.off}
           />

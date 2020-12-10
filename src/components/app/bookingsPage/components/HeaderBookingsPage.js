@@ -37,6 +37,7 @@ export default class HeaderBookingsPage extends Component {
         initialBorderWidth={1}
         initialBorderColorHeader={'transparent'}
         icon1={'times'}
+        sizeIcon1={17}
         // icon2={'share'}
         typeIcon2="moon"
         sizeIcon2={19}

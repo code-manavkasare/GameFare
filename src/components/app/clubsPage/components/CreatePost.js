@@ -7,11 +7,12 @@ import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import {heightHeaderModal} from '../../../style/sizes';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
-import ScrollView from '../../../layout/scrollViews/ScrollView';
+import ScrollView from '../../../layout/scrollViews/ScrollView2';
 import {createPost} from '../../../functions/clubs';
 import Button from '../../../layout/buttons/Button';
 import {navigate} from '../../../../../NavigationService';
 import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
+import KeyboardAwareButton from '../../../layout/buttons/KeyboardAwareButton';
 
 class CreatePost extends Component {
   static propTypes = {
@@ -82,7 +83,7 @@ class CreatePost extends Component {
             multiline={true}
             autoCorrect={true}
             underlineColorAndroid="rgba(0,0,0,0)"
-            blurOnSubmit={false}
+            blurOnSubmit={true}
             returnKeyType={'done'}
             placeholderTextColor={colors.greyDark}
             ref={(input) => {
@@ -92,26 +93,25 @@ class CreatePost extends Component {
             onChangeText={(text) => this.setState({text})}
             value={text}
           />
-          {this.confirmButton()}
+          <View style={{height: 30}} />
         </View>
       </View>
     );
   };
   confirmButton = () => {
-    const {text, video, loader} = this.state;
+    const {video, loader} = this.state;
     return (
-      <View style={{marginTop: 20}}>
-        <Button
-          backgroundColor="primary"
-          onPressColor={colors.primaryLight}
-          enabled={true}
-          disabled={!video}
-          text={'Post to Club'}
-          styleButton={{height: 55}}
-          loader={loader}
-          click={this.createPost}
-        />
-      </View>
+      <KeyboardAwareButton
+        disabled={!video}
+        loader={loader}
+        click={this.createPost}
+        styleFooter={styleApp.footerModal}
+        text={'Post to Club'}
+        styleButton={{height: 55}}
+        nativeID="text"
+        backgroundColor="primary"
+        onPressColor={colors.primaryLight}
+      />
     );
   };
   render() {
@@ -141,6 +141,7 @@ class CreatePost extends Component {
           offsetBottom={0}
           showsVerticalScrollIndicator={true}
         />
+        {this.confirmButton()}
       </View>
     );
   }

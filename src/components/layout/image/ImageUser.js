@@ -60,8 +60,6 @@ export default class ImageUser extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
-
 ImageUser.propTypes = {
   info: PropTypes.object.isRequired,
 };

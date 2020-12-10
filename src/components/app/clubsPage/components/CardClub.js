@@ -13,6 +13,7 @@ import {acceptInvite, declineInvite} from '../../../functions/clubs';
 import CardInvitation from './CardInvitation';
 import CardUser from '../../../layout/cards/CardUser';
 import {FormatDate} from '../../../functions/date';
+import PlaceHolder from '../../../placeHolders/CardClub';
 
 class CardClub extends Component {
   static propTypes = {
@@ -89,7 +90,7 @@ class CardClub extends Component {
   }
   render() {
     const {club, selectClub, selectedClubID, displayAsInvitation} = this.props;
-    if (!club) return <View />;
+    if (!club) return <PlaceHolder style={styleApp.cardClub} />;
     if (displayAsInvitation) return this.invitationCard();
     const {info} = club;
     const {title} = info;

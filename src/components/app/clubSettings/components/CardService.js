@@ -16,6 +16,7 @@ import {formatDuration} from '../../../functions/date';
 import {serviceSelector} from '../../../../store/selectors/services';
 import CardUser from '../../../layout/cards/CardUser';
 import ButtonColor from '../../../layout/Views/Button';
+import PlaceHolder from '../../../placeHolders/CardService';
 
 class CardService extends Component {
   static propTypes = {
@@ -89,16 +90,16 @@ class CardService extends Component {
       disableEdit,
       disableDelete,
     } = this.props;
-
-    if (!service) return <View />;
-    const {title, price, duration, owner} = service;
-    const {unit: unitPrice, value: valuePrice} = price;
-    const {unit: unitDuration, value: valueDuration} = duration;
-    const isUserOwner = owner === userID;
     const containerStyle = {
       ...styles.card,
       ...styleContainer,
     };
+    if (!service) return <PlaceHolder style={containerStyle} />;
+    const {title, price, duration, owner} = service;
+    const {unit: unitPrice, value: valuePrice} = price;
+    const {unit: unitDuration, value: valueDuration} = duration;
+    const isUserOwner = owner === userID;
+
     return (
       <View activeOpacity={0.9} onPress={() => true} style={containerStyle}>
         {displayOwner && <CardUser id={owner} />}
