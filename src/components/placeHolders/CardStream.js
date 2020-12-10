@@ -52,12 +52,6 @@ export default class CardConversation extends PureComponent {
                 />
               </Col>
               <Col size={20} style={styleApp.center3}>
-                {/* <AllIcons
-                  name="keyboard-arrow-right"
-                  type="mat"
-                  size={20}
-                  color={colors.grey}
-                /> */}
                 <LinearGradient
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 0}}
@@ -71,7 +65,6 @@ export default class CardConversation extends PureComponent {
         click={() => (onPress ? onPress() : true)}
         color="white"
         style={[
-          // styleApp.cardConversation,
           styleApp.marginView,
           style,
           {

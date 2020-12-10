@@ -82,7 +82,7 @@ export default class AddContentBooking extends Component {
             multiline={true}
             autoCorrect={true}
             underlineColorAndroid="rgba(0,0,0,0)"
-            blurOnSubmit={false}
+            blurOnSubmit={true}
             returnKeyType={'done'}
             placeholderTextColor={colors.greyDark}
             ref={(input) => {

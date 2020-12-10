@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
   },
   textButtonOn: {
-    ...styleApp.text,
+    ...styleApp.textBold,
     color: colors.white,
   },
 });
