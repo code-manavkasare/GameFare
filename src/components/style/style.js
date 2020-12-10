@@ -444,6 +444,8 @@ const styles = StyleSheet.create({
     zIndex: 20,
     width: width,
     borderColor: '#EAEAEA',
+    paddingLeft: '5%',
+    paddingRight: '5%',
   },
   footerBook: {
     position: 'absolute',

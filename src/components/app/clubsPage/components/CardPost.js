@@ -17,6 +17,7 @@ import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer
 import CardUser from '../../../layout/cards/CardUser';
 import {FormatDate} from '../../../functions/date';
 import {navigate} from '../../../../../NavigationService';
+import PlaceHolder from '../../../placeHolders/CardPost';
 
 class CardClub extends Component {
   static propTypes = {
@@ -87,7 +88,7 @@ class CardClub extends Component {
   };
   render() {
     const {post} = this.props;
-    if (!post) return null;
+    if (!post) return <PlaceHolder style={styleApp.cardPost} />;
     const {video, userID} = post;
     return (
       <View style={styleApp.cardPost}>

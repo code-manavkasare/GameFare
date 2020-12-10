@@ -11,6 +11,7 @@ import styleApp from '../../style/style';
 import ImageUser from '../image/ImageUser';
 import {infoUserByIdSelector} from '../../../store/selectors/user';
 import {bindUserInfo, unbindUserInfo} from '../../database/firebase/bindings';
+import PlaceHolder from '../../placeHolders/CardUser';
 
 class CardUser extends Component {
   static propTypes = {
@@ -44,11 +45,13 @@ class CardUser extends Component {
       prefix,
     } = this.props;
     if (!infoUser) return null;
-    const {firstname, lastname} = infoUser;
+
     const containerStyle = {
       ...styles.cardUser,
       ...style,
     };
+    if (!infoUser) return <PlaceHolder style={containerStyle} />;
+    const {firstname, lastname} = infoUser;
     const textStyle = {
       ...styleApp.textBold,
       ...styleText,
@@ -79,7 +82,6 @@ class CardUser extends Component {
           );
         }}
         click={() => navigate('ProfilePage', {id})}
-        color={'transparent'}
         style={containerStyle}
         onPressColor={colors.off2}
       />

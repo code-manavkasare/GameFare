@@ -170,7 +170,6 @@ class ClubsHeader extends Component {
           typeIcon1={'font'}
           sizeIcon1={21}
           colorIcon1={colors.greyDarker}
-          backgroundColorIcon1={'transparent'}
           clickButton1={() => {
             navigation.navigate('Bookings');
           }}

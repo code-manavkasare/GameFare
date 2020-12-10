@@ -14,6 +14,7 @@ import Button from '../../../layout/buttons/Button';
 import RowPlusMinus from '../../../layout/rows/RowPlusMinus';
 import {serviceSelector} from '../../../../store/selectors/services';
 import {formatDuration} from '../../../functions/date';
+import KeyboardAwareButton from '../../../layout/buttons/KeyboardAwareButton';
 
 class CreateService extends Component {
   static propTypes = {
@@ -69,7 +70,7 @@ class CreateService extends Component {
           autoFocus={true}
           autoCorrect={true}
           underlineColorAndroid="rgba(0,0,0,0)"
-          blurOnSubmit={false}
+          blurOnSubmit={true}
           returnKeyType={'done'}
           placeholderTextColor={colors.greyDark}
           ref={(input) => {
@@ -99,7 +100,6 @@ class CreateService extends Component {
             formatType: 'text',
           })}
         />
-        {this.confirmButton()}
       </View>
     );
   };
@@ -108,18 +108,17 @@ class CreateService extends Component {
     const {edit} = route.params;
     const {title, loader} = this.state;
     return (
-      <View style={{marginTop: 30}}>
-        <Button
-          backgroundColor="primary"
-          onPressColor={colors.primaryLight}
-          enabled={true}
-          disabled={title === ''}
-          text={edit ? 'Save' : 'Add Service'}
-          styleButton={{height: 55}}
-          loader={loader}
-          click={this.createService}
-        />
-      </View>
+      <KeyboardAwareButton
+        disabled={title === ''}
+        loader={loader}
+        click={this.createService}
+        styleFooter={styleApp.footerModal}
+        text={edit ? 'Save' : 'Add Service'}
+        styleButton={{height: 55}}
+        nativeID="title"
+        backgroundColor="primary"
+        onPressColor={colors.primaryLight}
+      />
     );
   };
   render() {
@@ -150,6 +149,7 @@ class CreateService extends Component {
           offsetBottom={0}
           showsVerticalScrollIndicator={true}
         />
+        {this.confirmButton()}
       </View>
     );
   }

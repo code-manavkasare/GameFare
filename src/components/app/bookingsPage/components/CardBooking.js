@@ -99,6 +99,7 @@ class CardBooking extends Component {
           displayOwner={false}
           disableEdit
           disableDelete
+          disableBookButton
           styleContainer={styles.serviceContainer}
         />
       </CardInvitation>

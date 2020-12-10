@@ -11,6 +11,7 @@ import ScrollView from '../../../layout/scrollViews/ScrollView';
 import {createClub} from '../../../functions/clubs';
 import {userInfoSelector} from '../../../../store/selectors/user';
 import Button from '../../../layout/buttons/Button';
+import KeyboardAwareButton from '../../../layout/buttons/KeyboardAwareButton';
 
 class CreateClub extends Component {
   static propTypes = {
@@ -44,7 +45,7 @@ class CreateClub extends Component {
           autoFocus={true}
           autoCorrect={true}
           underlineColorAndroid="rgba(0,0,0,0)"
-          blurOnSubmit={false}
+          blurOnSubmit={true}
           returnKeyType={'done'}
           placeholderTextColor={colors.greyDark}
           ref={(input) => {
@@ -60,7 +61,7 @@ class CreateClub extends Component {
           multiline={true}
           autoCorrect={true}
           underlineColorAndroid="rgba(0,0,0,0)"
-          blurOnSubmit={false}
+          blurOnSubmit={true}
           returnKeyType={'done'}
           placeholderTextColor={colors.greyDark}
           ref={(input) => {
@@ -70,25 +71,23 @@ class CreateClub extends Component {
           onChangeText={(text) => this.setState({description: text})}
           value={description}
         />
-        {this.confirmButton()}
       </View>
     );
   };
   confirmButton = () => {
     const {title, description, loader} = this.state;
     return (
-      <View style={{marginTop: 20}}>
-        <Button
-          backgroundColor="primary"
-          onPressColor={colors.primaryLight}
-          enabled={true}
-          disabled={title === '' || description === ''}
-          text={'Create Club'}
-          styleButton={{height: 55}}
-          loader={loader}
-          click={this.createClub}
-        />
-      </View>
+      <KeyboardAwareButton
+        disabled={title === '' || description === ''}
+        loader={loader}
+        click={this.createClub}
+        styleFooter={styleApp.footerModal}
+        text={'Create Club'}
+        styleButton={{height: 55}}
+        nativeID="title"
+        backgroundColor="primary"
+        onPressColor={colors.primaryLight}
+      />
     );
   };
   render() {
@@ -118,6 +117,7 @@ class CreateClub extends Component {
           offsetBottom={0}
           showsVerticalScrollIndicator={true}
         />
+        {this.confirmButton()}
       </View>
     );
   }

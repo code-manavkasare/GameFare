@@ -12,6 +12,7 @@ import {boolShouldComponentUpdate} from '../../../functions/redux';
 import {userIDSelector} from '../../../../store/selectors/user';
 import {acceptInvite, declineInvite} from '../../../functions/clubs';
 import CardInvitation from './CardInvitation';
+import PlaceHolder from '../../../placeHolders/CardClub';
 
 class CardClub extends Component {
   static propTypes = {
@@ -64,7 +65,7 @@ class CardClub extends Component {
   }
   render() {
     const {club, selectClub, selectedClubID, displayAsInvitation} = this.props;
-    if (!club) return <View />;
+    if (!club) return <PlaceHolder style={styleApp.cardClub} />;
     if (displayAsInvitation) return this.invitationCard();
     const {info} = club;
     const {title} = info;
