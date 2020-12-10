@@ -66,4 +66,12 @@ const getSelectionActionDecorations = (action) => {
   }
 };
 
-export {generateID, getSelectionActionDecorations};
+const sanitizeSportsList = (sports) => {
+  let sportsList = sports.map((sport) => sport?.text);
+  const otherIndex = sportsList.indexOf('Other');
+  const strippedData =
+    otherIndex !== -1 ? sportsList.splice(otherIndex, 1) : [];
+  return [...sportsList, ...strippedData];
+};
+
+export {generateID, getSelectionActionDecorations, sanitizeSportsList};

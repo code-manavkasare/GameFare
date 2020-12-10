@@ -115,13 +115,11 @@ class CardClub extends Component {
 const styles = StyleSheet.create({
   title: {
     ...styleApp.textBold,
-    // ...styleApp.shadow,
     fontSize: 13,
     color: colors.greyLighter,
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.5)',
     textShadowOffset: {width: 0, height: 0},
-    // textShadowOpacity: 0.5,
     textShadowRadius: 7,
     overflow: 'visible',
   },

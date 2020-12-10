@@ -130,11 +130,12 @@ class ClubList extends Component {
         list={clubs}
         lengthList={clubs.length}
         cardList={this.renderClub}
-        keyExtractor={(item, index) => `${item.id}-${index}`}
+        keyExtractor={(item) => item.id}
         header={clubInvites.length > 0 ? this.renderInvites : null}
         headerStyle={styles.header}
         footer={!userConnected ? this.renderSignedOut : this.renderAddClub}
         footerStyle={styleApp.fullSize}
+        noLazy
       />
     );
   }
