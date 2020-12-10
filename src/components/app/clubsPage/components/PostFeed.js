@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {any, string} from 'prop-types';
 
+import {navigate} from '../../../../../NavigationService';
 import {FlatListComponent} from '../../../layout/Views/FlatList';
 import CardPost from './CardPost';
 import OptionsRow from './OptionsRow';
@@ -9,6 +10,7 @@ import {
   postListSelector,
   isClubOwnerSelector,
 } from '../../../../store/selectors/clubs';
+import {userConnectedSelector} from '../../../../store/selectors/user';
 import styleApp from '../../../style/style';
 import {
   heightFooter,
@@ -37,6 +39,10 @@ class PostFeed extends Component {
       this.flatListRef?.jumpToTop();
     }
   }
+  createPost = () => {
+    const {currentClubID} = this.props;
+    navigate('CreatePost', {clubID: currentClubID});
+  };
   renderClub = ({item: {id: postID}}) => {
     const {currentClubID} = this.props;
     return <CardPost id={postID} clubID={currentClubID} />;
@@ -52,7 +58,12 @@ class PostFeed extends Component {
       iconButton: 'plus',
     };
     if (isClubOwner) {
-      config = {...config, clickButton: this.createPost};
+      config = {
+        ...config,
+        clickButton: this.createPost,
+        text: "You haven't posted anything yet",
+        image: require('../../../../img/images/target.png'),
+      };
     } else {
       config = {
         ...config,
@@ -63,8 +74,9 @@ class PostFeed extends Component {
     return config;
   };
   render() {
-    const {posts, AnimatedScrollValue} = this.props;
+    const {posts, AnimatedScrollValue, userConnected} = this.props;
     if (!posts) return null;
+    if (!userConnected) return null;
     return (
       <FlatListComponent
         onRef={(ref) => (this.flatListRef = ref)}
@@ -92,6 +104,7 @@ const mapStateToProps = (state, props) => {
   return {
     posts: postListSelector(state, {id: props.currentClubID}),
     isClubOwner: isClubOwnerSelector(state, {id: props.currentClubID}),
+    userConnected: userConnectedSelector(state),
   };
 };
 

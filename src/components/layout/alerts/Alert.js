@@ -96,6 +96,7 @@ export default class Alert extends Component {
       textButton,
       displayList,
       listOptions,
+      forceVertical,
       close,
       onGoBack,
       componentAdded,
@@ -169,7 +170,7 @@ export default class Alert extends Component {
               close={() => this.close()}
               navigation={navigation}
             />
-          ) : displayList && listOptions.length === 2 ? (
+          ) : displayList && listOptions.length === 2 && !forceVertical ? (
             <Row style={styles.buttonArea}>
               <Col size={45} style={styles.viewButton}>
                 <Button
@@ -210,50 +211,41 @@ export default class Alert extends Component {
           ) : // CASE 2: More than two options available (All blue buttons)
           displayList ? (
             <Col style={styles.buttonArea}>
-              {listOptions.map((option, i) => {
-                const {icon, title, operation} = option;
-                return (
-                  <ButtonColor
-                    key={i}
-                    view={() => {
-                      return (
-                        <Row>
-                          {icon
-                            ? () => {
-                                const {name, size, type, color} = icon;
-                                return (
-                                  <Col size={20} style={styleApp.center}>
-                                    <AllIcons
-                                      name={name}
-                                      type={type}
-                                      color={color}
-                                      size={size}
-                                    />
-                                  </Col>
-                                );
-                              }
-                            : null}
-                          <Col size={60} style={styleApp.center2}>
-                            <Text style={styleApp.text}>{title}</Text>
-                          </Col>
-                          <Col size={20} style={styleApp.center3}>
-                            <AllIcons
-                              name="keyboard-arrow-right"
-                              type={'mat'}
-                              color={colors.grey}
-                              size={13}
-                            />
-                          </Col>
-                        </Row>
-                      );
-                    }}
-                    click={() => this.optionClick(operation)}
-                    color="white"
-                    style={styles.buttonList}
-                    onPressColor={colors.off}
-                  />
-                );
-              })}
+              {listOptions.map(
+                ({icon, title, operation, color, forceNavigation}, i) => {
+                  const iconRender = () => {
+                    const {name, size, type, color, solid} = icon;
+                    return (
+                      <View style={styles.listButtonIcon}>
+                        <AllIcons
+                          name={name}
+                          type={type}
+                          color={color}
+                          size={size}
+                          solid={solid}
+                        />
+                      </View>
+                    );
+                  };
+                  return (
+                    <ButtonColor
+                      key={i}
+                      view={() => {
+                        return (
+                          <Row style={styleApp.center}>
+                            {icon ? iconRender() : null}
+                            <Text style={styles.listButtonText}>{title}</Text>
+                          </Row>
+                        );
+                      }}
+                      click={() => this.optionClick(operation, forceNavigation)}
+                      color={color ?? colors.primary}
+                      style={styles.buttonList}
+                      onPressColor={color ?? colors.blueLight}
+                    />
+                  );
+                },
+              )}
             </Col>
           ) : (
             // CASE 3: Only one option provided (Same as previous usage)
@@ -338,7 +330,15 @@ const styles = StyleSheet.create({
   buttonList: {
     height: 55,
     width: '100%',
+    borderRadius: 15,
+    ...styleApp.shadowWeak,
+    marginBottom: 15,
   },
+  listButtonText: {
+    ...styleApp.textBold,
+    color: colors.white,
+  },
+  listButtonIcon: {marginRight: 15},
   viewButton: {
     alignItems: 'center',
     justifyContent: 'center',

@@ -20,7 +20,7 @@ import {
 } from '../../../../store/selectors/clubs';
 
 const ROW_HEIGHT = 60;
-const EXPANDED_ROW_HEIGHT = 170;
+const EXPANDED_ROW_HEIGHT = 185;
 class ClubsHeader extends Component {
   static propTypes = {
     loader: bool,

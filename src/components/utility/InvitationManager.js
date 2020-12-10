@@ -18,6 +18,7 @@ import {
   openSession,
   sessionOpening,
   addMembersToSession,
+  timeout,
 } from '../functions/coach';
 import {shareVideosWithTeams} from '../functions/videoManagement';
 import {getSelectionActionDecorations} from '../functions/utility';
@@ -225,6 +226,8 @@ class InvitationManager extends Component {
       if (archivesToShare && archivesToShare.length > 0) {
         shareVideosWithTeams(archivesToShare, sessionIDs);
         if (sessionIDs.length === 1) {
+          await goBack();
+          await timeout(100);
           navigate('Conversation', {id: sessionIDs[0]});
         } else {
           goBack();

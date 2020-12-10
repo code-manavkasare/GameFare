@@ -48,4 +48,13 @@ const updateData = async () => {
     .update(updates);
 };
 
-export {fetchArchives, updateData};
+const getSportTypes = async () => {
+  const snap = await database()
+    .ref('variables/sports/list')
+    .once('value');
+  let sports = snap.val().map((sport) => sport?.text);
+  sports.push('Other');
+  return sports;
+};
+
+export {fetchArchives, updateData, getSportTypes};

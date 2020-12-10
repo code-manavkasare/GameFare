@@ -13,6 +13,8 @@ import {
   userClubsSelector,
 } from '../../../../store/selectors/clubs';
 import CardClub from './CardClub';
+import {width} from '../../../style/sizes';
+import {userConnectedSelector} from '../../../../store/selectors/user';
 class ClubList extends Component {
   static propTypes = {
     clubs: object,
@@ -36,10 +38,34 @@ class ClubList extends Component {
     );
   };
   addClub = () => {
-    navigate('CreateClub');
+    navigate('ClubForm');
   };
   openInvites = () => {
     navigate('ClubInvites');
+  };
+  signIn = () => {
+    navigate('SignIn');
+  };
+  renderSignedOut = () => {
+    const addClubContainerStyle = {
+      ...styleApp.cardClubSmall,
+      backgroundColor: colors.greyDark,
+    };
+    return (
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={this.signIn}
+        style={addClubContainerStyle}>
+        <AllIcon
+          name={'user-plus'}
+          size={21}
+          color={styles.addClubSubtitle.color}
+          type="font"
+          solid
+        />
+        <Text style={styles.addClubSubtitle}>Sign In</Text>
+      </TouchableOpacity>
+    );
   };
   renderAddClub = () => {
     const addClubContainerStyle = {
@@ -85,12 +111,16 @@ class ClubList extends Component {
     );
   };
   render() {
-    const {clubs, clubInvites} = this.props;
+    let {clubs, clubInvites, userConnected} = this.props;
+    const cardWidth =
+      styleApp.cardClubSmall.width + styleApp.cardClubSmall.marginRight;
     const flatListStyle = {
       paddingHorizontal: '5%',
-      width: clubs.length
-        ? clubs.length * 150 + (clubInvites.length ? 100 : 0)
-        : 0,
+      width:
+        clubs.length * cardWidth +
+        0.05 * width +
+        styleApp.cardClubSmall.marginRight +
+        (clubInvites.length ? cardWidth * 2 : clubs.length ? cardWidth : 0),
     };
     return (
       <FlatListComponent
@@ -103,7 +133,7 @@ class ClubList extends Component {
         keyExtractor={(item, index) => `${item.id}-${index}`}
         header={clubInvites.length > 0 ? this.renderInvites : null}
         headerStyle={styles.header}
-        footer={this.renderAddClub}
+        footer={!userConnected ? this.renderSignedOut : this.renderAddClub}
         footerStyle={styleApp.fullSize}
       />
     );
@@ -141,6 +171,7 @@ const mapStateToProps = (state) => {
   return {
     clubs: userClubsSelector(state),
     clubInvites: userClubInvitesSelector(state),
+    userConnected: userConnectedSelector(state),
   };
 };
 

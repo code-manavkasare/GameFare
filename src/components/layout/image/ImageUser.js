@@ -14,7 +14,7 @@ export default class ImageUser extends Component {
     super(props);
   }
   image() {
-    const {info} = this.props;
+    const {info, hideProfileInitials} = this.props;
     const {picture, firstname, lastname} = info;
     if (picture)
       return (
@@ -24,6 +24,7 @@ export default class ImageUser extends Component {
           imgInitial={picture}
         />
       );
+    if (hideProfileInitials) return null;
     return (
       <View style={[styleApp.fullSize, styleApp.center]}>
         <Text style={[styleApp.textBold, {fontSize: 10, color: colors.white}]}>
@@ -33,17 +34,19 @@ export default class ImageUser extends Component {
     );
   }
   button() {
-    const {onClick, styleImgProps, user} = this.props;
+    const {onClick, styleImgProps, user, disableClick} = this.props;
 
     let styleImg = {
       ...styleApp.roundView2,
       ...styleImgProps,
       overflow: 'hidden',
+      backgroundColor: colors.greyDark,
     };
     return (
       <TouchableOpacity
         onPress={() => {
-          if (onClick) return onClick();
+          if (disableClick) return null;
+          else if (onClick) return onClick();
           else navigate('ProfilePage', {id: user.id});
         }}
         activeOpacity={0.9}

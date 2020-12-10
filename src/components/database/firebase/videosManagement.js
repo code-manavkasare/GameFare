@@ -11,17 +11,19 @@ const shareCloudVideo = async (
   const userID = forceInvitedByUser ?? store.getState().user.userID;
   const date = Date.now();
   let updates = {
-    [`users/${shareWithID}/archivedStreams/${videoID}`]: {
-      id: videoID,
-      startTimestamp: date,
-      uploadedByUser: false,
-    },
     [`archivedStreams/${videoID}/members/${shareWithID}`]: {
       id: shareWithID,
       invitedBy: userID,
       timestamp: date,
     },
   };
+  if (forceInvitedByUser) {
+    updates[`users/${shareWithID}/archivedStreams/${videoID}`] = {
+      id: videoID,
+      startTimestamp: date,
+      uploadedByUser: false,
+    };
+  }
   await database()
     .ref()
     .update(updates);

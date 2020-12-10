@@ -11,7 +11,7 @@ import {createInviteToClubBranchUrl} from '../database/branch';
 import {goBack, navigate} from '../../../NavigationService';
 import {getValueOnce} from '../database/firebase/methods.js';
 
-const createClub = async ({title, description}) => {
+const createClub = async ({title, description, sport}) => {
   const {userID} = store.getState().user;
   const id = generateID();
   const timestamp = Date.now();
@@ -23,6 +23,7 @@ const createClub = async ({title, description}) => {
     info: {
       title,
       description,
+      sport,
     },
   };
   const clubCreation = {
@@ -36,6 +37,34 @@ const createClub = async ({title, description}) => {
   await database()
     .ref()
     .update(clubCreation);
+};
+
+const editClub = async ({title, description, sport, clubID}) => {
+  const clubEdit = {
+    [`clubs/${clubID}/info`]: {
+      title,
+      description,
+      sport,
+    },
+  };
+  await database()
+    .ref()
+    .update(clubEdit);
+};
+
+const deleteClub = async ({clubID}) => {
+  const {members} = store.getState().clubs[clubID];
+  let clubDeletion = {
+    [`clubs/${clubID}`]: null,
+  };
+  if (members) {
+    Object.keys(members).map((userID) => {
+      clubDeletion[`users/${userID}/clubs/${clubID}`] = null;
+    });
+  }
+  await database()
+    .ref()
+    .update(clubDeletion);
 };
 
 const createService = async ({title, price, duration, clubID}) => {
@@ -114,6 +143,7 @@ const createPost = async ({clubID, text, video}) => {
       id,
       timestamp,
     },
+    [`clubs/${clubID}/timestamp`]: timestamp,
   };
   if (members) {
     Object.keys(members).map((userID) => {
@@ -275,6 +305,8 @@ const declineInvite = async ({clubID}) => {
 
 export {
   createClub,
+  editClub,
+  deleteClub,
   createService,
   editService,
   removeService,

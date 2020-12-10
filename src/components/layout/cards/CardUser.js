@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
-import {string, object} from 'prop-types';
+import {string, object, bool} from 'prop-types';
 
 import {navigate} from '../../../../NavigationService';
 import ButtonColor from '../Views/Button';
@@ -17,6 +17,8 @@ class CardUser extends Component {
     id: string,
     style: object,
     styleText: object,
+    imgOnly: bool,
+    hideProfileInitials: bool,
   };
 
   static defaultProps = {};
@@ -33,17 +35,29 @@ class CardUser extends Component {
     const {id} = this.props;
     unbindUserInfo(id);
   };
+  imgUser = () => {
+    const {infoUser, styleImg, imgOnly, hideProfileInitials} = this.props;
+    return (
+      <ImageUser
+        info={infoUser}
+        styleImgProps={styleImg}
+        disableClick={imgOnly}
+        hideProfileInitials={hideProfileInitials}
+      />
+    );
+  };
   render() {
     const {
       infoUser,
       style,
       styleText,
-      styleImg,
       id,
       suffix,
       prefix,
+      imgOnly,
     } = this.props;
     if (!infoUser) return null;
+    if (imgOnly) return this.imgUser();
     const {firstname, lastname} = infoUser;
     const containerStyle = {
       ...styles.cardUser,
@@ -61,7 +75,7 @@ class CardUser extends Component {
             <View style={styleApp.fullSize}>
               <Row>
                 <Col size={15} style={styleApp.center2}>
-                  <ImageUser info={infoUser} styleImgProps={styleImg} />
+                  {this.imgUser()}
                 </Col>
                 <Col size={65} style={styleApp.center2}>
                   <Text
