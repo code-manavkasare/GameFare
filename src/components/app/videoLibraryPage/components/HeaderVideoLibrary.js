@@ -57,6 +57,7 @@ class HeaderVideoLibrary extends Component {
           sizeIcon1={17}
           clickButton1={() => navigation.goBack()}
           typeIcon1={'font'}
+          backgroundColorIcon1={'transparent'}
           icon2={selectOnly ? null : !selectableMode ? 'text' : 'text'}
           text2={!selectableMode ? 'Select' : 'Cancel'}
           animateIcon2

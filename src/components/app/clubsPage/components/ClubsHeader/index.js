@@ -4,23 +4,20 @@ import {View, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import Animated from 'react-native-reanimated';
 
-import colors from '../../../style/colors';
-import styleApp from '../../../style/style';
-import {heightHeaderHome, marginTopApp} from '../../../style/sizes';
-import {rowTitle} from '../../TeamPage/components/elements';
-import {reanimatedTiming} from '../../../animations/animations';
+import colors from '../../../../style/colors';
+import styleApp from '../../../../style/style';
+import {heightHeaderHome, marginTopApp} from '../../../../style/sizes';
+import {reanimatedTiming} from '../../../../animations/animations';
+import {boolShouldComponentUpdate} from '../../../../functions/redux';
+import {userInfoSelector} from '../../../../../store/selectors/user';
 
-import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
-import {boolShouldComponentUpdate} from '../../../functions/redux';
-import {userInfoSelector} from '../../../../store/selectors/user';
-import ClubList from './ClubList';
-import {
-  clubSelector,
-  userClubInvitesSelector,
-} from '../../../../store/selectors/clubs';
+import HeaderBackButton from '../../../../layout/headers/HeaderBackButton';
+import ClubList from './components/ClubList';
+import HeaderTitle from './components/HeaderTitle';
 
 const ROW_HEIGHT = 60;
 const EXPANDED_ROW_HEIGHT = 185;
+
 class ClubsHeader extends Component {
   static propTypes = {
     loader: bool,
@@ -77,44 +74,15 @@ class ClubsHeader extends Component {
   };
   headerTitle = () => {
     const {listVisible} = this.state;
-    const {currentClub, clubInvites} = this.props;
-    const title = currentClub?.info?.title;
-    return rowTitle({
-      hideDividerHeader: true,
-      title: listVisible || !title ? 'Clubs' : title,
-      titleColor: colors.greyDarker,
-      titleStyle: {
-        fontWeight: '800',
-        fontSize: 23,
-      },
-      containerStyle: {
-        paddingHorizontal: '5%',
-        height: ROW_HEIGHT,
-      },
-      clickOnRow: true,
-      button: {
-        click: this.toggleListView,
-        icon: {
-          type: 'font',
-          color:
-            listVisible || !clubInvites.length
-              ? colors.greyDarker
-              : colors.primary,
-          name: listVisible
-            ? 'chevron-up'
-            : clubInvites.length
-            ? 'circle'
-            : 'chevron-down',
-        },
-        color: 'transparent',
-        onPressColor: 'transparent',
-        fontSize: 12,
-        style: {
-          height: 25,
-          width: 25,
-        },
-      },
-    });
+    const {currentClubID} = this.props;
+    return (
+      <HeaderTitle
+        currentClubID={currentClubID}
+        listVisible={listVisible}
+        rowHeight={ROW_HEIGHT}
+        click={this.toggleListView}
+      />
+    );
   };
   selectClub = (id) => {
     const {selectClub} = this.props;
@@ -173,14 +141,10 @@ class ClubsHeader extends Component {
           clickButton1={() => {
             navigation.navigate('Bookings');
           }}
-          // icon11={'dollar-sign'}
           typeIcon11={'font'}
           sizeIcon11={17}
           colorIcon11={colors.greyDarker}
           backgroundColorIcon11={'transparent'}
-          clickButton11={() => {
-            /// navigate to services page
-          }}
           icon2={infoUser?.picture ? infoUser?.picture : 'user'}
           sizeIcon2={infoUser.picture ? 45 : 23}
           clickButton2={() => navigation.navigate('VideoLibrary')}
@@ -211,8 +175,6 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, props) => {
   return {
     infoUser: userInfoSelector(state),
-    currentClub: clubSelector(state, {id: props.currentClubID}),
-    clubInvites: userClubInvitesSelector(state),
   };
 };
 

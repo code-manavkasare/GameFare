@@ -3,18 +3,18 @@ import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 import {object, string, func} from 'prop-types';
 
-import {navigate} from '../../../../../NavigationService';
-import styleApp from '../../../style/style';
-import colors from '../../../style/colors';
-import AllIcon from '../../../layout/icons/AllIcons';
-import {FlatListComponent} from '../../../layout/Views/FlatList';
+import {navigate} from '../../../../../../../NavigationService';
+import styleApp from '../../../../../style/style';
+import colors from '../../../../../style/colors';
+import AllIcon from '../../../../../layout/icons/AllIcons';
+import {FlatListComponent} from '../../../../../layout/Views/FlatList';
 import {
   userClubInvitesSelector,
   userClubsSelector,
-} from '../../../../store/selectors/clubs';
-import CardClub from './CardClub';
-import {width} from '../../../style/sizes';
-import {userConnectedSelector} from '../../../../store/selectors/user';
+} from '../../../../../../store/selectors/clubs';
+import CardClub from '../../CardClub';
+import {width} from '../../../../../style/sizes';
+import {userConnectedSelector} from '../../../../../../store/selectors/user';
 class ClubList extends Component {
   static propTypes = {
     clubs: object,
@@ -114,13 +114,20 @@ class ClubList extends Component {
     let {clubs, clubInvites, userConnected} = this.props;
     const cardWidth =
       styleApp.cardClubSmall.width + styleApp.cardClubSmall.marginRight;
+    console.log;
     const flatListStyle = {
       paddingHorizontal: '5%',
       width:
         clubs.length * cardWidth +
         0.05 * width +
         styleApp.cardClubSmall.marginRight +
-        (clubInvites.length ? cardWidth * 2 : clubs.length ? cardWidth : 0),
+        (clubInvites.length && clubs.length
+          ? cardWidth * 2
+          : clubInvites.length
+          ? 10
+          : clubs.length
+          ? cardWidth
+          : 0),
     };
     return (
       <FlatListComponent

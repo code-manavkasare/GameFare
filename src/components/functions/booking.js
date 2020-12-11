@@ -27,14 +27,42 @@ const addContentToBooking = async ({bookingID, text, video}) => {
 };
 
 const updateBookingStatusAlert = ({bookingID, status}) => {
+  const title =
+    status === 'confirmed'
+      ? 'Are you sure you want to accept this booking?'
+      : status === 'declined'
+      ? 'Are you sure you want to decline this booking?'
+      : status === 'completed'
+      ? 'Are you sure you want to mark this as complete?'
+      : status === 'cancelled'
+      ? 'Are you sure you want to cancel this booking?'
+      : null;
+  const textButton =
+    status === 'confirmed'
+      ? 'Accept'
+      : status === 'declined'
+      ? 'Decline'
+      : status === 'completed'
+      ? 'Mark as complete'
+      : status === 'cancelled'
+      ? 'Cancel service'
+      : null;
+  const color =
+    status === 'confirmed'
+      ? ['green', 'greenLight']
+      : status === 'declined'
+      ? ['red', 'red']
+      : status === 'completed'
+      ? ['green', 'greenLight']
+      : status === 'cancelled'
+      ? ['red', 'red']
+      : ['green', 'greenLight'];
   navigate('Alert', {
-    title: `Do you want to ${
-      status === 'confirmed' ? 'confirm' : 'decline'
-    } the booking?`,
+    title,
     subtitle: 'This action cannot be undone.',
-    textButton: status === 'confirmed' ? 'Confim' : 'Decline',
-    colorButton: status === 'confirmed' ? 'green' : 'red',
-    onPressColor: status === 'confirmed' ? colors.greenLight : colors.red,
+    textButton,
+    colorButton: color[0],
+    onPressColor: colors[color[1]],
     onGoBack: async () => updateBookingStatus({bookingID, status}),
   });
 };

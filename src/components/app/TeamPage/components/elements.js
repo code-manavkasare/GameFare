@@ -133,7 +133,7 @@ const userCircle = (options) => {
                   textAlign: 'center',
                   marginLeft: 3,
                   marginTop: 1,
-                  fontSize: single ? 21 : 16,
+                  fontSize: scale * (single ? 21 : 16),
                 }}>
                 {firstAndLastName
                   ? member.info.firstname[0] + member.info.lastname[0]
@@ -183,7 +183,7 @@ const titleSession = (session, size, short) => {
     const name = members[0]?.info?.firstname;
     const string =
       members.length === 1
-        ? name
+        ? name + ' ' + members[0]?.info?.lastname
         : name +
           ' & ' +
           (members.length - 1) +
@@ -221,9 +221,6 @@ const titleSession = (session, size, short) => {
       return nameString;
     }
   }, '');
-  if (size) {
-    return names.slice(0, 30) + '...';
-  }
   return names;
 };
 

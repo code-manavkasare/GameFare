@@ -13,8 +13,9 @@ import {createClub, deleteClub, editClub} from '../../../functions/clubs';
 import {userInfoSelector} from '../../../../store/selectors/user';
 import {getSportTypes} from '../../../database/firebase/fetchData';
 import {clubSelector} from '../../../../store/selectors/clubs';
-import {navigate} from '../../../../../NavigationService';
+import {goBack, navigate} from '../../../../../NavigationService';
 import KeyboardAwareButton from '../../../layout/buttons/KeyboardAwareButton';
+import {timeout} from '../../../functions/coach';
 
 class ClubForm extends Component {
   static propTypes = {
@@ -59,7 +60,11 @@ class ClubForm extends Component {
       textButton: 'Delete',
       colorButton: 'red',
       onPressColor: 'red',
-      onGoBack: () => {
+      onGoBack: async () => {
+        goBack();
+        this.titleInput.blur();
+        this.descriptionInput.blur();
+        await timeout(300);
         navigate('ClubsPage', {
           timestamp: Date.now(),
           clubID: false,
@@ -84,7 +89,7 @@ class ClubForm extends Component {
           returnKeyType={'done'}
           placeholderTextColor={colors.greyDark}
           ref={(input) => {
-            this.firstnameInput = input;
+            this.titleInput = input;
           }}
           inputAccessoryViewID={'title'}
           onChangeText={(text) => this.setState({title: text})}
@@ -101,7 +106,7 @@ class ClubForm extends Component {
           returnKeyType={'done'}
           placeholderTextColor={colors.greyDark}
           ref={(input) => {
-            this.firstnameInput = input;
+            this.descriptionInput = input;
           }}
           inputAccessoryViewID={'title'}
           onChangeText={(text) => this.setState({description: text})}

@@ -14,7 +14,7 @@ import NotificationPage from '../app/elementsUser/elementsProfile/NotificationPa
 import SelectVideosFromLibrary from '../app/videoLibraryPage/index';
 import Alert from '../layout/alerts/Alert';
 import {SheetModal} from './transitions/SheetModal';
-import {marginTopApp} from '../style/sizes';
+import {marginTopApp, width} from '../style/sizes';
 import Conversation from '../app/elementsMessage/Conversation';
 import SessionSettings from '../app/TeamPage/components/SessionSettings';
 
@@ -46,6 +46,9 @@ function InitialStack() {
     <Stack.Navigator
       initialRouteName="MainApp"
       screenOptions={{
+        gestureResponseDistance: {
+          horizontal: width,
+        },
         header: () => <StatusBar barStyle={'dark-content'} />,
       }}>
       <Stack.Screen
