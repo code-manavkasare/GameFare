@@ -38,7 +38,7 @@ class HeaderConversation extends React.Component {
     return (
       <HeaderBackButton
         AnimatedHeaderValue={AnimatedHeaderValue}
-        textHeader={titleSession(session, 'small')}
+        textHeader={titleSession(session, 'small', true)}
         imgHeader={imageCardTeam(session, 60, true)}
         clickImgHeader={() =>
           navigate('SessionSettings', {objectID: session.objectID})
@@ -47,18 +47,18 @@ class HeaderConversation extends React.Component {
         inputRange={[50, 80]}
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
-        typeIcon2={'moon'}
+        typeIcon2={'font'}
         initialBorderWidth={1}
         initialBorderColorHeader={colors.white}
-        sizeIcon2={26}
-        sizeIcon1={21}
+        sizeIcon2={19}
+        sizeIcon1={17}
         initialTitleOpacity={1}
         icon1={'chevron-left'}
-        icon2={!isSessionRequest && 'film'}
+        icon2={!isSessionRequest && 'video'}
+        colorIcon2={colors.greyDarker}
         clickButton1={() => navigation.goBack()}
         clickButton2={() => this.openSession()}
         badgeIcon2={viewLive(session, {height: 20, width: 20}, true)}
-        // iconOffset="custom"
         customOffset={hangupButton(session)}
       />
     );

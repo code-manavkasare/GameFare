@@ -36,16 +36,16 @@ export default class HeaderListStream extends Component {
         initialBorderWidth={1}
         iconOffset={'bell'}
         typeIconOffset="font"
-        sizeIconOffset={24}
+        sizeIconOffset={22}
         colorIconOffset={colors.title}
         clickButtonOffset={() => navigate('NotificationPage', {modal: true})}
         icon2={'edit'}
         typeIcon2="font"
-        sizeIcon2={21}
+        sizeIcon2={19}
         colorIcon2={colors.title}
         clickButton2={async () => newConversation()}
         icon1={'chevron-left'}
-        sizeIcon1={21}
+        sizeIcon1={17}
         colorIcon1={colors.title}
         typeIcon1={'font'}
         clickButton1={() => navigation.goBack()}

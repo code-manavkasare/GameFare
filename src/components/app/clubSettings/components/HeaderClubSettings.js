@@ -21,7 +21,7 @@ export default class HeaderClubSettings extends Component {
   editClub = async () => {
     const {clubID} = this.props;
     goBack();
-    await timeout(100);
+    await timeout(300);
     navigate('EditClub', {editClubID: clubID});
   };
   share = async () => {

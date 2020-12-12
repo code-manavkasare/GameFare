@@ -36,15 +36,12 @@ export default class HeaderBookingsPage extends Component {
         initialTitleOpacity={0}
         initialBorderWidth={1}
         initialBorderColorHeader={'transparent'}
-        icon1={'times'}
-        sizeIcon1={17}
-        // icon2={'share'}
-        typeIcon2="moon"
-        sizeIcon2={19}
-        clickButton1={navigation.goBack}
+        icon2={'times'}
+        backgroundColorIcon2={'transparent'}
+        sizeIcon2={17}
+        clickButton2={navigation.goBack}
         loader={loader}
         colorLoader={colors.title}
-        clickButton2={this.share}
       />
     );
   }

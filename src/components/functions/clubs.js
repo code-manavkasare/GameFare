@@ -1,12 +1,8 @@
 import database from '@react-native-firebase/database';
 
 import {generateID} from './utility.js';
-import {setClubs} from '../../store/actions/clubsActions';
 import {store} from '../../store/reduxStore';
-import {setServices} from '../../store/actions/servicesActions.js';
-import {chargeUser} from './stripe.js';
-import {setPosts} from '../../store/actions/postsActions.js';
-import {setBookings} from '../../store/actions/bookingsActions.js';
+import {authorizePayment} from './stripe.js';
 import {createInviteToClubBranchUrl} from '../database/branch';
 import {goBack, navigate} from '../../../NavigationService';
 import {getValueOnce} from '../database/firebase/methods.js';
@@ -33,7 +29,6 @@ const createClub = async ({title, description, sport}) => {
       timestamp,
     },
   };
-  await store.dispatch(setClubs({[id]: newClub}));
   await database()
     .ref()
     .update(clubCreation);
@@ -92,7 +87,6 @@ const createService = async ({title, price, duration, clubID}) => {
       timestamp,
     },
   };
-  await store.dispatch(setServices({[id]: newService}));
   await database()
     .ref()
     .update(serviceCreation);
@@ -150,7 +144,6 @@ const createPost = async ({clubID, text, video}) => {
       postCreation[`users/${userID}/clubs/${clubID}/timestamp`] = timestamp;
     });
   }
-  await store.dispatch(setPosts({[id]: newPost}));
   await database()
     .ref()
     .update(postCreation);
@@ -173,10 +166,11 @@ const confirmBookingService = async ({serviceID}) => {
   const {userInfo} = infoUser;
   const ownerInfo = await getValueOnce(`users/${service.owner}/userInfo`);
 
-  ///// charge user //////
+  ///// authorize payment from user //////
   const {value: chargeAmount} = service.price;
-  const chargeUserRequest = await chargeUser(chargeAmount);
-  if (!chargeUserRequest.response) return chargeUserRequest;
+  const chargeUserRequest = await authorizePayment(chargeAmount);
+  if (!chargeUserRequest?.response) return chargeUserRequest;
+  const {paymentID: stripePaymentIntentID} = chargeUserRequest;
 
   ////// create new booking ////////
   const id = generateID();
@@ -196,22 +190,28 @@ const confirmBookingService = async ({serviceID}) => {
   const newBooking = {
     id,
     userID,
-    serviceID,
+    service,
     serviceOwnerID: service.owner,
     requestorID: userID,
     members: membersBooking,
-    status: 'pending',
+    status: {
+      status: 'pending',
+      timestamp,
+    },
     timestamp,
+    stripePaymentIntentID,
   };
   const bookingCreation = {
     [`bookings/${id}/`]: newBooking,
     [`users/${service.owner}/bookings/${id}`]: {
       id,
       timestamp,
+      requestorID: userID,
     },
     [`users/${userID}/bookings/${id}`]: {
       id,
       timestamp,
+      requestorID: userID,
     },
     // create new conversation
     [`coachSessions/${id}/`]: {
@@ -223,8 +223,6 @@ const confirmBookingService = async ({serviceID}) => {
       },
     },
   };
-
-  await store.dispatch(setBookings({[id]: newBooking}));
   await database()
     .ref()
     .update(bookingCreation);

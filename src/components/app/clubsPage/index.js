@@ -4,7 +4,7 @@ import {object, bool} from 'prop-types';
 import Animated from 'react-native-reanimated';
 
 import styleApp from '../../style/style';
-import ClubsHeader from './components/ClubsHeader';
+import ClubsHeader from './components/ClubsHeader/index';
 import ButtonBook from './components/ButtonBook';
 import PostFeed from './components/PostFeed';
 

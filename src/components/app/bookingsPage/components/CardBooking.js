@@ -14,6 +14,7 @@ import {bookingSelector} from '../../../../store/selectors/bookings';
 import CardService from '../../clubSettings/components/CardService';
 import {updateBookingStatusAlert} from '../../../functions/booking';
 import CardInvitation from '../../clubsPage/components/CardInvitation';
+import Button from '../../../layout/buttons/Button';
 
 class CardBooking extends Component {
   static propTypes = {
@@ -56,52 +57,112 @@ class CardBooking extends Component {
     const {booking} = this.props;
     updateBookingStatusAlert({bookingID: booking.id, status: 'declined'});
   };
-  invitationCard() {
+  cancelBooking = () => {
+    const {booking} = this.props;
+    updateBookingStatusAlert({bookingID: booking.id, status: 'cancelled'});
+  };
+  completeBooking = () => {
+    const {booking} = this.props;
+    navigate('BookingCompletion', {bookingID: booking.id});
+  };
+  messageButton = () => {
+    const {booking} = this.props;
+    const {status} = booking.status;
+    const color =
+      status === 'confirmed' || status === 'pending'
+        ? 'primary'
+        : 'greyMidDark';
+    return (
+      <Button
+        icon={{
+          name: 'comment-alt',
+          type: 'font',
+          size: 15,
+          color: colors.white,
+          solid: true,
+        }}
+        textButton={{fontSize: 16}}
+        backgroundColor={color}
+        onPressColor={colors[color]}
+        text={'Message'}
+        styleButton={styles.button}
+        click={this.openConversation}
+      />
+    );
+  };
+  cardInvitationProps() {
     const {booking, userID} = this.props;
-    const {serviceID, serviceOwnerID, requestorID, status} = booking;
+    const {serviceOwnerID, requestorID} = booking;
+    const {status} = booking.status;
     const isServiceOwner = userID === serviceOwnerID;
-    const user = isServiceOwner
-      ? {
-          userID: requestorID,
-          prefix: 'Service request from ',
-        }
-      : {
-          userID: serviceOwnerID,
-          prefix: 'Request sent to ',
-        };
-    const buttonNo =
-      isServiceOwner && status === 'pending'
-        ? {
-            action: this.declineBooking,
-          }
-        : null;
-    const buttonYes =
-      isServiceOwner && status === 'pending'
-        ? {
-            action: this.confirmBooking,
-          }
-        : null;
     const invitationStatus = {
       value: status,
       icon: statusStyles[status].icon,
       backgroundColor: statusStyles[status].backgroundColor,
     };
+    if (isServiceOwner) {
+      const user = {
+        userID: requestorID,
+        prefix: 'Service request from ',
+      };
+      const buttonNo =
+        status === 'pending'
+          ? {
+              action: this.declineBooking,
+            }
+          : status === 'confirmed'
+          ? {
+              action: this.cancelBooking,
+              text: 'Cancel',
+            }
+          : null;
+      const buttonYes =
+        status === 'pending'
+          ? {
+              action: this.confirmBooking,
+            }
+          : status === 'confirmed'
+          ? {
+              action: this.completeBooking,
+              text: 'Complete',
+            }
+          : null;
+      return {user, buttonNo, buttonYes, invitationStatus};
+    } else {
+      const user = {
+        userID: serviceOwnerID,
+        prefix: 'Request sent to ',
+      };
+      return {user, invitationStatus};
+    }
+  }
+  invitationCard() {
+    const {booking} = this.props;
+    const {service, timestamp} = booking;
+    const {
+      user,
+      buttonNo,
+      buttonYes,
+      invitationStatus,
+    } = this.cardInvitationProps();
     return (
       <CardInvitation
         onPress={this.openConversation}
         style={styles.cardInvitation}
         user={user}
+        date={timestamp}
         buttonNo={buttonNo}
         buttonYes={buttonYes}
         invitationStatus={invitationStatus}>
         <CardService
-          id={serviceID}
+          service={service}
           displayOwner={false}
           disableEdit
           disableDelete
           disableBookButton
           styleContainer={styles.serviceContainer}
         />
+        {this.messageButton()}
       </CardInvitation>
     );
   }
@@ -121,7 +182,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: colors.off,
   },
-  cardInvitation: {marginBottom: 30},
+  cardInvitation: {marginTop: 10, marginBottom: 20},
   title: {
     ...styleApp.textBold,
     fontSize: 17,
@@ -133,7 +194,15 @@ const styles = StyleSheet.create({
     fontSize: 11,
     marginTop: 4,
   },
-  serviceContainer: {paddingVertical: null},
+  serviceContainer: {
+    paddingVertical: null,
+    backgroundColor: null,
+    paddingHorizontal: null,
+  },
+  button: {
+    marginTop: 15,
+    height: 40,
+  },
 });
 
 const statusStyles = {

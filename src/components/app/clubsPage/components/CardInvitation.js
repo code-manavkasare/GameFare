@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {shape, func, string, object} from 'prop-types';
+import {shape, func, string, object, number} from 'prop-types';
 import {Row, Col} from 'react-native-easy-grid';
 
 import styleApp from '../../../style/style';
@@ -10,6 +10,7 @@ import Button from '../../../layout/buttons/Button';
 import CardUser from '../../../layout/cards/CardUser';
 import {capitalize} from '../../../functions/coach';
 import AllIcon from '../../../layout/icons/AllIcons';
+import {FormatDate} from '../../../functions/date';
 
 export default class CardInvitation extends Component {
   static propTypes = {
@@ -18,6 +19,7 @@ export default class CardInvitation extends Component {
       prefix: string,
       suffix: string,
     }),
+    date: number,
     title: string,
     description: string,
     invitationStatus: shape({
@@ -65,7 +67,7 @@ export default class CardInvitation extends Component {
     );
   }
   cardUser() {
-    const {user} = this.props;
+    const {user, date} = this.props;
     return (
       <View style={styles.userContainer}>
         <CardUser
@@ -74,7 +76,7 @@ export default class CardInvitation extends Component {
           styleText={styles.userText}
           styleImg={styles.userImg}
           prefix={user.prefix}
-          suffix={user.suffix}
+          suffix={user.suffix ?? date ? <FormatDate date={date} /> : null}
         />
       </View>
     );
@@ -170,12 +172,14 @@ const styles = StyleSheet.create({
     color: colors.greyDarker,
     opacity: 0.8,
     marginTop: 2,
+    marginBottom: 5,
     marginHorizontal: '5%',
   },
   userContainer: {
     width: '100%',
     borderRadius: 15,
     overflow: 'hidden',
+    marginTop: 0,
   },
   userImg: {height: 30, width: 30},
   userText: {
@@ -183,9 +187,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginLeft: -15,
     color: colors.greyDarker,
-    opacity: 0.6,
+    opacity: 0.9,
   },
-  cardUser: {width: '100%', marginHorizontal: '5%', height: 50},
+  cardUser: {width: '100%', marginHorizontal: '5%', height: 65},
   inviteRowButtons: {
     marginTop: 10,
     ...styleApp.center,
@@ -195,7 +199,8 @@ const styles = StyleSheet.create({
   button: {height: 40},
   childrenView: {
     ...styleApp.marginView,
-    paddingVertical: 5,
+    paddingBottom: 5,
+    marginTop: -10,
     width: '100%',
   },
   statusIndicator: {

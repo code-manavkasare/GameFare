@@ -77,7 +77,7 @@ class MorePage extends Component {
                 {page === 'Wallet' ? (
                   <Text style={styles.balanceText}>
                     $
-                    {this.props.wallet.totalWallet
+                    {this.props.wallet.totalWallet !== undefined
                       ? Number(this.props.wallet.totalWallet).toFixed(2)
                       : null}
                   </Text>
@@ -312,15 +312,15 @@ class MorePage extends Component {
           marginTop={10}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Settings'}
-          inputRange={[0, 50]}
+          inputRange={[0, 20]}
           initialBorderColorIcon={'transparent'}
-          initialBackgroundColor={'transparent'}
+          initialBackgroundColor={colors.white}
           initialBorderColorHeader={'transparent'}
           initialTitleOpacity={0}
           initialBorderWidth={0}
           icon1={'chevron-left'}
           typeIcon1="font"
-          sizeIcon1={21}
+          sizeIcon1={17}
           colorIcon1={colors.title}
           clickButton1={() => goBack()}
         />

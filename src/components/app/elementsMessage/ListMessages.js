@@ -71,12 +71,11 @@ class ListMessages extends Component {
     );
   }
   filterBlockedUserMessage = (message, i) => {
-    const {blockedUsers, user, session} = this.props;
+    const {blockedUsers, user, session, userID} = this.props;
     let {messages} = this.props;
     if (!messages) messages = {};
     if (blockedUsers && includes(message.user.id, Object.keys(blockedUsers)))
       return null;
-
     return (
       <CardMessage
         message={{
@@ -87,6 +86,7 @@ class ListMessages extends Component {
         }}
         discussion={session}
         user={user}
+        userID={userID}
         key={message.id}
         index={i}
       />

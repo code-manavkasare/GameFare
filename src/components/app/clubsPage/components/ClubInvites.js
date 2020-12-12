@@ -7,6 +7,7 @@ import {goBack} from '../../../../../NavigationService';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import {heightHeaderHome} from '../../../style/sizes';
+import {rowTitle} from '../../TeamPage/components/elements';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {userInfoSelector} from '../../../../store/selectors/user';
 import {userClubInvitesSelector} from '../../../../store/selectors/clubs';
@@ -46,20 +47,34 @@ class ClubInvites extends Component {
           textHeader={'Club Invites'}
           inputRange={[0, 10]}
           initialBorderColorIcon={'transparent'}
-          initialBackgroundColor={colors.white}
-          initialTitleOpacity={1}
+          initialBackgroundColor={'transparent'}
+          initialTitleOpacity={0}
           initialBorderWidth={1}
           initialBorderColorHeader={'transparent'}
-          icon1={'times'}
-          sizeIcon1={17}
-          clickButton1={navigation.goBack}
+          icon2={'times'}
+          backgroundColorIcon2={'transparent'}
+          sizeIcon2={17}
+          clickButton2={navigation.goBack}
         />
         <FlatListComponent
           styleContainer={{
             ...styleApp.marginView,
-            paddingTop: heightHeaderHome + 20,
+            paddingTop: 22,
           }}
           list={clubInvites}
+          header={rowTitle({
+            hideDividerHeader: true,
+            title: 'Club Invites',
+            titleColor: colors.greyDarker,
+            titleStyle: {
+              fontWeight: '800',
+              fontSize: 23,
+            },
+            containerStyle: {
+              marginBottom: 5,
+              marginTop: 0,
+            },
+          })}
           lengthList={clubInvites.length}
           cardList={this.renderClub}
           keyExtractor={(item, index) => `${item.id}-${index}`}

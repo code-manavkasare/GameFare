@@ -69,6 +69,12 @@ class CardUser extends Component {
       ...styleText,
       fontSize: 17,
     };
+    const smallTextStyle = {
+      ...styleApp.textBold,
+      ...styleText,
+      fontSize: 12,
+      opacity: 0.6,
+    };
     return (
       <ButtonColor
         view={() => {
@@ -79,14 +85,14 @@ class CardUser extends Component {
                   {this.imgUser()}
                 </Col>
                 <Col size={65} style={styleApp.center2}>
+                  {prefix ? <Text style={smallTextStyle}>{prefix}</Text> : null}
                   <Text
                     style={textStyle}
                     numberOfLines={1}
                     ellipsizeMode="tail">
-                    {prefix}
                     {firstname} {lastname}
-                    {suffix}
                   </Text>
+                  {suffix ? <Text style={smallTextStyle}>{suffix}</Text> : null}
                 </Col>
                 <Col size={10} style={styleApp.center2} />
               </Row>

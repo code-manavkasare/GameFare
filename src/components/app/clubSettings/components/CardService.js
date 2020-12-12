@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import {bool, string, object} from 'prop-types';
 import {Col, Row} from 'react-native-easy-grid';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
-import {navigate} from '../../../../../NavigationService';
+import {goBack, navigate} from '../../../../../NavigationService';
 
 import {bindService, unbindService} from '../../../database/firebase/bindings';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
@@ -17,6 +17,8 @@ import {serviceSelector} from '../../../../store/selectors/services';
 import CardUser from '../../../layout/cards/CardUser';
 import ButtonColor from '../../../layout/Views/Button';
 import PlaceHolder from '../../../placeHolders/CardService';
+import AllIcon from '../../../layout/icons/AllIcons';
+import {timeout} from '../../../functions/coach';
 
 class CardService extends Component {
   static propTypes = {
@@ -27,7 +29,6 @@ class CardService extends Component {
     displayOwner: bool,
     disableBookButton: bool,
     disableEdit: bool,
-    disableDelete: bool,
   };
   static defaultProps = {};
 
@@ -52,9 +53,11 @@ class CardService extends Component {
       component: 'CardService',
     });
   }
-  editService = () => {
+  editService = async () => {
     const {service, clubID} = this.props;
     const {id} = service;
+    goBack();
+    await timeout(300);
     navigate('Club', {
       screen: 'CreateService',
       params: {id: clubID, serviceID: id, edit: true},
@@ -69,9 +72,11 @@ class CardService extends Component {
       params: {clubID, serviceID: id},
     });
   };
-  removeService = () => {
+  removeService = async () => {
     const {service, clubID} = this.props;
     const {id, title} = service;
+    goBack();
+    await timeout(300);
     navigate('Alert', {
       title: 'Are you sure you want to delete ' + title + '?',
       subtitle: 'This action cannot be undone.',
@@ -81,6 +86,39 @@ class CardService extends Component {
       onGoBack: async () => removeService({clubID, serviceID: id}),
     });
   };
+  showOptions = async () => {
+    navigate('Alert', {
+      title: 'Service Options',
+      displayList: true,
+      forceVertical: true,
+      listOptions: [
+        {
+          title: 'Edit Service',
+          icon: {
+            type: 'font',
+            name: 'edit',
+            size: 19,
+            color: colors.white,
+            solid: true,
+          },
+          operation: this.editService,
+          forceNavigation: true,
+        },
+        {
+          title: 'Delete Club',
+          icon: {
+            type: 'font',
+            name: 'trash',
+            size: 19,
+            color: colors.white,
+          },
+          operation: this.removeService,
+          forceNavigation: true,
+          color: colors.red,
+        },
+      ],
+    });
+  };
   render() {
     const {
       service,
@@ -88,7 +126,6 @@ class CardService extends Component {
       displayOwner,
       styleContainer,
       disableEdit,
-      disableDelete,
     } = this.props;
     const containerStyle = {
       ...styles.card,
@@ -104,24 +141,8 @@ class CardService extends Component {
       <View activeOpacity={0.9} onPress={() => true} style={containerStyle}>
         {displayOwner && <CardUser id={owner} />}
         <Row>
-          <Col size={80}>
-            <Text style={styles.title}>
-              {title}{' '}
-              {isUserOwner && !disableEdit ? (
-                <Text
-                  style={[styleApp.smallText, {fontWeight: 'normal'}]}
-                  onPress={this.editService}>
-                  Edit
-                </Text>
-              ) : null}{' '}
-              {isUserOwner && !disableDelete ? (
-                <Text
-                  style={[styleApp.smallText, {fontWeight: 'normal'}]}
-                  onPress={this.removeService}>
-                  Delete
-                </Text>
-              ) : null}
-            </Text>
+          <Col size={60} style={styleApp.center2}>
+            <Text style={styles.title}>{title}</Text>
             <Text style={styles.subtitle}>
               {formatDuration({
                 duration: valueDuration,
@@ -130,7 +151,7 @@ class CardService extends Component {
               })}
             </Text>
           </Col>
-          <Col size={20} style={styleApp.center3}>
+          <Row size={40} style={styles.buttonRow}>
             <ButtonColor
               view={() => {
                 return (
@@ -140,12 +161,31 @@ class CardService extends Component {
                   </Text>
                 );
               }}
-              click={this.bookService}
-              color={colors.off2}
+              click={!isUserOwner ? this.bookService : () => {}}
+              color={colors.greyDarker}
               style={styles.price}
-              onPressColor={colors.off}
+              onPressColor={!isUserOwner ? colors.greyDark : colors.greyDarker}
             />
-          </Col>
+            {!disableEdit ? (
+              <ButtonColor
+                view={() => {
+                  return (
+                    <AllIcon
+                      name={'ellipsis-h'}
+                      size={15}
+                      color={colors.greyDarker}
+                      type="font"
+                      solid
+                    />
+                  );
+                }}
+                click={this.showOptions}
+                color={colors.off2}
+                style={styles.button}
+                onPressColor={colors.off}
+              />
+            ) : null}
+          </Row>
         </Row>
       </View>
     );
@@ -155,7 +195,12 @@ class CardService extends Component {
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 15,
+    paddingHorizontal: '5%',
+    marginTop: 20,
+    borderRadius: 15,
+    backgroundColor: colors.greyLight,
+    ...styleApp.shadowWeak,
   },
   title: {
     ...styleApp.textBold,
@@ -170,24 +215,30 @@ const styles = StyleSheet.create({
   },
   textPrice: {
     ...styleApp.textBold,
-    color: colors.title,
-    fontSize: 13,
-    marginTop: 4,
+    color: colors.white,
+    fontSize: 14,
   },
   price: {
     height: 35,
-    width: 55,
+    paddingHorizontal: 12,
     backgroundColor: colors.off2,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.grey,
+    borderRadius: 15,
     ...styleApp.center,
+    ...styleApp.shadowWeak,
+  },
+  buttonRow: {justifyContent: 'flex-end', alignItems: 'center'},
+  button: {
+    marginLeft: 15,
+    height: 35,
+    width: 35,
+    borderRadius: 20,
+    ...styleApp.shadowWeak,
   },
 });
 
 const mapStateToProps = (state, props) => {
   return {
-    service: serviceSelector(state, props),
+    service: serviceSelector(state, props) ?? props.service,
     userID: userIDSelector(state),
   };
 };

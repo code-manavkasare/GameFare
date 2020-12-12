@@ -6,6 +6,7 @@ import {getValueOnce} from './methods';
 import {store} from '../../../store/reduxStore';
 import {timeout} from '../../functions/coach';
 import {setArchives} from '../../../store/actions/archivesActions';
+import {sanitizeSportsList} from '../../functions/utility';
 
 const fetchArchives = async ({listIds, fetchAll}) => {
   const {isConnected} = store.getState().network;
@@ -48,13 +49,15 @@ const updateData = async () => {
     .update(updates);
 };
 
-const getSportTypes = async () => {
-  const snap = await database()
-    .ref('variables/sports/list')
-    .once('value');
-  let sports = snap.val().map((sport) => sport?.text);
-  sports.push('Other');
-  return sports;
+const fetchGameFareCommission = async () => {
+  const value = await getValueOnce('variables/gamefareCommission/percentage');
+  if (!value) return 0;
+  return value;
 };
 
-export {fetchArchives, updateData, getSportTypes};
+const getSportTypes = async () => {
+  const sports = await getValueOnce('variables/sports/list');
+  return sanitizeSportsList(sports);
+};
+
+export {fetchArchives, updateData, getSportTypes, fetchGameFareCommission};

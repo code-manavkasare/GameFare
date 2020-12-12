@@ -66,7 +66,7 @@ class BookingsPage extends Component {
           onRef={(ref) => (this.flatListRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           styleContainer={{
-            paddingTop: marginTopApp + heightHeaderModal,
+            paddingTop: 22,
             ...styleApp.marginView,
           }}
           showsVerticalScrollIndicator={false}

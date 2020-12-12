@@ -3,6 +3,7 @@ import axios from 'axios';
 import Config from 'react-native-config';
 
 import {store} from '../../store/reduxStore';
+import {getValueOnce} from '../database/firebase/methods';
 
 stripe.setOptions({
   publishableKey: 'pk_live_wO7jPfXmsYwXwe6BQ2q5rm6B00wx0PM4ki',
@@ -15,26 +16,42 @@ const options = {
   requiredBillingAddressFields: ['postal_address'],
 };
 
-const chargeUser = async (amount) => {
-  const {userID} = store.getState().user;
-  const {
-    totalWallet,
-    defaultCard,
-    tokenCusStripe,
-  } = store.getState().user.infoUser.wallet;
+const fetchStripeFees = async () => {
+  const {fixed, variable} = await getValueOnce('variables/stripeFees');
+  return {
+    stripeFixed: fixed,
+    stripeVariable: variable,
+  };
+};
 
-  var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}chargeUser`;
+const authorizePayment = async (amount) => {
+  const {defaultCard, tokenCusStripe} = store.getState().user.infoUser.wallet;
+
+  var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}authorizePayment`;
+
   const {data} = await axios.get(url, {
     params: {
       amount,
-      userID,
-      currentUserWallet: totalWallet,
-      now: new Date(),
       tokenCusStripe,
       cardID: defaultCard.id,
     },
   });
+
   return data;
 };
 
-export {stripe, options, chargeUser};
+const completePayment = async ({requestorID, paymentIntentID, amount}) => {
+  const url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}chargeUser`;
+
+  const {data} = await axios.get(url, {
+    params: {
+      requestorID,
+      paymentIntentID,
+      amount,
+    },
+  });
+
+  return data;
+};
+
+export {stripe, options, authorizePayment, fetchStripeFees, completePayment};

@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Animated, View, TextInput, StyleSheet} from 'react-native';
-import {connect} from 'react-redux';
 import {object} from 'prop-types';
 
 import styleApp from '../../../style/style';
@@ -12,6 +11,7 @@ import {addContentToBooking} from '../../../functions/booking';
 import Button from '../../../layout/buttons/Button';
 import {navigate} from '../../../../../NavigationService';
 import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
+import {timeout} from '../../../functions/coach';
 
 export default class AddContentBooking extends Component {
   static propTypes = {
@@ -117,6 +117,7 @@ export default class AddContentBooking extends Component {
   next = async () => {
     const {navigation} = this.props;
     await navigation.navigate('ClubsPage');
+    await timeout(300);
     navigation.navigate('Bookings');
   };
   render() {

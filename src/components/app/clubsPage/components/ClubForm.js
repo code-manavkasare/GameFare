@@ -8,13 +8,15 @@ import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import {heightHeaderModal} from '../../../style/sizes';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
+import {rowTitle} from '../../TeamPage/components/elements';
 import ScrollView from '../../../layout/scrollViews/ScrollView';
 import {createClub, deleteClub, editClub} from '../../../functions/clubs';
 import {userInfoSelector} from '../../../../store/selectors/user';
 import {getSportTypes} from '../../../database/firebase/fetchData';
 import {clubSelector} from '../../../../store/selectors/clubs';
-import {navigate} from '../../../../../NavigationService';
+import {goBack, navigate} from '../../../../../NavigationService';
 import KeyboardAwareButton from '../../../layout/buttons/KeyboardAwareButton';
+import {timeout} from '../../../functions/coach';
 
 class ClubForm extends Component {
   static propTypes = {
@@ -59,7 +61,11 @@ class ClubForm extends Component {
       textButton: 'Delete',
       colorButton: 'red',
       onPressColor: 'red',
-      onGoBack: () => {
+      onGoBack: async () => {
+        goBack();
+        this.titleInput.blur();
+        this.descriptionInput.blur();
+        await timeout(300);
         navigate('ClubsPage', {
           timestamp: Date.now(),
           clubID: false,
@@ -73,6 +79,7 @@ class ClubForm extends Component {
     const {title, description, sport, sportTypes} = this.state;
     return (
       <View style={[styleApp.marginView, {marginTop: 15}]}>
+        {this.createClubHeader()}
         <Text style={styles.sportHeader}>Club Name</Text>
         <TextInput
           style={styleApp.textField}
@@ -84,7 +91,7 @@ class ClubForm extends Component {
           returnKeyType={'done'}
           placeholderTextColor={colors.greyDark}
           ref={(input) => {
-            this.firstnameInput = input;
+            this.titleInput = input;
           }}
           inputAccessoryViewID={'title'}
           onChangeText={(text) => this.setState({title: text})}
@@ -101,7 +108,7 @@ class ClubForm extends Component {
           returnKeyType={'done'}
           placeholderTextColor={colors.greyDark}
           ref={(input) => {
-            this.firstnameInput = input;
+            this.descriptionInput = input;
           }}
           inputAccessoryViewID={'title'}
           onChangeText={(text) => this.setState({description: text})}
@@ -137,13 +144,44 @@ class ClubForm extends Component {
       />
     );
   };
+  createClubHeader = () => {
+    return rowTitle({
+      hideDividerHeader: true,
+      title: 'Create a Club',
+      titleColor: colors.greyDarker,
+      titleStyle: {
+        fontWeight: '800',
+        fontSize: 23,
+      },
+      containerStyle: {
+        marginBottom: 0,
+        marginTop: 0,
+      },
+    });
+  };
   render() {
     const {navigation} = this.props;
     const {editMode} = this.state;
-    const icon2 = editMode && {
-      sizeIcon2: 17,
-      icon2: 'trash',
-      clickButton2: this.deleteClub,
+    const icon2 = editMode
+      ? {
+          sizeIcon2: 17,
+          icon2: 'trash',
+          backgroundColorIcon2: 'transparent',
+          clickButton2: this.deleteClub,
+        }
+      : {
+          sizeIcon2: 17,
+          icon2: 'times',
+          backgroundColorIcon2: 'transparent',
+          clickButton2: navigation.goBack,
+          initialTitleOpacity: 0,
+        };
+    const icon1 = editMode && {
+      sizeIcon1: 17,
+      icon1: 'chevron-left',
+      backgroundColorIcon1: 'transparent',
+      clickButton1: navigation.goBack,
+      initialTitleOpacity: 1,
     };
     return (
       <View style={styleApp.stylePage}>
@@ -157,9 +195,7 @@ class ClubForm extends Component {
           initialTitleOpacity={1}
           initialBorderWidth={1}
           initialBorderColorHeader={'transparent'}
-          icon1={editMode ? 'chevron-left' : 'times'}
-          sizeIcon1={17}
-          clickButton1={navigation.goBack}
+          {...icon1}
           {...icon2}
         />
         <ScrollView
@@ -168,6 +204,7 @@ class ClubForm extends Component {
           marginBottomScrollView={0}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginTop={heightHeaderModal}
+          style={!editMode && {marginTop: 5}}
           offsetBottom={50}
           showsVerticalScrollIndicator={true}
         />
