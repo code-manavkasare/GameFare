@@ -77,7 +77,7 @@ class MorePage extends Component {
                 {page === 'Wallet' ? (
                   <Text style={styles.balanceText}>
                     $
-                    {this.props.wallet.totalWallet
+                    {this.props.wallet.totalWallet !== undefined
                       ? Number(this.props.wallet.totalWallet).toFixed(2)
                       : null}
                   </Text>

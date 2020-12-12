@@ -2,7 +2,7 @@ import database from '@react-native-firebase/database';
 
 import {generateID} from './utility.js';
 import {store} from '../../store/reduxStore';
-import {chargeUser} from './stripe.js';
+import {authorizePayment} from './stripe.js';
 import {createInviteToClubBranchUrl} from '../database/branch';
 import {goBack, navigate} from '../../../NavigationService';
 import {getValueOnce} from '../database/firebase/methods.js';
@@ -166,10 +166,11 @@ const confirmBookingService = async ({serviceID}) => {
   const {userInfo} = infoUser;
   const ownerInfo = await getValueOnce(`users/${service.owner}/userInfo`);
 
-  ///// charge user //////
+  ///// authorize payment from user //////
   const {value: chargeAmount} = service.price;
-  const chargeUserRequest = await chargeUser(chargeAmount);
-  if (!chargeUserRequest.response) return chargeUserRequest;
+  const chargeUserRequest = await authorizePayment(chargeAmount);
+  if (!chargeUserRequest?.response) return chargeUserRequest;
+  const {paymentID: stripePaymentIntentID} = chargeUserRequest;
 
   ////// create new booking ////////
   const id = generateID();
@@ -189,22 +190,28 @@ const confirmBookingService = async ({serviceID}) => {
   const newBooking = {
     id,
     userID,
-    serviceID,
+    service,
     serviceOwnerID: service.owner,
     requestorID: userID,
     members: membersBooking,
-    status: 'pending',
+    status: {
+      status: 'pending',
+      timestamp,
+    },
     timestamp,
+    stripePaymentIntentID,
   };
   const bookingCreation = {
     [`bookings/${id}/`]: newBooking,
     [`users/${service.owner}/bookings/${id}`]: {
       id,
       timestamp,
+      requestorID: userID,
     },
     [`users/${userID}/bookings/${id}`]: {
       id,
       timestamp,
+      requestorID: userID,
     },
     // create new conversation
     [`coachSessions/${id}/`]: {

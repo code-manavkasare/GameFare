@@ -8,6 +8,7 @@ import {Col, Row, Grid} from 'react-native-easy-grid';
 import styleApp from '../../../style/style';
 import ButtonColor from '../../../layout/Views/Button';
 import colors from '../../../style/colors';
+import {FormatDate} from '../../../functions/date';
 
 export default class CardTransfer extends Component {
   constructor(props) {
@@ -26,7 +27,7 @@ export default class CardTransfer extends Component {
         view={() => {
           return (
             <Row>
-              <Col size={20} style={styleApp.center}>
+              <Col size={30} style={styleApp.center}>
                 <Text
                   style={[
                     styleApp.title,
@@ -36,16 +37,15 @@ export default class CardTransfer extends Component {
                       fontSize: 19,
                     },
                   ]}>
-                  {this.signTransfer(transfer)}${transfer.invoice.totalPrice}
+                  {this.signTransfer(transfer)}${transfer?.invoice?.totalPrice}
                 </Text>
               </Col>
-              <Col size={70} style={styleApp.center2}>
+              <Col size={60} style={styleApp.center2}>
                 <Text style={[styleApp.titleSmall, {fontSize: 16}]}>
                   {transfer.title}
                 </Text>
                 <Text style={[styleApp.subtitle, {marginTop: 4, fontSize: 14}]}>
-                  {moment(transfer.date).format('MMMM, Do')} at{' '}
-                  {moment(transfer.date).format('h:mm a')}
+                  <FormatDate date={moment(transfer.date).toDate()} />
                 </Text>
               </Col>
               <Col size={10} style={styleApp.center}>

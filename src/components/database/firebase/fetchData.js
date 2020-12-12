@@ -49,9 +49,15 @@ const updateData = async () => {
     .update(updates);
 };
 
+const fetchGameFareCommission = async () => {
+  const value = await getValueOnce('variables/gamefareCommission/percentage');
+  if (!value) return 0;
+  return value;
+};
+
 const getSportTypes = async () => {
   const sports = await getValueOnce('variables/sports/list');
   return sanitizeSportsList(sports);
 };
 
-export {fetchArchives, updateData, getSportTypes};
+export {fetchArchives, updateData, getSportTypes, fetchGameFareCommission};

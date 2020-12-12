@@ -63,11 +63,11 @@ class CardBooking extends Component {
   };
   completeBooking = () => {
     const {booking} = this.props;
-    updateBookingStatusAlert({bookingID: booking.id, status: 'completed'});
+    navigate('BookingCompletion', {bookingID: booking.id});
   };
   messageButton = () => {
     const {booking} = this.props;
-    const {status} = booking;
+    const {status} = booking.status;
     const color =
       status === 'confirmed' || status === 'pending'
         ? 'primary'
@@ -92,7 +92,8 @@ class CardBooking extends Component {
   };
   cardInvitationProps() {
     const {booking, userID} = this.props;
-    const {serviceOwnerID, requestorID, status} = booking;
+    const {serviceOwnerID, requestorID} = booking;
+    const {status} = booking.status;
     const isServiceOwner = userID === serviceOwnerID;
     const invitationStatus = {
       value: status,
@@ -137,7 +138,7 @@ class CardBooking extends Component {
   }
   invitationCard() {
     const {booking} = this.props;
-    const {serviceID, timestamp} = booking;
+    const {service, timestamp} = booking;
     const {
       user,
       buttonNo,
@@ -154,7 +155,7 @@ class CardBooking extends Component {
         buttonYes={buttonYes}
         invitationStatus={invitationStatus}>
         <CardService
-          id={serviceID}
+          service={service}
           displayOwner={false}
           disableEdit
           disableDelete
@@ -193,7 +194,11 @@ const styles = StyleSheet.create({
     fontSize: 11,
     marginTop: 4,
   },
-  serviceContainer: {paddingVertical: null},
+  serviceContainer: {
+    paddingVertical: null,
+    backgroundColor: null,
+    paddingHorizontal: null,
+  },
   button: {
     marginTop: 15,
     height: 40,

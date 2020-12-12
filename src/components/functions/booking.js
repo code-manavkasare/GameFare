@@ -1,11 +1,12 @@
 import database from '@react-native-firebase/database';
 
-import {generateID} from './utility.js';
 import {store} from '../../store/reduxStore';
 
-import {goBack, navigate} from '../../../NavigationService';
+import {navigate} from '../../../NavigationService';
 import {sendNewMessage} from './message.js';
 import colors from '../style/colors';
+import {completePayment} from './stripe.js';
+import {payUser} from './wallet';
 
 const addContentToBooking = async ({bookingID, text, video}) => {
   const {userID, infoUser} = store.getState().user;
@@ -26,7 +27,34 @@ const addContentToBooking = async ({bookingID, text, video}) => {
       .update({id: video, timeStamp: Date.now()});
 };
 
-const updateBookingStatusAlert = ({bookingID, status}) => {
+const completeBooking = async ({bookingID}) => {
+  try {
+    await updateBookingStatusAlert({bookingID, status: 'completed'});
+  } catch (err) {
+    return false;
+  }
+
+  const booking = await store.getState().bookings[bookingID];
+  const {stripePaymentIntentID, requestorID, service} = booking;
+  const {owner, price, title} = service;
+  const {value} = price;
+
+  // Finalize requestor user payment
+  try {
+    await completePayment({
+      requestorID,
+      paymentIntentID: stripePaymentIntentID,
+      amount: value,
+    });
+  } catch (err) {
+    return false;
+  }
+
+  // Make payment to service provider
+  return await payUser({userID: owner, amount: value, description: title});
+};
+
+const updateBookingStatusAlert = async ({bookingID, status}) => {
   const title =
     status === 'confirmed'
       ? 'Are you sure you want to accept this booking?'
@@ -57,36 +85,59 @@ const updateBookingStatusAlert = ({bookingID, status}) => {
       : status === 'cancelled'
       ? ['red', 'red']
       : ['green', 'greenLight'];
-  navigate('Alert', {
-    title,
-    subtitle: 'This action cannot be undone.',
-    textButton,
-    colorButton: color[0],
-    onPressColor: colors[color[1]],
-    onGoBack: async () => updateBookingStatus({bookingID, status}),
+  return new Promise((resolve, reject) => {
+    navigate('Alert', {
+      title,
+      subtitle: 'This action cannot be undone.',
+      textButton,
+      colorButton: color[0],
+      onPressColor: colors[color[1]],
+      onClose: () => {
+        reject();
+      },
+      onGoBack: async () => {
+        await updateBookingStatus({bookingID, status}).catch(reject);
+        resolve();
+      },
+    });
   });
 };
 
 const updateBookingStatus = async ({bookingID, status}) => {
   await database()
-    .ref(`bookings/${bookingID}/`)
+    .ref(`bookings/${bookingID}/status`)
     .update({
-      status: status,
+      status,
+      timestamp: Date.now(),
     });
   const {userID, infoUser} = store.getState().user;
   const {userInfo} = infoUser;
-  // declined/ accepted
+
+  const text =
+    `${userInfo.firstname} has ` +
+    (status === 'confirmed'
+      ? 'accepted your booking.'
+      : status === 'declined'
+      ? 'declined your booking.'
+      : status === 'completed'
+      ? 'completed your booking.'
+      : status === 'cancelled'
+      ? 'cancelled your booking.'
+      : null);
   await sendNewMessage({
     objectID: bookingID,
     user: {
       id: userID,
       info: userInfo,
     },
-    text: `${userInfo.firstname} has ${
-      status === 'confirmed' ? 'accepted' : 'declined'
-    } the booking.`,
+    text,
     type: 'bookingStatus',
   });
 };
 
-export {addContentToBooking, updateBookingStatus, updateBookingStatusAlert};
+export {
+  addContentToBooking,
+  updateBookingStatus,
+  updateBookingStatusAlert,
+  completeBooking,
+};

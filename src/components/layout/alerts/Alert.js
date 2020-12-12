@@ -85,6 +85,8 @@ export default class Alert extends Component {
   }
   async close() {
     const {navigation} = this.props;
+    const {onClose} = this.props.route.params;
+    onClose && onClose();
     navigation.goBack();
   }
   render() {
@@ -232,7 +234,8 @@ export default class Alert extends Component {
                       key={i}
                       view={() => {
                         return (
-                          <Row style={styleApp.center}>
+                          <Row
+                            style={{...styleApp.center, ...styleApp.fullSize}}>
                             {icon ? iconRender() : null}
                             <Text style={styles.listButtonText}>{title}</Text>
                           </Row>
@@ -338,7 +341,10 @@ const styles = StyleSheet.create({
     ...styleApp.textBold,
     color: colors.white,
   },
-  listButtonIcon: {marginRight: 15},
+  listButtonIcon: {
+    position: 'absolute',
+    left: '5%',
+  },
   viewButton: {
     alignItems: 'center',
     justifyContent: 'center',
