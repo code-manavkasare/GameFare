@@ -130,13 +130,13 @@ const updateBookingStatus = async ({bookingID, status}) => {
   const text =
     `${userInfo.firstname} has ` +
     (status === 'confirmed'
-      ? 'accepted your booking.'
+      ? 'accepted a booking.'
       : status === 'declined'
-      ? 'declined your booking.'
+      ? 'declined a booking.'
       : status === 'completed'
-      ? 'completed your booking.'
+      ? 'completed a booking.'
       : status === 'cancelled'
-      ? 'cancelled your booking.'
+      ? 'cancelled a booking.'
       : null);
   await sendNewMessage({
     objectID: bookingID,

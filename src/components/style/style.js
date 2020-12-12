@@ -42,6 +42,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
   },
+  center8: {
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
   shadow: {
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 0},
