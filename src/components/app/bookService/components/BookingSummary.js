@@ -65,12 +65,14 @@ class BookingSummary extends Component {
         {this.rowBooking({
           text: 'Credits',
           styleText: {color: colors.green},
-          value: `$${totalWallet}`,
+          value: `${unitPrice}${totalWallet}`,
         })}
         <View style={styleApp.divider} />
         {this.rowBooking({
           text: 'Charge',
-          value: `$${Math.max(0, valuePrice - totalWallet).toFixed(2)}`,
+          value: `${unitPrice}${Math.max(0, valuePrice - totalWallet).toFixed(
+            2,
+          )}`,
           styleText: {fontWeight: 'bold'},
         })}
         <View style={styles.separator} />

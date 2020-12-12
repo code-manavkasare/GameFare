@@ -31,7 +31,7 @@ const completeBooking = async ({bookingID}) => {
   try {
     await updateBookingStatusAlert({bookingID, status: 'completed'});
   } catch (err) {
-    return false;
+    return {response: false, error: false};
   }
 
   const booking = await store.getState().bookings[bookingID];
@@ -47,11 +47,25 @@ const completeBooking = async ({bookingID}) => {
       amount: value,
     });
   } catch (err) {
-    return false;
+    return {
+      response: false,
+      error: 'There was an issue processing the payment.',
+    };
   }
 
   // Make payment to service provider
-  return await payUser({userID: owner, amount: value, description: title});
+  try {
+    await payUser({userID: owner, amount: value, description: title});
+    return {
+      response: true,
+      error: false,
+    };
+  } catch (err) {
+    return {
+      response: false,
+      error: 'There was an issue transferring funds to your account.',
+    };
+  }
 };
 
 const updateBookingStatusAlert = async ({bookingID, status}) => {

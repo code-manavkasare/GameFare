@@ -88,7 +88,7 @@ class BookingCompletion extends Component {
         <View style={styleApp.divider} />
         {this.rowBooking({
           text: 'Income Total',
-          value: `$${total}`,
+          value: `${unitPrice}${total}`,
           styleText: {fontWeight: 'bold'},
         })}
         <View style={styles.separator} />

@@ -26,15 +26,15 @@ export default class ButtonComplete extends Component {
     const {bookingID} = this.props;
 
     await this.setState({loader: true});
-    const completionRequest = await completeBooking({
+    const {response, error} = await completeBooking({
       bookingID,
     });
     await this.setState({loader: false});
-    if (completionRequest) goBack();
-    else {
+    if (response && !error) goBack();
+    else if (error) {
       await timeout(300);
       navigate('Alert', {
-        title: 'There was an error processing this request',
+        title: error,
         subtitle: 'Try again in a moment.',
         textButton: 'Got it!',
         onGoBack: () => {},
