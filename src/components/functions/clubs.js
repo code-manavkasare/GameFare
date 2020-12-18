@@ -273,6 +273,17 @@ const addUserToClub = async ({clubID, userID}) => {
     .update(updates);
 };
 
+const removeUserFromClub = async ({clubID, userID}) => {
+  if (!userID) userID = store.getState().user?.userID;
+  const updates = {
+    [`users/${userID}/clubs/${clubID}`]: null,
+    [`clubs/${clubID}/members/${userID}`]: null,
+  };
+  await database()
+    .ref()
+    .update(updates);
+};
+
 const acceptInvite = async ({clubID}) => {
   const {userID} = store.getState().user;
   if (!userID || !clubID) return false;
@@ -301,6 +312,13 @@ const declineInvite = async ({clubID}) => {
     .update(updates);
 };
 
+const getFirstClub = async () => {
+  const {user} = store.getState();
+  const {userID} = user;
+  if (!userID) return false;
+  console.log(user);
+};
+
 export {
   createClub,
   editClub,
@@ -313,6 +331,8 @@ export {
   removePost,
   inviteUsersToClub,
   addUserToClub,
+  removeUserFromClub,
   acceptInvite,
   declineInvite,
+  getFirstClub,
 };

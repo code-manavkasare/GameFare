@@ -6,7 +6,6 @@ import {object} from 'prop-types';
 import {goBack} from '../../../../../NavigationService';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
-import {heightHeaderHome} from '../../../style/sizes';
 import {rowTitle} from '../../TeamPage/components/elements';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {userInfoSelector} from '../../../../store/selectors/user';
@@ -53,7 +52,6 @@ class ClubInvites extends Component {
           initialBorderColorHeader={'transparent'}
           icon2={'times'}
           backgroundColorIcon2={'transparent'}
-          sizeIcon2={17}
           clickButton2={navigation.goBack}
         />
         <FlatListComponent

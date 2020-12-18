@@ -7,7 +7,10 @@ import {string} from 'prop-types';
 import {navigate} from '../../../../../NavigationService';
 import ButtonColor from '../../../layout/Views/Button';
 import AllIcons from '../../../layout/icons/AllIcons';
-import {isClubOwnerSelector} from '../../../../store/selectors/clubs';
+import {
+  clubSelector,
+  isClubOwnerSelector,
+} from '../../../../store/selectors/clubs';
 import {inviteUsersToClub} from '../../../functions/clubs';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
@@ -29,62 +32,81 @@ class OptionsRow extends Component {
     const {currentClubID} = this.props;
     inviteUsersToClub({clubID: currentClubID});
   };
+  book = () => {
+    const {currentClubID} = this.props;
+    navigate('Club', {
+      screen: 'BookService',
+      params: {id: currentClubID},
+    });
+  };
+  buttonConfiguration = () => {
+    const {isClubOwner, currentClub} = this.props;
+    return isClubOwner
+      ? [
+          {
+            icon: {
+              name: 'user-plus',
+            },
+            onPress: this.inviteUsersToClub,
+          },
+          {
+            icon: {
+              name: 'cog',
+            },
+            onPress: this.goToSettings,
+          },
+          {
+            icon: {
+              name: 'plus',
+            },
+            color: colors.blue,
+            onPressColor: colors.blueLight,
+            onPress: this.createPost,
+          },
+        ]
+      : [
+          {
+            icon: {
+              name: 'user-friends',
+            },
+            onPress: this.goToSettings,
+          },
+          currentClub?.services
+            ? {
+                icon: {
+                  name: 'store-alt',
+                },
+                color: colors.blue,
+                onPressColor: colors.blueLight,
+                onPress: this.book,
+              }
+            : undefined,
+        ];
+  };
   render() {
-    const {isClubOwner} = this.props;
-    if (!isClubOwner) return null;
+    const buttons = this.buttonConfiguration();
     return (
       <View style={styles.settingsRowContainer}>
         <Row style={styles.settingsRow}>
-          <ButtonColor
-            view={() => {
-              return (
+          {buttons.map((button) => {
+            if (!button) return;
+            const {icon, color, onPressColor, onPress} = button;
+            return (
+              <ButtonColor
+                style={styles.settingsRowButton}
+                click={onPress}
+                color={color ?? colors.greyDark}
+                onPressColor={onPressColor ?? colors.greyMidDark}>
                 <AllIcons
-                  type={'font'}
-                  color={colors.white}
-                  size={16}
-                  name={'user-plus'}
-                  solid
+                  type={icon.type ?? 'font'}
+                  color={icon.color ?? colors.white}
+                  size={icon.size ?? 16}
+                  name={icon.name ?? 'user-plus'}
+                  solid={icon.solid ?? true}
                 />
-              );
-            }}
-            style={styles.settingsRowButton}
-            color={colors.greyDark}
-            click={this.inviteUsersToClub}
-            onPressColor={colors.greyMidDark}
-          />
-          <ButtonColor
-            view={() => {
-              return (
-                <AllIcons
-                  type={'font'}
-                  color={colors.white}
-                  size={16}
-                  name={'cog'}
-                />
-              );
-            }}
-            style={styles.settingsRowButton}
-            color={colors.greyDark}
-            click={this.goToSettings}
-            onPressColor={colors.greyMidDark}
-          />
-          <ButtonColor
-            view={() => {
-              return (
-                <AllIcons
-                  type={'font'}
-                  color={colors.white}
-                  size={16}
-                  name={'plus'}
-                  solid
-                />
-              );
-            }}
-            style={styles.settingsRowButton}
-            color={colors.blue}
-            click={this.createPost}
-            onPressColor={colors.blueLight}
-          />
+              </ButtonColor>
+            );
+          })}
         </Row>
       </View>
     );
@@ -98,17 +120,17 @@ const styles = StyleSheet.create({
     ...styleApp.center2,
   },
   settingsRow: {
-    width: '50%',
     maxWidth: 240,
     minHeight: 55,
     ...styleApp.center,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
   },
   settingsRowButton: {
     width: 45,
     height: 45,
     borderRadius: 25,
     marginTop: -10,
+    marginRight: 15,
     ...styleApp.shadowWeak,
   },
 });
@@ -116,6 +138,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, props) => {
   return {
     isClubOwner: isClubOwnerSelector(state, {id: props.currentClubID}),
+    currentClub: clubSelector(state, {id: props.currentClubID}),
   };
 };
 

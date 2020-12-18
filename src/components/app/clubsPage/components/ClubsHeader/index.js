@@ -84,9 +84,10 @@ class ClubsHeader extends Component {
       />
     );
   };
-  selectClub = (id) => {
+  selectClub = (id, ignoreAnimation) => {
     const {selectClub} = this.props;
     selectClub(id);
+    if (ignoreAnimation) return;
     this.toggleListView();
   };
   clubsListView() {

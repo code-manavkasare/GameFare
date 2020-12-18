@@ -45,7 +45,7 @@ export default class HeaderUserDirectory extends Component {
         initialBorderWidth={1}
         colorLoader={colors.title}
         icon2={'share'}
-        sizeIcon2={20}
+        sizeIcon2={17}
         typeIcon2={'moon'}
         colorIcon2={colors.title}
         clickButton2={() => {
@@ -54,7 +54,7 @@ export default class HeaderUserDirectory extends Component {
         }}
         icon1={'times'}
         typeIcon1="font"
-        sizeIcon1={20}
+        sizeIcon1={15}
         colorIcon1={colors.title}
         clickButton1={() => goBack()}
       />

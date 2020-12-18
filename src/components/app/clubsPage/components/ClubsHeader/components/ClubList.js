@@ -22,7 +22,17 @@ class ClubList extends Component {
     selectedClubID: string,
   };
   static defaultProps = {};
-
+  componentDidMount() {
+    this.autoSelect();
+  }
+  componentDidUpdate() {
+    this.autoSelect();
+  }
+  autoSelect() {
+    const {clubs, selectClub, selectedClubID} = this.props;
+    if (selectedClubID || !clubs || clubs.length === 0) return;
+    selectClub(clubs[0]?.id);
+  }
   selectClub = (clubID) => {
     const {selectClub} = this.props;
     return selectClub(clubID);

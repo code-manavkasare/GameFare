@@ -1,21 +1,16 @@
 import React, {Component} from 'react';
-import {Animated, View, Text, TextInput, StyleSheet} from 'react-native';
+import {Animated, View} from 'react-native';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
-import {
-  heightFooterBooking,
-  heightHeaderModal,
-  marginBottomApp,
-} from '../../style/sizes';
+import {heightFooterBooking, marginBottomApp} from '../../style/sizes';
 import ScrollView from '../../layout/scrollViews/ScrollView';
-import Button from '../../layout/buttons/Button';
 import {clubSelector, servicesSelector} from '../../../store/selectors/clubs';
 import CardService from '../clubSettings/components/CardService';
 import HeaderBookService from './components/HeaderBookService';
-import CardUser from '../../layout/cards/CardUser';
+import {rowTitle} from '../TeamPage/components/elements';
 
 class ClubSettings extends Component {
   static propTypes = {
@@ -30,23 +25,52 @@ class ClubSettings extends Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  clubSettings = () => {
-    const {route, services, club} = this.props;
+  clubTitle = () => {
+    const {club} = this.props;
+    const {title} = club.info;
+    return rowTitle({
+      hideDividerHeader: true,
+      title,
+      titleColor: colors.greyDarker,
+      titleStyle: {
+        fontWeight: '800',
+        fontSize: 23,
+      },
+      containerStyle: {
+        marginBottom: 0,
+        marginTop: 0,
+      },
+    });
+  };
+  clubServices = () => {
+    const {route, services} = this.props;
     const {id: clubID} = route.params;
-    const {owner} = club;
+    return (
+      <View>
+        {rowTitle({
+          hideDividerHeader: true,
+          title: 'Club Services',
+          titleColor: colors.greyDarker,
+          titleStyle: {
+            fontWeight: '800',
+            fontSize: 18,
+          },
+          containerStyle: {
+            marginBottom: -25,
+            marginTop: 0,
+          },
+        })}
+        {services.map(({id}) => (
+          <CardService key={id} id={id} clubID={clubID} disableEdit />
+        ))}
+      </View>
+    );
+  };
+  clubSettings = () => {
     return (
       <View style={[styleApp.marginView]}>
-        <CardUser id={owner} />
-        <View style={[styleApp.divider, {marginBottom: 0}]} />
-        {services.map(({id}) => (
-          <CardService
-            key={id}
-            id={id}
-            clubID={clubID}
-            book={true}
-            displayOwner={false}
-          />
-        ))}
+        {this.clubTitle()}
+        {this.clubServices()}
       </View>
     );
   };
@@ -74,7 +98,7 @@ class ClubSettings extends Component {
           contentScrollView={this.clubSettings}
           marginBottomScrollView={0}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          marginTop={heightHeaderModal}
+          marginTop={-15}
           offsetBottom={heightFooterBooking + marginBottomApp + 50}
           showsVerticalScrollIndicator={true}
         />

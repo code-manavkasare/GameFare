@@ -54,7 +54,7 @@ class HeaderVideoLibrary extends Component {
           initialBorderWidth={1}
           initialBorderColorHeader={'transparent'}
           icon1={'times'}
-          sizeIcon1={17}
+          sizeIcon1={15}
           clickButton1={() => navigation.goBack()}
           typeIcon1={'font'}
           backgroundColorIcon1={'transparent'}
@@ -70,7 +70,7 @@ class HeaderVideoLibrary extends Component {
           clickButtonOffset={selectVideosFromCameraRoll}
           iconOffset={!selectableMode && 'plus'}
           typeIconOffset={'font'}
-          sizeIconOffset={17}
+          sizeIconOffset={15}
         />
 
         <UploadHeader

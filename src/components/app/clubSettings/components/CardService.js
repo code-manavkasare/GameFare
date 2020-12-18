@@ -105,7 +105,7 @@ class CardService extends Component {
           forceNavigation: true,
         },
         {
-          title: 'Delete Club',
+          title: 'Delete Service',
           icon: {
             type: 'font',
             name: 'trash',

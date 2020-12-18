@@ -140,7 +140,7 @@ export default class NotificationPage extends Component {
           initialTitleOpacity={1}
           initialBorderWidth={1}
           icon1={modalMode ? 'times' : 'chevron-left'}
-          sizeIcon1={17}
+          sizeIcon1={modalMode ? 15 : 17}
           clickButton1={() => this.props.navigation.goBack()}
         />
         {this.notificationView()}

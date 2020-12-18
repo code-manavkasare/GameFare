@@ -5,7 +5,7 @@ import {object} from 'prop-types';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
-import {heightHeaderModal} from '../../../style/sizes';
+import {rowTitle} from '../../TeamPage/components/elements';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
 import {createPost} from '../../../functions/clubs';
@@ -29,6 +29,26 @@ class CreatePost extends Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
+  createPostHeader = () => {
+    return (
+      <View style={{...styleApp.marginView}}>
+        {rowTitle({
+          hideDividerHeader: true,
+          title: 'Create a Post',
+          titleColor: colors.greyDarker,
+          titleStyle: {
+            fontWeight: '800',
+            fontSize: 23,
+            marginBottom: -5,
+          },
+          containerStyle: {
+            marginBottom: 10,
+            marginTop: 0,
+          },
+        })}
+      </View>
+    );
+  };
   createPost = async () => {
     const {navigation, route} = this.props;
     const {clubID} = route.params;
@@ -67,7 +87,8 @@ class CreatePost extends Component {
   createPostForm = () => {
     const {text, video} = this.state;
     return (
-      <View>
+      <View style={styleApp.fullAppModal}>
+        {this.createPostHeader()}
         {video ? (
           <CardArchive
             style={[styles.fullCardArchive, {height: 250}]}
@@ -125,19 +146,18 @@ class CreatePost extends Component {
           inputRange={[10, 20]}
           initialBorderColorIcon={'transparent'}
           initialBackgroundColor={'transparent'}
-          initialTitleOpacity={1}
+          initialTitleOpacity={0}
           initialBorderWidth={1}
           initialBorderColorHeader={'transparent'}
-          icon1={'times'}
-          sizeIcon1={17}
-          clickButton1={navigation.goBack}
+          icon2={'times'}
+          clickButton2={navigation.goBack}
         />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={this.createPostForm}
           marginBottomScrollView={0}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          marginTop={heightHeaderModal + 5}
+          marginTop={-15}
           offsetBottom={0}
           showsVerticalScrollIndicator={true}
         />

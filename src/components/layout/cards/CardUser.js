@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
-import {string, object, bool} from 'prop-types';
+import {string, object, bool, func} from 'prop-types';
 
 import {navigate} from '../../../../NavigationService';
 import ButtonColor from '../Views/Button';
@@ -12,6 +12,7 @@ import ImageUser from '../image/ImageUser';
 import {infoUserByIdSelector} from '../../../store/selectors/user';
 import {bindUserInfo, unbindUserInfo} from '../../database/firebase/bindings';
 import PlaceHolder from '../../placeHolders/CardUser';
+import AllIcon from '../icons/AllIcons';
 
 class CardUser extends Component {
   static propTypes = {
@@ -20,6 +21,8 @@ class CardUser extends Component {
     styleText: object,
     imgOnly: bool,
     hideProfileInitials: bool,
+    icon: object,
+    onPress: func,
   };
 
   static defaultProps = {};
@@ -56,6 +59,8 @@ class CardUser extends Component {
       suffix,
       prefix,
       imgOnly,
+      icon,
+      onPress,
     } = this.props;
     if (!infoUser) return <PlaceHolder style={containerStyle} />;
     if (imgOnly) return this.imgUser();
@@ -94,12 +99,21 @@ class CardUser extends Component {
                   </Text>
                   {suffix ? <Text style={smallTextStyle}>{suffix}</Text> : null}
                 </Col>
-                <Col size={10} style={styleApp.center2} />
+                <Col size={10} style={styleApp.center}>
+                  {icon ? (
+                    <AllIcon
+                      type={icon.type ?? 'font'}
+                      name={icon.name ?? 'chevron-right'}
+                      color={icon.color ?? colors.greyMidDark}
+                      size={icon.size ?? 13}
+                    />
+                  ) : null}
+                </Col>
               </Row>
             </View>
           );
         }}
-        click={() => navigate('ProfilePage', {id})}
+        click={!onPress ? () => navigate('ProfilePage', {id}) : onPress}
         style={containerStyle}
         onPressColor={colors.off2}
       />

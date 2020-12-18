@@ -10,15 +10,13 @@ const client = algoliasearch('F4SW2K5A54', '567ba66321018b3bdc5e90fc9e0e26d3', {
 });
 
 let indexUsers = client.initIndex('prod_users');
-let indexUsersName = 'prod_users';
 let indexDiscussions = client.initIndex('prod_discussions');
-let indexDiscussionsName = 'prod_discussions';
+let indexClubs = client.initIndex('prod_clubs');
 
 if (Config.ENV === 'dev') {
   indexUsers = client.initIndex('dev_users');
-  indexUsersName = 'dev_users';
   indexDiscussions = client.initIndex('dev_discussions');
-  indexDiscussionsName = 'dev_discussions';
+  indexClubs = client.initIndex('prod_clubs');
 }
 
 const getBlockedUsers = async (objectIDArray) => {
@@ -30,6 +28,7 @@ const getBlockedUsers = async (objectIDArray) => {
 module.exports = {
   indexUsers,
   indexDiscussions,
+  indexClubs,
   getBlockedUsers,
   client,
 };
