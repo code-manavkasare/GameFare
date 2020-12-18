@@ -229,7 +229,7 @@ class CallTab extends Component {
         initialBorderWidth={1}
         loader={false}
         icon1={!userConnected ? null : inlineSearch ? 'times' : 'search'}
-        sizeIcon1={19}
+        sizeIcon1={!userConnected || inlineSearch ? null : 19}
         colorIcon1={colors.greyDarker}
         clickButton1={
           inlineSearch ? () => goBack() : () => this.openUserDirectory()

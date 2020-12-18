@@ -38,7 +38,6 @@ export default class HeaderBookingsPage extends Component {
         initialBorderColorHeader={'transparent'}
         icon2={'times'}
         backgroundColorIcon2={'transparent'}
-        sizeIcon2={17}
         clickButton2={navigation.goBack}
         loader={loader}
         colorLoader={colors.title}

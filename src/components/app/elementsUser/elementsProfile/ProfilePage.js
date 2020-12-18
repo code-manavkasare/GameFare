@@ -170,8 +170,8 @@ class ProfilePage extends Component {
               },
             })
           : null}
+        <View style={[{height: 10}]} />
         <View style={styleApp.divider} />
-
         <View style={[{height: 10}]} />
 
         {this.blockButton()}
@@ -193,9 +193,8 @@ class ProfilePage extends Component {
           initialBorderColorHeader={colors.white}
           initialTitleOpacity={1}
           initialBorderWidth={1}
-          icon1={'times'}
-          sizeIcon1={21}
-          clickButton1={() => this.props.navigation.goBack()}
+          icon2={'times'}
+          clickButton2={() => this.props.navigation.goBack()}
         />
 
         <ScrollView

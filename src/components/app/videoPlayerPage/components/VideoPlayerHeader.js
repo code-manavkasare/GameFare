@@ -101,7 +101,7 @@ class VideoPlayerHeader extends React.Component {
       backgroundColorIcon1: 'transparent',
       initialBorderColorIcon: 'transparent',
       initialBackgroundColor: 'transparent',
-      sizeIcon1: 17,
+      sizeIcon1: 15,
       colorIcon1: colors.white,
       typeIcon1: 'font',
       marginTop: -3,

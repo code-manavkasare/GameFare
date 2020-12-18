@@ -1,7 +1,4 @@
 import React, {Component} from 'react';
-import {Share} from 'react-native';
-import {createInviteToClubBranchUrl} from '../../../database/branch';
-
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import colors from '../../../style/colors';
 
@@ -16,12 +13,6 @@ export default class HeaderClubSettings extends Component {
       loader: false,
     };
   }
-  share = async () => {
-    let {branchLink} = this.state;
-    const {clubID} = this.props;
-    if (!branchLink) branchLink = await createInviteToClubBranchUrl(clubID);
-    Share.share({url: branchLink});
-  };
   render() {
     const {loader} = this.state;
     const {navigation, title, AnimatedHeaderValue} = this.props;
@@ -33,17 +24,13 @@ export default class HeaderClubSettings extends Component {
         inputRange={[10, 20]}
         initialBorderColorIcon={'transparent'}
         initialBackgroundColor={'transparent'}
-        initialTitleOpacity={1}
+        initialTitleOpacity={0}
         initialBorderWidth={1}
         initialBorderColorHeader={'transparent'}
-        icon1={'times'}
-        icon2={'share'}
-        typeIcon2="moon"
-        sizeIcon2={21}
-        clickButton1={navigation.goBack}
+        icon2={'times'}
+        clickButton2={navigation.goBack}
         loader={loader}
         colorLoader={colors.title}
-        clickButton2={this.share}
       />
     );
   }

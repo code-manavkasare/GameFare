@@ -170,7 +170,6 @@ class ClubForm extends Component {
           clickButton2: this.deleteClub,
         }
       : {
-          sizeIcon2: 17,
           icon2: 'times',
           backgroundColorIcon2: 'transparent',
           clickButton2: navigation.goBack,
