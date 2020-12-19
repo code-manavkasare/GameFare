@@ -14,6 +14,7 @@ import CardInvitation from './CardInvitation';
 import CardUser from '../../../layout/cards/CardUser';
 import {FormatDate} from '../../../functions/date';
 import PlaceHolder from '../../../placeHolders/CardClub';
+import {Col, Row} from 'react-native-easy-grid';
 
 class CardClub extends Component {
   static propTypes = {
@@ -22,6 +23,7 @@ class CardClub extends Component {
     selectClub: func,
     selectedClubID: string,
     displayAsInvitation: bool,
+    displayAsRow: bool,
   };
   static defaultProps = {};
 
@@ -88,10 +90,38 @@ class CardClub extends Component {
       />
     );
   }
+  cardRow() {
+    const {club} = this.props;
+    const {info, owner} = club;
+    const {title} = info;
+    return (
+      <Row>
+        <Row size={25} style={styleApp.center}>
+          <View style={styles.profileImgSmall}>
+            <CardUser id={owner} imgOnly styleImg={styleApp.fullSize} />
+          </View>
+        </Row>
+        <Col size={75} style={styleApp.center2}>
+          <Text style={styleApp.textBold}>{title}</Text>
+          <Text style={styles.ownerLabel}>
+            Owner:{' '}
+            <CardUser id={owner} textOnly styleText={styles.clubOwnerText} />
+          </Text>
+        </Col>
+      </Row>
+    );
+  }
   render() {
-    const {club, selectClub, selectedClubID, displayAsInvitation} = this.props;
+    const {
+      club,
+      selectClub,
+      selectedClubID,
+      displayAsInvitation,
+      displayAsRow,
+    } = this.props;
     if (!club) return <PlaceHolder style={styleApp.cardClub} />;
     if (displayAsInvitation) return this.invitationCard();
+    if (displayAsRow) return this.cardRow();
     const {info} = club;
     const {title} = info;
     const isSelected = selectedClubID === club?.id;
@@ -153,6 +183,25 @@ const styles = StyleSheet.create({
     backgroundColor: colors.greyDark,
     borderRadius: 200,
     overflow: 'hidden',
+  },
+  profileImgSmall: {
+    position: 'absolute',
+    zIndex: -1,
+    height: 45,
+    width: 45,
+    backgroundColor: colors.greyDark,
+    borderRadius: 200,
+    overflow: 'hidden',
+  },
+  clubOwnerText: {
+    ...styleApp.text,
+    fontSize: 13,
+    color: colors.greyDark,
+  },
+  ownerLabel: {
+    ...styleApp.textBold,
+    fontSize: 13,
+    color: colors.greyDark,
   },
 });
 

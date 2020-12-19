@@ -185,7 +185,7 @@ const openDiscussion = async (arrayUsers, idDiscussion) => {
 
 const newConversation = async () => {
   const branchLink = await createInviteToAppBranchUrl();
-  navigate('UserDirectory', {
+  navigate('SearchPage', {
     action: 'message',
     branchLink,
   });

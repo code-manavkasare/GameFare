@@ -148,10 +148,11 @@ class InvitationManager extends Component {
     const {actionText} = getSelectionActionDecorations(action);
     const firstUser = userArray[0];
     if (userArray.length === 1) {
-      return `${actionText} ${firstUser.info.firstname}`;
+      return `${actionText} ${firstUser.info.firstname ??
+        firstUser.info.title}`;
     } else {
-      return `${actionText} ${firstUser.info.firstname} and ${userArray.length -
-        1} others`;
+      return `${actionText} ${firstUser.info.firstname ??
+        firstUser.info.title} and ${userArray.length - 1} others`;
     }
   }
 

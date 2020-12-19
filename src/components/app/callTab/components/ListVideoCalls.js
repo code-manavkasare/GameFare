@@ -50,7 +50,7 @@ class ListVideoCalls extends Component {
       hideCallButton,
       currentSessionID,
       AnimatedHeaderValue,
-      openUserDirectory,
+      openSearchPage,
       coachSessions,
       headerTitle,
       inlineSearch,
@@ -63,7 +63,7 @@ class ListVideoCalls extends Component {
         list={coachSessions}
         ListEmptyComponent={{
           clickButton: () =>
-            !userConnected ? navigate('SignIn') : openUserDirectory(),
+            !userConnected ? navigate('SignIn') : openSearchPage(),
           textButton: !userConnected ? 'Sign in' : 'Search',
           text: !userConnected
             ? 'Sign in to start a call'

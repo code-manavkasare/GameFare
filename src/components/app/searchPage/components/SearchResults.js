@@ -1,26 +1,29 @@
 import React, {Component} from 'react';
-import {View, Animated, Text, StyleSheet} from 'react-native';
-import {Row, Col} from 'react-native-easy-grid';
+import {View, Text, StyleSheet} from 'react-native';
+import {Row} from 'react-native-easy-grid';
 import {
   KeyboardAwareScrollView,
   KeyboardAwareFlatList,
 } from 'react-native-keyboard-aware-scroll-view';
-import PropTypes from 'prop-types';
+import {func, object, string} from 'prop-types';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 
 import {autocompleteSearchUsers} from '../../../functions/users';
+import {autoCompleteSearchClubs} from '../../../functions/clubs';
 import {store} from '../../../../store/reduxStore';
 import AllIcon from '../../../layout/icons/AllIcons';
 import ButtonColor from '../../../layout/Views/Button';
 import CardUserSelect from '../../../layout/cards/CardUserSelect';
+import CardClub from '../../clubsPage/components/CardClub';
 
-export default class UserSearchResults extends Component {
+export default class SearchResults extends Component {
   static propTypes = {
-    onSelect: PropTypes.func.isRequired,
-    selectedUsers: PropTypes.object,
-    searchText: PropTypes.string,
+    onSelect: func.isRequired,
+    searchFor: string.isRequired,
+    selectedUsers: object,
+    searchText: string,
   };
 
   static defaultProps = {
@@ -31,7 +34,7 @@ export default class UserSearchResults extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      users: [],
+      searchResults: [],
       displayMore: false,
       noResults: false,
     };
@@ -48,36 +51,53 @@ export default class UserSearchResults extends Component {
   }
 
   searchUsers = async () => {
-    const {searchText} = this.props;
+    const {searchText, searchFor} = this.props;
     this.setState({noResults: false});
     if (searchText === '') {
-      this.setState({users: []});
+      this.setState({searchResults: []});
     } else {
       const {blockedByUsers} = store.getState().user.infoUser;
       const {userID} = store.getState().user.userID;
 
-      const rawUsers = await autocompleteSearchUsers(
-        searchText,
-        userID,
-        false,
-        blockedByUsers ? Object.keys(blockedByUsers) : false,
-      );
-      const users = rawUsers.map((user) => {
-        return {info: user.info, id: user.objectID};
+      let searchResults = [];
+      console.log(searchFor);
+      if (searchFor === 'users') {
+        searchResults = (await autocompleteSearchUsers(
+          searchText,
+          userID,
+          false,
+          blockedByUsers ? Object.keys(blockedByUsers) : false,
+        )).map((user) => {
+          return {info: user.info, id: user.objectID};
+        });
+      } else if (searchFor === 'clubs') {
+        searchResults = (await autoCompleteSearchClubs({
+          searchText,
+        })).map((club) => {
+          return {info: club.info, id: club.objectID};
+        });
+        console.log(searchResults);
+      }
+      this.setState({
+        searchResults,
+        displayMore: false,
+        noResults: searchResults.length === 0,
       });
-      this.setState({users, displayMore: false, noResults: users.length === 0});
     }
   };
 
-  userCard = (user) => {
-    const {selectedUsers, onSelect} = this.props;
+  resultCard = (result) => {
+    const {selectedUsers, onSelect, searchFor} = this.props;
     return (
-      <View key={user.id} style={{marginBottom: 5}}>
+      <View key={result.id} style={styles.result}>
         <CardUserSelect
-          user={user}
-          selected={selectedUsers[user.id] ? true : false}
-          onClick={(user) => onSelect(user)}
-        />
+          user={result}
+          selected={selectedUsers[result.id] ? true : false}
+          onClick={(result) => onSelect(result)}>
+          {searchFor === 'clubs' ? (
+            <CardClub id={result.id} displayAsRow />
+          ) : null}
+        </CardUserSelect>
       </View>
     );
   };
@@ -98,7 +118,7 @@ export default class UserSearchResults extends Component {
           return (
             <Row style={styles.displayMoreRowStyle}>
               <Text style={styles.displayMoreButtonTextStyle}>
-                {displayMore ? 'Hide results' : 'More results'}
+                {displayMore ? 'See less' : 'See more'}
               </Text>
               <AllIcon
                 name={displayMore ? 'chevron-up' : 'chevron-down'}
@@ -114,18 +134,18 @@ export default class UserSearchResults extends Component {
   };
 
   moreResultsView() {
-    const {users} = this.state;
+    const {searchResults} = this.state;
     const {AnimatedHeaderValue} = this.props;
     return (
       <KeyboardAwareFlatList
         keyboardShouldPersistTaps="always"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.results}
+        contentContainerStyle={styles.searchResults}
         keyExtractor={(item) => {
           return item?.objectID;
         }}
-        data={users}
-        renderItem={(item) => this.userCard(item.item)}
+        data={searchResults}
+        renderItem={(item) => this.resultCard(item.item)}
         ListFooterComponent={() => {
           return this.displayMoreButton();
         }}
@@ -135,19 +155,19 @@ export default class UserSearchResults extends Component {
   }
 
   render() {
-    const {users, displayMore, noResults} = this.state;
+    const {searchResults, displayMore, noResults} = this.state;
     const {searchText, AnimatedHeaderValue} = this.props;
     if (searchText === '') {
       return null;
     } else if (noResults) {
       return (
-        <View>
+        <View style={styleApp.fullSize}>
           <Text style={styles.noResultsText}>
             No results for "{searchText}"
           </Text>
         </View>
       );
-    } else if (users.length > 0) {
+    } else if (searchResults.length > 0) {
       if (displayMore) {
         return this.moreResultsView();
       } else {
@@ -155,10 +175,10 @@ export default class UserSearchResults extends Component {
           <KeyboardAwareScrollView
             keyboardShouldPersistTaps="always"
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.results}
+            contentContainerStyle={styles.searchResults}
             AnimatedHeaderValue={AnimatedHeaderValue}>
-            {users.slice(0, 3).map((user) => this.userCard(user))}
-            {users.length > 3 ? this.displayMoreButton() : null}
+            {searchResults.slice(0, 3).map((user) => this.resultCard(user))}
+            {searchResults.length > 3 ? this.displayMoreButton() : null}
           </KeyboardAwareScrollView>
         );
       }
@@ -169,17 +189,19 @@ export default class UserSearchResults extends Component {
 }
 
 const styles = StyleSheet.create({
-  results: {
+  searchResults: {
     marginTop: 0,
     marginLeft: 10,
     marginRight: 10,
   },
+  result: {marginVertical: 5},
   noResultsText: {
     ...styleApp.textBold,
     marginVertical: 15,
     marginLeft: '7%',
-    fontSize: 23,
-    marginTop: 45,
+    fontSize: 18,
+    marginTop: 15,
+    color: colors.greyDark,
   },
   displayMoreButtonTextStyle: {
     ...styleApp.textBold,
@@ -189,6 +211,7 @@ const styles = StyleSheet.create({
   displayMoreButtonStyle: {
     height: 30,
     paddingHorizontal: 10,
+    marginTop: 5,
   },
   displayMoreRowStyle: {
     ...styleApp.center,

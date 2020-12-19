@@ -1,14 +1,24 @@
 import React, {Component} from 'react';
-import {View, Share} from 'react-native';
+import {Share} from 'react-native';
+import {object, func} from 'prop-types';
 
 import colors from '../../../style/colors';
-import styleApp from '../../../style/style';
-import sizes from '../../../style/sizes';
 
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {createInviteToSessionBranchUrl} from '../../../database/branch';
 
-export default class HeaderUserDirectory extends Component {
+export default class HeaderSearch extends Component {
+  static propTypes = {
+    goBack: func,
+    searchBar: func,
+    AnimatedHeaderValue: object,
+  };
+
+  static defaultProps = {
+    selectedUsers: {},
+    searchText: '',
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -37,14 +47,14 @@ export default class HeaderUserDirectory extends Component {
         inputRange={[40, 50]}
         searchBar={searchBar}
         loader={loader}
-        searchBarStyle={{width: '62.5%'}}
+        searchBarStyle={branchLink ? {width: '65%'} : {width: '75%'}}
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
         initialBorderColorHeader={colors.white}
         initialTitleOpacity={1}
         initialBorderWidth={1}
         colorLoader={colors.title}
-        icon2={'share'}
+        icon2={branchLink && 'share'}
         sizeIcon2={17}
         typeIcon2={'moon'}
         colorIcon2={colors.title}

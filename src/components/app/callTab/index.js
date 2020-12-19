@@ -19,7 +19,7 @@ import PermissionView from '../../layout/Views/PermissionView';
 import InvitationManager from '../../utility/InvitationManager';
 
 import ListVideoCalls from './components/ListVideoCalls';
-import UserSearchResults from '../userDirectory/components/UserSearchResults';
+import SearchResults from '../searchPage/components/SearchResults';
 import HeaderCallTab from './components/HeaderCallTab';
 import {
   userConnectedSelector,
@@ -173,7 +173,7 @@ class CallTab extends Component {
             selectedSessions={selectedSessions}
             inlineSearch={inlineSearch}
             onClick={(session) => this.selectSession(session)}
-            openUserDirectory={() => this.openUserDirectory()}
+            openSearchPage={() => this.openSearchPage()}
             hideCallButton={action !== 'call'}
             liveSessionHeader={action === 'call'}
             headerTitle={modal ? 'Recent' : userID ? 'Video Calls' : ''}
@@ -187,7 +187,8 @@ class CallTab extends Component {
           />
         ) : null}
         {searchText !== '' ? (
-          <UserSearchResults
+          <SearchResults
+            searchFor={'users'}
             onSelect={(user) => this.selectUser(user)}
             selectedUsers={selectedUsers}
             searchText={searchText}
@@ -196,7 +197,7 @@ class CallTab extends Component {
       </View>
     );
   }
-  openUserDirectory = async () => {
+  openSearchPage = async () => {
     const {navigation} = this.props;
     const {goBack, navigate} = navigation;
     const {inlineSearch, branchLink, archivesToShare, action} = this.state;
@@ -205,7 +206,7 @@ class CallTab extends Component {
       goBack();
     } else {
       await this.setState({selectedUsers: {}, selectedSessions: {}});
-      navigate('UserDirectory', {
+      navigate('SearchPage', {
         action,
         archivesToShare,
         branchLink,
@@ -232,7 +233,7 @@ class CallTab extends Component {
         sizeIcon1={!userConnected || inlineSearch ? null : 19}
         colorIcon1={colors.greyDarker}
         clickButton1={
-          inlineSearch ? () => goBack() : () => this.openUserDirectory()
+          inlineSearch ? () => goBack() : () => this.openSearchPage()
         }
         archivesToShare={route?.params?.archivesToShare}
         modal={modal}

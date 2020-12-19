@@ -792,7 +792,7 @@ const ListPlayers = (props) => {
         button: {
           text: 'Add',
           click: async () =>
-            navigate('UserDirectory', {
+            navigate('SearchPage', {
               action: 'invite',
               sessionToInvite: objectID,
               branchLink: await createInviteToSessionBranchUrl(objectID),

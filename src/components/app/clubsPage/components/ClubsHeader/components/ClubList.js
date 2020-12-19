@@ -3,7 +3,7 @@ import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 import {object, string, func} from 'prop-types';
 
-import {navigate} from '../../../../../../../NavigationService';
+import {goBack, navigate} from '../../../../../../../NavigationService';
 import styleApp from '../../../../../style/style';
 import colors from '../../../../../style/colors';
 import AllIcon from '../../../../../layout/icons/AllIcons';
@@ -15,6 +15,8 @@ import {
 import CardClub from '../../CardClub';
 import {width} from '../../../../../style/sizes';
 import {userConnectedSelector} from '../../../../../../store/selectors/user';
+import {acceptInvite} from '../../../../../functions/clubs';
+import {Col, Row} from 'react-native-easy-grid';
 class ClubList extends Component {
   static propTypes = {
     clubs: object,
@@ -50,6 +52,19 @@ class ClubList extends Component {
   addClub = () => {
     navigate('ClubForm');
   };
+  searchClubs = () => {
+    navigate('SearchPage', {
+      searchFor: 'clubs',
+      action: 'joinClub',
+      selectOne: true,
+      onConfirm: ({results}) => {
+        goBack();
+        if (!results) return;
+        const clubID = Object.keys(results)[0];
+        acceptInvite({clubID});
+      },
+    });
+  };
   openInvites = () => {
     navigate('ClubInvites');
   };
@@ -80,22 +95,45 @@ class ClubList extends Component {
   renderAddClub = () => {
     const addClubContainerStyle = {
       ...styleApp.cardClubSmall,
-      backgroundColor: colors.greyDark,
+      borderRadius: 0,
+      backgroundColor: 'transparent',
+      width: 100,
     };
     return (
-      <TouchableOpacity
-        activeOpacity={0.9}
-        onPress={this.addClub}
-        style={addClubContainerStyle}>
-        <AllIcon
-          name={'plus'}
-          size={21}
-          color={styles.addClubSubtitle.color}
-          type="font"
-          solid
-        />
-        <Text style={styles.addClubSubtitle}>Create a Club</Text>
-      </TouchableOpacity>
+      <Row style={addClubContainerStyle}>
+        <Col size={50} style={styleApp.center}>
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={this.searchClubs}
+            style={styles.footerButton}>
+            <Row style={styleApp.center}>
+              <AllIcon
+                name={'search'}
+                size={17}
+                color={styles.footerText.color}
+                type="font"
+                solid
+              />
+            </Row>
+          </TouchableOpacity>
+        </Col>
+        <Col size={50} style={styleApp.center}>
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={this.addClub}
+            style={styles.footerButton}>
+            <Row style={styleApp.center}>
+              <AllIcon
+                name={'plus'}
+                size={17}
+                color={styles.footerText.color}
+                type="font"
+                solid
+              />
+            </Row>
+          </TouchableOpacity>
+        </Col>
+      </Row>
     );
   };
   renderInvites = () => {
@@ -182,6 +220,21 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     top: 3,
     right: 3,
+  },
+  footerButton: {
+    height: '50%',
+    width: '85%',
+    borderRadius: 15,
+    backgroundColor: 'transparent',
+    paddingHorizontal: 10,
+    marginHorizontal: 0,
+  },
+  footerText: {
+    ...styleApp.textBold,
+    fontSize: 12,
+    color: colors.greyDark,
+    marginLeft: 7,
+    marginTop: 1,
   },
 });
 
