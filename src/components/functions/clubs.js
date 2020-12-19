@@ -6,6 +6,18 @@ import {authorizePayment} from './stripe.js';
 import {createInviteToClubBranchUrl} from '../database/branch';
 import {goBack, navigate} from '../../../NavigationService';
 import {getValueOnce} from '../database/firebase/methods.js';
+import {indexClubs, client} from '../database/algolia';
+
+const autoCompleteSearchClubs = async ({searchText}) => {
+  await client.clearCache();
+  let filters = '';
+  const {hits} = await indexClubs.search(searchText, {
+    hitsPerPage: 500,
+    filters: filters,
+  });
+  const clubs = hits.filter((club) => club.info.title);
+  return clubs;
+};
 
 const createClub = async ({title, description, sport}) => {
   const {userID} = store.getState().user;
@@ -234,14 +246,14 @@ const inviteUsersToClub = async ({clubID}) => {
   const branchLink = await createInviteToClubBranchUrl(clubID)
     .then((r) => r)
     .catch(() => null);
-  navigate('UserDirectory', {
+  navigate('SearchPage', {
     action: 'inviteToClub',
     branchLink: branchLink,
     clubID,
-    onConfirm: async ({users}) => {
+    onConfirm: async ({results}) => {
       goBack();
-      if (users) {
-        const userIDs = Object.keys(users);
+      if (results) {
+        const userIDs = Object.keys(results);
         const timestamp = Date.now();
         let updates = {};
         userIDs.map((userID) => {
@@ -320,6 +332,7 @@ const getFirstClub = async () => {
 };
 
 export {
+  autoCompleteSearchClubs,
   createClub,
   editClub,
   deleteClub,

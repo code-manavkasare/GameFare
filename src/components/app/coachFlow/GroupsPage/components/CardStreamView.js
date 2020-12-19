@@ -259,7 +259,7 @@ class CardStream extends Component {
               color={colors.greyLight}
               onPressColor={colors.grey}
               click={async () =>
-                navigate('UserDirectory', {
+                navigate('SearchPage', {
                   action: 'invite',
                   sessionToInvite:
                     currentSessionID === coachSessionID

@@ -53,6 +53,15 @@ const getSelectionActionDecorations = (action) => {
           name: 'user-plus',
         },
       };
+    case 'joinClub':
+      return {
+        actionText: 'Join',
+        actionHeader: 'Join Club',
+        icon: {
+          type: 'font',
+          name: 'user-plus',
+        },
+      };
     default:
       return {
         actionText: 'Unknown action',

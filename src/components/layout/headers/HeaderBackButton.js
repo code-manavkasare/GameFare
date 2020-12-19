@@ -487,6 +487,7 @@ class HeaderBackButton extends Component {
       textHeader,
       clickImgHeader,
       searchBar,
+      searchBarStyle,
       containerStyle,
       marginTop: marginTopProp,
       initialBackgroundColor,
@@ -525,6 +526,7 @@ class HeaderBackButton extends Component {
     };
     const rowTextImgHeaderStyle = {
       ...styles.rowTextImgHeader,
+      ...searchBarStyle,
       marginTop,
     };
     const rowTextHeaderStyle = {

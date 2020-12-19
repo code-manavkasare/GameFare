@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Keyboard} from 'react-native';
+import {StyleSheet, Keyboard} from 'react-native';
 import {connect} from 'react-redux';
 import {Row, Col} from 'react-native-easy-grid';
 import {dissoc} from 'ramda';
-import PropTypes from 'prop-types';
+import {string, array, bool} from 'prop-types';
 import {navigate} from '../../../../../NavigationService';
 
 import styleApp from '../../../style/style';
@@ -13,17 +13,19 @@ import {isUserPrivate, userObject} from '../../../functions/users';
 import {openSession} from '../../../functions/coach';
 
 import InvitationManager from '../../../utility/InvitationManager';
-import UserSearchResults from './UserSearchResults';
+import SearchResults from './SearchResults';
 import {
   userIDSelector,
   userInfoSelector,
 } from '../../../../store/selectors/user';
 
-class BodyUserDirectory extends Component {
+class SearchBody extends Component {
   static propTypes = {
-    action: PropTypes.string,
-    archivesToShare: PropTypes.array,
-    sessionToInvite: PropTypes.string,
+    action: string,
+    archivesToShare: array,
+    sessionToInvite: string,
+    searchFor: string,
+    selectOne: bool,
   };
   static defaultProps = {
     action: 'call',
@@ -41,8 +43,8 @@ class BodyUserDirectory extends Component {
     this.props.onRef(this);
   }
 
-  selectUser(user) {
-    const {userID} = this.props;
+  selectUser = (user) => {
+    const {userID, selectOne} = this.props;
     if (isUserPrivate(user)) {
       Keyboard.dismiss();
       return navigate('Alert', {
@@ -72,15 +74,17 @@ class BodyUserDirectory extends Component {
       const {selectedUsers} = this.state;
       if (selectedUsers[user.id]) {
         this.setState({selectedUsers: dissoc(user.id, selectedUsers)});
+      } else if (selectOne) {
+        this.setState({selectedUsers: {[user.id]: user}});
       } else {
         this.setState({selectedUsers: {...selectedUsers, [user.id]: user}});
       }
     }
-  }
+  };
 
   onConfirm = ({users}) => {
     const {onConfirm} = this.props;
-    onConfirm && onConfirm({users});
+    onConfirm && onConfirm({results: users});
     this.setState({selectedUsers: {}});
   };
 
@@ -91,12 +95,14 @@ class BodyUserDirectory extends Component {
       archivesToShare,
       sessionToInvite,
       AnimatedHeaderValue,
+      searchFor,
     } = this.props;
     return (
       <Col style={styles.body}>
         <Row size={90} style={styles.smallTopPad}>
-          <UserSearchResults
-            onSelect={(user) => this.selectUser(user)}
+          <SearchResults
+            searchFor={searchFor}
+            onSelect={this.selectUser}
             selectedUsers={selectedUsers}
             searchText={searchText}
             AnimatedHeaderValue={AnimatedHeaderValue}
@@ -127,6 +133,7 @@ const styles = StyleSheet.create({
   },
   smallTopPad: {
     paddingTop: 6,
+    marginTop: -20,
   },
 });
 
@@ -137,4 +144,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(BodyUserDirectory);
+export default connect(mapStateToProps)(SearchBody);

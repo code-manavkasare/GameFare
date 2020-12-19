@@ -30,14 +30,16 @@ class ClubForm extends Component {
       loader: false,
       title: props.club?.info?.title ?? '',
       description: props.club?.info?.description ?? '',
-      sport: props.club?.info?.sport ?? '',
+      sport: props.club?.info?.sport ?? undefined,
       sportTypes: [],
       editMode: props.club !== undefined,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount = async () => {
-    this.setState({sportTypes: await getSportTypes()});
+    const {sport} = this.state;
+    const sportTypes = await getSportTypes();
+    this.setState({sportTypes, sport: sport ?? sportTypes[0]});
   };
   createClub = async () => {
     const {navigation} = this.props;
@@ -145,6 +147,8 @@ class ClubForm extends Component {
     );
   };
   createClubHeader = () => {
+    const {editMode} = this.state;
+    if (editMode) return null;
     return rowTitle({
       hideDividerHeader: true,
       title: 'Create a Club',

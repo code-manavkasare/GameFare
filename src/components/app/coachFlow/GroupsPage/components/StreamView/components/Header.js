@@ -63,7 +63,7 @@ class HeaderStreamView extends Component {
         clickButtonOffset2={async () =>
           currentSessionReconnecting
             ? null
-            : navigation.navigate('UserDirectory', {
+            : navigation.navigate('SearchPage', {
                 action: 'invite',
                 branchLink: await createInviteToSessionBranchUrl(
                   coachSessionID,

@@ -16,6 +16,7 @@ export default class SearchInput extends Component {
     autofocus: PropTypes.bool,
     onFocus: PropTypes.func,
     onBlur: PropTypes.func,
+    searchFor: PropTypes.string,
   };
   static defaultProps = {
     autoFocus: false,
@@ -40,7 +41,7 @@ export default class SearchInput extends Component {
 
   searchBar = () => {
     const {empty} = this.state;
-    const {autoFocus, onFocus, onBlur} = this.props;
+    const {autoFocus, onFocus, onBlur, searchFor} = this.props;
     return (
       <View style={styles.searchBarStyle}>
         <Row>
@@ -55,7 +56,7 @@ export default class SearchInput extends Component {
           <Col size={65}>
             <TextInput
               style={styles.textStyle}
-              placeholder={'Search for users'}
+              placeholder={`Search for ${searchFor}`}
               placeholderTextColor={colors.greyDark}
               returnKeyType={'done'}
               autoCompleteType={'name'}
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 15,
     backgroundColor: colors.greyLight,
-    marginVertical: 10, 
+    marginVertical: 10,
   },
   textStyle: {
     ...styleApp.textBold,

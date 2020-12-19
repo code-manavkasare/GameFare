@@ -9,7 +9,7 @@ import NewConversation from '../app/elementsMessage/NewConversation';
 import VideoPlayerPage from '../app/videoPlayerPage/index';
 import CallTabPage from '../app/callTab';
 import QueueList from '../app/elementsUpload/QueueList';
-import UserDirectoryPage from '../app/userDirectory';
+import SearchPage from '../app/searchPage';
 import NotificationPage from '../app/elementsUser/elementsProfile/NotificationPage';
 import SelectVideosFromLibrary from '../app/videoLibraryPage/index';
 import Alert from '../layout/alerts/Alert';
@@ -93,8 +93,8 @@ function InitialStack() {
       />
 
       <Stack.Screen
-        name="UserDirectory"
-        component={UserDirectoryPage}
+        name="SearchPage"
+        component={SearchPage}
         options={SheetModalSpec}
       />
 

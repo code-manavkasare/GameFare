@@ -46,7 +46,7 @@ class CardUserSelect extends Component {
     Animated.timing(this.selectionIndication, native(to, 250)).start();
   }
   render() {
-    const {user, onClick, silentFriends, isUserSelected} = this.props;
+    const {user, onClick, silentFriends, isUserSelected, children} = this.props;
     const {isPrivate} = user.info;
     const selectionOverlayStyle = {
       width: '100%',
@@ -67,48 +67,52 @@ class CardUserSelect extends Component {
           return (
             <View style={styleApp.fullSize}>
               <Animated.View style={selectionOverlayStyle} />
-              <Row>
-                <Col size={25} style={styleApp.center}>
-                  {user.info.picture ? (
-                    <AsyncImage
-                      style={styles.imgUser}
-                      mainImage={user.info.picture}
-                      imgInitial={user.info.picture}
-                    />
-                  ) : (
-                    <View style={[styleApp.center, styles.imgUser]}>
-                      <Text style={[styleApp.textBold, {fontSize: 13}]}>
-                        {user.info.firstname !== ''
-                          ? user.info.firstname[0]
-                          : ''}
-                        {user.info.lastname !== '' ? user.info.lastname[0] : ''}
-                      </Text>
-                    </View>
-                  )}
-                </Col>
-                <Col size={65} style={styleApp.center2}>
-                  <Text style={styleApp.text}>
-                    {user?.info?.firstname} {user?.info?.lastname}
-                  </Text>
-                </Col>
-                <Col size={10} style={styleApp.center2}>
-                  {isUserSelected ? (
-                    <AllIcon
-                      type={'font'}
-                      color={colors.green}
-                      size={18}
-                      name={'check'}
-                    />
-                  ) : privateUser ? (
-                    <AllIcon
-                      type={'font'}
-                      color={colors.greyDarker}
-                      size={18}
-                      name={'lock'}
-                    />
-                  ) : null}
-                </Col>
-              </Row>
+              {children ?? (
+                <Row>
+                  <Col size={25} style={styleApp.center}>
+                    {user.info.picture ? (
+                      <AsyncImage
+                        style={styles.imgUser}
+                        mainImage={user.info.picture}
+                        imgInitial={user.info.picture}
+                      />
+                    ) : (
+                      <View style={[styleApp.center, styles.imgUser]}>
+                        <Text style={[styleApp.textBold, {fontSize: 13}]}>
+                          {user.info.firstname !== ''
+                            ? user.info.firstname[0]
+                            : ''}
+                          {user.info.lastname !== ''
+                            ? user.info.lastname[0]
+                            : ''}
+                        </Text>
+                      </View>
+                    )}
+                  </Col>
+                  <Col size={65} style={styleApp.center2}>
+                    <Text style={styleApp.text}>
+                      {user?.info?.firstname} {user?.info?.lastname}
+                    </Text>
+                  </Col>
+                  <Col size={10} style={styleApp.center2}>
+                    {isUserSelected ? (
+                      <AllIcon
+                        type={'font'}
+                        color={colors.green}
+                        size={18}
+                        name={'check'}
+                      />
+                    ) : privateUser ? (
+                      <AllIcon
+                        type={'font'}
+                        color={colors.greyDarker}
+                        size={18}
+                        name={'lock'}
+                      />
+                    ) : null}
+                  </Col>
+                </Row>
+              )}
             </View>
           );
         }}

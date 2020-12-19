@@ -23,6 +23,7 @@ class CardUser extends Component {
     hideProfileInitials: bool,
     icon: object,
     onPress: func,
+    textOnly: bool,
   };
 
   static defaultProps = {};
@@ -50,6 +51,20 @@ class CardUser extends Component {
       />
     );
   };
+  text = () => {
+    const {infoUser, styleText} = this.props;
+    const {firstname, lastname} = infoUser;
+    const textStyle = {
+      ...styleApp.textBold,
+      fontSize: 17,
+      ...styleText,
+    };
+    return (
+      <Text style={textStyle} numberOfLines={1} ellipsizeMode="tail">
+        {firstname} {lastname}
+      </Text>
+    );
+  };
   render() {
     const {
       infoUser,
@@ -59,20 +74,16 @@ class CardUser extends Component {
       suffix,
       prefix,
       imgOnly,
+      textOnly,
       icon,
       onPress,
     } = this.props;
     if (!infoUser) return <PlaceHolder style={containerStyle} />;
     if (imgOnly) return this.imgUser();
+    if (textOnly) return this.text();
     const containerStyle = {
       ...styles.cardUser,
       ...style,
-    };
-    const {firstname, lastname} = infoUser;
-    const textStyle = {
-      ...styleApp.textBold,
-      ...styleText,
-      fontSize: 17,
     };
     const smallTextStyle = {
       ...styleApp.textBold,
@@ -91,12 +102,7 @@ class CardUser extends Component {
                 </Col>
                 <Col size={65} style={styleApp.center2}>
                   {prefix ? <Text style={smallTextStyle}>{prefix}</Text> : null}
-                  <Text
-                    style={textStyle}
-                    numberOfLines={1}
-                    ellipsizeMode="tail">
-                    {firstname} {lastname}
-                  </Text>
+                  {this.text()}
                   {suffix ? <Text style={smallTextStyle}>{suffix}</Text> : null}
                 </Col>
                 <Col size={10} style={styleApp.center}>

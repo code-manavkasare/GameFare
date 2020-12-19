@@ -3,19 +3,21 @@ import {View, Animated} from 'react-native';
 
 import styleApp from '../../style/style';
 
-import HeaderUserDirectory from './components/HeaderUserDirectory';
-import BodyUserDirectory from './components/BodyUserDirectory';
+import HeaderSearch from './components/HeaderSearch';
+import SearchBody from './components/SearchBody';
 import SearchInput from '../../layout/textField/SearchInput';
 
-export default class userDirectoryPage extends Component {
+export default class searchPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      searchFor: props.route?.params?.searchFor ?? 'users',
       action: props.route?.params?.action ?? 'call',
       archivesToShare: props.route?.params?.archivesToShare ?? [],
       sessionToInvite: props.route?.params?.sessionToInvite ?? '',
       onConfirm: props.route?.params?.onConfirm ?? null,
       branchLink: props.route?.params?.branchLink ?? null,
+      selectOne: props.route?.params?.selectOne ?? false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -27,28 +29,31 @@ export default class userDirectoryPage extends Component {
       sessionToInvite,
       onConfirm,
       branchLink,
+      searchFor,
+      selectOne,
     } = this.state;
     const {goBack} = this.props.navigation;
     return (
       <View style={styleApp.stylePage}>
-        <HeaderUserDirectory
+        <HeaderSearch
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           searchBar={
             <SearchInput
+              searchFor={searchFor}
               autoFocus
-              search={(text) =>
-                this.bodyUserDirectoryRef.setState({searchText: text})
-              }
+              search={(text) => this.searchBodyRef.setState({searchText: text})}
             />
           }
           branchLink={branchLink}
           goBack={() => goBack()}
         />
-        <BodyUserDirectory
+        <SearchBody
+          searchFor={searchFor}
           action={action}
           onRef={(ref) => {
-            this.bodyUserDirectoryRef = ref;
+            this.searchBodyRef = ref;
           }}
+          selectOne={selectOne}
           archivesToShare={archivesToShare}
           sessionToInvite={sessionToInvite}
           onConfirm={onConfirm}

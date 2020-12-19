@@ -16,7 +16,7 @@ let indexClubs = client.initIndex('prod_clubs');
 if (Config.ENV === 'dev') {
   indexUsers = client.initIndex('dev_users');
   indexDiscussions = client.initIndex('dev_discussions');
-  indexClubs = client.initIndex('prod_clubs');
+  indexClubs = client.initIndex('dev_clubs');
 }
 
 const getBlockedUsers = async (objectIDArray) => {
