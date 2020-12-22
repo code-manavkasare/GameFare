@@ -53,9 +53,9 @@ class CardBooking extends Component {
       id,
     });
   };
-  confirmBooking = async () => {
+  confirmBooking = () => {
     const {booking} = this.props;
-    await updateBookingStatusAlert({
+    updateBookingStatusAlert({
       bookingID: booking.id,
       status: 'confirmed',
     }).then(() => {
@@ -65,9 +65,9 @@ class CardBooking extends Component {
       });
     });
   };
-  declineBooking = async () => {
+  declineBooking = () => {
     const {booking} = this.props;
-    await updateBookingStatusAlert({
+    updateBookingStatusAlert({
       bookingID: booking.id,
       status: 'declined',
     }).then(() => {
