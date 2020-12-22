@@ -39,7 +39,6 @@ const updateNotificationBadge = (notificationNumber) => {
 
 const updateNotificationBadgeInBackground = async () => {
   const notifications = await store.getState().userNotifications;
-  Object.values(notifications).map((n) => console.log(n?.data));
   if (notifications) {
     updateNotificationBadge(Object.values(notifications).length);
   }
@@ -59,7 +58,7 @@ const deleteNotificationsByCoachSession = async ({
   let updates = {};
   let badgeCount = notifications.length;
 
-  notifications = notifications
+  notifications
     .map((n) => n?.data)
     .filter((n) => n.coachSessionID === coachSessionID && n.action === action)
     .map((n) => {

@@ -95,13 +95,9 @@ const numConversationNotificationsSelector = createSelector(
   (conversations, notifications) => {
     if (!conversations || !notifications) return 0;
 
-    const conversationIDs = Object.values(conversations)
-      .map((conversation) => conversation?.objectID)
-      .filter((conversation) => conversation);
-
     const numNotifications = Object.values(notifications)
       .map((n) => n?.data?.coachSessionID)
-      .filter((sessionID) => conversationIDs.includes(sessionID)).length;
+      .filter((sessionID) => conversations[sessionID]).length;
 
     return numNotifications;
   },
@@ -113,13 +109,9 @@ const numBookingNotificationsSelector = createSelector(
   (bookings, notifications) => {
     if (!bookings || !notifications) return 0;
 
-    const bookingIDs = Object.values(bookings)
-      .map((booking) => booking?.id)
-      .filter((booking) => booking);
-
     const numNotifications = Object.values(notifications)
       .map((n) => n?.data?.coachSessionID)
-      .filter((sessionID) => bookingIDs.includes(sessionID)).length;
+      .filter((sessionID) => bookings[sessionID]).length;
 
     return numNotifications;
   },
