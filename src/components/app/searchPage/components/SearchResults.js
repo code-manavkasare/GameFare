@@ -13,6 +13,7 @@ import colors from '../../../style/colors';
 import {autocompleteSearchUsers} from '../../../functions/users';
 import {autoCompleteSearchClubs} from '../../../functions/clubs';
 import {store} from '../../../../store/reduxStore';
+import {rowTitle} from '../../TeamPage/components/elements';
 import AllIcon from '../../../layout/icons/AllIcons';
 import ButtonColor from '../../../layout/Views/Button';
 import CardUserSelect from '../../../layout/cards/CardUserSelect';
@@ -24,6 +25,8 @@ export default class SearchResults extends Component {
     searchFor: string.isRequired,
     selectedUsers: object,
     searchText: string,
+    defaultList: func,
+    defaultHeader: string,
   };
 
   static defaultProps = {
@@ -37,10 +40,12 @@ export default class SearchResults extends Component {
       searchResults: [],
       displayMore: false,
       noResults: false,
+      defaultList: [],
     };
   }
 
   componentDidMount() {
+    this.fetchDefaultList();
     this.searchUsers();
   }
 
@@ -49,6 +54,14 @@ export default class SearchResults extends Component {
       this.searchUsers();
     }
   }
+
+  fetchDefaultList = async () => {
+    const {defaultList} = this.props;
+    if (defaultList) {
+      const defaultListResults = await defaultList();
+      this.setState({defaultList: defaultListResults});
+    }
+  };
 
   searchUsers = async () => {
     const {searchText, searchFor} = this.props;
@@ -154,11 +167,44 @@ export default class SearchResults extends Component {
     );
   }
 
+  defaultListView() {
+    const {defaultHeader, AnimatedHeaderValue} = this.props;
+    const {defaultList} = this.state;
+    return Array.isArray(defaultList) && defaultList.length ? (
+      <KeyboardAwareFlatList
+        keyboardShouldPersistTaps="always"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.searchResults}
+        keyExtractor={(item) => {
+          return item?.id;
+        }}
+        data={defaultList}
+        ListHeaderComponent={rowTitle({
+          hideDividerHeader: true,
+          title: defaultHeader,
+          titleColor: colors.greyDarker,
+          titleStyle: {
+            fontWeight: '800',
+            fontSize: 23,
+            marginBottom: -10,
+          },
+          containerStyle: {
+            marginTop: 0,
+            marginBottom: 10,
+            paddingHorizontal: '2.5%',
+          },
+        })}
+        renderItem={(item) => this.resultCard(item.item)}
+        AnimatedHeaderValue={AnimatedHeaderValue}
+      />
+    ) : null;
+  }
+
   render() {
     const {searchResults, displayMore, noResults} = this.state;
     const {searchText, AnimatedHeaderValue} = this.props;
     if (searchText === '') {
-      return null;
+      return this.defaultListView();
     } else if (noResults) {
       return (
         <View style={styleApp.fullSize}>
@@ -167,7 +213,7 @@ export default class SearchResults extends Component {
           </Text>
         </View>
       );
-    } else if (searchResults.length > 0) {
+    } else {
       if (displayMore) {
         return this.moreResultsView();
       } else {
@@ -182,8 +228,6 @@ export default class SearchResults extends Component {
           </KeyboardAwareScrollView>
         );
       }
-    } else {
-      return null;
     }
   }
 }

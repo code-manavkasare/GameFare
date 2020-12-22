@@ -18,6 +18,8 @@ export default class searchPage extends Component {
       onConfirm: props.route?.params?.onConfirm ?? null,
       branchLink: props.route?.params?.branchLink ?? null,
       selectOne: props.route?.params?.selectOne ?? false,
+      defaultList: props.route?.params?.defaultList ?? false,
+      defaultHeader: props.route?.params?.defaultHeader ?? false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -31,6 +33,8 @@ export default class searchPage extends Component {
       branchLink,
       searchFor,
       selectOne,
+      defaultList,
+      defaultHeader,
     } = this.state;
     const {goBack} = this.props.navigation;
     return (
@@ -40,7 +44,7 @@ export default class searchPage extends Component {
           searchBar={
             <SearchInput
               searchFor={searchFor}
-              autoFocus
+              autoFocus={!defaultList}
               search={(text) => this.searchBodyRef.setState({searchText: text})}
             />
           }
@@ -58,6 +62,8 @@ export default class searchPage extends Component {
           sessionToInvite={sessionToInvite}
           onConfirm={onConfirm}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
+          defaultList={defaultList}
+          defaultHeader={defaultHeader}
         />
       </View>
     );

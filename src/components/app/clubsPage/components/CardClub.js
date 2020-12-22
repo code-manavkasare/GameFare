@@ -92,8 +92,9 @@ class CardClub extends Component {
   }
   cardRow() {
     const {club} = this.props;
-    const {info, owner} = club;
+    const {info, owner, members} = club;
     const {title} = info;
+    const memberCount = Object.values(members).length - 1;
     return (
       <Row>
         <Row size={25} style={styleApp.center}>
@@ -107,6 +108,9 @@ class CardClub extends Component {
             Owner:{' '}
             <CardUser id={owner} textOnly styleText={styles.clubOwnerText} />
           </Text>
+          <Text style={styles.clubOwnerText}>{`${
+            memberCount ? memberCount : 'No'
+          } club member${memberCount === 1 ? '' : 's'}`}</Text>
         </Col>
       </Row>
     );

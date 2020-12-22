@@ -15,7 +15,10 @@ import {
 import CardClub from '../../CardClub';
 import {width} from '../../../../../style/sizes';
 import {userConnectedSelector} from '../../../../../../store/selectors/user';
-import {acceptInvite} from '../../../../../functions/clubs';
+import {
+  acceptInvite,
+  generateClubDiscoveryList,
+} from '../../../../../functions/clubs';
 import {Col, Row} from 'react-native-easy-grid';
 class ClubList extends Component {
   static propTypes = {
@@ -57,6 +60,8 @@ class ClubList extends Component {
       searchFor: 'clubs',
       action: 'joinClub',
       selectOne: true,
+      defaultHeader: 'Discover Clubs',
+      defaultList: generateClubDiscoveryList,
       onConfirm: ({results}) => {
         goBack();
         if (!results) return;

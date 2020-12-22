@@ -129,7 +129,7 @@ class CardUserSelect extends Component {
 
 const styles = StyleSheet.create({
   cardUser: {
-    height: 65,
+    height: 75,
     borderRadius: 15,
     paddingLeft: '5%',
     paddingRight: '5%',
