@@ -11,7 +11,7 @@ import {getValueOnce} from '../../../database/firebase/methods';
 import {shareVideosWithTeams} from '../../../functions/videoManagement';
 import {timeout} from '../../../functions/coach';
 import styleApp from '../../../style/style';
-import {numConversationNotificationsSelector} from '../../../../store/selectors/user';
+import {numFilteredNotificationsSelector} from '../../../../store/selectors/user';
 
 class HeaderCallTab extends Component {
   constructor(props) {
@@ -105,7 +105,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    numNotifications: numConversationNotificationsSelector(state),
+    numNotifications: numFilteredNotificationsSelector(state, {
+      filterType: 'conversations',
+    }),
   };
 };
 

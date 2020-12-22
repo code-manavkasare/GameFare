@@ -89,29 +89,15 @@ const numNotificationsSelector = createSelector(
   (notifications) => (!notifications ? 0 : Object.values(notifications).length),
 );
 
-const numConversationNotificationsSelector = createSelector(
-  (state) => state.conversations,
+const numFilteredNotificationsSelector = createSelector(
+  (state, props) => state[props.filterType],
   notificationsSelector,
-  (conversations, notifications) => {
-    if (!conversations || !notifications) return 0;
+  (sessions, notifications) => {
+    if (!sessions || !notifications) return 0;
 
     const numNotifications = Object.values(notifications)
       .map((n) => n?.data?.coachSessionID)
-      .filter((sessionID) => conversations[sessionID]).length;
-
-    return numNotifications;
-  },
-);
-
-const numBookingNotificationsSelector = createSelector(
-  (state) => state.bookings,
-  notificationsSelector,
-  (bookings, notifications) => {
-    if (!bookings || !notifications) return 0;
-
-    const numNotifications = Object.values(notifications)
-      .map((n) => n?.data?.coachSessionID)
-      .filter((sessionID) => bookings[sessionID]).length;
+      .filter((sessionID) => sessions[sessionID]).length;
 
     return numNotifications;
   },
@@ -146,8 +132,7 @@ export {
   userNotificationsSelector,
   notificationsByConversationSelector,
   numNotificationsSelector,
-  numConversationNotificationsSelector,
-  numBookingNotificationsSelector,
+  numFilteredNotificationsSelector,
   userInfoSelector,
   walletSelector,
   silentFriendsSelector,

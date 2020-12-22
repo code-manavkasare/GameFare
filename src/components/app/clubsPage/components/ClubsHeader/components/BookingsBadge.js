@@ -4,17 +4,16 @@ import {connect} from 'react-redux';
 
 import colors from '../../../../../style/colors';
 import styleApp from '../../../../../style/style';
-import {numBookingNotificationsSelector} from '../../../../../../store/selectors/user';
+import {numFilteredNotificationsSelector} from '../../../../../../store/selectors/user';
 
-class BadgeHandler extends Component {
+class BookingsBadge extends Component {
   render() {
     const {numNotifications} = this.props;
-    if (!numNotifications) return null;
-    return (
+    return numNotifications ? (
       <View style={styles.badge}>
         <Text style={styles.badgeText}>{numNotifications}</Text>
       </View>
-    );
+    ) : null;
   }
 }
 
@@ -25,8 +24,10 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    numNotifications: numBookingNotificationsSelector(state),
+    numNotifications: numFilteredNotificationsSelector(state, {
+      filterType: 'bookings',
+    }),
   };
 };
 
-export default connect(mapStateToProps)(BadgeHandler);
+export default connect(mapStateToProps)(BookingsBadge);

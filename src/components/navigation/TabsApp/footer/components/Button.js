@@ -12,7 +12,7 @@ import AllIcons from '../../../../layout/icons/AllIcons';
 import Button from '../../../../layout/Views/Button';
 import {logMixpanel} from '../../../../functions/logs';
 import {
-  numConversationNotificationsSelector,
+  numFilteredNotificationsSelector,
   userConnectedSelector,
 } from '../../../../../store/selectors/user';
 import {generalSessionRecordingSelector} from '../../../../../store/selectors/layout';
@@ -259,7 +259,9 @@ const mapStateToProps = (state) => {
   return {
     userConnected: userConnectedSelector(state),
     generalSessionRecording: generalSessionRecordingSelector(state),
-    numberNotifications: numConversationNotificationsSelector(state),
+    numberNotifications: numFilteredNotificationsSelector(state, {
+      filterType: 'conversations',
+    }),
   };
 };
 
