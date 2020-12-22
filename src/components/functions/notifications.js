@@ -3,7 +3,7 @@ import database from '@react-native-firebase/database';
 import PushNotificationIOS from '@react-native-community/push-notification-ios'; //DO NOT DELETE, USEFUL FOR PushNotification
 import PushNotification from 'react-native-push-notification';
 
-import {getValueOnce} from '../database/firebase/methods.js';
+import {store} from '../../store/reduxStore';
 
 async function permissions() {
   try {
@@ -37,21 +37,37 @@ const updateNotificationBadge = (notificationNumber) => {
   PushNotification.setApplicationIconBadgeNumber(notificationNumber);
 };
 
-const updateNotificationBadgeInBackground = async (userId) => {
-  const notifications = await getValueOnce(`users/${userId}/notifications`);
+const updateNotificationBadgeInBackground = async () => {
+  const notifications = await store.getState().userNotifications;
   if (notifications) {
     updateNotificationBadge(Object.values(notifications).length);
   }
 };
 
-const deleteNotifications = async (userId, coachSessionId, notifications) => {
+const deleteNotificationsByCoachSession = async ({
+  userID,
+  coachSessionID,
+  action = 'Conversation',
+}) => {
+  if (!userID) userID = store.getState().user.userID;
+
+  let notifications = Object.values(
+    (await store.getState().userNotifications) ?? {},
+  );
+
   let updates = {};
-  for (const notification of notifications) {
-    const {action, coachSessionID, notificationId} = notification.data;
-    if (action === 'Conversation' && coachSessionID === coachSessionId) {
-      updates[`users/${userId}/notifications/${notificationId}`] = null;
-    }
-  }
+  let badgeCount = notifications.length;
+
+  notifications
+    .map((n) => n?.data)
+    .filter((n) => n.coachSessionID === coachSessionID && n.action === action)
+    .map((n) => {
+      updates[`users/${userID}/notifications/${n.notificationId}`] = null;
+      badgeCount--;
+    });
+
+  updateNotificationBadge(badgeCount);
+
   if (Object.values(updates).length !== 0) {
     await database()
       .ref()
@@ -73,7 +89,7 @@ const conversationIsInNotification = (coachSessionId, notifications) => {
 
 module.exports = {
   conversationIsInNotification,
-  deleteNotifications,
+  deleteNotificationsByCoachSession,
   refreshTokenOnDatabase,
   subscribeToTopics,
   updateNotificationBadge,

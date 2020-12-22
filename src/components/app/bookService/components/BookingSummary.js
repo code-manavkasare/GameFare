@@ -80,8 +80,9 @@ class BookingSummary extends Component {
         <CardCreditCard />
         <View style={styles.separator} />
         <Text style={styleApp.smallText}>
-          <Text style={[styleApp.textBold, {fontSize: 12}]}>Note •</Text> You'll
-          be charged the entire amount now.
+          <Text style={[styleApp.textBold, {fontSize: 12}]}>Note •</Text> Your
+          payment method will authorize the entire booking fee now and your
+          total will be adjusted when the service is complete.
         </Text>
       </View>
     );

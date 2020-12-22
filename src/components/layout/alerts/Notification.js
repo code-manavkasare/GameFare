@@ -24,7 +24,7 @@ import AsyncImage from '../image/AsyncImage';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
-import {timing} from '../../animations/animations';
+import {native} from '../../animations/animations';
 import {timeout} from '../../functions/coach';
 
 import {marginTopApp} from '../../style/sizes';
@@ -34,7 +34,7 @@ import {
 } from '../../../store/selectors/user.js';
 import {notificationSelector} from '../../../store/selectors/layout.js';
 
-const heightNotif = 130;
+const heightNotif = 90;
 const initialTranslateY = -marginTopApp - heightNotif - 20;
 
 class Notification extends Component {
@@ -80,11 +80,12 @@ class Notification extends Component {
   componentDidUpdate(prevProps, prevState) {
     const {notification, numNotifications} = this.props;
     if (
-      !equal(prevProps.numNotifications, notification) &&
-      numNotifications !== 0
+      !equal(prevProps.notification, notification) &&
+      numNotifications !== 0 &&
+      notification?.notification?.title
     ) {
       notification.data.action === 'Conversation' &&
-        updateNotificationBadge(numNotifications + 1);
+        updateNotificationBadge(numNotifications);
       return this.openNotification();
     }
   }
@@ -94,14 +95,14 @@ class Notification extends Component {
     const {action} = notification.data;
     const currentRoute = getCurrentRoute();
     if (action !== currentRoute)
-      Animated.timing(this.translateYNotif, timing(0, 400)).start(async () => {
+      Animated.timing(this.translateYNotif, native(0, 400)).start(async () => {
         await timeout(4000);
         this.close(initialTranslateY);
       });
   }
 
   close(translateValue, click) {
-    Animated.timing(this.translateYNotif, timing(translateValue, 200)).start(
+    Animated.timing(this.translateYNotif, native(translateValue, 200)).start(
       () => click && click(),
     );
   }
@@ -109,7 +110,7 @@ class Notification extends Component {
   render() {
     const {notification} = this.props;
     const {width} = Dimensions.get('screen');
-    if (!notification) return null;
+    if (!notification || !notification?.notification?.title) return null;
     const {picture} = notification.data;
     let {body, title} = notification.notification;
     if (body.length > 80) body = body.slice(0, 80) + '...';
@@ -118,14 +119,13 @@ class Notification extends Component {
       <Animated.View
         style={[
           styles.notification,
-          {width: width},
+          {width: width * 0.95},
           {transform: [{translateY: this.translateYNotif}]},
         ]}>
         <TouchableOpacity
           style={styleApp.fullSize}
           activeOpacity={1}
           onPress={() => {
-            const {userID} = this.props;
             this.close(initialTranslateY, () =>
               clickNotification(notification),
             );
@@ -168,17 +168,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     height: heightNotif,
-    paddingTop: marginTopApp,
-    borderBottomWidth: 1,
-    borderColor: colors.off,
+    marginTop: marginTopApp + 10,
+    marginHorizontal: '2.5%',
+    borderRadius: 15,
     backgroundColor: colors.white,
-    ...styleApp.shade,
+    ...styleApp.shadow,
   },
   swipableView: {
     ...styleApp.center,
     position: 'absolute',
-    bottom: -20,
-    height: 20,
+    bottom: -30,
+    height: 40,
     paddingTop: 0,
   },
   swipableRectangle: {

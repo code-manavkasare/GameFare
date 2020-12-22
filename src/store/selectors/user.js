@@ -5,7 +5,7 @@ export const userIDSubSelector = (state) => state.user.userID;
 export const infoUserSubSelector = (state) => state.user.infoUser;
 const infoUserByIdSubSelector = (state, props) => state.users[props.id];
 
-const notificationsSelector = (state) => state.notifications;
+const notificationsSelector = (state) => state.userNotifications;
 const silentFriendsSubSelector = (state) => state.userSilentFriends;
 const userBookingsSubSelector = (state) => state.userBookings;
 
@@ -68,6 +68,17 @@ const userNotificationsSelector = createSelector(
   (item) => item,
 );
 
+const notificationsByConversationSelector = createSelector(
+  (_, props) => props.coachSessionID,
+  notificationsSelector,
+  (coachSessionID, notifications) =>
+    Object.values(notifications).filter(
+      (n) =>
+        n?.data?.coachSessionID === coachSessionID &&
+        n?.data?.action === 'Conversation',
+    ),
+);
+
 const silentFriendsSelector = createSelector(
   silentFriendsSubSelector,
   (item) => item,
@@ -76,6 +87,20 @@ const silentFriendsSelector = createSelector(
 const numNotificationsSelector = createSelector(
   notificationsSelector,
   (notifications) => (!notifications ? 0 : Object.values(notifications).length),
+);
+
+const numFilteredNotificationsSelector = createSelector(
+  (state, props) => state[props.filterType],
+  notificationsSelector,
+  (sessions, notifications) => {
+    if (!sessions || !notifications) return 0;
+
+    const numNotifications = Object.values(notifications)
+      .map((n) => n?.data?.coachSessionID)
+      .filter((sessionID) => sessions[sessionID]).length;
+
+    return numNotifications;
+  },
 );
 
 const infoUserByIdSelector = createSelector(
@@ -105,7 +130,9 @@ export {
   userIDSelector,
   infoUserSelector,
   userNotificationsSelector,
+  notificationsByConversationSelector,
   numNotificationsSelector,
+  numFilteredNotificationsSelector,
   userInfoSelector,
   walletSelector,
   silentFriendsSelector,

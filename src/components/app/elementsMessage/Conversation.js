@@ -3,12 +3,8 @@ import {View, Animated, InteractionManager} from 'react-native';
 import {connect} from 'react-redux';
 
 import {userObject} from '../../functions/users';
-import {
-  deleteNotifications,
-  updateNotificationBadge,
-} from '../../functions/notifications.js';
+import {deleteNotificationsByCoachSession} from '../../functions/notifications.js';
 import {bindSession, bindConversation} from '../../database/firebase/bindings';
-import {store} from '../../../store/reduxStore';
 
 import MyTabs from '../../navigation/MainApp/components/TeamPage';
 
@@ -31,18 +27,21 @@ class MessageTab extends React.Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  componentDidMount = async () => {
+  componentDidMount = () => {
+    this.clearNotifications();
+  };
+  componentDidUpdate = () => {
+    this.clearNotifications();
+  };
+
+  clearNotifications() {
     InteractionManager.runAfterInteractions(async () => {
-      const {id} = this.props.route.params;
-      let {notifications} = store.getState().user.infoUser;
-      if (!notifications) notifications = [];
-      notifications = Object.values(notifications);
+      const {id: coachSessionID} = this.props.route.params;
       const {userID} = this.props;
-      await deleteNotifications(userID, id, notifications);
-      updateNotificationBadge(notifications.length);
+      await deleteNotificationsByCoachSession({userID, coachSessionID});
       this.bindSession();
     });
-  };
+  }
   bindSession() {
     const {id} = this.props.route.params;
     bindSession(id);
