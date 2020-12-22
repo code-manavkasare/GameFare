@@ -96,8 +96,8 @@ class Notification extends Component {
     const currentRoute = getCurrentRoute();
     if (action !== currentRoute)
       Animated.timing(this.translateYNotif, native(0, 400)).start(async () => {
-        // await timeout(4000);
-        // this.close(initialTranslateY);
+        await timeout(4000);
+        this.close(initialTranslateY);
       });
   }
 
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
   swipableView: {
     ...styleApp.center,
     position: 'absolute',
-    bottom: -10,
+    bottom: -30,
     height: 40,
     paddingTop: 0,
   },
