@@ -9,7 +9,11 @@ import {navigate} from '../../../../../NavigationService';
 
 import {bindBooking, unbindBooking} from '../../../database/firebase/bindings';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
-import {userIDSelector} from '../../../../store/selectors/user';
+import {
+  notificationsByConversationSelector,
+  userIDSelector,
+} from '../../../../store/selectors/user';
+import {deleteNotificationsByCoachSession} from '../../../functions/notifications';
 import {bookingSelector} from '../../../../store/selectors/bookings';
 import CardService from '../../clubSettings/components/CardService';
 import {updateBookingStatusAlert} from '../../../functions/booking';
@@ -49,13 +53,29 @@ class CardBooking extends Component {
       id,
     });
   };
-  confirmBooking = () => {
+  confirmBooking = async () => {
     const {booking} = this.props;
-    updateBookingStatusAlert({bookingID: booking.id, status: 'confirmed'});
+    await updateBookingStatusAlert({
+      bookingID: booking.id,
+      status: 'confirmed',
+    }).then(() => {
+      deleteNotificationsByCoachSession({
+        coachSessionID: booking.id,
+        action: 'Bookings',
+      });
+    });
   };
-  declineBooking = () => {
+  declineBooking = async () => {
     const {booking} = this.props;
-    updateBookingStatusAlert({bookingID: booking.id, status: 'declined'});
+    await updateBookingStatusAlert({
+      bookingID: booking.id,
+      status: 'declined',
+    }).then(() => {
+      deleteNotificationsByCoachSession({
+        coachSessionID: booking.id,
+        action: 'Bookings',
+      });
+    });
   };
   cancelBooking = () => {
     const {booking} = this.props;
@@ -66,12 +86,13 @@ class CardBooking extends Component {
     navigate('BookingCompletion', {bookingID: booking.id});
   };
   messageButton = () => {
-    const {booking} = this.props;
-    const {status} = booking.status;
-    const color =
-      status === 'confirmed' || status === 'pending'
-        ? 'primary'
-        : 'greyMidDark';
+    const {notifications} = this.props;
+    const color = notifications.length > 0 ? 'primary' : 'greyMidDark';
+    const text = notifications.length
+      ? `${notifications.length} new message${
+          notifications.length === 1 ? '' : 's'
+        }`
+      : 'Message';
     return (
       <Button
         icon={{
@@ -84,7 +105,7 @@ class CardBooking extends Component {
         textButton={{fontSize: 16}}
         backgroundColor={color}
         onPressColor={colors[color]}
-        text={'Message'}
+        text={text}
         styleButton={styles.button}
         click={this.openConversation}
       />
@@ -251,6 +272,9 @@ const statusStyles = {
 
 const mapStateToProps = (state, props) => {
   return {
+    notifications: notificationsByConversationSelector(state, {
+      coachSessionID: props.id,
+    }),
     booking: bookingSelector(state, props),
     userID: userIDSelector(state),
   };

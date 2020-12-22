@@ -11,7 +11,6 @@ import {logMixpanel} from '../../../../functions/logs';
 import {boolShouldComponentUpdate} from '../../../../functions/redux';
 
 import {sessionOpening} from '../../../../functions/coach';
-import {conversationIsInNotification} from '../../../../functions/notifications.js';
 import {createInviteToSessionBranchUrl} from '../../../../database/branch';
 
 import {
@@ -33,8 +32,8 @@ import Loader from '../../../../layout/loaders/Loader';
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
 import {
+  notificationsByConversationSelector,
   userIDSelector,
-  userNotificationsSelector,
 } from '../../../../../store/selectors/user';
 import {
   currentSessionIDSelector,
@@ -122,10 +121,7 @@ class CardStream extends Component {
       position: 'absolute',
       opacity: this.selectionIndication,
     };
-    const hasNotification = conversationIsInNotification(
-      coachSessionID,
-      notifications,
-    );
+    const hasNotification = notifications.length > 0;
     return (
       <ButtonColor
         click={() => {
@@ -323,7 +319,7 @@ const mapStateToProps = (state, props) => {
     session: sessionSelector(state, {id: props.coachSessionID}),
     lastMessage: lastMessageSelector(state, {id: props.coachSessionID}),
     currentSessionID: currentSessionIDSelector(state),
-    numNotifications: userNotificationsSelector(state),
+    notifications: notificationsByConversationSelector(state, props),
   };
 };
 

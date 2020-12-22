@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Share, View, Text} from 'react-native';
+import {Share, View, Text, StyleSheet} from 'react-native';
 import database from '@react-native-firebase/database';
 import {connect} from 'react-redux';
 
@@ -11,7 +11,7 @@ import {getValueOnce} from '../../../database/firebase/methods';
 import {shareVideosWithTeams} from '../../../functions/videoManagement';
 import {timeout} from '../../../functions/coach';
 import styleApp from '../../../style/style';
-import {numNotificationsSelector} from '../../../../store/selectors/user';
+import {numConversationNotificationsSelector} from '../../../../store/selectors/user';
 
 class HeaderCallTab extends Component {
   constructor(props) {
@@ -85,14 +85,8 @@ class HeaderCallTab extends Component {
         badgeIcon2={
           numNotifications !== 0 &&
           !modal && (
-            <View style={[styleApp.viewBadge, {marginLeft: 30}]}>
-              <Text
-                style={[
-                  styleApp.textBold,
-                  {color: colors.white, fontSize: 10},
-                ]}>
-                {numNotifications}
-              </Text>
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{numNotifications}</Text>
             </View>
           )
         }
@@ -104,9 +98,14 @@ class HeaderCallTab extends Component {
   }
 }
 
+const styles = StyleSheet.create({
+  badge: {...styleApp.viewBadge, marginLeft: 30},
+  badgeText: {...styleApp.textBold, color: colors.white, fontSize: 10},
+});
+
 const mapStateToProps = (state) => {
   return {
-    numNotifications: numNotificationsSelector(state),
+    numNotifications: numConversationNotificationsSelector(state),
   };
 };
 

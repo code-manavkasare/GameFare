@@ -81,7 +81,11 @@ const clickNotification = async (notification) => {
     }
     return navigate(action, {...notification.data, date: Date.now()});
   }
-  return push(action, {...notification.data, date: Date.now()});
+  return push(action, {
+    ...notification.data,
+    id: notification?.data?.coachSessionID,
+    date: Date.now(),
+  });
 };
 
 // add other navigation functions that you need and export them

@@ -14,6 +14,7 @@ import {userInfoSelector} from '../../../../../store/selectors/user';
 import HeaderBackButton from '../../../../layout/headers/HeaderBackButton';
 import ClubList from './components/ClubList';
 import HeaderTitle from './components/HeaderTitle';
+import BookingsBadge from './components/BookingsBadge';
 
 const ROW_HEIGHT = 60;
 const EXPANDED_ROW_HEIGHT = 185;
@@ -150,6 +151,7 @@ class ClubsHeader extends Component {
           sizeIcon2={infoUser.picture ? 45 : 23}
           clickButton2={() => navigation.navigate('VideoLibrary')}
           typeIcon2={infoUser.picture ? 'image' : 'font'}
+          badgeIcon1={<BookingsBadge />}
         />
         {this.clubsListView()}
         {this.offsetAnimation()}
