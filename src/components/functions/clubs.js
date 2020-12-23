@@ -8,6 +8,18 @@ import {goBack, navigate} from '../../../NavigationService';
 import {getValueOnce} from '../database/firebase/methods.js';
 import {indexClubs, client} from '../database/algolia';
 
+const generateClubDiscoveryList = async () => {
+  const allClubs = await getValueOnce('clubs');
+  const {userID} = await store.getState().user;
+  const sortedClubs = Object.values(allClubs)
+    .filter((club) => club.id !== 'clubGameFare' && club.owner !== userID)
+    .sort(
+      (clubA, clubB) =>
+        Object.keys(clubA.members).length < Object.keys(clubB.members).length,
+    );
+  return sortedClubs;
+};
+
 const autoCompleteSearchClubs = async ({searchText}) => {
   await client.clearCache();
   let filters = '';
@@ -332,6 +344,7 @@ const getFirstClub = async () => {
 };
 
 export {
+  generateClubDiscoveryList,
   autoCompleteSearchClubs,
   createClub,
   editClub,

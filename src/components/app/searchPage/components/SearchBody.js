@@ -3,7 +3,7 @@ import {StyleSheet, Keyboard} from 'react-native';
 import {connect} from 'react-redux';
 import {Row, Col} from 'react-native-easy-grid';
 import {dissoc} from 'ramda';
-import {string, array, bool} from 'prop-types';
+import {string, array, bool, func, oneOfType} from 'prop-types';
 import {navigate} from '../../../../../NavigationService';
 
 import styleApp from '../../../style/style';
@@ -26,6 +26,8 @@ class SearchBody extends Component {
     sessionToInvite: string,
     searchFor: string,
     selectOne: bool,
+    defaultList: oneOfType([func, bool]),
+    defaultHeader: string,
   };
   static defaultProps = {
     action: 'call',
@@ -96,6 +98,8 @@ class SearchBody extends Component {
       sessionToInvite,
       AnimatedHeaderValue,
       searchFor,
+      defaultList,
+      defaultHeader,
     } = this.props;
     return (
       <Col style={styles.body}>
@@ -106,6 +110,8 @@ class SearchBody extends Component {
             selectedUsers={selectedUsers}
             searchText={searchText}
             AnimatedHeaderValue={AnimatedHeaderValue}
+            defaultList={defaultList}
+            defaultHeader={defaultHeader}
           />
         </Row>
         <InvitationManager
