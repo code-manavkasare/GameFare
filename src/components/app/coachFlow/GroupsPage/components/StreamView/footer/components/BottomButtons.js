@@ -5,7 +5,7 @@ import {Col, Row} from 'react-native-easy-grid';
 import queue, {Worker} from 'react-native-job-queue';
 import RecordingMenu from './RecordingMenu';
 
-import {navigate} from '../../../../../../../../../NavigationService';
+import {goBack, navigate} from '../../../../../../../../../NavigationService';
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
@@ -47,6 +47,8 @@ import {
   recordingSessionSelector,
 } from '../../../../../../../../store/selectors/sessions';
 import {cloudVideosSelector} from '../../../../../../../../store/selectors/archives';
+import {watchVideosLive} from '../../../../../../../database/firebase/videosManagement';
+import VideoBeingShared from '../../../../../../videoLibraryPage/components/VideoBeingShared';
 
 class BottomButton extends Component {
   constructor(props) {
@@ -318,6 +320,45 @@ class BottomButton extends Component {
       />
     );
   }
+  videoLibrary() {
+    const {coachSessionID} = this.props;
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <Animated.View style={styleApp.center}>
+              <AllIcons
+                type={'font'}
+                color={colors.white}
+                size={18}
+                name={'film'}
+              />
+            </Animated.View>
+          );
+        }}
+        color={'transparent'}
+        onPressColor={'transparent'}
+        click={async () => {
+          navigate('SelectVideosFromLibrary', {
+            headerTitle: 'Watch Videos Live',
+            modalMode: true,
+            selectOnly: true,
+            selectableMode: true,
+            hideLocal: true,
+            confirmVideo: async (selectedVideos) => {
+              goBack();
+              await watchVideosLive({
+                selectedVideos,
+                coachSessionID,
+                forcePlay: true,
+              });
+            },
+          });
+        }}
+        style={styles.buttonRound}
+      />
+    );
+  }
   indicatorAnimation = () => {
     const {recording} = this.state;
     if (recording) {
@@ -367,6 +408,7 @@ class BottomButton extends Component {
       <Row style={styles.rowButtons}>
         <Col style={styleApp.center}>{this.publishVideo()}</Col>
         <Col style={styleApp.center}>{this.publishAudio()}</Col>
+        <Col style={styleApp.center}>{this.videoLibrary()}</Col>
         <Col style={styleApp.center}>{this.buttonEndCall()}</Col>
       </Row>
     );
@@ -395,6 +437,7 @@ class BottomButton extends Component {
   render() {
     return (
       <View style={styleApp.center}>
+        <VideoBeingShared />
         {this.rowButtons()}
         {this.recordingSelector()}
       </View>
@@ -405,7 +448,7 @@ const styles = StyleSheet.create({
   rowButtons: {
     height: 100 + offsetFooterStreaming,
     paddingTop: 10,
-    width: 0.7 * width,
+    width: 0.9 * width,
     paddingBottom: 20,
   },
 

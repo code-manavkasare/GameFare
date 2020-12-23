@@ -60,21 +60,12 @@ class VideoLibraryPage extends Component {
       selectOne: params ? params.selectOnly && params.selectOne : false,
       selectFromCameraRoll: params ? params.selectFromCameraRoll : false,
       modalMode: params ? params.modalMode : false,
+      headerTitle: params?.headerTitle,
       selectedVideos: [],
       nonplayableVideos: 0,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  componentDidMount = () => {
-    const {navigation} = this.props;
-    this.focusListener = navigation.addListener('focus', () => {
-      const currentSessionID = store.getState().coach.currentSessionID;
-      if (currentSessionID) this.setState({selectableMode: true});
-    });
-  };
-  componentWillUnmount = () => {
-    this.focusListener();
-  };
   componentDidUpdate(prevProps) {
     const {userConnected} = this.props;
     if (userConnected !== prevProps.userConnected)
@@ -296,12 +287,7 @@ class VideoLibraryPage extends Component {
 
             image: require('../../../img/images/video-player.png'),
           }}
-          header={
-            <View>
-              {this.libraryHeader()}
-              <VideoBeingShared />
-            </View>
-          }
+          header={<View>{this.libraryHeader()}</View>}
           numColumns={3}
           incrementRendering={18}
           initialNumberToRender={15}
@@ -386,6 +372,7 @@ class VideoLibraryPage extends Component {
       selectFromCameraRoll,
       modalMode,
       selectOne,
+      headerTitle,
     } = this.state;
     const containerStyle = modalMode
       ? styleApp.stylePageModal
@@ -399,7 +386,9 @@ class VideoLibraryPage extends Component {
         {modalMode ? (
           <ModalHeader
             title={
-              selectFromCameraRoll
+              headerTitle
+                ? headerTitle
+                : selectFromCameraRoll
                 ? 'Add from Camera Roll'
                 : selectOne
                 ? 'Select a Video'
@@ -495,7 +484,6 @@ const mapStateToProps = (state) => {
   return {
     infoUser: userInfoSelector(state),
     videosArray: videoLibrarySelector(state),
-    currentSessionID: currentSessionIDSelector(state),
     userConnected: userConnectedSelector(state),
     portrait: portraitSelector(state),
   };

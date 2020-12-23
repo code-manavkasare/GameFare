@@ -40,9 +40,10 @@ export default class HeaderClubSettings extends Component {
       textButton: 'Leave',
       colorButton: 'red',
       onPressColor: colors.red,
-      forceNavigation: true,
       onGoBack: async () => {
         await removeUserFromClub({clubID});
+      },
+      nextNavigation: async () => {
         await timeout(300);
         navigate('ClubsPage', {clubID: undefined, timestamp: Date.now()});
       },

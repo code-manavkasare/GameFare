@@ -1,6 +1,8 @@
 import database from '@react-native-firebase/database';
+import {navigate} from '../../../../NavigationService';
 
 import {store} from '../../../store/reduxStore';
+import {timeout} from '../../functions/coach';
 import {getValueOnce} from './methods';
 
 const shareCloudVideo = async (
@@ -175,6 +177,50 @@ const shareCloudVideoWithCoachSession = async (
     });
 };
 
+const watchVideosLive = async ({
+  selectedVideos,
+  coachSessionID,
+  personSharingScreen,
+  forcePlay,
+}) => {
+  if (!personSharingScreen) personSharingScreen = store.getState().user.userID;
+  let updates = {};
+  let sharedVideoUpdates = {};
+  for (let i in selectedVideos) {
+    const id = selectedVideos[i];
+    const coachSessionMemberSharingPath = `coachSessions/${coachSessionID}/members/${personSharingScreen}`;
+    sharedVideoUpdates[id] = {
+      id,
+      currentTime: 0,
+      paused: true,
+      playRate: 1,
+      position: {x: 0, y: 0},
+      scale: 1,
+    };
+    updates[`${coachSessionMemberSharingPath}/shareScreen`] = true;
+    updates[`${coachSessionMemberSharingPath}/videoIDSharing`] = id;
+
+    updates[
+      `coachSessions/${coachSessionID}/members/${personSharingScreen}/sharedVideos/${id}`
+    ] = true;
+  }
+  const sharedVideosPath = `coachSessions/${coachSessionID}/sharedVideos`;
+  updates[sharedVideosPath] = sharedVideoUpdates;
+  console.log(updates);
+  await database()
+    .ref()
+    .update(updates);
+
+  if (forcePlay) {
+    await timeout(300);
+    await navigate('VideoPlayerPage', {
+      archives: selectedVideos,
+      coachSessionID,
+      open: true,
+    });
+  }
+};
+
 export {
   shareCloudVideo,
   deleteCloudVideo,
@@ -186,4 +232,5 @@ export {
   updateCloudUploadProgress,
   shareCloudVideoWithCoachSession,
   updateThumbnailCloud,
+  watchVideosLive,
 };

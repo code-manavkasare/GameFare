@@ -22,7 +22,7 @@ class TabsApp extends React.Component {
   render = () => {
     return (
       <Tab.Navigator
-        initialRouteName="VideoLibrary"
+        initialRouteName="Clubs"
         keyboardHidesTabBar={false}
         lazy={true}
         tabBar={(props) => (
