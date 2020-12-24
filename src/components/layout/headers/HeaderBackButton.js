@@ -19,6 +19,7 @@ import AsyncImage from '../image/AsyncImage';
 import {logMixpanel} from '../../functions/logs';
 import {boolShouldComponentUpdate} from '../../functions/redux';
 import {currentScreenSizeSelector} from '../../../store/selectors/layout';
+import GuidedInteraction from '../../utility/initialInteractions/GuidedInteraction';
 
 class HeaderBackButton extends Component {
   constructor(props) {
@@ -492,6 +493,7 @@ class HeaderBackButton extends Component {
       marginTop: marginTopProp,
       initialBackgroundColor,
       children,
+      button2Guided,
     } = this.props;
     const {portrait} = currentScreenSize;
     const marginTop =
@@ -578,7 +580,13 @@ class HeaderBackButton extends Component {
             {this.buttonOffset()}
           </Col>
           <Col size={15} style={[styleApp.center3]}>
-            {this.button2()}
+            {button2Guided ? (
+              <GuidedInteraction {...button2Guided}>
+                <View style={styleApp.center}>{this.button2()}</View>
+              </GuidedInteraction>
+            ) : (
+              this.button2()
+            )}
           </Col>
         </Row>
         <Animated.View style={styleBackdrop} />

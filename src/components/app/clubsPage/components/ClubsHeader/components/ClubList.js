@@ -20,7 +20,7 @@ import {
   generateClubDiscoveryList,
 } from '../../../../../functions/clubs';
 import {Col, Row} from 'react-native-easy-grid';
-// import GuidedInteraction from '../../../../../utility/initialInteractions/GuidedInteraction';
+import GuidedInteraction from '../../../../../utility/initialInteractions/GuidedInteraction';
 class ClubList extends Component {
   static propTypes = {
     clubs: object,
@@ -35,9 +35,9 @@ class ClubList extends Component {
     this.autoSelect(true);
   }
   static getDerivedStateFromProps(props) {
-    const {clubs, isConnected} = props;
+    const {clubs, userConnected} = props;
     return {
-      clubs: isConnected ? clubs : [{id: 'clubGameFare'}],
+      clubs: userConnected ? clubs : [{id: 'clubGameFare'}],
     };
   }
   autoSelect(ignoreAnimation) {
@@ -110,31 +110,34 @@ class ClubList extends Component {
       ...styleApp.cardClubSmall,
       borderRadius: 0,
       backgroundColor: 'transparent',
-      width: 100,
+      width: 115,
     };
     return (
       <Row style={addClubContainerStyle}>
         <Col size={50} style={styleApp.center}>
-          {/* <GuidedInteraction
-            text={'Tap to find a club!'}
+          <GuidedInteraction
+            text={'Find a club and work with your favorite instructor'}
             type={'overlay'}
             interaction={'clubSearch'}
-            onPress={this.searchClubs}> */}
-          <TouchableOpacity
-            activeOpacity={0.9}
-            onPress={this.searchClubs}
-            style={styles.footerButton}>
-            <Row style={styleApp.center}>
-              <AllIcon
-                name={'search'}
-                size={17}
-                color={styles.footerText.color}
-                type="font"
-                solid
-              />
-            </Row>
-          </TouchableOpacity>
-          {/* </GuidedInteraction> */}
+            style={styles.footerButton}
+            delay={1500}
+            overlayStyle={{backgroundColor: colors.white}}
+            onPress={this.searchClubs}>
+            <View
+              activeOpacity={0.9}
+              onTouchEnd={this.searchClubs}
+              style={styleApp.fullSize}>
+              <Row style={styleApp.center}>
+                <AllIcon
+                  name={'search'}
+                  size={17}
+                  color={styles.footerText.color}
+                  type="font"
+                  solid
+                />
+              </Row>
+            </View>
+          </GuidedInteraction>
         </Col>
         <Col size={50} style={styleApp.center}>
           <TouchableOpacity
@@ -185,6 +188,7 @@ class ClubList extends Component {
     const flatListStyle = {
       paddingHorizontal: '5%',
       width:
+        20 +
         clubs.length * cardWidth +
         0.05 * width +
         styleApp.cardClubSmall.marginRight +
@@ -242,7 +246,7 @@ const styles = StyleSheet.create({
   },
   footerButton: {
     height: '50%',
-    width: '85%',
+    width: '100%',
     borderRadius: 15,
     backgroundColor: 'transparent',
     paddingHorizontal: 10,

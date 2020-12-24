@@ -6,6 +6,7 @@ import queue, {Worker} from 'react-native-job-queue';
 import RecordingMenu from './RecordingMenu';
 
 import {goBack, navigate} from '../../../../../../../../../NavigationService';
+import GuidedInteraction from '../../../../../../../utility/initialInteractions/GuidedInteraction';
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
@@ -322,39 +323,49 @@ class BottomButton extends Component {
   }
   videoLibrary() {
     const {coachSessionID} = this.props;
+    const clickButton = async () => {
+      navigate('SelectVideosFromLibrary', {
+        headerTitle: 'Watch Videos Live',
+        modalMode: true,
+        selectOnly: true,
+        selectableMode: true,
+        hideLocal: true,
+        confirmVideo: async (selectedVideos) => {
+          goBack();
+          await watchVideosLive({
+            selectedVideos,
+            coachSessionID,
+            forcePlay: true,
+          });
+        },
+      });
+    };
     return (
       <ButtonColor
         view={() => {
           return (
-            <Animated.View style={styleApp.center}>
-              <AllIcons
-                type={'font'}
-                color={colors.white}
-                size={18}
-                name={'film'}
-              />
-            </Animated.View>
+            <GuidedInteraction
+              text={'Watch videos together in this call'}
+              type={'overlay'}
+              interaction={'liveVideos'}
+              onPress={clickButton}
+              offset={{x: 15}}
+              delay={2000}
+              style={{...styleApp.fullSize, ...styleApp.center}}>
+              <Animated.View style={styleApp.center}>
+                <AllIcons
+                  type={'font'}
+                  color={colors.white}
+                  size={18}
+                  name={'film'}
+                />
+              </Animated.View>
+            </GuidedInteraction>
           );
         }}
         color={'transparent'}
         onPressColor={'transparent'}
-        click={async () => {
-          navigate('SelectVideosFromLibrary', {
-            headerTitle: 'Watch Videos Live',
-            modalMode: true,
-            selectOnly: true,
-            selectableMode: true,
-            hideLocal: true,
-            confirmVideo: async (selectedVideos) => {
-              goBack();
-              await watchVideosLive({
-                selectedVideos,
-                coachSessionID,
-                forcePlay: true,
-              });
-            },
-          });
-        }}
+        click={clickButton}
         style={styles.buttonRound}
       />
     );

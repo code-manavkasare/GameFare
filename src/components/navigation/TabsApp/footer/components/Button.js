@@ -16,6 +16,7 @@ import {
   userConnectedSelector,
 } from '../../../../../store/selectors/user';
 import {generalSessionRecordingSelector} from '../../../../../store/selectors/layout';
+import GuidedInteraction from '../../../../utility/initialInteractions/GuidedInteraction';
 
 class FooterButton extends React.Component {
   constructor(props) {
@@ -37,6 +38,20 @@ class FooterButton extends React.Component {
       this.indicatorAnimation();
     }
   }
+
+  clickButton = () => {
+    const {label, isFocused} = this.props;
+
+    let {routeName, pageStack} = this.props;
+    let params = {};
+    if (isFocused && label === undefined) {
+      params = {
+        action: Date.now(),
+      };
+    }
+    logMixpanel({label: 'Click footer: ' + label, params});
+    navigate(routeName, {screen: pageStack, params});
+  };
 
   indicatorAnimation() {
     const {generalSessionRecording, inSession} = this.props;
@@ -104,6 +119,7 @@ class FooterButton extends React.Component {
       scale,
       disableAnimation,
       numberNotifications,
+      numberBookingsNotifications,
       tintColor,
     } = this.props;
 
@@ -126,68 +142,78 @@ class FooterButton extends React.Component {
       outputRange: [-5, disableAnimation ? -5 : -20],
     });
     return (
-      <Button
-        view={() => {
-          return (
-            <Reanimated.View
-              style={{
-                ...styles.buttonView,
-                transform: [
-                  {scale: scale ? (disableAnimation ? 0.7 : scale) : 1},
-                  {translateY: scale ? recordButtonYTranslate : 0},
-                ],
-              }}>
-              {label ? (
-                <AllIcons
-                  name={icon.name}
-                  size={icon.size}
-                  color={tintColor}
-                  type={icon.type}
-                  reanimated
-                />
-              ) : (
-                this.recordButton()
-              )}
-              {label ? (
-                <Reanimated.Text style={labelStyle}>{label}</Reanimated.Text>
-              ) : null}
-              {displayPastille && numberNotifications > 0 ? (
-                <View
-                  pointerEvents="none"
-                  style={[
-                    styles.absoluteViewBadge,
-                    {
-                      backgroundColor: isFocused
-                        ? colors.primaryLight
-                        : colors.grey,
-                    },
-                  ]}>
-                  <Text
-                    style={[
-                      styleApp.textBold,
-                      {color: colors.white, fontSize: 10},
-                    ]}>
-                    {/* {numberNotifications} */}
-                  </Text>
-                </View>
-              ) : null}
-            </Reanimated.View>
-          );
-        }}
-        click={() => {
-          let params = {};
-          if (isFocused && label === undefined) {
-            params = {
-              action: Date.now(),
-            };
-          }
-          logMixpanel({label: 'Click footer: ' + label, params});
-          navigate(routeName, {screen: pageStack, params});
-        }}
-        color={'transparent'}
-        style={styles.button}
-        onPressColor={'transparent'}
-      />
+      <GuidedInteraction
+        text={
+          label === 'Calls'
+            ? 'Start a video call with coaches and friends to review game footage'
+            : 'Record a video to share with friends and coaches'
+        }
+        type={'overlay'}
+        interaction={(label ?? 'session') + 'Tab'}
+        onPress={this.clickButton}
+        offset={{y: 35}}
+        overlayStyle={{opacity: 0}}
+        style={styles.button}>
+        <View>
+          <Button
+            view={() => {
+              return (
+                <Reanimated.View
+                  style={{
+                    ...styles.buttonView,
+                    transform: [
+                      {scale: scale ? (disableAnimation ? 0.7 : scale) : 1},
+                      {translateY: scale ? recordButtonYTranslate : 0},
+                    ],
+                  }}>
+                  {label ? (
+                    <AllIcons
+                      name={icon.name}
+                      size={icon.size}
+                      color={tintColor}
+                      type={icon.type}
+                      reanimated
+                    />
+                  ) : (
+                    this.recordButton()
+                  )}
+                  {label ? (
+                    <Reanimated.Text style={labelStyle}>
+                      {label}
+                    </Reanimated.Text>
+                  ) : null}
+                  {displayPastille &&
+                  (numberNotifications > 0 ||
+                    numberBookingsNotifications > 0) ? (
+                    <View
+                      pointerEvents="none"
+                      style={[
+                        styles.absoluteViewBadge,
+                        {
+                          backgroundColor: isFocused
+                            ? colors.primaryLight
+                            : colors.grey,
+                        },
+                      ]}>
+                      <Text
+                        style={[
+                          styleApp.textBold,
+                          {color: colors.white, fontSize: 10},
+                        ]}>
+                        {/* {numberNotifications} */}
+                      </Text>
+                    </View>
+                  ) : null}
+                </Reanimated.View>
+              );
+            }}
+            click={this.clickButton}
+            color={'transparent'}
+            style={styles.button}
+            onPressColor={'transparent'}
+          />
+        </View>
+      </GuidedInteraction>
     );
   }
   render() {
@@ -198,6 +224,7 @@ class FooterButton extends React.Component {
 const styles = StyleSheet.create({
   button: {
     height: heightFooter,
+    backgroundColor: 'transparent',
   },
   buttonView: {
     ...styleApp.shadowWeak,
@@ -261,6 +288,9 @@ const mapStateToProps = (state) => {
     generalSessionRecording: generalSessionRecordingSelector(state),
     numberNotifications: numFilteredNotificationsSelector(state, {
       filterType: 'conversations',
+    }),
+    numberBookingsNotifications: numFilteredNotificationsSelector(state, {
+      filterType: 'bookings',
     }),
   };
 };
