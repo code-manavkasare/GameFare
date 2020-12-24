@@ -151,7 +151,6 @@ class FooterButton extends React.Component {
         type={'overlay'}
         interaction={(label ?? 'session') + 'Tab'}
         onPress={this.clickButton}
-        offset={{y: 35}}
         overlayStyle={{opacity: 0}}
         style={styles.button}>
         <View>
