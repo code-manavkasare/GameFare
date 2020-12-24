@@ -8,3 +8,4 @@ export * from './localVideoLibraryActions';
 export * from './archivesActions';
 export * from './coachSessionsActions';
 export * from './connectionTypeActions';
+export * from './initialInteractionActions';

@@ -20,6 +20,7 @@ import SessionSettings from '../app/TeamPage/components/SessionSettings';
 
 import Payments from './MainApp/components/Payments';
 import ProfilePage from '../app/elementsUser/elementsProfile/ProfilePage';
+import InteractiveView from '../utility/initialInteractions/InteractiveView';
 
 const Stack = createStackNavigator();
 function InitialStack() {
@@ -122,6 +123,16 @@ function InitialStack() {
         name="ProfilePage"
         component={ProfilePage}
         options={FullScreenModalSpec}
+      />
+
+      <Stack.Screen
+        name="InteractiveView"
+        component={InteractiveView}
+        options={{
+          animationEnabled: false,
+          gestureEnabled: false,
+          cardStyle: {backgroundColor: 'transparent'},
+        }}
       />
 
       <Stack.Screen name="Conversation" component={Conversation} />

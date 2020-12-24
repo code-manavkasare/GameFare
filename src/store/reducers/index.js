@@ -16,6 +16,7 @@ import {
 import messageReducer from './messageReducer';
 import coachReducer from './coachReducer';
 import layoutReducer from './layoutReducer';
+import intialInteractionReducer from './intialInteractionReducer';
 import uploadQueueReducer from './uploadQueueReducer';
 import appSettingsReducer from './appSettingsReducer';
 import localVideoLibraryReducer from './localVideoLibraryReducer';
@@ -36,6 +37,7 @@ export default combineReducers({
   coachSessions: coachSessionsReducer,
   connectionType: connectionTypeReducer,
   conversations: conversationsReducer,
+  initialInteractions: intialInteractionReducer,
   layout: layoutReducer,
   localVideoLibrary: localVideoLibraryReducer,
   message: messageReducer,

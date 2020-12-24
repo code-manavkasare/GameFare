@@ -152,6 +152,13 @@ class ClubsHeader extends Component {
           clickButton2={() => navigation.navigate('VideoLibrary')}
           typeIcon2={infoUser.picture ? 'image' : 'font'}
           badgeIcon1={<BookingsBadge />}
+          button2Guided={{
+            text: 'Access your GameFare video library',
+            type: 'overlay',
+            interaction: 'videoLibrary',
+            onPress: () => navigation.navigate('VideoLibrary'),
+            style: styleApp.fullSize,
+          }}
         />
         {this.clubsListView()}
         {this.offsetAnimation()}

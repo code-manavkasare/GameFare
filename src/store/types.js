@@ -113,3 +113,5 @@ export const RESET_POSTS = 'RESET_POSTS';
 
 export const SET_USERS = 'SET_USERS';
 export const RESET_USERS = 'RESET_USERS';
+
+export const SET_INITIAL_INTERACTION = 'SET_INITIAL_INTERACTION';

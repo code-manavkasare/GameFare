@@ -11,6 +11,7 @@ import {
 } from '../../../../store/selectors/clubs';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
+import GuidedInteraction from '../../../utility/initialInteractions/GuidedInteraction';
 
 class ButtonBook extends Component {
   static propTypes = {
@@ -29,22 +30,29 @@ class ButtonBook extends Component {
     if (isClubOwner) return null;
     if (!currentClub?.services) return null;
     return (
-      <View style={styles.container}>
-        <Button
-          backgroundColor="primary"
-          onPressColor={colors.primaryLight}
-          enabled={true}
-          text={'Book'}
-          styleButton={styles.button}
-          icon={{
-            name: 'store-alt',
-            size: 20,
-            type: 'font',
-            color: colors.white,
-          }}
-          click={this.book}
-        />
-      </View>
+      <GuidedInteraction
+        text={'Book a service with this coach and improve your game'}
+        type={'overlay'}
+        interaction={'bookService'}
+        onPress={this.book}
+        style={styles.container}>
+        <View style={styleApp.fullSize}>
+          <Button
+            backgroundColor="primary"
+            onPressColor={colors.primaryLight}
+            enabled={true}
+            text={'Book'}
+            styleButton={styles.button}
+            icon={{
+              name: 'store-alt',
+              size: 20,
+              type: 'font',
+              color: colors.white,
+            }}
+            click={this.book}
+          />
+        </View>
+      </GuidedInteraction>
     );
   }
 }

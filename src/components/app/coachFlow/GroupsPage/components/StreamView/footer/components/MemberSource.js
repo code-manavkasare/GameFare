@@ -172,9 +172,9 @@ class MemberSource extends Component {
       takeSnapShotCameraView,
       infoUser,
     } = this.props;
-    const {firstname, lastname} = infoUser;
     const {recording} = member;
-
+    const firstname = infoUser?.firstname;
+    const lastname = infoUser?.lastname;
     return (
       <View key={member.id} style={styles.cardUser}>
         <Row>
