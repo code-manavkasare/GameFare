@@ -66,9 +66,10 @@ class ListVideoCalls extends Component {
             !userConnected ? navigate('SignIn') : openSearchPage(),
           textButton: !userConnected ? 'Sign in' : 'Search',
           text: !userConnected
-            ? 'Sign in to start a call'
-            : 'Search users or share invite to start a call.',
+            ? 'Sign in to start a video call'
+            : 'Search for users and start a video call',
           iconButton: !userConnected ? 'user' : 'search',
+          icon: 'video',
           image: require('../../../../img/images/search.png'),
         }}
         cardList={({item: session}) => {
@@ -162,7 +163,10 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    coachSessions: sessionsSelector(state, {hideCurrentSession: true}),
+    coachSessions: sessionsSelector(state, {
+      sortBy: 'lastConnection',
+      hideCurrentSession: true,
+    }),
     userConnected: userConnectedSelector(state),
     currentSessionID: currentSessionIDSelector(state),
   };

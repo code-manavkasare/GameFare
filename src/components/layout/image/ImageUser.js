@@ -14,8 +14,10 @@ export default class ImageUser extends Component {
     super(props);
   }
   image() {
-    const {info, hideProfileInitials} = this.props;
-    const {picture, firstname, lastname} = info;
+    const {info, hideProfileInitials, profileInitialsStyle} = this.props;
+    const picture = info.picture;
+    const firstname = info.firstname;
+    const lastname = info.lastname;
     if (picture)
       return (
         <AsyncImage
@@ -27,7 +29,12 @@ export default class ImageUser extends Component {
     if (hideProfileInitials) return null;
     return (
       <View style={[styleApp.fullSize, styleApp.center]}>
-        <Text style={[styleApp.textBold, {fontSize: 10, color: colors.white}]}>
+        <Text
+          style={[
+            styleApp.textBold,
+            {fontSize: 10, color: colors.white},
+            profileInitialsStyle,
+          ]}>
           {firstname && lastname ? firstname[0] + lastname[0] : null}
         </Text>
       </View>
@@ -38,9 +45,9 @@ export default class ImageUser extends Component {
 
     let styleImg = {
       ...styleApp.roundView2,
-      ...styleImgProps,
       overflow: 'hidden',
       backgroundColor: colors.greyDark,
+      ...styleImgProps,
     };
     return (
       <TouchableOpacity

@@ -70,7 +70,7 @@ class ClubForm extends Component {
         await timeout(300);
         navigate('ClubsPage', {
           timestamp: Date.now(),
-          clubID: false,
+          clubID: undefined,
         });
         deleteClub({clubID});
       },

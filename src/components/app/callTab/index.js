@@ -10,7 +10,7 @@ import {heightHeaderHome, marginTopApp, heightFooter} from '../../style/sizes';
 
 import {getSelectionActionDecorations} from '../../functions/utility';
 import {isUserPrivate, userObject} from '../../functions/users';
-import {openSession} from '../../functions/coach';
+import {openSession, sessionOpening} from '../../functions/coach';
 
 import Loader from '../../layout/loaders/Loader';
 import {boolShouldComponentUpdate} from '../../functions/redux';
@@ -280,9 +280,10 @@ class CallTab extends Component {
           onClearInvites={() =>
             this.setState({selectedUsers: {}, selectedSessions: {}})
           }
-          onConfirmInvites={() =>
-            this.setState({selectedUsers: {}, selectedSessions: {}})
-          }
+          onConfirmInvites={({sessions}) => {
+            this.setState({selectedUsers: {}, selectedSessions: {}});
+            sessionOpening(Object.values(sessions)[0]);
+          }}
           action={action}
           archivesToShare={archivesToShare}
           bottomOffset={modal ? 55 : heightFooter}

@@ -41,13 +41,20 @@ class CardUser extends Component {
     unbindUserInfo(id);
   };
   imgUser = () => {
-    const {infoUser, styleImg, imgOnly, hideProfileInitials} = this.props;
+    const {
+      infoUser,
+      styleImg,
+      imgOnly,
+      hideProfileInitials,
+      profileInitialsStyle,
+    } = this.props;
     return (
       <ImageUser
         info={infoUser}
         styleImgProps={styleImg}
         disableClick={imgOnly}
         hideProfileInitials={hideProfileInitials}
+        profileInitialsStyle={profileInitialsStyle}
       />
     );
   };

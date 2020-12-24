@@ -20,6 +20,7 @@ import {
   generateClubDiscoveryList,
 } from '../../../../../functions/clubs';
 import {Col, Row} from 'react-native-easy-grid';
+// import GuidedInteraction from '../../../../../utility/initialInteractions/GuidedInteraction';
 class ClubList extends Component {
   static propTypes = {
     clubs: object,
@@ -28,15 +29,22 @@ class ClubList extends Component {
   };
   static defaultProps = {};
   componentDidMount() {
-    this.autoSelect();
+    this.autoSelect(true);
   }
   componentDidUpdate() {
-    this.autoSelect();
+    this.autoSelect(true);
   }
-  autoSelect() {
-    const {clubs, selectClub, selectedClubID} = this.props;
+  static getDerivedStateFromProps(props) {
+    const {clubs, isConnected} = props;
+    return {
+      clubs: isConnected ? clubs : [{id: 'clubGameFare'}],
+    };
+  }
+  autoSelect(ignoreAnimation) {
+    const {clubs} = this.state;
+    const {selectClub, selectedClubID} = this.props;
     if (selectedClubID || !clubs || clubs.length === 0) return;
-    selectClub(clubs[0]?.id);
+    selectClub(clubs[0]?.id, ignoreAnimation);
   }
   selectClub = (clubID) => {
     const {selectClub} = this.props;
@@ -107,6 +115,11 @@ class ClubList extends Component {
     return (
       <Row style={addClubContainerStyle}>
         <Col size={50} style={styleApp.center}>
+          {/* <GuidedInteraction
+            text={'Tap to find a club!'}
+            type={'overlay'}
+            interaction={'clubSearch'}
+            onPress={this.searchClubs}> */}
           <TouchableOpacity
             activeOpacity={0.9}
             onPress={this.searchClubs}
@@ -121,6 +134,7 @@ class ClubList extends Component {
               />
             </Row>
           </TouchableOpacity>
+          {/* </GuidedInteraction> */}
         </Col>
         <Col size={50} style={styleApp.center}>
           <TouchableOpacity
@@ -164,10 +178,10 @@ class ClubList extends Component {
     );
   };
   render() {
-    let {clubs, clubInvites, userConnected} = this.props;
+    const {clubs} = this.state;
+    let {clubInvites, userConnected} = this.props;
     const cardWidth =
       styleApp.cardClubSmall.width + styleApp.cardClubSmall.marginRight;
-    console.log;
     const flatListStyle = {
       paddingHorizontal: '5%',
       width:

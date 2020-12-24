@@ -100,6 +100,7 @@ class SearchBody extends Component {
       searchFor,
       defaultList,
       defaultHeader,
+      onConfirm,
     } = this.props;
     return (
       <Col style={styles.body}>
@@ -117,7 +118,7 @@ class SearchBody extends Component {
         <InvitationManager
           selectedUsers={selectedUsers}
           onClearInvites={() => this.setState({selectedUsers: {}})}
-          onConfirmInvites={this.onConfirm}
+          onConfirmInvites={onConfirm ? this.onConfirm : null}
           action={action}
           archivesToShare={archivesToShare}
           sessionToInvite={sessionToInvite}

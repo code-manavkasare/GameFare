@@ -262,7 +262,7 @@ class GroupsPage extends Component {
     } = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     if (personSharingScreen && userID !== personSharingScreen) {
-      const videos = coachSession.members[personSharingScreen].sharedVideos;
+      const videos = coachSession.sharedVideos ?? {};
       openVideoPlayer({
         coachSessionID,
         archives: Object.keys(videos),

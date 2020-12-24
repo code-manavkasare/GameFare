@@ -47,6 +47,7 @@ import {
   currentSessionIDSelector,
   sessionSelector,
 } from '../../../store/selectors/sessions';
+import {watchVideosLive} from '../../database/firebase/videosManagement';
 
 class VideoPlayerPage extends Component {
   constructor(props) {
@@ -482,34 +483,11 @@ class VideoPlayerPage extends Component {
             modalMode: true,
             confirmVideo: async (selectedVideos) => {
               if (videosBeingShared) {
-                let updates = {};
-                for (let i in selectedVideos) {
-                  const id = selectedVideos[i];
-
-                  const sharedVideosPath = `coachSessions/${coachSessionID}/sharedVideos/${id}`;
-                  const coachSessionMemberSharingPath = `coachSessions/${coachSessionID}/members/${personSharingScreen}`;
-                  updates[`${sharedVideosPath}/currentTime`] = 0;
-                  updates[`${sharedVideosPath}/paused`] = true;
-                  updates[`${sharedVideosPath}/playRate`] = 1;
-                  updates[`${sharedVideosPath}/position`] = {x: 0, y: 0};
-                  updates[`${sharedVideosPath}/scale`] = 1;
-                  updates[`${sharedVideosPath}/id`] = id;
-
-                  updates[
-                    `${coachSessionMemberSharingPath}/shareScreen`
-                  ] = true;
-                  updates[
-                    `${coachSessionMemberSharingPath}/videoIDSharing`
-                  ] = id;
-
-                  updates[
-                    `coachSessions/${coachSessionID}/members/${personSharingScreen}/sharedVideos/${id}`
-                  ] = true;
-                }
-
-                await database()
-                  .ref()
-                  .update(updates);
+                await watchVideosLive({
+                  selectedVideos,
+                  coachSessionID,
+                  personSharingScreen,
+                });
               }
 
               let newArchives = archives.concat(selectedVideos);
@@ -604,7 +582,7 @@ class VideoPlayerPage extends Component {
         propsWhenRecording={propsWhenRecording}
         playRecord={() => this.AudioRecorderPlayerRef?.playRecord()}
         videoFromCloud={
-          videosBeingShared ? session.sharedVideos[archiveID] : {}
+          videosBeingShared ? session.sharedVideos[archiveID] ?? {} : {}
         }
         pauseAudioPlayer={() => this.AudioRecorderPlayerRef?.playPause()}
         stopAudioPlayer={() => this.AudioRecorderPlayerRef?.stopPlayingRecord()}

@@ -115,7 +115,11 @@ class MorePage extends Component {
         colorButton: 'red',
         onPressColor: colors.red,
         onGoBack: (data) => this.confirmLogout(data),
-        nextNavigation: () => navigate('VideoLibrary'),
+        nextNavigation: () =>
+          navigate('ClubsPage', {
+            clubID: undefined,
+            timestamp: Date.now(),
+          }),
       });
     } else {
       this.props.navigation.navigate(page);
@@ -230,21 +234,18 @@ class MorePage extends Component {
           </View>
         ) : (
           <View style={styleApp.center}>
-            <Image
-              source={require('../../img/images/tennisZoom.png')}
-              style={{height: 100, width: 100, marginBottom: 20}}
-            />
-
             <Button
               backgroundColor="primary"
               onPressColor={colors.primaryLight}
               enabled={true}
               text="Sign in"
+              textButton={{fontSize: 16}}
               icon={{
                 name: 'user',
-                size: 24,
+                size: 17,
                 type: 'font',
                 color: colors.white,
+                solid: true,
               }}
               styleButton={styles.buttonLogin}
               loader={false}
@@ -359,7 +360,7 @@ const styles = StyleSheet.create({
   },
   buttonLogin: {
     width: '90%',
-    height: 55,
+    height: 45,
     marginTop: 20,
   },
   balanceText: {

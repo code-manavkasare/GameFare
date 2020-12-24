@@ -29,8 +29,9 @@ class MessageTab extends React.Component {
   }
   componentDidMount = () => {
     this.clearNotifications();
+    this.bindSession();
   };
-  componentDidUpdate = () => {
+  componentDidUpdate = (prevState, prevProps) => {
     this.clearNotifications();
   };
 
@@ -39,7 +40,6 @@ class MessageTab extends React.Component {
       const {id: coachSessionID} = this.props.route.params;
       const {userID} = this.props;
       await deleteNotificationsByCoachSession({userID, coachSessionID});
-      this.bindSession();
     });
   }
   bindSession() {

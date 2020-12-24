@@ -17,6 +17,7 @@ import colors from '../../style/colors';
 import styleApp from '../../style/style';
 import Button from '../../layout/buttons/Button';
 import Loader from '../../layout/loaders/Loader';
+import AllIcon from '../icons/AllIcons';
 
 const ReanimatedFlatList = Reanimated.createAnimatedComponent(FlatList);
 class FlatListComponent extends Component {
@@ -220,24 +221,45 @@ class FlatListComponent extends Component {
               styleApp.center,
               {height: 250, marginTop: 20},
             ]}>
-            <Image
-              source={ListEmptyComponent?.image}
-              style={{height: 50, width: 50, marginBottom: 20}}
-            />
-            <Text style={styleApp.textBold}>{ListEmptyComponent?.text}</Text>
+            {ListEmptyComponent?.icon ? (
+              <View style={{marginBottom: 25}}>
+                <AllIcon
+                  type="font"
+                  size={35}
+                  color={colors.greyDark}
+                  name={ListEmptyComponent.icon}
+                  solid
+                />
+              </View>
+            ) : ListEmptyComponent?.image ? (
+              <Image
+                source={ListEmptyComponent?.image}
+                style={{height: 50, width: 50, marginBottom: 20}}
+              />
+            ) : null}
+            <Text
+              style={{
+                ...styleApp.textBold,
+                color: colors.greyDark,
+                textAlign: 'center',
+              }}>
+              {ListEmptyComponent?.text}
+            </Text>
             {ListEmptyComponent?.clickButton ? (
               <Button
                 backgroundColor="primary"
                 onPressColor={colors.primaryLight}
                 enabled={true}
                 text={ListEmptyComponent?.textButton}
+                textButton={{fontSize: 16}}
                 icon={{
                   name: ListEmptyComponent?.iconButton,
-                  size: 24,
+                  size: 17,
                   type: 'font',
                   color: colors.white,
+                  solid: true,
                 }}
-                styleButton={{height: 55, marginTop: 30}}
+                styleButton={{height: 45, marginTop: 30}}
                 loader={false}
                 click={() => ListEmptyComponent?.clickButton()}
               />
@@ -248,13 +270,15 @@ class FlatListComponent extends Component {
                 onPressColor={colors.greenLight}
                 enabled={true}
                 text={ListEmptyComponent?.textButton2}
+                textButton={{fontSize: 16}}
                 icon={{
                   name: ListEmptyComponent?.iconButton2,
-                  size: 24,
+                  size: 17,
                   type: 'font',
                   color: colors.white,
+                  solid: true,
                 }}
-                styleButton={{height: 55, marginTop: 30}}
+                styleButton={{height: 45, marginTop: 30}}
                 loader={false}
                 click={() => ListEmptyComponent?.clickButton2()}
               />
