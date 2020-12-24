@@ -48,7 +48,8 @@ class PostFeed extends Component {
     return <CardPost id={postID} clubID={currentClubID} />;
   };
   settingsRow = () => {
-    const {currentClubID} = this.props;
+    const {currentClubID, userConnected} = this.props;
+    if (!userConnected) return null;
     return <OptionsRow currentClubID={currentClubID} />;
   };
   emptyList = () => {
@@ -74,9 +75,8 @@ class PostFeed extends Component {
     return config;
   };
   render() {
-    const {posts, AnimatedScrollValue, userConnected} = this.props;
+    const {posts, AnimatedScrollValue} = this.props;
     if (!posts) return null;
-    if (!userConnected) return null;
     return (
       <FlatListComponent
         onRef={(ref) => (this.flatListRef = ref)}

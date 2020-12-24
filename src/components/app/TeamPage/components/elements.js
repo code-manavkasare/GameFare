@@ -8,7 +8,6 @@ import styleApp from '../../../style/style';
 
 import {getSortedMembers} from '../../../functions/session';
 import AllIcons from '../../../layout/icons/AllIcons';
-import AsyncImage from '../../../layout/image/AsyncImage';
 import ButtonColor from '../../../layout/Views/Button';
 import {FlatListComponent} from '../../../layout/Views/FlatList';
 
@@ -21,9 +20,8 @@ import {
 import {createInviteToSessionBranchUrl} from '../../../database/branch';
 
 import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
-import ImageUser from '../../../layout/image/ImageUser';
 import AllIcon from '../../../layout/icons/AllIcons';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import CardUser from '../../../layout/cards/CardUser';
 
 const imageCardTeam = (session, size, hideDots, color) => {
   let scale = 1;
@@ -47,13 +45,12 @@ const imageCardTeam = (session, size, hideDots, color) => {
     }
   };
   let styleContainer = {};
-  // if (size) styleContainer = {height: size, width: size};
   return (
     <View style={{flex: 1, ...styleApp.center, ...styleContainer}}>
       {length > 2 ? (
         <View>
           {userCircle({
-            member: length - 2,
+            displayRemainder: length - 2,
             style: styleByIndex(-1),
             scale,
             length: Object.values(session.members).length - 1,
@@ -80,8 +77,16 @@ const imageCardTeam = (session, size, hideDots, color) => {
 };
 
 const userCircle = (options) => {
-  const {member, style, scale, length, hideDots, single, color} = options;
-  const userID = store.getState().user.userID;
+  const {
+    member,
+    style,
+    scale,
+    length,
+    hideDots,
+    single,
+    color,
+    displayRemainder,
+  } = options;
   let borderRadius = 100;
   let sizeImg = length > 1 ? 45 * scale : 63 * scale;
   const styleImg = {
@@ -93,59 +98,38 @@ const userCircle = (options) => {
     overflow: 'hidden',
     backgroundColor: colors.grey,
   };
-  const firstAndLastName =
-    member &&
-    member.info &&
-    member.info.firstname &&
-    member.info.lastname &&
-    member.info.firstname !== '' &&
-    member.info.lastname !== '';
-
-  const altNames = member && member.info && member.info.userInfo;
+  const containerStyle = {
+    ...styleApp.fullSize,
+    ...styleApp.center,
+    borderRadius,
+    backgroundColor: colors.greyDark,
+  };
 
   return (
-    <View key={member.id ? member.id : -1}>
+    <View key={member?.id ?? -1}>
       <View style={{...style}}>
         <View style={{...styleImg}}>
-          {member.info && member.info.picture ? (
-            <AsyncImage
-              style={{
-                ...styleApp.fullSize,
-                borderRadius,
-                backgroundColor: colors.grey,
-              }}
-              mainImage={member.info.picture}
-              imgInitial={member.info.picture}
-            />
-          ) : (
-            <View
-              style={{
-                ...styleApp.fullSize,
-                ...styleApp.center,
-                backgroundColor: colors.greyDark,
-                borderRadius,
-              }}>
+          {displayRemainder ? (
+            <View style={containerStyle}>
               <Text
                 style={{
                   ...styleApp.textBold,
+                  fontSize: 13,
                   color: colors.white,
-                  letterSpacing: 1,
-                  textAlign: 'center',
-                  marginLeft: 3,
-                  marginTop: 1,
-                  fontSize: scale * (single ? 21 : 16),
                 }}>
-                {firstAndLastName
-                  ? member.info.firstname[0] + member.info.lastname[0]
-                  : altNames
-                  ? member.info.userInfo.firstname[0] +
-                    member.info.userInfo.lastname[0]
-                  : '+' + member}
+                +{displayRemainder}
               </Text>
             </View>
+          ) : (
+            <CardUser
+              id={member?.id}
+              imgOnly
+              styleImg={containerStyle}
+              profileInitialsStyle={{fontSize: scale * (single ? 21 : 14)}}
+            />
           )}
         </View>
-        {!hideDots && member.info ? (
+        {!hideDots && member ? (
           <View
             style={{
               position: 'absolute',
@@ -180,10 +164,11 @@ const titleSession = (session, size, short) => {
     return 'You';
   }
   if (short) {
-    const name = members[0]?.info?.firstname;
+    const firstMember = store.getState().users[members[0].id];
+    const name = firstMember?.firstname;
     const string =
       members.length === 1
-        ? name + ' ' + members[0]?.info?.lastname
+        ? name + ' ' + firstMember?.lastname
         : name +
           ' & ' +
           (members.length - 1) +
@@ -192,9 +177,10 @@ const titleSession = (session, size, short) => {
     return string;
   }
 
-  const names = members.reduce((nameString, member, i, members) => {
-    if (member.info && member.info.firstname && member.info.lastname) {
-      const {firstname, lastname} = member.info;
+  const names = members.reduce((nameString, memberObject, i, members) => {
+    const member = store.getState().users[memberObject.id];
+    if (member && member.firstname && member.lastname) {
+      const {firstname, lastname} = member;
       const and = short ? ' & ' : ' and ';
       if (nameString === '') {
         return firstname + ' ' + lastname;
@@ -311,8 +297,10 @@ const blueBadge = () => {
 
 const lastMessageView = (lastMessage) => {
   if (!lastMessage) return null;
-  const {userID} = store.getState().user;
   const {user, images, type} = lastMessage;
+  if (lastMessage.id === 'noMessage') return null;
+  const {userID} = store.getState().user;
+  const userInfo = store.getState().users[user.id];
   let {text} = lastMessage;
   if (!text) text = '';
   text = text.replace(/(\r\n|\n|\r)/gm, ' ');
@@ -388,16 +376,12 @@ const lastMessageView = (lastMessage) => {
     <Row style={containerStyle}>
       <View style={messageContainerStyle}>
         <View style={styleProfilePhotoContainer}>
-          <ImageUser
-            onClick={() => true}
-            info={user.info}
-            styleImgProps={profilePhotoStyle}
-          />
+          <CardUser imgOnly styleImg={profilePhotoStyle} id={user.id} />
         </View>
         <Text style={nameTextStyle}>
           {user.id === userID
             ? 'You'
-            : user.info.firstname + ' ' + user.info.lastname}
+            : userInfo?.firstname + ' ' + userInfo?.lastname}
         </Text>
         <AllIcon
           name={
@@ -702,7 +686,7 @@ const ListContents = (props) => {
       initialNumberToRender={8}
       hideDividerHeader={true}
       ListEmptyComponent={{
-        text: `You have not shared any content yet.`,
+        text: 'You have not shared any content yet',
       }}
       header={rowTitle({
         icon: {name: 'galery', type: 'moon', color: colors.title, size: 20},

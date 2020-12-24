@@ -132,7 +132,8 @@ export default class CamerarollList extends Component {
           ListEmptyComponent={
             !loadingCameraRoll
               ? {
-                  text: 'No videos',
+                  text: 'No videos found',
+                  icon: 'film',
                   image: require('../../../../img/images/shelve.png'),
                 }
               : null

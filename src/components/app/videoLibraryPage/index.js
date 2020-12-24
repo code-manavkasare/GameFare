@@ -281,11 +281,10 @@ class VideoLibraryPage extends Component {
             textButton: 'Record',
             iconButton: 'video',
             clickButton2: () => selectVideosFromCameraRoll(),
-            textButton2: 'Pick from library',
+            textButton2: 'Add from camera roll',
             iconButton2: 'images',
-            text: `You don't have any videos yet.`,
-
-            image: require('../../../img/images/video-player.png'),
+            text: "You don't have any videos yet",
+            icon: 'film',
           }}
           header={<View>{this.libraryHeader()}</View>}
           numColumns={3}

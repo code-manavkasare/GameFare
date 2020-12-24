@@ -14,7 +14,11 @@ import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 import Loader from '../../../../../../../layout/loaders/Loader';
 import Timer from './Timer';
-import {userIDSelector} from '../../../../../../../../store/selectors/user';
+import {
+  infoUserByIdSelector,
+  userIDSelector,
+} from '../../../../../../../../store/selectors/user';
+import CardUser from '../../../../../../../layout/cards/CardUser';
 
 class MemberSource extends Component {
   constructor(props) {
@@ -162,15 +166,20 @@ class MemberSource extends Component {
 
   member() {
     const {member} = this.state;
-    const {userID, coachSessionID, takeSnapShotCameraView} = this.props;
-    const {firstname, lastname} = member.info;
+    const {
+      userID,
+      coachSessionID,
+      takeSnapShotCameraView,
+      infoUser,
+    } = this.props;
+    const {firstname, lastname} = infoUser;
     const {recording} = member;
 
     return (
       <View key={member.id} style={styles.cardUser}>
         <Row>
           <Col size={15} style={styleApp.center2}>
-            <ImageUser info={member.info} />
+            <CardUser imgOnly id={member.id} />
           </Col>
 
           <Col size={2} />
@@ -275,9 +284,10 @@ MemberSource.propTypes = {
   selectMember: PropTypes.func,
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
   return {
     userID: userIDSelector(state),
+    infoUser: infoUserByIdSelector(state, {id: props.member.id}),
   };
 };
 
