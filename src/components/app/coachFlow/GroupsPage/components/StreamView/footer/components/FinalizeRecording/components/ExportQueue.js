@@ -8,14 +8,13 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 
+import {store} from '../../../../../../../../../../store/reduxStore';
 import {native} from '../../../../../../../../../animations/animations';
-import {uploadQueueAction} from '../../../../../../../../../../store/actions/uploadQueueActions';
 import ButtonColor from '../../../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../../../layout/icons/AllIcons';
-import sizes from '../../../../../../../../../style/sizes';
+import {width, height} from '../../../../../../../../../style/sizes';
 import Button from '../../../../../../../../../layout/buttons/Button';
 
 import colors from '../../../../../../../../../style/colors';
@@ -34,7 +33,7 @@ import CardFlag from './CardFlag';
  * {coachSessionID}/members/recording to occur and update this component based on the
  * information of the recording object (i.e. uploading thumbnails of the video)
  */
-class ExportQueue extends Component {
+export default class ExportQueue extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -197,7 +196,8 @@ class ExportQueue extends Component {
   confirm = async () => {
     this.close(true);
     const {flagsSelected, members} = this.state;
-    const {coachSessionID, userID} = this.props;
+    const {coachSessionID} = this.props;
+    const {userID} = store.getState().user;
     const uploadRequests = Object.values(members).reduce(
       (uploadRequests, member) => {
         if (member && member.id) {
@@ -308,6 +308,7 @@ class ExportQueue extends Component {
                     id: flagId,
                     portrait: recording.portrait,
                   }}
+                  memberID={member.id}
                   memberPicture={member?.info?.picture}
                   stopTimestamp={recording.stopTimestamp}
                 />
@@ -394,7 +395,7 @@ class ExportQueue extends Component {
         pointerEvents={visible ? 'auto' : 'none'}
         style={{
           ...styles.container,
-          width: sizes.width * 0.93,
+          width: width * 0.93,
           transform: [{translateY: translateY}],
         }}>
         <ButtonColor
@@ -483,23 +484,10 @@ const styles = StyleSheet.create({
   },
   fullPage: {
     position: 'absolute',
-    width: sizes.width,
+    width: width,
     height: 200000,
-    top: -sizes.height,
+    top: -height,
     backgroundColor: 'transparent',
     zIndex: -1,
   },
 });
-
-const mapStateToProps = (state, props) => {
-  return {
-    userID: state.user.userID,
-    currentScreenSize: state.layout.currentScreenSize,
-    firebaseMembers: state.coachSessions[props.coachSessionID].members,
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  {uploadQueueAction},
-)(ExportQueue);

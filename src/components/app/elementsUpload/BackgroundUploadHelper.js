@@ -3,9 +3,12 @@ import {connect} from 'react-redux';
 import equal from 'fast-deep-equal';
 
 import {store} from '../../../store/reduxStore';
-import {uploadQueueAction} from '../../../store/actions';
 import {uploadLocalVideo} from '../../functions/videoManagement';
 import {boolShouldComponentUpdate} from '../../functions/redux';
+import {userConnectedSelector} from '../../../store/selectors/user';
+import {wifiAutoUploadSelector} from '../../../store/selectors/appSettings';
+import {queueSelector} from '../../../store/selectors/uploadQueue';
+import {userLocalArchivesSelector} from '../../../store/selectors/archives';
 
 class BackgroundUploadHelper extends Component {
   constructor(props) {
@@ -106,15 +109,11 @@ class BackgroundUploadHelper extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    session: state.coachSessions[state.coach.currentSessionID],
-    globalQueue: state.uploadQueue.queue,
-    archivesToUpload: state.localVideoLibrary.userLocalArchives,
-    wifiAutoUpload: state.appSettings.wifiAutoUpload,
-    userConnected: state.user.userConnected,
+    globalQueue: queueSelector(state),
+    archivesToUpload: userLocalArchivesSelector(state),
+    wifiAutoUpload: wifiAutoUploadSelector(state),
+    userConnected: userConnectedSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {uploadQueueAction},
-)(BackgroundUploadHelper);
+export default connect(mapStateToProps)(BackgroundUploadHelper);

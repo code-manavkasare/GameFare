@@ -26,15 +26,28 @@ import {boolShouldComponentUpdate} from '../../functions/redux';
 import {
   isVideosAreBeingShared,
   isSomeoneSharingScreen,
+  timeout,
 } from '../../functions/coach';
 import {
-  checkIfAllArchivesAreLocal,
   generatePreview,
   generatePreviewCloud,
   videoIsReview,
 } from '../../functions/review';
 
 import RecordingMenu from './components/recording/components/RecordingMenu';
+import {
+  userConnectedSelector,
+  userIDSelector,
+} from '../../../store/selectors/user';
+import {
+  cameraAvailabilitySelector,
+  portraitSelector,
+} from '../../../store/selectors/layout';
+import {
+  currentSessionIDSelector,
+  sessionSelector,
+} from '../../../store/selectors/sessions';
+import {watchVideosLive} from '../../database/firebase/videosManagement';
 
 class VideoPlayerPage extends Component {
   constructor(props) {
@@ -175,7 +188,7 @@ class VideoPlayerPage extends Component {
     await this.recordingMenuRef.setState({
       isMicrophoneMutedLastValue: isMicrophoneMuted,
     });
-
+    await timeout(700);
     this.videoPlayerRefs[0].replayRecording();
   };
 
@@ -342,10 +355,9 @@ class VideoPlayerPage extends Component {
   };
 
   saveReview = async () => {
-    //To update for multiple video
     const {isMicrophoneMutedLastValue} = this.recordingMenuRef.getState();
     const {archives, recordedActions} = this.state;
-    const {userID, videoInfos} = this.props;
+    const {userID} = this.props;
     const {
       audioFilePath,
       audioFileDuration,
@@ -355,38 +367,36 @@ class VideoPlayerPage extends Component {
       label: 'Save review',
       params: {userID, recordedActions},
     });
-    for (const videoInfo of Object.values(videoInfos)) {
-      if (videoInfo.local) {
-        const localVideoInfo = getArchiveByID(archives[0]);
-        await generatePreview({
-          audioFilePath,
-          audioFileDuration,
-          isMicrophoneMuted: isMicrophoneMutedLastValue,
-          recordedActions,
-          source: localVideoInfo.url,
-        });
-        this.props.navigation.navigate('Alert', {
-          close: true,
-          title: 'Video successfully created!',
-          subtitle: 'Your recording is now in your library!',
-          textButton: 'Got it!',
-        });
-      } else {
-        await generatePreviewCloud({
-          audioFileDuration,
-          audioFilePath,
-          isMicrophoneMuted: isMicrophoneMutedLastValue,
-          userId: userID,
-          videoInfo,
-          recordedActions,
-        });
-        this.props.navigation.navigate('Alert', {
-          close: true,
-          title: 'Your recording is being processed!',
-          subtitle: 'We will notify you when the video is ready.',
-          textButton: 'Got it!',
-        });
-      }
+    const archive = getArchiveByID(archives[0]);
+    if (archive.local) {
+      await generatePreview({
+        audioFilePath,
+        audioFileDuration,
+        isMicrophoneMuted: isMicrophoneMutedLastValue,
+        recordedActions,
+        source: archive.url,
+      });
+      this.props.navigation.navigate('Alert', {
+        close: true,
+        title: 'Video successfully created!',
+        subtitle: 'Your recording is now in your library!',
+        textButton: 'Got it!',
+      });
+    } else {
+      await generatePreviewCloud({
+        audioFileDuration,
+        audioFilePath,
+        isMicrophoneMuted: isMicrophoneMutedLastValue,
+        userId: userID,
+        videoInfo: archive,
+        recordedActions,
+      });
+      this.props.navigation.navigate('Alert', {
+        close: true,
+        title: 'Your recording is being processed!',
+        subtitle: 'We will notify you when the video is ready.',
+        textButton: 'Got it!',
+      });
     }
   };
 
@@ -403,7 +413,6 @@ class VideoPlayerPage extends Component {
       navigation,
       route,
       session,
-      videoInfos,
       userConnected,
       currentSessionID: coachSessionID,
       portrait,
@@ -430,16 +439,13 @@ class VideoPlayerPage extends Component {
         isRecording={isRecording}
         isPreviewing={isPreviewing}
         isDrawingEnabled={isDrawingEnabled}
-        videoInfos={videoInfos}
+        archives={archives}
         userConnected={userConnected}
         recordedActions={recordedActions}
-        archives={archives}
         personSharingScreen={personSharingScreen}
         coachSessionID={coachSessionID}
         getVideoState={(id) => {
-          const index = Object.values(videoInfos).findIndex(
-            (item) => item.id === id,
-          );
+          const index = archives.findIndex((item) => item === id);
           return this.videoPlayerRefs[index].getState();
         }}
         toggleLinkAllVideos={(link) => {
@@ -465,7 +471,6 @@ class VideoPlayerPage extends Component {
           });
           this.setState({isEditMode: false, isRecording: false});
         }}
-        disableRecord={isArchiveUploading(videoInfos)}
         setState={this.setState.bind(this)}
         addVideo={() => {
           navigate('SelectVideosFromLibrary', {
@@ -478,34 +483,12 @@ class VideoPlayerPage extends Component {
             modalMode: true,
             confirmVideo: async (selectedVideos) => {
               if (videosBeingShared) {
-                let updates = {};
-                for (let i in selectedVideos) {
-                  const id = selectedVideos[i];
-
-                  const sharedVideosPath = `coachSessions/${coachSessionID}/sharedVideos/${id}`;
-                  const coachSessionMemberSharingPath = `coachSessions/${coachSessionID}/members/${personSharingScreen}`;
-                  updates[`${sharedVideosPath}/currentTime`] = 0;
-                  updates[`${sharedVideosPath}/paused`] = true;
-                  updates[`${sharedVideosPath}/playRate`] = 1;
-                  updates[`${sharedVideosPath}/position`] = {x: 0, y: 0};
-                  updates[`${sharedVideosPath}/scale`] = 1;
-                  updates[`${sharedVideosPath}/id`] = id;
-
-                  updates[
-                    `${coachSessionMemberSharingPath}/shareScreen`
-                  ] = true;
-                  updates[
-                    `${coachSessionMemberSharingPath}/videoIDSharing`
-                  ] = id;
-
-                  updates[
-                    `coachSessions/${coachSessionID}/members/${personSharingScreen}/sharedVideos/${id}`
-                  ] = true;
-                }
-
-                await database()
-                  .ref()
-                  .update(updates);
+                await watchVideosLive({
+                  selectedVideos,
+                  coachSessionID,
+                  personSharingScreen,
+                  overrideCurrent: false,
+                });
               }
 
               let newArchives = archives.concat(selectedVideos);
@@ -531,14 +514,9 @@ class VideoPlayerPage extends Component {
     return heightHeaderHome + (portrait ? marginTopApp : marginTopAppLandscape);
   };
 
-  singlePlayer = (videoInfo, i) => {
+  singlePlayer = ({archiveID, i}) => {
     const {archives} = this.state;
-    const {
-      session,
-      videoInfos,
-      currentSessionID: coachSessionID,
-      portrait,
-    } = this.props;
+    const {session, currentSessionID: coachSessionID, portrait} = this.props;
     let videosBeingShared = false;
     let personSharingScreen = false;
     if (session) {
@@ -550,9 +528,7 @@ class VideoPlayerPage extends Component {
         userIDSharing: personSharingScreen,
       });
     }
-    const {id: archiveID, local} = videoInfo;
-    let numArchives = 0;
-    if (videoInfos) numArchives = Object.values(videoInfos).length;
+
     const {
       isRecording,
       disableControls,
@@ -594,7 +570,7 @@ class VideoPlayerPage extends Component {
           this.AudioRecorderPlayerRef.preparePlayer({url, isCloud})
         }
         isAudioPlayerReady={isAudioPlayerReady}
-        numArchives={numArchives}
+        numArchives={archives.length}
         recordedActions={recordedActions}
         isDrawingEnabled={isDrawingEnabled}
         linkedPlayers={linkedPlayers}
@@ -603,12 +579,11 @@ class VideoPlayerPage extends Component {
         isRecording={isRecording}
         videosBeingShared={videosBeingShared}
         personSharingScreen={personSharingScreen}
-        local={local}
         landscape={!portrait}
         propsWhenRecording={propsWhenRecording}
         playRecord={() => this.AudioRecorderPlayerRef?.playRecord()}
         videoFromCloud={
-          videosBeingShared ? session.sharedVideos[archiveID] : {}
+          videosBeingShared ? session.sharedVideos[archiveID] ?? {} : {}
         }
         pauseAudioPlayer={() => this.AudioRecorderPlayerRef?.playPause()}
         stopAudioPlayer={() => this.AudioRecorderPlayerRef?.stopPlayingRecord()}
@@ -620,9 +595,9 @@ class VideoPlayerPage extends Component {
   };
 
   render = () => {
-    const {isRecording, isEditMode, recordedActions} = this.state;
-    const {videoInfos, currentSessionID, navigation} = this.props;
-    const isReview = videoIsReview(videoInfos);
+    const {isRecording, isEditMode, recordedActions, archives} = this.state;
+    const {currentSessionID, navigation} = this.props;
+    const isReview = videoIsReview(archives);
 
     const connectedToSession =
       currentSessionID !== false && currentSessionID !== undefined;
@@ -654,11 +629,7 @@ class VideoPlayerPage extends Component {
           saveReview={this.saveReview.bind(this)}
         />
 
-        {videoInfos
-          ? Object.values(videoInfos)
-              .filter((x) => x)
-              .map((videoInfo, i) => this.singlePlayer(videoInfo, i))
-          : null}
+        {archives.map((archiveID, i) => this.singlePlayer({archiveID, i}))}
       </View>
     );
   };
@@ -666,21 +637,13 @@ class VideoPlayerPage extends Component {
 
 const mapStateToProps = (state, props) => {
   const {currentSessionID} = state.coach;
-  const {params} = props.route;
-  const archives = params.objectID ? [params.objectID] : params.archives;
   return {
-    userID: state.user.userID,
-    userConnected: state.user.userConnected,
-    session: state.coachSessions[currentSessionID],
-    cameraAvailability: state.layout.cameraAvailability,
-    currentSessionID,
-    portrait: state.layout.currentScreenSize.portrait,
-    videoInfos: archives.reduce((videoInfos, archiveID) => {
-      return {
-        ...videoInfos,
-        [archiveID]: {...state.archives[archiveID], id: archiveID},
-      };
-    }, {}),
+    userID: userIDSelector(state),
+    userConnected: userConnectedSelector(state),
+    session: sessionSelector(state, {id: currentSessionID}),
+    cameraAvailability: cameraAvailabilitySelector(state),
+    currentSessionID: currentSessionIDSelector(state),
+    portrait: portraitSelector(state),
   };
 };
 

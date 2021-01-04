@@ -21,14 +21,14 @@ export default class RowPlusMinus extends Component {
     const {title, alert, value, increment, add, textValue} = this.props;
     return (
       <Row style={{marginTop: 20}}>
-        <Col style={styleApp.center2} size={30}>
+        <Col style={styleApp.center2} size={25}>
           <Text style={styleApp.text}>{title}</Text>
         </Col>
         <Col
           activeOpacity={0.7}
           onPress={() => alert && NavigationService.navigate('Alert', alert)}
           style={styleApp.center2}
-          size={30}>
+          size={5}>
           <AllIcons
             type={'font'}
             name={'info-circle'}
@@ -36,7 +36,7 @@ export default class RowPlusMinus extends Component {
             size={17}
           />
         </Col>
-        <Col style={styleApp.center3} size={25}>
+        <Col style={styleApp.center3} size={20}>
           <ButtonColor
             view={() => {
               return (
@@ -56,7 +56,7 @@ export default class RowPlusMinus extends Component {
             onPressColor={colors.grey}
           />
         </Col>
-        <Col style={styleApp.center3} size={25}>
+        <Col style={styleApp.center3} size={20}>
           <ButtonColor
             view={() => {
               return (
@@ -76,8 +76,14 @@ export default class RowPlusMinus extends Component {
             onPressColor={colors.grey}
           />
         </Col>
-        <Col style={styleApp.center3} size={25}>
-          <Text style={styleApp.title}>{textValue}</Text>
+        <Col style={styleApp.center3} size={35}>
+          <Text
+            style={[
+              styleApp.textBold,
+              {fontSize: textValue?.length > 9 ? 14 : 19},
+            ]}>
+            {textValue}
+          </Text>
         </Col>
       </Row>
     );

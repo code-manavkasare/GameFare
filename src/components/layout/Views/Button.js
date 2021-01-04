@@ -72,6 +72,8 @@ export default class Button extends Component {
     const {
       color: defaultColorProp,
       onPressColor: onPressColorProp,
+      view,
+      children,
     } = this.props;
     const defaultColor =
       defaultColorProp === 'blur' ? 'transparent' : defaultColorProp;
@@ -117,7 +119,7 @@ export default class Button extends Component {
               ...styleApp.fullSize,
               ...styleApp.center,
             }}>
-            {this.props.view()}
+            {view ? view() : children}
           </Animated.View>
           <Animated.View
             style={{

@@ -20,7 +20,6 @@ import {openVideoPlayer} from '../../../../../../../functions/videoManagement';
 
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 import AsyncImage from '../../../../../../../layout/image/AsyncImage';
-import {boolShouldComponentUpdate} from '../../../../../../../functions/redux';
 
 import {FormatDate, formatDuration} from '../../../../../../../functions/date';
 import Loader from '../../../../../../../layout/loaders/Loader';
@@ -29,6 +28,12 @@ import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 import {logMixpanel} from '../../../../../../../functions/logs';
 import {bindArchive} from '../../../../../../../database/firebase/bindings';
+
+import {userIDSelector} from '../../../../../../../../store/selectors/user';
+import {archiveSelector} from '../../../../../../../../store/selectors/archives';
+import {boolShouldComponentUpdate} from '../../../../../../../functions/redux';
+import {getDimention} from '../../../../../../../style/sizes';
+import {unbindArchive} from '../../../../../../../../store/actions/archivesActions';
 
 class CardArchive extends Component {
   static propTypes = {
@@ -108,6 +113,10 @@ class CardArchive extends Component {
       bindArchive(id);
     }
   }
+  componentWillUnmount = () => {
+    const {id} = this.props;
+    unbindArchive(id);
+  };
 
   placeholder() {
     const {style} = this.props;
@@ -120,9 +129,8 @@ class CardArchive extends Component {
       />
     );
   }
-
-  openVideo = async (archive) => {
-    const {coachSessionID, videosToOpen, disableClick} = this.props;
+  openVideo = async () => {
+    const {coachSessionID, videosToOpen, disableClick, archive} = this.props;
     const {url, id} = archive;
     if (url && url !== '' && !disableClick) {
       logMixpanel({
@@ -166,7 +174,6 @@ class CardArchive extends Component {
       return null;
     }
   }
-
   linearGradient() {
     return (
       <LinearGradient
@@ -230,10 +237,16 @@ class CardArchive extends Component {
   cardArchiveImage = () => {
     const {archive} = this.state;
     const {archiveFromCameraroll} = this.props;
-
     if (archiveFromCameraroll) {
       const {url} = archiveFromCameraroll;
-      return <Image style={styleApp.fullSize} source={{uri: url}} />;
+      return (
+        <Image
+          style={styleApp.fullSize}
+          source={{
+            uri: url,
+          }}
+        />
+      );
     }
 
     const {thumbnail, local} = archive;
@@ -251,14 +264,21 @@ class CardArchive extends Component {
 
   infoRow = () => {
     const {archive, videoUnavailable} = this.state;
-    const {startTimestamp, durationSeconds, progress} = archive;
+    const {startTimestamp, durationSeconds, progress, id} = archive;
     return (
       <View pointerEvents="none" style={styles.infoRow}>
         <Col>
+          {__DEV__ && (
+            <Text style={{...styles.durationText, fontSize: 9}}>{id}</Text>
+          )}
           <Text style={styles.durationText}>
             {videoUnavailable
               ? null
-              : formatDuration(durationSeconds * 1000, true)}
+              : formatDuration({
+                  duration: durationSeconds,
+                  inputUnit: 'second',
+                  formatType: 'numerical',
+                })}
           </Text>
           <Text style={styles.dateText}>
             {videoUnavailable ? null : progress ? (
@@ -299,16 +319,17 @@ class CardArchive extends Component {
     } = this.state;
     const {id, localIdentifier} = archive;
     const {selectableMode, unclickable, selectVideo} = this.props;
+
     if (unclickable) {
       return;
     } else if (selectableMode) {
-      this.setState({isSelected: !isSelected});
-      selectVideo({
+      const newSelected = selectVideo({
         id,
         isSelected: !isSelected,
         localIdentifier,
         playable: !videoUnavailable && !currentlyUploading,
       });
+      this.setState({isSelected: newSelected});
     } else if (videoUnavailable) {
       navigate('Alert', {
         title: 'This video is unavailable.',
@@ -472,10 +493,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, props) => {
   return {
-    userID: state.user.userID,
-    archive: props.nativeArchive
-      ? props.nativeArchive
-      : state.archives[props.id],
+    userID: userIDSelector(state),
+    archive: archiveSelector(state, props),
   };
 };
 

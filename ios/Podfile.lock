@@ -188,15 +188,6 @@ PODS:
   - KTVHTTPCache (2.0.1):
     - KTVCocoaHTTPServer
   - leveldb-library (1.22)
-  - libwebp (1.1.0):
-    - libwebp/demux (= 1.1.0)
-    - libwebp/mux (= 1.1.0)
-    - libwebp/webp (= 1.1.0)
-  - libwebp/demux (1.1.0):
-    - libwebp/webp
-  - libwebp/mux (1.1.0):
-    - libwebp/demux
-  - libwebp/webp (1.1.0)
   - lottie-ios (3.1.9)
   - lottie-react-native (3.5.0):
     - lottie-ios (~> 3.1.8)
@@ -469,8 +460,6 @@ PODS:
     - React
   - react-native-video/Video (5.1.0-alpha8):
     - React
-  - react-native-vitals (2.0.1):
-    - React
   - React-RCTActionSheet (0.63.2):
     - React-Core/RCTActionSheetHeaders (= 0.63.2)
   - React-RCTAnimation (0.63.2):
@@ -547,16 +536,14 @@ PODS:
     - React-Core
   - RNCMaskedView (0.1.10):
     - React
+  - RNCPicker (1.8.1):
+    - React-Core
   - RNCPushNotificationIOS (1.7.1):
     - React-Core
   - RNDateTimePicker (2.6.2):
     - React
   - RNDeviceInfo (5.6.5):
     - React
-  - RNFastImage (8.3.3):
-    - React-Core
-    - SDWebImage (~> 5.8)
-    - SDWebImageWebPCoder (~> 0.6.1)
   - RNFBApp (6.7.1):
     - Firebase/Core (~> 6.13.0)
     - React
@@ -608,15 +595,17 @@ PODS:
     - React
   - RNVideoProcessing (1.7.5):
     - React
-  - SDWebImage (5.9.5):
-    - SDWebImage/Core (= 5.9.5)
-  - SDWebImage/Core (5.9.5)
-  - SDWebImageWebPCoder (0.6.1):
-    - libwebp (~> 1.0)
-    - SDWebImage/Core (~> 5.7)
+  - RNZipArchive (5.0.6):
+    - React
+    - RNZipArchive/Core (= 5.0.6)
+    - SSZipArchive (= 2.2.2)
+  - RNZipArchive/Core (5.0.6):
+    - React
+    - SSZipArchive (= 2.2.2)
   - Sentry (6.0.8):
     - Sentry/Core (= 6.0.8)
   - Sentry/Core (6.0.8)
+  - SSZipArchive (2.2.2)
   - Stripe (14.0.1)
   - tipsi-stripe (7.5.3):
     - React
@@ -693,7 +682,6 @@ DEPENDENCIES:
   - "react-native-statusbar (from `../node_modules/@react-native-community/status-bar`)"
   - react-native-video (from `../node_modules/gamefare-rn-video`)
   - react-native-video-cache (from `../node_modules/react-native-video-cache`)
-  - react-native-vitals (from `../node_modules/react-native-vitals`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
   - React-RCTBlob (from `../node_modules/react-native/Libraries/Blob`)
@@ -712,10 +700,10 @@ DEPENDENCIES:
   - RNAwesomeCardIO (from `../node_modules/react-native-awesome-card-io`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
+  - "RNCPicker (from `../node_modules/@react-native-community/picker`)"
   - "RNCPushNotificationIOS (from `../node_modules/@react-native-community/push-notification-ios`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
-  - RNFastImage (from `../node_modules/react-native-fast-image`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - "RNFBDatabase (from `../node_modules/@react-native-firebase/database`)"
@@ -733,6 +721,7 @@ DEPENDENCIES:
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - RNVideoProcessing (from `../node_modules/react-native-video-processing`)
+  - RNZipArchive (from `../node_modules/react-native-zip-archive`)
   - Stripe
   - tipsi-stripe (from `../node_modules/tipsi-stripe`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -771,16 +760,14 @@ SPEC REPOS:
     - KTVCocoaHTTPServer
     - KTVHTTPCache
     - leveldb-library
-    - libwebp
     - Mixpanel
     - nanopb
     - OpenSSL-Universal
     - OpenTok
     - PromisesObjC
     - Protobuf
-    - SDWebImage
-    - SDWebImageWebPCoder
     - Sentry
+    - SSZipArchive
     - Stripe
     - YogaKit
 
@@ -905,8 +892,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/gamefare-rn-video"
   react-native-video-cache:
     :path: "../node_modules/react-native-video-cache"
-  react-native-vitals:
-    :path: "../node_modules/react-native-vitals"
   React-RCTActionSheet:
     :path: "../node_modules/react-native/Libraries/ActionSheetIOS"
   React-RCTAnimation:
@@ -943,14 +928,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/async-storage"
   RNCMaskedView:
     :path: "../node_modules/@react-native-community/masked-view"
+  RNCPicker:
+    :path: "../node_modules/@react-native-community/picker"
   RNCPushNotificationIOS:
     :path: "../node_modules/@react-native-community/push-notification-ios"
   RNDateTimePicker:
     :path: "../node_modules/@react-native-community/datetimepicker"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
-  RNFastImage:
-    :path: "../node_modules/react-native-fast-image"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBAuth:
@@ -985,6 +970,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-vector-icons"
   RNVideoProcessing:
     :path: "../node_modules/react-native-video-processing"
+  RNZipArchive:
+    :path: "../node_modules/react-native-zip-archive"
   tipsi-stripe:
     :path: "../node_modules/tipsi-stripe"
   Yoga:
@@ -1037,7 +1024,6 @@ SPEC CHECKSUMS:
   KTVCocoaHTTPServer: df8d7b861e603ff8037e9b2138aca2563a6b768d
   KTVHTTPCache: 588c3eb16f6bd1e6fde1e230dabfb7bd4e490a4d
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
-  libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
   lottie-ios: 3a3758ef5a008e762faec9c9d50a39842f26d124
   lottie-react-native: 1fb4ce21d6ad37dab8343eaff8719df76035bd93
   Mixpanel: 0e9d50ecc6398e1082e690ddedf6968e57e81935
@@ -1095,7 +1081,6 @@ SPEC CHECKSUMS:
   react-native-statusbar: ee9cc04cf942791e3d10597280d0e1adc876b9e5
   react-native-video: dbb8df4f0bbdf80de6797c90fcad8bc12b19401d
   react-native-video-cache: 90b8857673151d2618fc61030f14d755d1e92d4e
-  react-native-vitals: 64f6d267e5a08041604aba1e963c42d93b4174b2
   React-RCTActionSheet: 910163b6b09685a35c4ebbc52b66d1bfbbe39fc5
   React-RCTAnimation: 9a883bbe1e9d2e158d4fb53765ed64c8dc2200c6
   React-RCTBlob: 39cf0ece1927996c4466510e25d2105f67010e13
@@ -1114,10 +1099,10 @@ SPEC CHECKSUMS:
   RNAwesomeCardIO: 14d78f3e76abaf503068c9f4513ff6c4a516d958
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
+  RNCPicker: 914b557e20b3b8317b084aca9ff4b4edb95f61e4
   RNCPushNotificationIOS: 988c26325d0b7e7b54f818db35b8313d3a125f0c
   RNDateTimePicker: 968ccf716b3b6aee07849641966005924de5c0f9
   RNDeviceInfo: c5f8f3a456adcbba405ace475254b08febc4c095
-  RNFastImage: ff7e055d085abe465b358ce5aa51e3c6d64b1efd
   RNFBApp: a8a70521201eb3e75761e5495ebf3be319a3a9bc
   RNFBAuth: 3d3491cf27037c65a7f68bd77a990c15fd97ccec
   RNFBDatabase: 5cfc5a090c66c46dd325e0842378be69a1780d6f
@@ -1135,9 +1120,9 @@ SPEC CHECKSUMS:
   RNSVG: 67f1f12dae2cef6ed59a42cae74a6b8f5a9e7b46
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   RNVideoProcessing: 87e7cb7d5386bb5ea5149a9bb0c5f1bb59a22d06
-  SDWebImage: 0b2ba0d56479bf6a45ecddbfd5558bea93150d25
-  SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
+  RNZipArchive: 9dfdaa1d1ad49a423e83df505f292e0ae8126a5d
   Sentry: 6ab9f44a413dec7ebf5e82b166048afb5f60b895
+  SSZipArchive: fa16b8cc4cdeceb698e5e5d9f67e9558532fbf23
   Stripe: 4305b646743612854819fb5d5cf67aaeb93577c0
   tipsi-stripe: fb5b32e890a4528322c491e1827133a3cb919e0a
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598

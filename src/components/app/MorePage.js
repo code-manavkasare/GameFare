@@ -7,40 +7,33 @@ import {
   Alert,
   Image,
   Animated,
-  TouchableOpacity,
   Share,
 } from 'react-native';
 import {connect} from 'react-redux';
-import Orientation from 'react-native-orientation-locker';
-import Vitals from 'react-native-vitals';
 
-import {coachAction} from '../../store/actions/coachActions';
-import {layoutAction} from '../../store/actions/layoutActions';
-
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Col, Row} from 'react-native-easy-grid';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import Communications from 'react-native-communications';
 
 import ScrollView from '../layout/scrollViews/ScrollView2';
 import HeaderBackButton from '../layout/headers/HeaderBackButton';
-import sizes from '../style/sizes';
-import ButtonNotification from './elementsUser/elementsProfile/ButtonNotification';
-import {navigate, clickNotification} from '../../../NavigationService';
+import {navigate} from '../../../NavigationService';
 import styleApp from '../style/style';
 import colors from '../style/colors';
 import AllIcons from '../layout/icons/AllIcons';
 import ButtonColor from '../layout/Views/Button';
 import Button from '../layout/buttons/Button';
-import AsyncImage from '../layout/image/AsyncImage';
+import {rowTitle} from './TeamPage/components/elements';
 
-import {userAction} from '../../store/actions/userActions';
+import {logout} from '../../store/actions/userActions';
 import {createInviteToAppBranchUrl} from '../database/branch';
 import {boolShouldComponentUpdate} from '../functions/redux';
-
-Vitals.getMemory().then((memory) => {
-  var {appUsed, systemTotal, systemFree, systemUsed} = memory;
-  console.log('Low memory warning triggered', memory);
-});
+import {
+  userConnectedSelector,
+  userIDSelector,
+  userInfoSelector,
+  walletSelector,
+} from '../../store/selectors/user';
 
 class MorePage extends Component {
   constructor(props) {
@@ -57,62 +50,16 @@ class MorePage extends Component {
       component: 'MorePage',
     });
   }
-  button2(dataButton) {
-    const {text, icon, click, text2} = dataButton;
+  button({icon, text, page, type, url, onClick}) {
+    const textStyle = {
+      ...styles.buttonTitle,
+      color: text === 'Logout' ? colors.red : colors.title,
+    };
     return (
       <ButtonColor
         view={() => {
           return (
             <Row>
-              <Col size={10} style={styleApp.center2}>
-                <AllIcons
-                  type={icon.type}
-                  size={icon.size}
-                  name={icon.name}
-                  color={icon.color}
-                />
-              </Col>
-              <Col size={60} style={styleApp.center2}>
-                <Text
-                  style={[
-                    styleApp.input,
-                    {
-                      fontSize: 14,
-                      color: text === 'Logout' ? colors.red : colors.title,
-                    },
-                  ]}>
-                  {text}
-                </Text>
-              </Col>
-              <Col size={20} style={styleApp.center3}>
-                <Text style={[styleApp.text, {color: colors.primary}]}>
-                  {text2}
-                </Text>
-              </Col>
-              <Col size={10} style={styleApp.center3}>
-                <AllIcons
-                  type="mat"
-                  size={20}
-                  name={'keyboard-arrow-right'}
-                  color={colors.grey}
-                />
-              </Col>
-            </Row>
-          );
-        }}
-        click={() => click()}
-        color="white"
-        style={styles.button}
-        onPressColor={colors.off}
-      />
-    );
-  }
-  button(icon, text, page, type, url) {
-    return (
-      <ButtonColor
-        view={() => {
-          return (
-            <Row style={{marginLeft: 0, width: '100%'}}>
               {icon ? (
                 <Col size={10} style={styleApp.center2}>
                   <AllIcons
@@ -123,37 +70,30 @@ class MorePage extends Component {
                   />
                 </Col>
               ) : null}
-              <Col size={60} style={[styleApp.center2, {paddingLeft: 0}]}>
-                <Text
-                  style={[
-                    styleApp.text,
-                    {
-                      fontSize: 15,
-                      color: text === 'Logout' ? colors.red : colors.title,
-                    },
-                  ]}>
-                  {text}
-                </Text>
+              <Col size={70} style={styleApp.center2}>
+                <Text style={textStyle}>{text}</Text>
               </Col>
               <Col size={20} style={styleApp.center3}>
                 {page === 'Wallet' ? (
-                  <Text style={[styleApp.textBold, {color: colors.primary}]}>
-                    ${this.props.wallet.totalWallet}
+                  <Text style={styles.balanceText}>
+                    $
+                    {this.props.wallet.totalWallet !== undefined
+                      ? Number(this.props.wallet.totalWallet).toFixed(2)
+                      : null}
                   </Text>
-                ) : null}
-              </Col>
-              <Col size={10} style={styleApp.center3}>
-                <AllIcons
-                  type="mat"
-                  size={20}
-                  name={'keyboard-arrow-right'}
-                  color={icon === 'logout' ? colors.red : colors.grey}
-                />
+                ) : (
+                  <AllIcons
+                    type="mat"
+                    size={20}
+                    name={'keyboard-arrow-right'}
+                    color={icon === 'logout' ? colors.red : colors.grey}
+                  />
+                )}
               </Col>
             </Row>
           );
         }}
-        click={() => this.clickButton(page, type, url)}
+        click={() => (onClick ? onClick() : this.clickButton(page, type, url))}
         color="white"
         style={styles.button}
         onPressColor={colors.off}
@@ -175,7 +115,11 @@ class MorePage extends Component {
         colorButton: 'red',
         onPressColor: colors.red,
         onGoBack: (data) => this.confirmLogout(data),
-        nextNavigation: () => navigate('VideoLibrary'),
+        nextNavigation: () =>
+          navigate('ClubsPage', {
+            clubID: undefined,
+            timestamp: Date.now(),
+          }),
       });
     } else {
       this.props.navigation.navigate(page);
@@ -184,7 +128,7 @@ class MorePage extends Component {
   async openLink(url) {
     try {
       if (await InAppBrowser.isAvailable()) {
-        const result = await InAppBrowser.open(url, {
+        await InAppBrowser.open(url, {
           // iOS Properties
           dismissButtonStyle: 'cancel',
           preferredBarTintColor: 'white',
@@ -234,62 +178,28 @@ class MorePage extends Component {
     Communications.email([email1], null, null, subject, '');
   }
 
-  goToEditProfile = () => {
-    this.props.navigation.navigate('EditProfilePage');
-  };
-
   profile() {
-    const {infoUser, userConnected} = this.props;
+    const {userConnected} = this.props;
     return (
-      <View style={{marginTop: 20, marginBottom: 50}}>
+      <View style={{paddingTop: 60, marginTop: 0, marginBottom: 50}}>
         {userConnected ? (
           <View>
-            <TouchableOpacity
-              onPress={() => this.goToEditProfile()}
-              style={styleApp.marginView}
-              activeOpacity={0.9}>
-              <Row>
-                <Col size={30} style={styleApp.center2}>
-                  {infoUser.picture ? (
-                    <AsyncImage
-                      style={styles.asyncImage}
-                      mainImage={infoUser.picture}
-                    />
-                  ) : (
-                    <View
-                      style={[
-                        styles.asyncImage,
-                        styleApp.center,
-                        {backgroundColor: colors.off},
-                      ]}>
-                      <Text style={[styleApp.input, {fontSize: 20}]}>
-                        {infoUser?.firstname[0] + infoUser.lastname[0]}
-                      </Text>
-                    </View>
-                  )}
-                </Col>
-                <Col size={70} style={styleApp.center2}>
-                  <Text style={styleApp.title}>
-                    {infoUser.firstname + ' ' + infoUser.lastname}
-                  </Text>
-                  <Text style={styleApp.subtitle}>
-                    {infoUser.countryCode + ' ' + infoUser.phoneNumber}
-                  </Text>
-                </Col>
-              </Row>
-            </TouchableOpacity>
-
             <View style={{height: 20}} />
 
-            {this.button2({
-              text: 'Share GameFare with your friends',
-              icon: {
-                name: 'gifts',
-                type: 'font',
-                size: 20,
-                color: colors.title,
+            {rowTitle({
+              hideDividerHeader: true,
+              title: 'Settings',
+              titleColor: colors.black,
+              titleStyle: {
+                fontWeight: '800',
+                fontSize: 23,
+                marginLeft: '5%',
               },
-              click: async () => {
+            })}
+            {this.button({
+              icon: 'gifts',
+              text: 'Share GameFare with Friends',
+              onClick: async () => {
                 const url = await createInviteToAppBranchUrl();
                 Share.share({url});
               },
@@ -298,34 +208,44 @@ class MorePage extends Component {
             <Text style={styles.title}>Account parameters</Text>
             <View style={styles.divider} />
 
-            {this.button('cog', 'App Settings', 'AppSettings')}
-            <ButtonNotification displayBeforeLoader={true} />
+            {this.button({
+              icon: 'cog',
+              text: 'App Settings',
+              page: 'AppSettings',
+            })}
 
-            {this.button('user-alt-slash', 'Blocked users', 'BlockedUsersList')}
-            {this.button('credit-card', 'Payment', 'Payments')}
-            {this.button('wallet', 'Wallet', 'Wallet')}
+            {this.button({
+              icon: 'bell',
+              text: 'Notifications',
+              page: 'NotificationPage',
+            })}
+
+            {this.button({
+              icon: 'user-alt-slash',
+              text: 'Blocked users',
+              page: 'BlockedUsersList',
+            })}
+            {this.button({
+              icon: 'credit-card',
+              text: 'Payment',
+              page: 'Payments',
+            })}
+            {this.button({icon: 'wallet', text: 'Wallet', page: 'Wallet'})}
           </View>
         ) : (
           <View style={styleApp.center}>
-            <Image
-              source={require('../../img/images/tennisZoom.png')}
-              style={{height: 100, width: 100, marginBottom: 20}}
-            />
-
-            {/* <Text style={styleApp.text}>
-              Sign in to start improving your tennis skills.
-            </Text> */}
-
             <Button
               backgroundColor="primary"
               onPressColor={colors.primaryLight}
               enabled={true}
               text="Sign in"
+              textButton={{fontSize: 16}}
               icon={{
                 name: 'user',
-                size: 24,
+                size: 17,
                 type: 'font',
                 color: colors.white,
+                solid: true,
               }}
               styleButton={styles.buttonLogin}
               loader={false}
@@ -334,243 +254,74 @@ class MorePage extends Component {
           </View>
         )}
 
-        <Text style={styles.title}>Assistance</Text>
+        <Text style={styles.title}>Support</Text>
         <View style={styles.divider} />
-        {this.button('envelope', 'Email', 'Alert', 'email')}
+        {this.button({
+          icon: 'envelope',
+          text: 'Email',
+          page: 'Alert',
+          type: 'email',
+        })}
 
-        <Text style={styles.title}>Social media</Text>
+        <Text style={styles.title}>Social Media</Text>
         <View style={styles.divider} />
-        {this.button(
-          'instagram',
-          'Visit us on Instagram',
-          'Alert',
-          'url',
-          'https://www.instagram.com/getgamefare',
-        )}
+        {this.button({
+          icon: 'instagram',
+          text: 'Visit us on Instagram',
+          page: 'Alert',
+          type: 'url',
+          url: 'https://www.instagram.com/getgamefare',
+        })}
 
         <Text style={styles.title}>Legal</Text>
         <View style={styles.divider} />
-        {this.button(
-          false,
-          'Privacy policy',
-          'Alert',
-          'url',
-          'https://www.getgamefare.com/privacy',
-        )}
-        {this.button(
-          false,
-          'Terms of service',
-          'Alert',
-          'url',
-          'https://www.getgamefare.com/terms',
-        )}
-
-        {/* {this.button2({
-          text: 'Test notif open session',
-          icon: {
-            name: 'user',
-            type: 'font',
-            size: 20,
-            color: colors.title,
-          },
-          click: () =>
-            clickNotification({
-              date: Date.now(),
-              typeNavigation: 'navigate',
-              action: 'Session',
-              data: {
-                screen: 'Session',
-                coachSessionID: '3tniy7ismz4kf3egg2z',
-                date: Date.now(),
-              },
-            }),
+        {this.button({
+          text: 'Privacy policy',
+          page: 'Alert',
+          type: 'url',
+          url: 'https://www.getgamefare.com/privacy',
         })}
-
-        {this.button2({
-          text: 'Test notif open video',
-          icon: {
-            name: 'user',
-            type: 'font',
-            size: 20,
-            color: colors.title,
-          },
-          click: () =>
-            clickNotification({
-              date: Date.now(),
-              typeNavigation: 'navigate',
-              action: 'VideoPlayerPage',
-              data: {
-                objectID: '-MEjvxdF9hqpyOAoVStt',
-                date: Date.now(),
-              },
-            }),
-        })} */}
-
-        {__DEV__
-          ? this.button2({
-              text: 'Log getMemory',
-              icon: {
-                name: 'user',
-                type: 'font',
-                size: 20,
-                color: colors.title,
-              },
-              click: () =>
-                Vitals.getMemory().then((memory) => {
-                  var {appUsed, systemTotal, systemFree, systemUsed} = memory;
-                  console.log('memory', memory);
-                }),
-            })
-          : null}
-        {__DEV__
-          ? this.button2({
-              text: 'Log getStorage',
-              icon: {
-                name: 'user',
-                type: 'font',
-                size: 20,
-                color: colors.title,
-              },
-              click: () =>
-                Vitals.getStorage().then((storage) => {
-                  var {total, free, used} = storage;
-                  console.log('storage', storage);
-                }),
-            })
-          : null}
-
-        {/* {__DEV__ ? (
-          <View>
-            {this.button2({
-              text: 'Test notif open stream',
-              icon: {
-                name: 'user',
-                type: 'font',
-                size: 20,
-                color: colors.title,
-              },
-              click: () =>
-                NavigationService.navigate('Stream', {
-                  screen: 'GroupsPage',
-                  params: {
-                    openSession: true,
-                    objectID: 'yrhyg3a4nrik9v83hjx',
-                  },
-                }),
-            }) : null}
-            {this.button2({
-              text: 'Test notif open conversation',
-              icon: {
-                name: 'user',
-                type: 'font',
-                size: 20,
-                color: colors.title,
-              },
-              click: () =>
-                NavigationService.push('Conversation', {
-                  data: '-M4pyI87V02bA7Uz1_ah',
-                  uniqueStack: 'true',
-                }),
-            })}
-
-            {this.button2({
-              text: 'Test notif appears',
-              icon: {
-                name: 'user',
-                type: 'font',
-                size: 20,
-                color: colors.title,
-              },
-              click: () => {
-                const {layoutAction} = this.props;
-                layoutAction('setLayout', {
-                  notification: {
-                    data: {
-                      action: 'Stream',
-                      screen: 'GroupsPage',
-                      objectID: 'yrhyg3a4nrik9v83hjx',
-                      typeNavigation: 'navigate',
-                      notUniqueStack: 'true',
-                      date: Date.now(),
-                    },
-                    notification: {
-                      title: 'Marroco has invited you to a video chat ',
-                      timestamp: Date.now(),
-                      body: 'Click on this notification to join.',
-                      picture:
-                        'https://images.pexels.com/photos/1115804/pexels-photo-1115804.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-                    },
-                  },
-                });
-              },
-            })}
-            {this.button2({
-          text: 'Test notif appears',
-          icon: {
-            name: 'user',
-            type: 'font',
-            size: 20,
-            color: colors.title,
-          },
-          click: () => {
-            const {layoutAction} = this.props;
-            layoutAction('setLayout', {
-              notification: {
-                data: {
-                  action: 'Stream',
-                  screen: 'GroupsPage',
-                  objectID: 'yrhyg3a4nrik9v83hjx',
-                  typeNavigation: 'navigate',
-                  notUniqueStack: 'true',
-                  date: Date.now(),
-                  picture:
-                    'https://images.pexels.com/photos/1115804/pexels-photo-1115804.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-                },
-                notification: {
-                  title: 'Marroco has invited you to a video chat ',
-                  timestamp: Date.now(),
-                  body:
-                    'Click on this notification to join. Click on this notification to join. Click on this notification to join. Click on this notification to join.c ',
-                },
-              },
-            });
-          },
+        {this.button({
+          text: 'Terms of service',
+          page: 'Alert',
+          type: 'url',
+          url: 'https://www.getgamefare.com/terms',
         })}
-          </View>
-        )} */}
 
         <View style={[{marginTop: 20}]}>
           {this.props.userConnected
-            ? this.button('logout', 'Logout', 'Alert', 'logout')
+            ? this.button({
+                icon: 'logout',
+                text: 'Logout',
+                page: 'Alert',
+                type: 'logout',
+              })
             : null}
         </View>
       </View>
     );
   }
   async confirmLogout() {
-    await this.props.userAction('logout', {userID: this.props.userID});
+    await logout();
     return true;
   }
   render() {
-    const {infoUser, userConnected} = this.props;
     const {goBack} = this.props.navigation;
     return (
       <View style={[styleApp.stylePage]}>
         <HeaderBackButton
           marginTop={10}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={
-            userConnected ? infoUser.firstname + ' ' + infoUser.lastname : null
-          }
-          inputRange={[2, 5]}
-          initialBorderColorIcon={'white'}
-          initialBackgroundColor={'white'}
-          initialBorderColorHeader={colors.white}
+          textHeader={'Settings'}
+          inputRange={[0, 20]}
+          initialBorderColorIcon={'transparent'}
+          initialBackgroundColor={colors.white}
+          initialBorderColorHeader={'transparent'}
           initialTitleOpacity={0}
-          initialBorderWidth={1}
-          icon1={'times'}
+          initialBorderWidth={0}
+          icon1={'chevron-left'}
           typeIcon1="font"
-          sizeIcon1={21}
+          sizeIcon1={17}
           colorIcon1={colors.title}
           clickButton1={() => goBack()}
         />
@@ -579,7 +330,7 @@ class MorePage extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.profile()}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome - 30}
+          marginTop={-30}
           offsetBottom={70}
           showsVerticalScrollIndicator={true}
         />
@@ -600,42 +351,46 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   divider: {
-    ...styleApp.divider,
     marginLeft: '5%',
     width: '90%',
   },
+  buttonTitle: {
+    ...styleApp.text,
+    fontSize: 14,
+  },
   buttonLogin: {
-    //  marginRight: '5%',
-    //  marginLeft: '5%',
     width: '90%',
-    height: 55,
+    height: 45,
     marginTop: 20,
   },
+  balanceText: {
+    ...styleApp.textBold,
+    fontSize: 13,
+    color: colors.white,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 13,
+    backgroundColor: colors.green,
+    overflow: 'hidden',
+    minWidth: 55,
+  },
   title: {
-    ...styleApp.text,
-    fontSize: 12,
+    ...styleApp.textBold,
+    color: colors.greyDarker,
+    fontSize: 19,
     marginLeft: '5%',
     marginBottom: 10,
     marginTop: 30,
-  },
-  asyncImage: {
-    width: 75,
-    height: 75,
-    borderColor: colors.off,
-    borderRadius: 45,
   },
 });
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
-    wallet: state.user.infoUser.wallet,
-    userConnected: state.user.userConnected,
+    userID: userIDSelector(state),
+    infoUser: userInfoSelector(state),
+    wallet: walletSelector(state),
+    userConnected: userConnectedSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {userAction, coachAction, layoutAction},
-)(MorePage);
+export default connect(mapStateToProps)(MorePage);

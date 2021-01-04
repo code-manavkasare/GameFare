@@ -166,4 +166,3 @@ export default class Recording extends Component {
     return null;
   }
 }
-

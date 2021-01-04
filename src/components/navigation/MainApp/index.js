@@ -1,31 +1,35 @@
 import * as React from 'react';
+import {StatusBar} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import TabsApp from '../TabsApp/index';
 
-import ProfilePage from '../../app/elementsUser/elementsProfile/ProfilePage';
-import Conversation from '../../app/elementsMessage/Conversation';
-
 import Profile from './components/Profile';
-
 import Webview from '../../layout/Views/Webview';
-import VideoPlayerPage from '../../app/videoPlayerPage/index';
-import {DepthModal} from '../transitions/DepthModal';
-
 import Groups from '../../app/coachFlow/GroupsPage/index';
-
-import SessionSettings from '../../app/TeamPage/components/SessionSettings';
-
-import initialPage from '../../app/initialPage';
-import sizes from '../../style/sizes';
+import ClubForm from '../../app/clubsPage/components/ClubForm';
+import ClubInvites from '../../app/clubsPage/components/ClubInvites';
+import Club from '../MainApp/components/Club';
+import {SheetModal} from '../transitions/SheetModal';
+import {marginTopApp, width} from '../../style/sizes';
+import CreatePost from '../../app/clubsPage/components/CreatePost';
+import Bookings from './components/Bookings';
 
 const Stack = createStackNavigator();
 const MainApp = () => {
-  const ProfileSpec = DepthModal({top: sizes.marginTopApp + 25});
-  const ModalSpec = DepthModal({top: 0, ignoreBackgroundScale: true});
+  const SheetModalSpec = SheetModal({
+    top: marginTopApp + 25,
+    gestureHeight: 1 / 3,
+  });
   return (
-    <Stack.Navigator initialRouteName="TabsApp" headerMode="none">
-      <Stack.Screen name="InitialPage" component={initialPage} />
+    <Stack.Navigator
+      initialRouteName="TabsApp"
+      screenOptions={{
+        gestureResponseDistance: {
+          horizontal: width,
+        },
+        header: () => <StatusBar barStyle={'dark-content'} />,
+      }}>
       <Stack.Screen
         name="TabsApp"
         component={TabsApp}
@@ -34,22 +38,38 @@ const MainApp = () => {
           animationEnabled: false,
         }}
       />
-      <Stack.Screen name="Conversation" component={Conversation} />
-
-      <Stack.Screen
-        name="ProfilePage"
-        component={ProfilePage}
-        options={ModalSpec}
-      />
 
       <Stack.Screen name="Webview" component={Webview} />
 
-      <Stack.Screen name="MorePage" component={Profile} options={ProfileSpec} />
-
-      <Stack.Screen name="VideoPlayerPage" component={VideoPlayerPage} />
+      <Stack.Screen
+        name="VideoLibrary"
+        component={Profile}
+        options={SheetModalSpec}
+      />
       <Stack.Screen name="Groups" component={Groups} />
 
-      <Stack.Screen name="SessionSettings" component={SessionSettings} />
+      <Stack.Screen
+        name="ClubInvites"
+        component={ClubInvites}
+        options={SheetModalSpec}
+      />
+      <Stack.Screen
+        name="ClubForm"
+        component={ClubForm}
+        options={SheetModalSpec}
+      />
+      <Stack.Screen
+        name="CreatePost"
+        component={CreatePost}
+        options={SheetModalSpec}
+      />
+
+      <Stack.Screen name="Club" component={Club} options={SheetModalSpec} />
+      <Stack.Screen
+        name="Bookings"
+        component={Bookings}
+        options={SheetModalSpec}
+      />
     </Stack.Navigator>
   );
 };

@@ -14,39 +14,47 @@ export default class ImageUser extends Component {
     super(props);
   }
   image() {
-    const {user} = this.props;
-    if (user.info && user.info.picture)
+    const {info, hideProfileInitials, profileInitialsStyle} = this.props;
+    const picture = info.picture;
+    const firstname = info.firstname;
+    const lastname = info.lastname;
+    if (picture)
       return (
         <AsyncImage
           style={styleApp.fullSize}
-          mainImage={user.info.picture}
-          imgInitial={user.info.picture}
+          mainImage={picture}
+          imgInitial={picture}
         />
       );
+    if (hideProfileInitials) return null;
     return (
       <View style={[styleApp.fullSize, styleApp.center]}>
-        <Text style={[styleApp.textBold, {fontSize: 10, color: colors.white}]}>
-          {user.info &&
-            user.info.firstname &&
-            user.info.lastname &&
-            user?.info?.firstname[0] + user.info.lastname[0]}
+        <Text
+          style={[
+            styleApp.textBold,
+            {fontSize: 10, color: colors.white},
+            profileInitialsStyle,
+          ]}>
+          {firstname && lastname ? firstname[0] + lastname[0] : null}
         </Text>
       </View>
     );
   }
   button() {
-    const {onClick, styleImgProps, user} = this.props;
+    const {onClick, styleImgProps, user, disableClick} = this.props;
 
     let styleImg = {
       ...styleApp.roundView2,
-      ...styleImgProps,
       overflow: 'hidden',
+      backgroundColor: colors.greyDark,
+      ...styleImgProps,
     };
     return (
       <TouchableOpacity
         onPress={() => {
-          if (onClick) return onClick();
-          else navigate('ProfilePage', {user: user});
+          if (disableClick) return null;
+          else if (onClick) return onClick();
+          else navigate('ProfilePage', {id: user.id});
         }}
         activeOpacity={0.9}
         style={styleImg}>
@@ -59,8 +67,6 @@ export default class ImageUser extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
-
 ImageUser.propTypes = {
-  user: PropTypes.object.isRequired,
+  info: PropTypes.object.isRequired,
 };

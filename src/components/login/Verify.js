@@ -9,7 +9,7 @@ import {
   Animated,
 } from 'react-native';
 import ScrollView from '../layout/scrollViews/ScrollView';
-import sizes from '../style/sizes';
+import {heightHeaderHome} from '../style/sizes';
 import styleApp from '../style/style';
 import VerifyFields from './elementsLogin/VerifyFields';
 import HeaderBackButton from '../layout/headers/HeaderBackButton';
@@ -49,7 +49,7 @@ export default class Verify extends Component {
           )}
           marginBottomScrollView={0}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={heightHeaderHome}
           offsetBottom={0}
           showsVerticalScrollIndicator={true}
         />

@@ -1,5 +1,5 @@
 import React, {Component, createRef} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {CodeField, Cursor} from 'react-native-confirmation-code-field';
 import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
@@ -10,10 +10,11 @@ import Config from 'react-native-config';
 import Loader from '../../layout/loaders/Loader';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
-import {userAction} from '../../../store/actions/userActions';
+import {signIn} from '../../../store/actions/userActions';
 import {timeout} from '../../functions/coach';
 import {formatPhoneNumber} from '../../functions/users';
 import {logMixpanel} from '../../functions/logs';
+import {userIDSelector} from '../../../store/selectors/user';
 
 const CELL_COUNT = 4;
 
@@ -65,7 +66,7 @@ class VerifyFields extends Component {
       firebaseSignInToken,
       userID,
     } = this.props.params;
-    const {close, navigate, userAction} = this.props;
+    const {close, navigate} = this.props;
     const phoneNumberFormated = formatPhoneNumber(phoneNumber);
 
     const promiseAxios = await axios.get(url, {
@@ -85,11 +86,11 @@ class VerifyFields extends Component {
       });
     } else {
       this.setState({step: 'signIn'});
-      var profileCompleted = await database()
+      let profileCompleted = await database()
         .ref('users/' + userID + '/profileCompleted')
         .once('value');
       profileCompleted = profileCompleted.val();
-      await userAction('signIn', {
+      await signIn({
         userID: userID,
         firebaseSignInToken: firebaseSignInToken,
         phoneNumber: phoneNumber,
@@ -256,11 +257,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
+    userID: userIDSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {userAction},
-)(VerifyFields);
+export default connect(mapStateToProps)(VerifyFields);

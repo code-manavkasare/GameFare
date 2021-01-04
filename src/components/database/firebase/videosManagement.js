@@ -1,6 +1,8 @@
 import database from '@react-native-firebase/database';
+import {navigate} from '../../../../NavigationService';
 
 import {store} from '../../../store/reduxStore';
+import {timeout} from '../../functions/coach';
 import {getValueOnce} from './methods';
 
 const shareCloudVideo = async (
@@ -81,9 +83,10 @@ const createCloudVideo = async (videoInfo) => {
       local: false,
       fromNativeLibrary: false,
       uploadedByUser: true,
-      url: false,
       sourceUser: userID,
     };
+    delete firebaseVideoInfo.url;
+    delete firebaseVideoInfo.thumbnail;
     const newFirebaseVideoInfo = await mergeInfoWithExistingCloudVideo(
       firebaseVideoInfo,
     );
@@ -177,6 +180,59 @@ const shareCloudVideoWithCoachSession = async (
     });
 };
 
+const watchVideosLive = async ({
+  selectedVideos,
+  coachSessionID,
+  personSharingScreen,
+  forcePlay,
+  overrideCurrent,
+}) => {
+  if (!personSharingScreen) personSharingScreen = store.getState().user.userID;
+  let updates = {};
+  let sharedVideoUpdates = {};
+  let memberVideoUpdates = {};
+  for (let i in selectedVideos) {
+    const id = selectedVideos[i];
+    const coachSessionMemberSharingPath = `coachSessions/${coachSessionID}/members/${personSharingScreen}`;
+    sharedVideoUpdates[id] = {
+      id,
+      currentTime: 0,
+      paused: true,
+      playRate: 1,
+      position: {x: 0, y: 0},
+      scale: 1,
+    };
+    memberVideoUpdates[id] = true;
+    updates[`${coachSessionMemberSharingPath}/shareScreen`] = true;
+    updates[`${coachSessionMemberSharingPath}/videoIDSharing`] = id;
+    if (!overrideCurrent) {
+      updates[
+        `coachSessions/${coachSessionID}/members/${personSharingScreen}/sharedVideos/${id}`
+      ] = true;
+    }
+  }
+  const sharedVideosPath = `coachSessions/${coachSessionID}/sharedVideos`;
+  updates[sharedVideosPath] = sharedVideoUpdates;
+  if (overrideCurrent) {
+    updates[
+      `coachSessions/${coachSessionID}/members/${personSharingScreen}/sharedVideos`
+    ] = memberVideoUpdates;
+  }
+  console.log(updates);
+  await database()
+    .ref()
+    .update(updates);
+
+  if (forcePlay) {
+    await timeout(300);
+    await navigate('VideoPlayerPage', {
+      archives: selectedVideos,
+      coachSessionID,
+      open: true,
+    });
+  }
+};
+
 export {
   shareCloudVideo,
   deleteCloudVideo,
@@ -188,4 +244,5 @@ export {
   updateCloudUploadProgress,
   shareCloudVideoWithCoachSession,
   updateThumbnailCloud,
+  watchVideosLive,
 };

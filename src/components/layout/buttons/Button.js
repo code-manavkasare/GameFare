@@ -101,7 +101,7 @@ export default class Button extends Component {
   iconView() {
     const {icon, loader} = this.props;
     const {loading} = this.state;
-    const {name, size, type, color} = icon;
+    const {name, size, type, color, solid} = icon;
     const containerIcon = {
       ...styleApp.center,
       position: 'absolute',
@@ -113,7 +113,13 @@ export default class Button extends Component {
         {loader || loading ? (
           <Loader size={34} color={colors.white} />
         ) : (
-          <AllIcon name={name} size={size} type={type} color={color} />
+          <AllIcon
+            name={name}
+            size={size}
+            type={type}
+            color={color}
+            solid={solid}
+          />
         )}
       </View>
     );
@@ -162,7 +168,7 @@ export default class Button extends Component {
 
 const styles = StyleSheet.create({
   buttonSubmit: {
-    height: 50,
+    height: 55,
     backgroundColor: colors.primary,
     borderRadius: 15,
     width: '100%',

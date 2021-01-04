@@ -6,7 +6,6 @@ import database from '@react-native-firebase/database';
 import {PanGestureHandler, State} from 'react-native-gesture-handler';
 import Svg, {Circle} from 'react-native-svg';
 
-import {coachAction} from '../../../../../store/actions/coachActions';
 import {generateID} from '../../../../functions/utility.js';
 
 import {ratio} from '../../../../style/sizes';
@@ -16,6 +15,15 @@ import DrawAngles from './shapes/DrawAngles';
 import DrawSraightLine from './shapes/DrawSraightLine';
 import DrawCircles from './shapes/DrawCircles';
 import DrawCustomLine from './shapes/DrawCustomLine';
+import {
+  userIDSelector,
+  userInfoSelector,
+} from '../../../../../store/selectors/user';
+
+import {
+  drawingsSelector,
+  sharedVideoSelector,
+} from '../../../../../store/selectors/sessions';
 
 class DrawView extends Component {
   static propTypes = {
@@ -58,7 +66,6 @@ class DrawView extends Component {
 
     let stateDrawings = state.drawings;
     if (!stateDrawings) stateDrawings = {};
-
     let newDrawings = Object.values(stateDrawings)
       .filter((drawing) => {
         if (!videoBeingShared) return true;
@@ -85,7 +92,6 @@ class DrawView extends Component {
         result[item.id] = item;
         return result;
       }, {});
-
     return {drawings: {...drawingsInCloudButNoLocally, ...newDrawings}};
   }
   clear = async () => {
@@ -575,6 +581,7 @@ class DrawView extends Component {
     );
   }
   render() {
+    //  return null;
     return this.drawView();
   }
 }
@@ -594,24 +601,18 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state, props) => {
-  const {coachSessionID, archiveID, videoBeingShared} = props;
-  let drawings = {};
-  let cloudVideo = {};
-  if (videoBeingShared) {
-    drawings =
-      state.coachSessions[coachSessionID]?.sharedVideos[archiveID]?.drawings;
-    cloudVideo = state.coachSessions[coachSessionID]?.sharedVideos[archiveID];
-  }
-
   return {
-    drawings: drawings,
-    userID: state.user.userID,
-    infoUser: state?.user?.infoUser?.userInfo,
-    cloudVideo,
+    drawings: drawingsSelector(state, {
+      id: props.coachSessionID,
+      archiveID: props.archiveID,
+    }),
+    userID: userIDSelector(state),
+    infoUser: userInfoSelector(state),
+    cloudVideo: sharedVideoSelector(state, {
+      id: props.coachSessionID,
+      archiveID: props.archiveID,
+    }),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {coachAction},
-)(DrawView);
+export default connect(mapStateToProps)(DrawView);

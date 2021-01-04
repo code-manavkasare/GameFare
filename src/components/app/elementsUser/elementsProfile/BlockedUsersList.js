@@ -10,9 +10,11 @@ import {blockUnblockUser} from '../../../database/firebase/users';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
 
 import Button from '../../../layout/buttons/Button';
-import sizes from '../../../style/sizes';
+import {heightHeaderModal, heightFooter} from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
+import {userIDSelector} from '../../../../store/selectors/user';
+import {blockedUsersSelector} from '../../../../store/selectors/blockedUsers';
 
 class BlockedUsersList extends Component {
   constructor(props) {
@@ -95,11 +97,13 @@ class BlockedUsersList extends Component {
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
+          marginTop={10}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Blocked Users'}
-          inputRange={[5, 10]}
+          inputRange={[0, 50]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
+          sizeIcon1={17}
           initialBorderColorHeader={colors.grey}
           initialTitleOpacity={1}
           initialBorderWidth={0.3}
@@ -115,8 +119,8 @@ class BlockedUsersList extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottomScrollView={0}
           refreshControl={false}
-          marginTop={sizes.heightHeaderHome}
-          offsetBottom={sizes.heightFooter + 40}
+          marginTop={heightHeaderModal}
+          offsetBottom={heightFooter + 40}
           showsVerticalScrollIndicator={true}
         />
 
@@ -125,7 +129,7 @@ class BlockedUsersList extends Component {
             style={[
               styleApp.footerBooking,
               styleApp.marginView,
-              {bottom: sizes.heightFooter + 20},
+              {bottom: heightFooter + 20},
             ]}>
             <Button
               text="Unblock users"
@@ -144,12 +148,9 @@ class BlockedUsersList extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    blockedUsersID: state.user.infoUser.blockedUsers,
+    userID: userIDSelector(state),
+    blockedUsersID: blockedUsersSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(BlockedUsersList);
+export default connect(mapStateToProps)(BlockedUsersList);

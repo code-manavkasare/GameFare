@@ -23,7 +23,7 @@ import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 const countriesBankAccount = require('./elementsAddBankAccount/fieldsBankAccount.json');
 const ListCountry = require('../../../login/elementsFlags/country.json');
 
-import sizes from '../../../style/sizes';
+import {heightHeaderHome} from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import ButtonFull from '../../../layout/buttons/ButtonFull';
@@ -388,7 +388,7 @@ class ListEvent extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.newBankAccount(country)}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={heightHeaderHome}
           offsetBottom={90 + 60}
           showsVerticalScrollIndicator={true}
         />

@@ -6,7 +6,6 @@ import {connect} from 'react-redux';
 import {blockUnblockUser} from '../../../database/firebase/users';
 
 import AsyncImage from '../../../layout/image/AsyncImage';
-import ButtonColor from '../../../layout/Views/Button';
 import Button from '../../../layout/buttons/Button';
 
 import colors from '../../../style/colors';
@@ -14,8 +13,7 @@ import styleApp from '../../../style/style';
 import {heightHeaderHome} from '../../../style/sizes';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
-import {openDiscussion} from '../../../functions/message';
-import {openMemberAcceptCharge, capitalize} from '../../../functions/coach';
+import {capitalize} from '../../../functions/coach';
 
 import {
   BadgesView,
@@ -23,7 +21,15 @@ import {
   FocusView,
 } from '../../coachingTab/components/ComponentsCard';
 
-import {getValueOnce} from '../../../database/firebase/methods';
+import {
+  infoUserByIdSelector,
+  userIDSelector,
+} from '../../../../store/selectors/user';
+import {isUserBlockedSelector} from '../../../../store/selectors/blockedUsers';
+import {
+  bindUserInfo,
+  unbindUserInfo,
+} from '../../../database/firebase/bindings';
 
 class ProfilePage extends Component {
   constructor(props) {
@@ -31,48 +37,26 @@ class ProfilePage extends Component {
     this.state = {
       loader: false,
       initialLoader: true,
-      loaderMessage: false,
-      userProfile: {
-        info: {
-          firstname: '',
-          lastname: '',
-          picture: false,
-        },
-        id: '',
-      },
       isBlocked: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  static getDerivedStateFromProps(props, state) {
-    const {route} = props;
-    const user = route.params.user;
-    const {initialLoader, userProfile} = state;
-    if (initialLoader) {
-      return {userProfile: user, initialLoader: false};
-    }
-    return {userProfile: userProfile};
-  }
-  componentDidMount = async () => {
-    const {infoUser, route} = this.props;
-    let userProfile = route.params.user;
-    if (!userProfile.id) userProfile.id = userProfile.objectID;
-    let isBlocked = false;
-    if (infoUser.blockedUsers && infoUser.blockedUsers[userProfile.id]) {
-      isBlocked = true;
-    }
-    const userInfo = await getValueOnce(`users/${userProfile.id}/userInfo`);
-    this.setState({
-      userProfile: {
-        id: userProfile.id,
-        info: userInfo,
-      },
-      isBlocked,
-    });
+
+  componentDidMount = () => {
+    const {route} = this.props;
+    const {id} = route.params;
+    bindUserInfo(id);
+  };
+  componentWillUnmount = () => {
+    const {route} = this.props;
+    const {id} = route.params;
+    unbindUserInfo(id);
   };
 
   blockUnblockUser = async (block) => {
-    await blockUnblockUser(block, this.props.userID, this.state.userProfile.id);
+    const {userID, route} = this.props;
+    const {id} = route.params;
+    await blockUnblockUser(block, userID, id);
     this.setState({isBlocked: block});
   };
 
@@ -88,49 +72,31 @@ class ProfilePage extends Component {
   };
 
   blockButton = () => {
-    const {isBlocked, userProfile} = this.state;
+    const {route, isUserBlocked} = this.props;
+    const {id} = route.params;
     const {userID} = this.props;
-    if (userID !== userProfile.id) {
+    if (userID !== id) {
       return (
         <Button
-          text={isBlocked ? 'Unblock' : 'Block user'}
+          text={isUserBlocked ? 'Unblock' : 'Block user'}
           icon={{
             name: 'hand-paper',
             size: 22,
             type: 'font',
             color: colors.title,
           }}
-          styleButton={{borderWidth: 0}}
           textButton={{color: colors.title}}
           color={colors.white}
           onPressColor={colors.off}
-          click={() => this.blockUnblockUser(!isBlocked)}
+          click={() => this.blockUnblockUser(!isUserBlocked)}
         />
       );
     }
   };
-  async requestSession() {
-    const {userProfile} = this.state;
-    const {userID, navigation, infoUser} = this.props;
-    const {id: profileUserID, info} = userProfile;
-    await this.setState({loaderMessage: true});
 
-    const discussion = await openDiscussion([
-      {id: userID, info: infoUser.userInfo},
-      {id: profileUserID, info},
-    ]);
-    this.setState({loaderMessage: false});
-    openMemberAcceptCharge({...userProfile, isCoach: true}, false, () =>
-      navigation.navigate('Conversation', {
-        data: discussion,
-        myConversation: true,
-        back: true,
-        message: "Hi, I'd like to book a video session with you. Thanks!",
-      }),
-    );
-  }
   profilePage() {
-    const {loaderMessage} = this.state;
+    const {infoUser} = this.props;
+    if (!infoUser) return null;
     const {
       firstname,
       lastname,
@@ -142,7 +108,7 @@ class ProfilePage extends Component {
       badges,
       biography,
       levelCoached,
-    } = this.state.userProfile.info;
+    } = infoUser;
     return (
       <View style={styleApp.marginView}>
         <Row>
@@ -204,24 +170,8 @@ class ProfilePage extends Component {
               },
             })
           : null}
+        <View style={[{height: 10}]} />
         <View style={styleApp.divider} />
-        {/* <View style={{height: 30}} />
-        {coach ? (
-          <Button
-            text={'Request a session'}
-            loader={loaderMessage}
-            icon={{
-              name: 'speech',
-              size: 22,
-              type: 'moon',
-              color: colors.white,
-            }}
-            backgroundColor={'blue'}
-            onPressColor={colors.blueLight}
-            click={() => this.requestSession()}
-          />
-        ) : null} */}
-
         <View style={[{height: 10}]} />
 
         {this.blockButton()}
@@ -243,9 +193,8 @@ class ProfilePage extends Component {
           initialBorderColorHeader={colors.white}
           initialTitleOpacity={1}
           initialBorderWidth={1}
-          icon1={'times'}
-          sizeIcon1={21}
-          clickButton1={() => this.props.navigation.goBack()}
+          icon2={'times'}
+          clickButton2={() => this.props.navigation.goBack()}
         />
 
         <ScrollView
@@ -280,10 +229,12 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
+  const {id} = props.route.params;
   return {
-    infoUser: state.user.infoUser,
-    userID: state.user.userID,
+    infoUser: infoUserByIdSelector(state, {id}),
+    userID: userIDSelector(state),
+    isUserBlocked: isUserBlockedSelector(state, {id}),
   };
 };
 

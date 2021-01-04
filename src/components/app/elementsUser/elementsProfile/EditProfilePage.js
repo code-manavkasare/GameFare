@@ -1,25 +1,21 @@
 import React, {Component} from 'react';
-import {
-  Animated,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  ScrollView,
-} from 'react-native';
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Animated, Text, TextInput, View, ScrollView} from 'react-native';
+import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 
 import {uploadPictureFirebase} from '../../../functions/pictures';
-import NavigationService from '../../../../../NavigationService';
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
-import sizes from '../../../style/sizes';
+import {heightHeaderModal, heightFooter} from '../../../style/sizes';
 
 import Button from '../../../layout/buttons/Button';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import ButtonAddImage from '../../../layout/buttons/ButtonAddImage';
+import {
+  userIDSelector,
+  userInfoSelector,
+} from '../../../../store/selectors/user';
 
 class EditProfilePage extends Component {
   constructor(props) {
@@ -92,12 +88,14 @@ class EditProfilePage extends Component {
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
+          marginTop={10}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Edit Profile'}
-          inputRange={[5, 10]}
+          inputRange={[0, 50]}
           initialBorderColorIcon={colors.white}
           initialBackgroundColor={'white'}
           icon1={'chevron-left'}
+          sizeIcon1={17}
           initialBorderColorHeader={colors.off}
           initialTitleOpacity={1}
           initialBorderWidth={1}
@@ -108,7 +106,7 @@ class EditProfilePage extends Component {
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome + 20}
+          marginTop={heightHeaderModal + 20}
           showsVerticalScrollIndicator={true}>
           <Row style={{paddingLeft: 20, paddingRight: 20, marginTop: 40}}>
             <Col size={20} style={styleApp.center2}>
@@ -158,7 +156,7 @@ class EditProfilePage extends Component {
           style={[
             styleApp.footerBooking,
             styleApp.marginView,
-            {bottom: sizes.heightFooter + 20},
+            {bottom: heightFooter + 20},
           ]}>
           <Button
             text="Update Profile"
@@ -173,32 +171,10 @@ class EditProfilePage extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  content: {
-    flex: 1,
-    width: '100%',
-    paddingLeft: 20,
-    paddingRight: 20,
-  },
-  buttonRound: {
-    width: '90%',
-    height: 120,
-    borderRadius: 10,
-  },
-  asyncImage: {
-    width: 90,
-    height: 90,
-    borderColor: colors.off,
-    borderRadius: 45,
-    position: 'absolute',
-    zIndex: 0,
-  },
-});
-
 const mapStateToProps = (state) => {
   return {
-    infoUser: state.user.infoUser.userInfo,
-    userID: state.user.userID,
+    infoUser: userInfoSelector(state),
+    userID: userIDSelector(state),
   };
 };
 

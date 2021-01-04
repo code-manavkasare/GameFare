@@ -8,6 +8,10 @@ import colors from '../../../style/colors';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import UploadHeader from './UploadHeader';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
+import {
+  userIDSelector,
+  userInfoSelector,
+} from '../../../../store/selectors/user';
 
 class HeaderVideoLibrary extends Component {
   constructor(props) {
@@ -33,41 +37,40 @@ class HeaderVideoLibrary extends Component {
       infoUser,
       text,
       toggleSelectable,
+      selectVideosFromCameraRoll,
+      userID,
     } = this.props;
+
     return (
       <View style={{zIndex: 11}}>
         <HeaderBackButton
           AnimatedHeaderValue={AnimatedHeaderValue}
           textHeader={text}
-          inputRange={[15, 20]}
+          inputRange={[200, 280]}
           loader={loader}
-          initialBorderColorIcon={'white'}
-          initialBackgroundColor={'white'}
+          initialBorderColorIcon={'transparent'}
+          initialBackgroundColor={'transparent'}
           initialTitleOpacity={0}
           initialBorderWidth={1}
-          initialBorderColorHeader={colors.white}
-          icon1={
-            selectOnly
-              ? 'chevron-left'
-              : infoUser.picture
-              ? infoUser.picture
-              : 'profileFooter'
-          }
-          sizeIcon1={selectOnly ? 21 : infoUser.picture ? 40 : 23}
-          clickButton1={() =>
-            selectOnly ? navigation.goBack() : navigation.navigate('MorePage')
-          }
-          typeIcon1={selectOnly ? 'font' : infoUser.picture ? 'image' : 'moon'}
+          initialBorderColorHeader={'transparent'}
+          icon1={'times'}
+          sizeIcon1={15}
+          clickButton1={() => navigation.goBack()}
+          typeIcon1={'font'}
+          backgroundColorIcon1={'transparent'}
           icon2={selectOnly ? null : !selectableMode ? 'text' : 'text'}
           text2={!selectableMode ? 'Select' : 'Cancel'}
+          animateIcon2
+          animateIconOffset
           typeIcon2="font"
           sizeIcon2={22}
+          marginTop={5}
           colorIcon2={colors.title}
-          clickButton2={() => toggleSelectable()}
+          clickButton2={toggleSelectable}
           clickButtonOffset={selectVideosFromCameraRoll}
           iconOffset={!selectableMode && 'plus'}
           typeIconOffset={'font'}
-          sizeIconOffset={22}
+          sizeIconOffset={15}
         />
 
         <UploadHeader
@@ -82,12 +85,9 @@ class HeaderVideoLibrary extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
+    userID: userIDSelector(state),
+    infoUser: userInfoSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(HeaderVideoLibrary);
+export default connect(mapStateToProps)(HeaderVideoLibrary);

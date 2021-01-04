@@ -56,7 +56,7 @@ export default class VideoPlayer extends Component {
       prevPaused: undefined,
 
       currentTime: this.props.currentTime ? this.props.currentTime : 0,
-
+      proxySource: '',
       videoLoading: true,
       videoLoaded: false,
       seekbarLoaded: false,
@@ -75,7 +75,9 @@ export default class VideoPlayer extends Component {
       this.props.onRef(this);
     }
     const {currentTime} = this.state;
-    const {coachSessionID} = this.props;
+    const {coachSessionID, archive} = this.props;
+    this.getProxySource();
+
     if (currentTime !== 0) {
       this.seek(currentTime);
     }
@@ -93,6 +95,7 @@ export default class VideoPlayer extends Component {
 
   async componentDidUpdate(prevProps, prevState) {
     const {currentTime, videoLoaded, seekbarLoaded} = this.state;
+    const {noUpdateInCloud} = this.props;
 
     if (prevState.currentTime !== currentTime) {
       this.visualSeekBarRef?.setCurrentTime(currentTime, true);
@@ -101,16 +104,18 @@ export default class VideoPlayer extends Component {
       this.PinchableBoxRef?.resetPosition();
     }
 
-    if (videoLoaded && !prevState.videoLoaded) {
+    if (videoLoaded && !prevState.videoLoaded && !noUpdateInCloud) {
       setTimeout(() => {
-        // this.visualSeekBarRef?.toggleVisible(true);
         this.seek(currentTime);
       }, 200);
     }
   }
 
-  getProxySource = async (src) => {
-    const proxySource = await convertToProxyURL(src);
+  getProxySource = async () => {
+    const {archive} = this.props;
+    const {url, local} = archive;
+    if (local) return;
+    const proxySource = await convertToProxyURL(url);
     this.setState({proxySource});
   };
   setDrawings = (drawings) => {
@@ -406,7 +411,7 @@ export default class VideoPlayer extends Component {
     } = this.props;
     let {recordedActions} = this.props;
 
-    let {thumbnail, url, durationSeconds, originalUrl} = archive;
+    let {thumbnail, url, durationSeconds, local} = archive;
 
     const {
       currentTime,
@@ -420,8 +425,8 @@ export default class VideoPlayer extends Component {
       seekbarLoaded,
       allowRecording,
       error,
+      proxySource,
     } = this.state;
-    if (error) url = originalUrl;
     const connectedToSession =
       coachSessionID !== false && coachSessionID !== undefined;
 
@@ -476,7 +481,7 @@ export default class VideoPlayer extends Component {
                       connectedToSession ? undefined : allowRecording
                     }
                     source={{
-                      uri: url,
+                      uri: !local ? proxySource : url,
                     }}
                     style={styleApp.fullSize}
                     ref={(ref) => {
@@ -548,7 +553,7 @@ export default class VideoPlayer extends Component {
             archiveId={archiveId}
             disableControls={disableControls}
             onRef={(ref) => (this.visualSeekBarRef = ref)}
-            source={error ? originalUrl : url ? url : undefined}
+            source={url}
             isRecording={isRecording}
             size={seekbarSize}
             togglePlayPause={this.linkedTogglePlayPause.bind(this)}

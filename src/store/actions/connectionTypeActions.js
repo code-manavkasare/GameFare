@@ -1,8 +1,8 @@
 import {SET_CONNECTION_TYPE} from '../types';
 
-export const setConnectionType = (connectionType) => ({
+export const setConnectionType = (connectionData) => ({
   type: SET_CONNECTION_TYPE,
-  connectionType,
+  connectionData,
 });
 
 export const connectionTypeAction = (val, data) => {

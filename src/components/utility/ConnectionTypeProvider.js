@@ -12,20 +12,19 @@ export default class ConnectionTypeProvider extends Component {
     this.state = {};
     this.unsubscribe = null;
   }
-  componentDidMount() {
+  componentDidMount = () => {
     this.unsubscribe = NetInfo.addEventListener((state) => {
+      const {isInternetReachable, type} = state;
       sentryAddBreadcrumb('networkInfo', `connectionType : ${state.type}`);
-      store.dispatch(setConnectionType(state.type));
+      store.dispatch(setConnectionType({type}));
       logMixpanel({
-        label: 'Change network: ' + state.type,
-        params: {type: state.type},
+        label: 'Change network: ' + type,
+        params: {type},
       });
     });
-  }
+  };
   componentWillUnmount() {
-    if (this.unsubscribe) {
-      this.unsubscribe();
-    }
+    if (this.unsubscribe) this.unsubscribe();
   }
   render = () => null;
 }

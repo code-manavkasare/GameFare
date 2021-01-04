@@ -17,6 +17,11 @@ import {navigate} from '../../../NavigationService';
 import {logMixpanel} from '../functions/logs';
 import {boolShouldComponentUpdate} from '../functions/redux';
 import {getValueOnce} from '../database/firebase/methods';
+import {
+  userConnectedSelector,
+  userIDSelector,
+} from '../../store/selectors/user';
+import {addUserToClub} from '../functions/clubs';
 
 class BranchManager extends Component {
   constructor(props) {
@@ -59,14 +64,14 @@ class BranchManager extends Component {
     const {branchParams} = this.state;
     const {userID} = this.props;
 
-    const {type, sentBy} = branchParams;
+    const {type, sentBy, id} = branchParams;
     switch (type) {
       case 'invite': {
         const session = await createCoachSessionFromUserIDs(sentBy, [userID]);
         logMixpanel({
           label: 'Open invite conversation link ' + session.objectID,
         });
-        navigate('Conversation', {coachSessionID: session.objectID});
+        navigate('Conversation', {id: session.objectID});
         break;
       }
       case 'session': {
@@ -76,6 +81,16 @@ class BranchManager extends Component {
         });
         if (sessionID) {
           this.handleSessionInvite(sessionID, userID, sentBy);
+        }
+        break;
+      }
+      case 'club': {
+        logMixpanel({
+          label: 'Open invite club link ' + id,
+        });
+        if (id) {
+          await addUserToClub({clubID: id, userID});
+          navigate('ClubsPage', {clubID: id, timestamp: Date.now()});
         }
         break;
       }
@@ -111,7 +126,7 @@ class BranchManager extends Component {
       ) {
         sessionOpening(coachSessionFirebase);
       } else {
-        navigate('Conversation', {coachSessionID: sessionID});
+        navigate('Conversation', {id: sessionID});
       }
     } else {
       const session = await createCoachSessionFromUserIDs(
@@ -119,9 +134,10 @@ class BranchManager extends Component {
         [userID],
         sessionID,
       );
-      navigate('Conversation', {coachSessionID: session.objectID});
+      navigate('Conversation', {id: session.objectID});
     }
   }
+  handleClubInvite = (clubID) => {};
 
   render = () => {
     return null;
@@ -130,12 +146,9 @@ class BranchManager extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    userConnected: state.user.userConnected,
+    userID: userIDSelector(state),
+    userConnected: userConnectedSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(BranchManager);
+export default connect(mapStateToProps)(BranchManager);

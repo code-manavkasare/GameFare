@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated} from 'react-native';
+import {Animated} from 'react-native';
 import {connect} from 'react-redux';
+import {reconnectingSelector} from '../../../../../../../store/selectors/sessions';
 
 import {createInviteToSessionBranchUrl} from '../../../../../../database/branch';
 
@@ -28,7 +29,7 @@ class HeaderStreamView extends Component {
     return (
       <HeaderBackButton
         AnimatedHeaderValue={this.AnimatedHeaderValue}
-        inputRange={[5, 10]}
+        inputRange={[0, 100]}
         colorLoader={'white'}
         sizeLoader={40}
         initialBorderColorIcon={'transparent'}
@@ -62,7 +63,7 @@ class HeaderStreamView extends Component {
         clickButtonOffset2={async () =>
           currentSessionReconnecting
             ? null
-            : navigation.navigate('UserDirectory', {
+            : navigation.navigate('SearchPage', {
                 action: 'invite',
                 branchLink: await createInviteToSessionBranchUrl(
                   coachSessionID,
@@ -90,11 +91,8 @@ class HeaderStreamView extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    currentSessionReconnecting: state.coach.reconnecting,
+    currentSessionReconnecting: reconnectingSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(HeaderStreamView);
+export default connect(mapStateToProps)(HeaderStreamView);

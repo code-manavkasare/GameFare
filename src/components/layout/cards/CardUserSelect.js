@@ -10,6 +10,7 @@ import colors from '../../style/colors';
 import AllIcon from '../../layout/icons/AllIcons';
 import AsyncImage from '../image/AsyncImage';
 import styleApp from '../../style/style';
+import {silentFriendsSelector} from '../../../store/selectors/user';
 
 class CardUserSelect extends Component {
   static propTypes = {
@@ -45,7 +46,7 @@ class CardUserSelect extends Component {
     Animated.timing(this.selectionIndication, native(to, 250)).start();
   }
   render() {
-    const {user, onClick, silentFriends, isUserSelected} = this.props;
+    const {user, onClick, silentFriends, isUserSelected, children} = this.props;
     const {isPrivate} = user.info;
     const selectionOverlayStyle = {
       width: '100%',
@@ -66,48 +67,52 @@ class CardUserSelect extends Component {
           return (
             <View style={styleApp.fullSize}>
               <Animated.View style={selectionOverlayStyle} />
-              <Row>
-                <Col size={25} style={styleApp.center}>
-                  {user.info.picture ? (
-                    <AsyncImage
-                      style={styles.imgUser}
-                      mainImage={user.info.picture}
-                      imgInitial={user.info.picture}
-                    />
-                  ) : (
-                    <View style={[styleApp.center, styles.imgUser]}>
-                      <Text style={[styleApp.textBold, {fontSize: 13}]}>
-                        {user.info.firstname !== ''
-                          ? user.info.firstname[0]
-                          : ''}
-                        {user.info.lastname !== '' ? user.info.lastname[0] : ''}
-                      </Text>
-                    </View>
-                  )}
-                </Col>
-                <Col size={65} style={styleApp.center2}>
-                  <Text style={styleApp.text}>
-                    {user?.info?.firstname} {user?.info?.lastname}
-                  </Text>
-                </Col>
-                <Col size={10} style={styleApp.center3}>
-                  {isUserSelected ? (
-                    <AllIcon
-                      type={'font'}
-                      color={colors.green}
-                      size={18}
-                      name={'check'}
-                    />
-                  ) : privateUser ? (
-                    <AllIcon
-                      type={'font'}
-                      color={colors.greyDarker}
-                      size={18}
-                      name={'lock'}
-                    />
-                  ) : null}
-                </Col>
-              </Row>
+              {children ?? (
+                <Row>
+                  <Col size={25} style={styleApp.center}>
+                    {user.info.picture ? (
+                      <AsyncImage
+                        style={styles.imgUser}
+                        mainImage={user.info.picture}
+                        imgInitial={user.info.picture}
+                      />
+                    ) : (
+                      <View style={[styleApp.center, styles.imgUser]}>
+                        <Text style={[styleApp.textBold, {fontSize: 13}]}>
+                          {user.info.firstname !== ''
+                            ? user.info.firstname[0]
+                            : ''}
+                          {user.info.lastname !== ''
+                            ? user.info.lastname[0]
+                            : ''}
+                        </Text>
+                      </View>
+                    )}
+                  </Col>
+                  <Col size={65} style={styleApp.center2}>
+                    <Text style={styleApp.text}>
+                      {user?.info?.firstname} {user?.info?.lastname}
+                    </Text>
+                  </Col>
+                  <Col size={10} style={styleApp.center2}>
+                    {isUserSelected ? (
+                      <AllIcon
+                        type={'font'}
+                        color={colors.green}
+                        size={18}
+                        name={'check'}
+                      />
+                    ) : privateUser ? (
+                      <AllIcon
+                        type={'font'}
+                        color={colors.greyDarker}
+                        size={18}
+                        name={'lock'}
+                      />
+                    ) : null}
+                  </Col>
+                </Row>
+              )}
             </View>
           );
         }}
@@ -124,7 +129,7 @@ class CardUserSelect extends Component {
 
 const styles = StyleSheet.create({
   cardUser: {
-    height: 60,
+    height: 75,
     borderRadius: 15,
     paddingLeft: '5%',
     paddingRight: '5%',
@@ -139,11 +144,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    silentFriends: state.user.infoUser.silentFriends ?? {},
+    silentFriends: silentFriendsSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(CardUserSelect);
+export default connect(mapStateToProps)(CardUserSelect);

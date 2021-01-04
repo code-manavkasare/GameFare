@@ -1,20 +1,34 @@
 import {combineReducers} from 'redux';
 import {reducer as network} from 'react-native-offline';
 
-import globaleVariablesReducer from './globaleVariablesReducer';
-import userReducer from './userReducer';
-import historicSearchReducer from './historicSearchReducer';
+import {
+  userReducer,
+  userCloudArchivesReducer,
+  userNotificationsReducer,
+  userSessionsReducer,
+  userSessionsRequestsReducer,
+  userBlockedUsersReducer,
+  userBlockedByUsersReducer,
+  userSilentFriendsReducer,
+  userClubsReducer,
+  userBookingsReducer,
+} from './userReducer';
 import messageReducer from './messageReducer';
 import coachReducer from './coachReducer';
 import layoutReducer from './layoutReducer';
+import intialInteractionReducer from './intialInteractionReducer';
 import uploadQueueReducer from './uploadQueueReducer';
 import appSettingsReducer from './appSettingsReducer';
 import localVideoLibraryReducer from './localVideoLibraryReducer';
 import {archivesReducer} from './archivesReducer';
 import {coachSessionsReducer} from './coachSessionsReducer';
 import {conversationsReducer} from './conversationsReducer';
-import phoneContactsReducer from './phoneContactsReducer';
 import connectionTypeReducer from './connectionTypeReducer';
+import {clubsReducer} from './clubsReducer';
+import {servicesReducer} from './servicesReducer';
+import {bookingsReducer} from './bookingsReducer';
+import {postsReducer} from './postsReducer';
+import {usersReducer} from './usersReducer';
 
 export default combineReducers({
   appSettings: appSettingsReducer,
@@ -23,13 +37,25 @@ export default combineReducers({
   coachSessions: coachSessionsReducer,
   connectionType: connectionTypeReducer,
   conversations: conversationsReducer,
-  globaleVariables: globaleVariablesReducer,
-  historicSearch: historicSearchReducer,
+  initialInteractions: intialInteractionReducer,
   layout: layoutReducer,
   localVideoLibrary: localVideoLibraryReducer,
   message: messageReducer,
   network,
-  phoneContacts: phoneContactsReducer,
   uploadQueue: uploadQueueReducer,
   user: userReducer,
+  userCloudArchives: userCloudArchivesReducer,
+  userNotifications: userNotificationsReducer,
+  userSessions: userSessionsReducer,
+  userSessionsRequests: userSessionsRequestsReducer,
+  userBlockedUsers: userBlockedUsersReducer,
+  userBlockedByUsers: userBlockedByUsersReducer,
+  userSilentFriends: userSilentFriendsReducer,
+  userClubs: userClubsReducer,
+  clubs: clubsReducer,
+  services: servicesReducer,
+  bookings: bookingsReducer,
+  posts: postsReducer,
+  userBookings: userBookingsReducer,
+  users: usersReducer,
 });

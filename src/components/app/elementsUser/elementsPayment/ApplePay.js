@@ -8,7 +8,7 @@ import {Col, Row, Grid} from 'react-native-easy-grid';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 
-import sizes from '../../../style/sizes';
+import {heightHeaderHome} from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import ButtonColor from '../../../layout/Views/Button';
 import colors from '../../../style/colors';
@@ -138,7 +138,7 @@ class ApplePay extends Component {
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={this.applePayComponent.bind(this)}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={heightHeaderHome}
           offsetBottom={90 + 60}
           showsVerticalScrollIndicator={true}
         />
@@ -165,7 +165,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(ApplePay);
+export default connect(mapStateToProps)(ApplePay);

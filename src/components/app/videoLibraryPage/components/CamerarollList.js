@@ -63,6 +63,7 @@ export default class CamerarollList extends Component {
     } else if (lengthVideos > 0 && !canExportVideos) {
       this.setState({canExportVideos: true});
     }
+    return isSelected;
   };
 
   renderCardArchive = (video, index) => {
@@ -127,10 +128,12 @@ export default class CamerarollList extends Component {
           fetchData={() => {
             hasNextPage && this.fetchNewPage({firstFetch: false, lastElement});
           }}
+          displayLoader={hasNextPage}
           ListEmptyComponent={
             !loadingCameraRoll
               ? {
-                  text: 'No videos',
+                  text: 'No videos found',
+                  icon: 'film',
                   image: require('../../../../img/images/shelve.png'),
                 }
               : null

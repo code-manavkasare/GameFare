@@ -1,17 +1,16 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Animated, Keyboard, Text} from 'react-native';
 import {connect} from 'react-redux';
-import Orientation from 'react-native-orientation-locker';
 import {BlurView} from '@react-native-community/blur';
 import {dissoc} from 'ramda';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
-import sizes from '../../style/sizes';
+import {heightHeaderHome, marginTopApp, heightFooter} from '../../style/sizes';
 
 import {getSelectionActionDecorations} from '../../functions/utility';
 import {isUserPrivate, userObject} from '../../functions/users';
-import {openSession} from '../../functions/coach';
+import {openSession, sessionOpening} from '../../functions/coach';
 
 import Loader from '../../layout/loaders/Loader';
 import {boolShouldComponentUpdate} from '../../functions/redux';
@@ -20,8 +19,13 @@ import PermissionView from '../../layout/Views/PermissionView';
 import InvitationManager from '../../utility/InvitationManager';
 
 import ListVideoCalls from './components/ListVideoCalls';
-import UserSearchResults from '../userDirectory/components/UserSearchResults';
+import SearchResults from '../searchPage/components/SearchResults';
 import HeaderCallTab from './components/HeaderCallTab';
+import {
+  userConnectedSelector,
+  userIDSelector,
+  userInfoSelector,
+} from '../../../store/selectors/user';
 
 class CallTab extends Component {
   constructor(props) {
@@ -83,7 +87,7 @@ class CallTab extends Component {
                 [user.id]: user,
               });
               navigate('Conversation', {
-                coachSessionID: session.objectID,
+                id: session.objectID,
               });
             },
           },
@@ -169,7 +173,7 @@ class CallTab extends Component {
             selectedSessions={selectedSessions}
             inlineSearch={inlineSearch}
             onClick={(session) => this.selectSession(session)}
-            openUserDirectory={() => this.openUserDirectory()}
+            openSearchPage={() => this.openSearchPage()}
             hideCallButton={action !== 'call'}
             liveSessionHeader={action === 'call'}
             headerTitle={modal ? 'Recent' : userID ? 'Video Calls' : ''}
@@ -183,7 +187,8 @@ class CallTab extends Component {
           />
         ) : null}
         {searchText !== '' ? (
-          <UserSearchResults
+          <SearchResults
+            searchFor={'users'}
             onSelect={(user) => this.selectUser(user)}
             selectedUsers={selectedUsers}
             searchText={searchText}
@@ -192,7 +197,7 @@ class CallTab extends Component {
       </View>
     );
   }
-  openUserDirectory = async () => {
+  openSearchPage = async () => {
     const {navigation} = this.props;
     const {goBack, navigate} = navigation;
     const {inlineSearch, branchLink, archivesToShare, action} = this.state;
@@ -201,7 +206,7 @@ class CallTab extends Component {
       goBack();
     } else {
       await this.setState({selectedUsers: {}, selectedSessions: {}});
-      navigate('UserDirectory', {
+      navigate('SearchPage', {
         action,
         archivesToShare,
         branchLink,
@@ -210,8 +215,8 @@ class CallTab extends Component {
   };
 
   header() {
-    const {actionHeader, modal, branchLink, inlineSearch} = this.state;
-    const {navigation, numberNotifications, userConnected, route} = this.props;
+    const {actionHeader, modal, inlineSearch} = this.state;
+    const {navigation, userConnected, route} = this.props;
     const {navigate, goBack} = navigation;
     return (
       <HeaderCallTab
@@ -225,31 +230,18 @@ class CallTab extends Component {
         initialBorderWidth={1}
         loader={false}
         icon1={!userConnected ? null : inlineSearch ? 'times' : 'search'}
-        sizeIcon1={24}
-        colorIcon1={colors.title}
+        sizeIcon1={!userConnected || inlineSearch ? null : 19}
+        colorIcon1={colors.greyDarker}
         clickButton1={
-          inlineSearch ? () => goBack() : () => this.openUserDirectory()
+          inlineSearch ? () => goBack() : () => this.openSearchPage()
         }
         archivesToShare={route?.params?.archivesToShare}
         modal={modal}
         icon2={!userConnected ? null : modal ? 'share' : 'comment-alt'}
         typeIcon2={modal ? 'moon' : 'font'}
-        sizeIcon2={24}
-        colorIcon2={colors.title}
+        sizeIcon2={21}
+        colorIcon2={colors.greyDarker}
         clickButton2={() => navigate('Groups')}
-        badgeIcon2={
-          numberNotifications !== 0 && !modal ? (
-            <View style={[styleApp.viewBadge, {marginLeft: 30}]}>
-              <Text
-                style={[
-                  styleApp.textBold,
-                  {color: colors.white, fontSize: 10},
-                ]}>
-                {numberNotifications}
-              </Text>
-            </View>
-          ) : null
-        }
         searchBar={
           inlineSearch ? (
             <SearchInput
@@ -288,12 +280,13 @@ class CallTab extends Component {
           onClearInvites={() =>
             this.setState({selectedUsers: {}, selectedSessions: {}})
           }
-          onConfirmInvites={() =>
-            this.setState({selectedUsers: {}, selectedSessions: {}})
-          }
+          onConfirmInvites={({sessions}) => {
+            this.setState({selectedUsers: {}, selectedSessions: {}});
+            sessionOpening(Object.values(sessions)[0]);
+          }}
           action={action}
           archivesToShare={archivesToShare}
-          bottomOffset={modal ? 55 : sizes.heightFooter}
+          bottomOffset={modal ? 55 : heightFooter}
         />
       </View>
     );
@@ -301,7 +294,7 @@ class CallTab extends Component {
 }
 
 const styles = StyleSheet.create({
-  bodyContainer: {marginTop: sizes.marginTopApp + sizes.heightHeaderHome},
+  bodyContainer: {marginTop: marginTopApp + heightHeaderHome},
   loaderStyle: {...styleApp.center, height: 120},
   inlineSearchContainer: {paddingBottom: 0},
   listVideoCallsBlur: {
@@ -312,19 +305,11 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => {
-  const notifications = state.user.infoUser.notifications;
   return {
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
-    userConnected: state.user.userConnected,
-    currentSessionID: state.coach.currentSessionID,
-    numberNotifications: notifications
-      ? Object.values(notifications).length
-      : 0,
+    userID: userIDSelector(state),
+    infoUser: userInfoSelector(state),
+    userConnected: userConnectedSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(CallTab);
+export default connect(mapStateToProps)(CallTab);

@@ -1,12 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Dimensions,
-  StatusBar,
-} from 'react-native';
+import {View, Text, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {
   OTSession,
@@ -30,8 +23,6 @@ import {
 } from '../../../../../style/sizes';
 
 import {coachAction} from '../../../../../../store/actions/coachActions';
-import {coachSessionsAction} from '../../../../../../store/actions/coachSessionsActions';
-import {userAction} from '../../../../../../store/actions/userActions';
 import {layoutAction} from '../../../../../../store/actions/layoutActions';
 
 import {
@@ -55,6 +46,18 @@ import Loader from '../../../../../layout/loaders/Loader';
 import MembersView from './components/MembersView';
 import CameraPage from '../../../../../app/camera/index';
 import Footer from './footer/index';
+import {
+  userConnectedSelector,
+  userIDSelector,
+} from '../../../../../../store/selectors/user';
+import {currentScreenSizeSelector} from '../../../../../../store/selectors/layout';
+import {
+  currentSessionIDSelector,
+  reconnectingSelector,
+  sessionSelector,
+} from '../../../../../../store/selectors/sessions';
+import {connectionTypeSelector} from '../../../../../../store/selectors/connectionType';
+import {boolShouldComponentUpdate} from '../../../../../functions/redux';
 
 class GroupsPage extends Component {
   constructor(props) {
@@ -169,7 +172,15 @@ class GroupsPage extends Component {
   componentDidMount() {
     this.refreshTokenMember();
   }
-
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+      component: 'StreamView',
+    });
+  }
   componentDidUpdate(prevProps, prevState) {
     const {
       userID,
@@ -177,6 +188,7 @@ class GroupsPage extends Component {
       userConnected,
       currentScreenSize,
       route,
+      session,
     } = this.props;
     const {portrait} = currentScreenSize;
     if (!currentSessionID && prevProps.currentSessionID)
@@ -193,12 +205,22 @@ class GroupsPage extends Component {
         permission('library');
         this.refreshTokenMember();
 
-        if (
-          !isEqual(prevProps.session, this.props.session) &&
-          this.props.session
-        ) {
+        if (!isEqual(prevProps.session, session) && session) {
           this.refreshTokenMember();
-          this.openVideoShared();
+          const personSharingScreen = isSomeoneSharingScreen(session);
+          if (
+            !isEqual(
+              Object.keys(
+                prevProps.session?.members[personSharingScreen]?.sharedVideos ??
+                  {},
+              ),
+              Object.keys(
+                session?.members[personSharingScreen]?.sharedVideos ?? {},
+              ),
+            )
+          ) {
+            this.openVideoShared();
+          }
         }
       }
     }
@@ -210,7 +232,6 @@ class GroupsPage extends Component {
         this.footerRef?.bottomButtonsRef?.clickRecord();
       } catch (e) {}
     }
-    prevProps = null;
   }
   isTokenUpToDate = () => {
     const {userID, session: coachSession} = this.props;
@@ -252,7 +273,8 @@ class GroupsPage extends Component {
     } = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     if (personSharingScreen && userID !== personSharingScreen) {
-      const videos = coachSession.members[personSharingScreen].sharedVideos;
+      const videos =
+        coachSession.members[personSharingScreen]?.sharedVideos ?? {};
       openVideoPlayer({
         coachSessionID,
         archives: Object.keys(videos),
@@ -554,7 +576,7 @@ class GroupsPage extends Component {
     const {navigation} = this.props;
     return (
       <View style={styleApp.stylePage}>
-        <FocusListeners navigation={navigation} />
+        <FocusListeners navigation={navigation} statusBarOnFocus />
         <KeepAwake />
         {this.streamPage()}
       </View>
@@ -620,19 +642,15 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state, props) => {
-  let connectionType = state.connectionType.type;
-  if (connectionType === 'none' || connectionType === 'unknown')
-    connectionType = false;
-  else connectionType = true;
+  const currentSessionID = currentSessionIDSelector(state);
   return {
-    userID: state.user.userID,
-    userConnected: state.user.userConnected,
-    currentScreenSize: state.layout.currentScreenSize,
-    currentSessionID: state.coach.currentSessionID,
-    session: state.coachSessions[state.coach.currentSessionID],
-    currentSession: state.coachSessions[state.coach.currentSessionID],
-    reconnecting: state.coach.reconnecting,
-    connectionType,
+    userID: userIDSelector(state),
+    userConnected: userConnectedSelector(state),
+    currentScreenSize: currentScreenSizeSelector(state),
+    currentSessionID,
+    session: sessionSelector(state, {id: currentSessionID}),
+    reconnecting: reconnectingSelector(state),
+    connectionType: connectionTypeSelector(state),
   };
 };
 
@@ -640,8 +658,6 @@ export default connect(
   mapStateToProps,
   {
     coachAction,
-    coachSessionsAction,
-    userAction,
     layoutAction,
   },
 )(GroupsPage);

@@ -1,12 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 
 import colors from '../../style/colors';
@@ -17,6 +10,7 @@ import {
   microphonePermission,
   cameraPermission,
 } from '../../functions/streaming';
+import {userIDSelector, userInfoSelector} from '../../../store/selectors/user';
 
 class PermissionView extends Component {
   constructor(props) {
@@ -108,13 +102,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
-    coach: state.coach,
+    userID: userIDSelector(state),
+    infoUser: userInfoSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(PermissionView);
+export default connect(mapStateToProps)(PermissionView);

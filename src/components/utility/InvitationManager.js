@@ -7,7 +7,7 @@ import isEqual from 'lodash.isequal';
 
 import {navigate, goBack} from '../../../NavigationService';
 
-import sizes from '../style/sizes';
+import {marginBottomApp, keyboardOffset, width} from '../style/sizes';
 import styleApp from '../style/style';
 import colors from '../style/colors';
 
@@ -18,6 +18,7 @@ import {
   openSession,
   sessionOpening,
   addMembersToSession,
+  timeout,
 } from '../functions/coach';
 import {shareVideosWithTeams} from '../functions/videoManagement';
 import {getSelectionActionDecorations} from '../functions/utility';
@@ -26,6 +27,12 @@ import AllIcon from '../layout/icons/AllIcons';
 import ButtonColor from '../layout/Views/Button';
 
 import {titleSession} from '../app/TeamPage/components/elements';
+import {
+  userConnectedSelector,
+  userIDSelector,
+  userInfoSelector,
+} from '../../store/selectors/user';
+import {currentSessionIDSelector} from '../../store/selectors/sessions';
 
 class InvitationManager extends Component {
   static propTypes = {
@@ -105,8 +112,11 @@ class InvitationManager extends Component {
   }
 
   componentWillUnmount() {
-    Keyboard.removeListener("keyboardWillShow");
-    Keyboard.removeListener("keyboardWillHide", this._keyboardWillHide.bind(this))
+    Keyboard.removeListener('keyboardWillShow');
+    Keyboard.removeListener(
+      'keyboardWillHide',
+      this._keyboardWillHide.bind(this),
+    );
   }
 
   hideButton() {
@@ -138,10 +148,11 @@ class InvitationManager extends Component {
     const {actionText} = getSelectionActionDecorations(action);
     const firstUser = userArray[0];
     if (userArray.length === 1) {
-      return `${actionText} ${firstUser.info.firstname}`;
+      return `${actionText} ${firstUser.info.firstname ??
+        firstUser.info.title}`;
     } else {
-      return `${actionText} ${firstUser.info.firstname} and ${userArray.length -
-        1} others`;
+      return `${actionText} ${firstUser.info.firstname ??
+        firstUser.info.title} and ${userArray.length - 1} others`;
     }
   }
 
@@ -168,7 +179,6 @@ class InvitationManager extends Component {
     const {
       selectedUsers,
       userID,
-      infoUser,
       archivesToShare,
       sessionToInvite,
       currentSessionID,
@@ -177,7 +187,7 @@ class InvitationManager extends Component {
     if (action === 'invite') {
       if (sessionToInvite && sessionToInvite !== '') {
         await addMembersToSession(sessionToInvite, selectedUsers);
-        navigate('Conversation', {coachSessionID: sessionToInvite});
+        navigate('Conversation', {id: sessionToInvite});
       } else if (currentSessionID && currentSessionID !== '') {
         await addMembersToSession(currentSessionID, selectedUsers);
         navigate('Session');
@@ -187,21 +197,18 @@ class InvitationManager extends Component {
         );
       }
     } else {
-      const session = await openSession(
-        userObject(infoUser, userID),
-        selectedUsers,
-      );
+      const session = await openSession(userObject(userID), selectedUsers);
       if (action === 'shareArchives') {
         if (archivesToShare && archivesToShare.length > 0) {
           shareVideosWithTeams(archivesToShare, [session.objectID]);
-          navigate('Conversation', {coachSessionID: session.objectID});
+          navigate('Conversation', {id: session.objectID});
         } else {
           console.log(
             'ERROR InvitationManager, action is "shareVideos" but empty/no prop "archivesToShare" provided',
           );
         }
       } else if (action === 'message') {
-        navigate('Conversation', {coachSessionID: session.objectID});
+        navigate('Conversation', {id: session.objectID});
       } else if (action === 'call') {
         sessionOpening(session);
       }
@@ -220,7 +227,9 @@ class InvitationManager extends Component {
       if (archivesToShare && archivesToShare.length > 0) {
         shareVideosWithTeams(archivesToShare, sessionIDs);
         if (sessionIDs.length === 1) {
-          navigate('Conversation', {coachSessionID: sessionIDs[0]});
+          await goBack();
+          await timeout(100);
+          navigate('Conversation', {id: sessionIDs[0]});
         } else {
           goBack();
         }
@@ -240,7 +249,7 @@ class InvitationManager extends Component {
         );
       }
     } else if (action === 'message') {
-      navigate('Conversation', {coachSessionID: sessionIDs[0]});
+      navigate('Conversation', {id: sessionIDs[0]});
     } else if (action === 'call') {
       sessionOpening(Object.values(selectedSessions)[0]);
     }
@@ -248,6 +257,12 @@ class InvitationManager extends Component {
 
   confirmInvites() {
     const {selectedSessions, selectedUsers, onConfirmInvites} = this.props;
+    if (onConfirmInvites) {
+      return onConfirmInvites({
+        sessions: selectedSessions,
+        users: selectedUsers,
+      });
+    }
     const sessionArray = Object.values(selectedSessions);
     const userArray = Object.values(selectedUsers);
     if (sessionArray.length > 0) {
@@ -255,18 +270,18 @@ class InvitationManager extends Component {
     } else if (userArray.length > 0) {
       this.confirmUserInvites();
     }
-    onConfirmInvites && onConfirmInvites();
   }
 
   button = () => {
-    const {bottomOffset} = this.props;
+    const {bottomOffset, action} = this.props;
     const {buttonText} = this.state;
+    const {icon} = getSelectionActionDecorations(action);
     const translateY = this.buttonReveal.interpolate({
       inputRange: [0, 1, 2],
       outputRange: [
         75,
-        -(sizes.marginBottomApp + bottomOffset),
-        -(sizes.keyboardOffset + bottomOffset + 25),
+        -(marginBottomApp + bottomOffset),
+        -(keyboardOffset + bottomOffset + 25),
       ],
     });
     const buttonContainerStyle = {
@@ -302,10 +317,11 @@ class InvitationManager extends Component {
               <View style={styleApp.fullSize}>
                 <Row style={styleApp.center}>
                   <AllIcon
-                    type={'font'}
-                    color={colors.white}
-                    size={18}
-                    name={'video'}
+                    type={icon.type}
+                    color={icon.color ?? colors.white}
+                    size={icon.size ?? 18}
+                    name={icon.name}
+                    solid
                   />
                   <Text style={styles.buttonTextStyle}>{buttonText}</Text>
                 </Row>
@@ -366,20 +382,17 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginLeft: '5%',
     marginRight: '4%',
-    width: sizes.width * 0.76,
+    width: width * 0.76,
   },
 });
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
-    userConnected: state.user.userConnected,
-    currentSessionID: state.coach.currentSessionID,
+    userID: userIDSelector(state),
+    infoUser: userInfoSelector(state),
+    userConnected: userConnectedSelector(state),
+    currentSessionID: currentSessionIDSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(InvitationManager);
+export default connect(mapStateToProps)(InvitationManager);

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {Share} from 'react-native';
+import {Share, View, Text, StyleSheet} from 'react-native';
 import database from '@react-native-firebase/database';
+import {connect} from 'react-redux';
 
 import {store} from '../../../../store/reduxStore';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
@@ -9,8 +10,10 @@ import colors from '../../../style/colors';
 import {getValueOnce} from '../../../database/firebase/methods';
 import {shareVideosWithTeams} from '../../../functions/videoManagement';
 import {timeout} from '../../../functions/coach';
+import styleApp from '../../../style/style';
+import {numFilteredNotificationsSelector} from '../../../../store/selectors/user';
 
-export default class HeaderCallTab extends Component {
+class HeaderCallTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -71,7 +74,7 @@ export default class HeaderCallTab extends Component {
     await this.setState({loader: false});
   };
   header() {
-    const {modal, clickButton2} = this.props;
+    const {modal, clickButton2, numNotifications} = this.props;
     const {loader} = this.state;
     return (
       <HeaderBackButton
@@ -79,6 +82,14 @@ export default class HeaderCallTab extends Component {
         loader={loader}
         clickButton2={() => (modal ? this.clickShare() : clickButton2())}
         colorLoader={colors.title}
+        badgeIcon2={
+          numNotifications !== 0 &&
+          !modal && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{numNotifications}</Text>
+            </View>
+          )
+        }
       />
     );
   }
@@ -87,3 +98,17 @@ export default class HeaderCallTab extends Component {
   }
 }
 
+const styles = StyleSheet.create({
+  badge: {...styleApp.viewBadge, marginLeft: 30},
+  badgeText: {...styleApp.textBold, color: colors.white, fontSize: 10},
+});
+
+const mapStateToProps = (state) => {
+  return {
+    numNotifications: numFilteredNotificationsSelector(state, {
+      filterType: 'conversations',
+    }),
+  };
+};
+
+export default connect(mapStateToProps)(HeaderCallTab);

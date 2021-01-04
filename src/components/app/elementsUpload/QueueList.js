@@ -14,12 +14,14 @@ import {connect} from 'react-redux';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 
-import {uploadQueueAction} from '../../../store/actions/uploadQueueActions';
 import TaskCard from './TaskCard';
 import * as Progress from 'react-native-progress';
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
-import {navigate} from '../../../../NavigationService';
+import {goBack} from '../../../../NavigationService';
+import {uploadQueueSelector} from '../../../store/selectors/uploadQueue';
+import {currentScreenSizeSelector} from '../../../store/selectors/layout';
+import {userIDSelector} from '../../../store/selectors/user';
 
 class QueueList extends Component {
   constructor(props) {
@@ -67,7 +69,7 @@ class QueueList extends Component {
       setTimeout(() => {
         const {mounted} = this.state;
         if (mounted) {
-          navigate('TabsApp');
+          goBack();
         }
       }, 1200);
     }
@@ -90,7 +92,7 @@ class QueueList extends Component {
 
   close() {
     const {navigation} = this.props;
-    navigation.navigate('TabsApp');
+    navigation.goBack();
   }
 
   closeButton() {
@@ -237,19 +239,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.black,
   },
-  headerText: {
-    ...styleApp.text,
-    marginTop: 10,
-    marginBottom: 5,
-    fontSize: 15,
-    marginHorizontal: 'auto',
-    textAlign: 'center',
-    width: '100%',
-    height: 40,
-    position: 'absolute',
-    fontWeight: '700',
-    color: colors.greyDarker,
-  },
   buttonClose: {
     position: 'absolute',
     top: 15,
@@ -287,13 +276,10 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    uploadQueue: state.uploadQueue,
-    currentScreenSize: state.layout.currentScreenSize,
-    userID: state.user.userID,
+    uploadQueue: uploadQueueSelector(state),
+    currentScreenSize: currentScreenSizeSelector(state),
+    userID: userIDSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {uploadQueueAction},
-)(QueueList);
+export default connect(mapStateToProps)(QueueList);

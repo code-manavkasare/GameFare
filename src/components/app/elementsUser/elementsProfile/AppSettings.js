@@ -9,16 +9,18 @@ import AllIcons from '../../../layout/icons/AllIcons';
 import {appSettingsAction} from '../../../../store/actions/appSettingsActions';
 import {toggleUserPublic} from '../../../functions/users';
 
-import {
-  heightFooter,
-  heightHeaderHome,
-  marginTopApp,
-} from '../../../style/sizes';
+import {heightFooter, heightHeaderModal} from '../../../style/sizes';
 
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
+import {
+  isPrivateSelector,
+  permissionOtherUserToRecordSelector,
+  userIDSelector,
+} from '../../../../store/selectors/user';
+import {wifiAutoUploadSelector} from '../../../../store/selectors/appSettings';
 
 class AppSettings extends Component {
   constructor(props) {
@@ -116,13 +118,14 @@ class AppSettings extends Component {
     return (
       <View style={[styleApp.stylePage]}>
         <HeaderBackButton
-          inputRange={[5, 10]}
+          marginTop={10}
+          inputRange={[0, 20]}
           colorLoader={'white'}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           initialBorderColorIcon={colors.white}
           textHeader="Settings"
           sizeLoader={40}
-          sizeIcon1={21}
+          sizeIcon1={17}
           nobackgroundColorIcon1={true}
           initialBorderWidth={1}
           initialBorderColorHeader={colors.white}
@@ -139,7 +142,7 @@ class AppSettings extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.settings()}
           marginBottomScrollView={0}
-          marginTop={heightHeaderHome}
+          marginTop={heightHeaderModal + 5}
           offsetBottom={heightFooter + 90}
           showsVerticalScrollIndicator={false}
         />
@@ -150,11 +153,10 @@ class AppSettings extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    isPrivate: state.user.infoUser.userInfo.isPrivate,
-    permissionOtherUserToRecord:
-      state.user.infoUser.permissionOtherUserToRecord,
-    wifiAutoUpload: state.appSettings.wifiAutoUpload,
+    userID: userIDSelector(state),
+    isPrivate: isPrivateSelector(state),
+    permissionOtherUserToRecord: permissionOtherUserToRecordSelector(state),
+    wifiAutoUpload: wifiAutoUploadSelector(state),
   };
 };
 

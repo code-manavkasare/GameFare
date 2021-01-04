@@ -1,8 +1,16 @@
 import {StyleSheet, Dimensions} from 'react-native';
-import sizes from './sizes';
+import {
+  heightHeaderHome,
+  marginTopHeader,
+  marginTopApp,
+  marginBottomApp,
+  height,
+  borderRadius,
+  heightFooterBooking,
+  heightFooter,
+  width,
+} from './sizes';
 import colors from './colors';
-
-const {height, width} = Dimensions.get('screen');
 
 const font = 'Avenir-Book';
 const fontLight = 'Avenir-Light';
@@ -31,6 +39,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   center7: {
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
+  center8: {
     justifyContent: 'center',
     alignItems: 'flex-start',
   },
@@ -154,11 +166,34 @@ const styles = StyleSheet.create({
     fontFamily: fontLight,
     color: colors.title,
   },
+  textField: {
+    justifyContent: 'center',
+    height: 50,
+    opacity: 1,
+    width: '100%',
+    borderRadius: 15,
+    backgroundColor: colors.greyLight,
+    marginVertical: 10,
+    paddingLeft: 15,
+    fontSize: 16,
+    fontFamily: font,
+    color: colors.title,
+    fontWeight: 'bold',
+  },
   input: {
-    fontSize: 15,
+    fontSize: 17,
     fontFamily: font,
     fontWeight: '600',
     color: colors.title,
+  },
+  inputBox: {
+    height: 55,
+    backgroundColor: colors.white,
+    borderRadius: 0,
+    borderColor: colors.off,
+    // paddingLeft: 10,
+    marginTop: 10,
+    borderBottomWidth: 1,
   },
   inputOff: {
     color: '#C7C7CC',
@@ -230,12 +265,48 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     shadowOpacity: 0.05,
   },
+  cardPost: {
+    width: width,
+    marginBottom: 25,
+  },
+  cardClubSmall: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    marginRight: 10,
+    backgroundColor: colors.greyDarker,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.06,
+    shadowRadius: 7,
+  },
+  cardInvitation: {
+    width: '100%',
+    paddingVertical: 10,
+    borderRadius: 15,
+    marginBottom: 25,
+    backgroundColor: colors.greyLight,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.06,
+    shadowRadius: 7,
+  },
   cardArchive: {
     width: width / 2,
     borderWidth: 1,
     borderColor: colors.white,
     height: 170,
     borderRadius: 0,
+    overflow: 'hidden',
+    backgroundColor: colors.title,
+  },
+  fullCardArchive: {
+    width: width,
+    height: width,
     overflow: 'hidden',
     backgroundColor: colors.title,
   },
@@ -301,8 +372,8 @@ const styles = StyleSheet.create({
   headerBooking: {
     position: 'absolute',
     top: 0,
-    height: sizes.heightHeaderHome,
-    paddingTop: sizes.marginTopHeader - 5,
+    height: heightHeaderHome,
+    paddingTop: marginTopHeader - 5,
 
     borderBottomWidth: 0,
     backgroundColor: colors.primary,
@@ -347,8 +418,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
     backgroundColor: colors.off2,
-    borderWidth: 0.5,
-    borderColor: colors.grey,
   },
   viewNumber: {
     height: 30,
@@ -364,8 +433,30 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     borderTopWidth: 0,
-    height: sizes.heightFooterBooking,
+    height: heightFooterBooking,
     paddingTop: 15,
+    zIndex: 20,
+    width: width,
+    borderColor: '#EAEAEA',
+  },
+  footerModal: {
+    position: 'absolute',
+    bottom: marginTopApp + 25,
+    borderTopWidth: 0,
+    height: heightFooterBooking,
+    paddingTop: 15,
+    zIndex: 20,
+    width: width,
+    borderColor: '#EAEAEA',
+    paddingLeft: '5%',
+    paddingRight: '5%',
+  },
+  footerBook: {
+    position: 'absolute',
+    bottom: heightFooter + marginBottomApp + 10,
+    borderTopWidth: 0,
+    height: 75,
+    paddingTop: 10,
     zIndex: 20,
     width: width,
     borderColor: '#EAEAEA',
@@ -502,9 +593,9 @@ const styles = StyleSheet.create({
   },
   stylePageModal: {
     flex: 1,
-    maxHeight: height - sizes.marginTopApp - 25,
+    maxHeight: height - marginTopApp - 25,
     borderLeftWidth: 0,
-    borderRadius: sizes.borderRadius,
+    borderRadius: borderRadius,
     borderColor: colors.off,
     backgroundColor: colors.white,
   },
@@ -535,8 +626,8 @@ const styles = StyleSheet.create({
   },
   fullAppModal: {
     width: '100%',
-    height: sizes.height - sizes.marginTopApp,
-    borderRadius: sizes.borderRadius,
+    height: height - marginTopApp,
+    borderRadius: borderRadius,
   },
   eventTitle: {
     color: colors.primary,
@@ -573,6 +664,8 @@ const styles = StyleSheet.create({
     height: 20,
     width: 20,
     borderRadius: 10,
+    paddingLeft: 1,
+    paddingTop: 1,
     backgroundColor: colors.blue,
   },
   absoluteViewBadge: {

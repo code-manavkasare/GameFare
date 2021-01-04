@@ -3,7 +3,7 @@ import {StyleSheet, View, Animated, StatusBar} from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
-import sizes from '../../style/sizes';
+import {heightFooter,marginBottomApp} from '../../style/sizes';
 
 import BottomButtons from './components/BottomButtons';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
@@ -44,7 +44,7 @@ export default class CameraPage extends Component {
         />
         <HeaderBackButton
           AnimatedHeaderValue={this.animatedHeaderValue}
-          inputRange={[5, 10]}
+          inputRange={[0, 100]}
           colorLoader={'white'}
           sizeLoader={40}
           initialBorderColorIcon={'transparent'}
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   bottomButtonsContainer: {
     position: 'absolute',
     bottom: 0,
-    height: sizes.heightFooter + sizes.marginBottomApp,
+    height: heightFooter + marginBottomApp,
     marginTop: 5,
     paddingTop: 0,
     width: '100%',
