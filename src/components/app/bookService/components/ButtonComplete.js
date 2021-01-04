@@ -30,8 +30,11 @@ export default class ButtonComplete extends Component {
       bookingID,
     });
     await this.setState({loader: false});
-    if (response && !error) goBack();
-    else if (error) {
+    if (response && !error) {
+      await navigate('ClubsPage');
+      await timeout(300);
+      navigate('Club', {screen: 'AddContentBooking', params: {bookingID}});
+    } else if (error) {
       await timeout(300);
       navigate('Alert', {
         title: error,

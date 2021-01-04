@@ -16,6 +16,7 @@ import {
   FormatDate,
   duration,
 } from '../../../../../../../../../functions/date';
+import CardUser from '../../../../../../../../../layout/cards/CardUser';
 
 export default class CardFlag extends Component {
   constructor(props) {
@@ -106,7 +107,7 @@ export default class CardFlag extends Component {
       flagsSelected,
       click,
       totalTime,
-      memberPicture,
+      memberID,
       stopTimestamp,
       size,
     } = this.props;
@@ -139,10 +140,11 @@ export default class CardFlag extends Component {
                     )}
                   </View>
                   <View style={styles.memberPictureContainer}>
-                    {memberPicture ? (
-                      <AsyncImage
-                        mainImage={memberPicture}
-                        style={styles.memberPicture}
+                    {memberID ? (
+                      <CardUser
+                        id={memberID}
+                        imgOnly
+                        styleImg={styleApp.fullSize}
                       />
                     ) : null}
                   </View>
@@ -184,10 +186,11 @@ export default class CardFlag extends Component {
                     )}
                   </View>
                   <View style={styles.memberPictureContainerLg}>
-                    {memberPicture ? (
-                      <AsyncImage
-                        mainImage={memberPicture}
-                        style={styles.memberPicture}
+                    {memberID ? (
+                      <CardUser
+                        id={memberID}
+                        imgOnly
+                        styleImg={styleApp.fullSize}
                       />
                     ) : null}
                   </View>

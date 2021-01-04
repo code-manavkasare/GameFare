@@ -336,6 +336,7 @@ class BottomButton extends Component {
             selectedVideos,
             coachSessionID,
             forcePlay: true,
+            overrideCurrent: true,
           });
         },
       });

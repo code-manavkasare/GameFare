@@ -126,7 +126,7 @@ export default class AddContentBooking extends Component {
         <HeaderBackButton
           marginTop={10}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Add content to your booking'}
+          textHeader={'Add content to this booking'}
           inputRange={[10, 20]}
           initialBorderColorIcon={'transparent'}
           initialBackgroundColor={'transparent'}

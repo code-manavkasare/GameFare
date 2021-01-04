@@ -42,6 +42,7 @@ import {
   deleteCloudVideoInfo,
   updateThumbnailCloud,
 } from '../database/firebase/videosManagement';
+import {timeout} from './coach';
 
 const generateVideoInfosFromFlags = async (
   sourceVideoInfo,
@@ -177,14 +178,16 @@ const openVideoPlayer = async ({
   coachSessionID,
   forceSharing,
 }) => {
-  if (open) {
+  if (getCurrentRoute() === 'VideoPlayerPage') {
+    goBack();
+    await timeout(300);
+  }
+  if (open && archives.length > 0) {
     return navigate('VideoPlayerPage', {
       archives,
       coachSessionID,
       forceSharing,
     });
-  } else if (getCurrentRoute() === 'VideoPlayerPage') {
-    return goBack();
   }
   return;
 };
