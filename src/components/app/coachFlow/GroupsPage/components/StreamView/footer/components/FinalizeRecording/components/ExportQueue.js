@@ -14,7 +14,7 @@ import {store} from '../../../../../../../../../../store/reduxStore';
 import {native} from '../../../../../../../../../animations/animations';
 import ButtonColor from '../../../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../../../layout/icons/AllIcons';
-import {width,height} from '../../../../../../../../../style/sizes';
+import {width, height} from '../../../../../../../../../style/sizes';
 import Button from '../../../../../../../../../layout/buttons/Button';
 
 import colors from '../../../../../../../../../style/colors';
@@ -308,6 +308,7 @@ export default class ExportQueue extends Component {
                     id: flagId,
                     portrait: recording.portrait,
                   }}
+                  memberID={member.id}
                   memberPicture={member?.info?.picture}
                   stopTimestamp={recording.stopTimestamp}
                 />

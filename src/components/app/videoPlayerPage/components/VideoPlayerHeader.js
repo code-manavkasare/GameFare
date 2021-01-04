@@ -57,7 +57,7 @@ class VideoPlayerHeader extends React.Component {
     const {disableRecord, archives, firstArchive, route} = this.props;
     const {coachSessionID} = route.params;
     if (disableRecord || archives.length > 1) return false;
-    if (firstArchive.recordedActions || coachSessionID) return false;
+    if (firstArchive?.recordedActions || coachSessionID) return false;
     return true;
   };
   iconReview = () => {
@@ -239,11 +239,13 @@ class VideoPlayerHeader extends React.Component {
       // transform: [{translateY: headerTranslateY}],
     };
     const floatingButtonsStyle = {
-      width: '95%',
-      left: '2.5%',
+      position: 'absolute',
+      right: '5%',
       alignItems: 'flex-end',
+      alignSelf: 'flex-end',
       marginTop: marginTopFloatingButtons,
-      transform: [{translateY: floatingButtonsTranslateY}],
+      // transform: [{translateY: floatingButtonsTranslateY}],
+      opacity: headerOpacity,
     };
     return (
       <View style={containerStyle}>

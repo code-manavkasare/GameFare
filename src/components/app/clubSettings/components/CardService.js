@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 import {bool, string, object} from 'prop-types';
 import {Col, Row} from 'react-native-easy-grid';
@@ -138,7 +138,10 @@ class CardService extends Component {
     const isUserOwner = owner === userID;
 
     return (
-      <View activeOpacity={0.9} onPress={() => true} style={containerStyle}>
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={!isUserOwner ? this.bookService : () => {}}
+        style={containerStyle}>
         {displayOwner && <CardUser id={owner} />}
         <Row>
           <Col size={60} style={styleApp.center2}>
@@ -187,7 +190,7 @@ class CardService extends Component {
             ) : null}
           </Row>
         </Row>
-      </View>
+      </TouchableOpacity>
     );
   }
 }

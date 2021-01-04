@@ -54,7 +54,13 @@ class GuidedInteraction extends Component {
       offset,
     } = this.props;
     const {x, y, height, width} = this.state;
-    if (isFocused && requiredInteractions[0] === interaction && x && y) {
+    if (
+      isFocused &&
+      requiredInteractions &&
+      requiredInteractions[0] === interaction &&
+      x &&
+      y
+    ) {
       if (type === 'overlay') {
         navigate('InteractiveView', {
           x,

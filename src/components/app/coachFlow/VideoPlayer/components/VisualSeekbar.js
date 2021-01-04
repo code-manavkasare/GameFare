@@ -206,7 +206,9 @@ class VisualSeekBar extends Component {
     const {seek, totalTime, paused, onSlidingStart} = this.props;
     const {width} = this.state;
 
-    this.playheadPosition.setValue(toValue);
+    if (!isNaN(toValue)) {
+      this.playheadPosition.setValue(toValue);
+    }
     if (!updateVideoOnSeek) {
       this._lastPlayheadPos = toValue;
     } else {

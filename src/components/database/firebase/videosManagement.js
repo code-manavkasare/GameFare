@@ -13,19 +13,17 @@ const shareCloudVideo = async (
   const userID = forceInvitedByUser ?? store.getState().user.userID;
   const date = Date.now();
   let updates = {
+    [`users/${shareWithID}/archivedStreams/${videoID}`]: {
+      id: videoID,
+      startTimestamp: date,
+      uploadedByUser: false,
+    },
     [`archivedStreams/${videoID}/members/${shareWithID}`]: {
       id: shareWithID,
       invitedBy: userID,
       timestamp: date,
     },
   };
-  if (forceInvitedByUser) {
-    updates[`users/${shareWithID}/archivedStreams/${videoID}`] = {
-      id: videoID,
-      startTimestamp: date,
-      uploadedByUser: false,
-    };
-  }
   await database()
     .ref()
     .update(updates);
@@ -182,10 +180,12 @@ const watchVideosLive = async ({
   coachSessionID,
   personSharingScreen,
   forcePlay,
+  overrideCurrent,
 }) => {
   if (!personSharingScreen) personSharingScreen = store.getState().user.userID;
   let updates = {};
   let sharedVideoUpdates = {};
+  let memberVideoUpdates = {};
   for (let i in selectedVideos) {
     const id = selectedVideos[i];
     const coachSessionMemberSharingPath = `coachSessions/${coachSessionID}/members/${personSharingScreen}`;
@@ -197,15 +197,22 @@ const watchVideosLive = async ({
       position: {x: 0, y: 0},
       scale: 1,
     };
+    memberVideoUpdates[id] = true;
     updates[`${coachSessionMemberSharingPath}/shareScreen`] = true;
     updates[`${coachSessionMemberSharingPath}/videoIDSharing`] = id;
-
-    updates[
-      `coachSessions/${coachSessionID}/members/${personSharingScreen}/sharedVideos/${id}`
-    ] = true;
+    if (!overrideCurrent) {
+      updates[
+        `coachSessions/${coachSessionID}/members/${personSharingScreen}/sharedVideos/${id}`
+      ] = true;
+    }
   }
   const sharedVideosPath = `coachSessions/${coachSessionID}/sharedVideos`;
   updates[sharedVideosPath] = sharedVideoUpdates;
+  if (overrideCurrent) {
+    updates[
+      `coachSessions/${coachSessionID}/members/${personSharingScreen}/sharedVideos`
+    ] = memberVideoUpdates;
+  }
   console.log(updates);
   await database()
     .ref()

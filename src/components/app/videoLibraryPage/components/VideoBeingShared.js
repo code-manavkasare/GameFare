@@ -30,9 +30,13 @@ class VideoBeingShared extends Component {
     if (!currentSessionID) return null;
     const personSharingScreen = isSomeoneSharingScreen(session);
     if (!personSharingScreen) return null;
-    if (!session.sharedVideos) return null;
-    const videos = Object.keys(session.sharedVideos);
-    const displayVideos = Object.keys(session.sharedVideos).splice(0, 3);
+    if (!session.members[personSharingScreen].sharedVideos) return null;
+    const videos = Object.keys(
+      session.members[personSharingScreen].sharedVideos,
+    );
+    const displayVideos = Object.keys(
+      session.members[personSharingScreen].sharedVideos,
+    ).splice(0, 3);
     return (
       <ButtonColor
         view={() => {
@@ -43,17 +47,8 @@ class VideoBeingShared extends Component {
                   return (
                     <CardArchive
                       style={{
-                        height: 70,
-                        width: 50,
                         left: Number(index) * 20,
-                        borderRadius: 15,
-                        overflow: 'hidden',
-                        // marginRight: 3,
-                        borderWidth: 3,
-                        borderColor: colors.white,
-                        position: 'absolute',
-                        backgroundColor: colors.greyDark,
-                        // ...styleApp.shade,
+                        ...styles.cardArchive,
                       }}
                       disableClick={true}
                       hideInformation={true}
@@ -67,12 +62,7 @@ class VideoBeingShared extends Component {
               </Col>
               <Col size={50} style={styleApp.center2}>
                 <Text style={styleApp.textBold}>Currently Live</Text>
-                <Text
-                  style={{
-                    ...styleApp.textBold,
-                    color: colors.greyDark,
-                    fontSize: 14,
-                  }}>
+                <Text style={styles.text}>
                   {`${videos.length} video${videos.length === 1 ? '' : 's'}`}
                 </Text>
               </Col>
@@ -113,6 +103,21 @@ const styles = StyleSheet.create({
     borderColor: colors.off,
     borderWidth: 0,
     width: width * 0.9,
+  },
+  text: {
+    ...styleApp.textBold,
+    color: colors.greyDark,
+    fontSize: 14,
+  },
+  cardArchive: {
+    height: 70,
+    width: 50,
+    borderRadius: 15,
+    overflow: 'hidden',
+    borderWidth: 3,
+    borderColor: colors.white,
+    position: 'absolute',
+    backgroundColor: colors.greyDark,
   },
 });
 

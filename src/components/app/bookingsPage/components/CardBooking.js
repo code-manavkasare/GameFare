@@ -86,8 +86,12 @@ class CardBooking extends Component {
     navigate('BookingCompletion', {bookingID: booking.id});
   };
   messageButton = () => {
-    const {notifications} = this.props;
-    const color = notifications.length > 0 ? 'primary' : 'greyMidDark';
+    const {booking, notifications} = this.props;
+    const {status} = booking.status;
+    const color =
+      notifications.length > 0 || status === 'pending'
+        ? 'primary'
+        : 'greyMidDark';
     const text = notifications.length
       ? `${notifications.length} new message${
           notifications.length === 1 ? '' : 's'

@@ -64,6 +64,7 @@ class ButtonShareVideo extends Component {
         updates[`${coachSessionMemberSharingPath}/shareScreen`] = true;
         updates[`${coachSessionMemberSharingPath}/videoIDSharing`] = id;
       } else {
+        updates[`coachSessions/${coachSessionID}/sharedVideos`] = null;
         updates[`${coachSessionMemberSharingPath}/shareScreen`] = false;
         updates[`${coachSessionMemberSharingPath}/sharedVideos`] = null;
       }

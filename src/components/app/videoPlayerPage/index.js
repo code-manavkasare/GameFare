@@ -487,6 +487,7 @@ class VideoPlayerPage extends Component {
                   selectedVideos,
                   coachSessionID,
                   personSharingScreen,
+                  overrideCurrent: false,
                 });
               }
 

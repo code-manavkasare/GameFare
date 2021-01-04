@@ -188,6 +188,7 @@ class GroupsPage extends Component {
       userConnected,
       currentScreenSize,
       route,
+      session,
     } = this.props;
     const {portrait} = currentScreenSize;
     if (!currentSessionID && prevProps.currentSessionID)
@@ -204,12 +205,22 @@ class GroupsPage extends Component {
         permission('library');
         this.refreshTokenMember();
 
-        if (
-          !isEqual(prevProps.session, this.props.session) &&
-          this.props.session
-        ) {
+        if (!isEqual(prevProps.session, session) && session) {
           this.refreshTokenMember();
-          this.openVideoShared();
+          const personSharingScreen = isSomeoneSharingScreen(session);
+          if (
+            !isEqual(
+              Object.keys(
+                prevProps.session?.members[personSharingScreen]?.sharedVideos ??
+                  {},
+              ),
+              Object.keys(
+                session?.members[personSharingScreen]?.sharedVideos ?? {},
+              ),
+            )
+          ) {
+            this.openVideoShared();
+          }
         }
       }
     }
@@ -262,7 +273,8 @@ class GroupsPage extends Component {
     } = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     if (personSharingScreen && userID !== personSharingScreen) {
-      const videos = coachSession.sharedVideos ?? {};
+      const videos =
+        coachSession.members[personSharingScreen]?.sharedVideos ?? {};
       openVideoPlayer({
         coachSessionID,
         archives: Object.keys(videos),
