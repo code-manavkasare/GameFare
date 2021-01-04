@@ -21,11 +21,6 @@ export default class ButtonComplete extends Component {
       error: null,
     };
   }
-  componentDidMount() {
-    // const {bookingID} = this.props;
-    // console.log('asdf', bookingID);
-    // navigate('Clubs', {screen: 'AddContentBooking', params: {bookingID}});
-  }
 
   completeBooking = async () => {
     const {bookingID} = this.props;
