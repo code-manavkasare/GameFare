@@ -582,7 +582,9 @@ class HeaderBackButton extends Component {
           <Col size={15} style={[styleApp.center3]}>
             {button2Guided ? (
               <GuidedInteraction {...button2Guided}>
-                <View style={styleApp.center}>{this.button2()}</View>
+                <View style={[styleApp.fullSize, styleApp.center]}>
+                  {this.button2()}
+                </View>
               </GuidedInteraction>
             ) : (
               this.button2()

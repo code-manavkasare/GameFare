@@ -108,12 +108,6 @@ function InitialStack() {
       />
 
       <Stack.Screen
-        name="SelectVideosFromLibrary"
-        component={SelectVideosFromLibrary}
-        options={{...CallTabSpec}}
-      />
-
-      <Stack.Screen
         name="NotificationPage"
         component={NotificationPage}
         options={NotificationPageSpec}

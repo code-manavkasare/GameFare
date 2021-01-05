@@ -508,7 +508,6 @@
 		};
 /* End PBXNativeTarget section */
 
-
 /* Begin PBXProject section */
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
@@ -1262,7 +1261,7 @@
 				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = "gamefare-dev-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.3.91;
+				MARKETING_VERSION = 1.4;
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-DFB_SONARKIT_ENABLED=1",
@@ -1296,7 +1295,7 @@
 				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = "gamefare-dev-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.3.91;
+				MARKETING_VERSION = 1.4;
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-DFB_SONARKIT_ENABLED=1",
@@ -1331,7 +1330,7 @@
 				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = gamefare/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.3.91;
+				MARKETING_VERSION = 1.4;
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-DFB_SONARKIT_ENABLED=1",
@@ -1365,7 +1364,7 @@
 				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = gamefare/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.3.91;
+				MARKETING_VERSION = 1.4;
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-DFB_SONARKIT_ENABLED=1",

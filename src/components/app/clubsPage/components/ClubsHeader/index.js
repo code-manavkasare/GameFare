@@ -151,6 +151,7 @@ class ClubsHeader extends Component {
           sizeIcon2={infoUser.picture ? 45 : 23}
           clickButton2={() => navigation.navigate('VideoLibrary')}
           typeIcon2={infoUser.picture ? 'image' : 'font'}
+          colorIcon2={colors.greyDarker}
           badgeIcon1={<BookingsBadge />}
           button2Guided={{
             text: 'Access your GameFare video library',
