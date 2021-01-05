@@ -10,9 +10,13 @@ import {connect} from 'react-redux';
 import * as Progress from 'react-native-progress';
 
 import colors from '../../../style/colors';
-import sizes from '../../../style/sizes';
+import {offsetFooterStreaming, marginTopApp} from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import {isQueueVisible} from '../../../functions/upload';
+import {userIDSelector} from '../../../../store/selectors/user';
+import {currentScreenSizeSelector} from '../../../../store/selectors/layout';
+import {connectionTypeSelector} from '../../../../store/selectors/connectionType';
+import {uploadQueueSelector} from '../../../../store/selectors/uploadQueue';
 
 class UploadHeader extends Component {
   constructor(props) {
@@ -80,7 +84,7 @@ class UploadHeader extends Component {
       marginBottom: -10,
       position: 'absolute',
       width,
-      ...styleApp.center3,
+      ...styleApp.center,
     };
     return (
       <View style={containerStyle}>
@@ -107,8 +111,7 @@ const styles = StyleSheet.create({
     borderColor: colors.off,
     width: 200,
     height: 40,
-    right: '5%',
-    top: sizes.marginTopApp + 75,
+    top: marginTopApp - 15,
     zIndex: 1,
     borderRadius: 25,
   },
@@ -116,7 +119,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     paddingHorizontal: 10,
-    paddingBottom: 150 + sizes.offsetFooterStreaming,
+    paddingBottom: 150 + offsetFooterStreaming,
     backgroundColor: colors.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
@@ -184,10 +187,10 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    currentScreenSize: state.layout.currentScreenSize,
-    uploadQueue: state.uploadQueue,
-    connectionType: state.connectionType.type,
+    userID: userIDSelector(state),
+    currentScreenSize: currentScreenSizeSelector(state),
+    uploadQueue: uploadQueueSelector(state),
+    connectionType: connectionTypeSelector(state),
   };
 };
 

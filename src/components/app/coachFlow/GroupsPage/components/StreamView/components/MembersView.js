@@ -12,6 +12,9 @@ import {
   marginTopAppLandscape,
 } from '../../../../../../style/sizes';
 import AddFlagButton from '../footer/components/AddFlagButton';
+import {userIDSelector} from '../../../../../../../store/selectors/user';
+import {currentScreenSizeSelector} from '../../../../../../../store/selectors/layout';
+import CardUser from '../../../../../../layout/cards/CardUser';
 
 class MembersView extends Component {
   constructor(props) {
@@ -23,9 +26,10 @@ class MembersView extends Component {
     return (
       <Row key={member.id} style={styles.cardMember}>
         <Col size={50} style={styleApp.center2}>
-          <ImageUser
-            styleImgProps={{height: 45, width: 45, borderRadius: 30}}
-            user={member}
+          <CardUser
+            imgOnly
+            styleImg={{height: 45, width: 45, borderRadius: 30}}
+            id={member.id}
           />
         </Col>
         <Col size={50} style={styleApp.center}>
@@ -78,12 +82,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    currentScreenSize: state.layout.currentScreenSize,
+    userID: userIDSelector(state),
+    currentScreenSize: currentScreenSizeSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(MembersView);
+export default connect(mapStateToProps)(MembersView);

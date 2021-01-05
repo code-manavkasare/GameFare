@@ -11,11 +11,12 @@ import CurrentTime from './CurrentTime';
 import {native} from '../../../../animations/animations';
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
-import sizes from '../../../../style/sizes';
+import {marginBottomApp} from '../../../../style/sizes';
 import {displayTime} from '../../../../functions/coach';
 import ControlBar from './ControlBar';
 import Filmstrip from './Filmstrip';
 import {boolShouldComponentUpdate} from '../../../../functions/redux';
+import {currentScreenSizeSelector} from '../../../../../store/selectors/layout';
 
 class VisualSeekBar extends Component {
   constructor(props) {
@@ -205,7 +206,9 @@ class VisualSeekBar extends Component {
     const {seek, totalTime, paused, onSlidingStart} = this.props;
     const {width} = this.state;
 
-    this.playheadPosition.setValue(toValue);
+    if (!isNaN(toValue)) {
+      this.playheadPosition.setValue(toValue);
+    }
     if (!updateVideoOnSeek) {
       this._lastPlayheadPos = toValue;
     } else {
@@ -419,7 +422,7 @@ class VisualSeekBar extends Component {
 
     const translateY = this._revealSeekbar.interpolate({
       inputRange: [0, 1],
-      outputRange: [!small ? height + sizes.marginBottomApp + 5 : 0, 0],
+      outputRange: [!small ? height + marginBottomApp + 5 : 0, 0],
     });
     const opacity = this._revealSeekbar.interpolate({
       inputRange: [0, 1],
@@ -524,11 +527,8 @@ VisualSeekBar.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    currentScreenSize: state.layout.currentScreenSize,
+    currentScreenSize: currentScreenSizeSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(VisualSeekBar);
+export default connect(mapStateToProps)(VisualSeekBar);

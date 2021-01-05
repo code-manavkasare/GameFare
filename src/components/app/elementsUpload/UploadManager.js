@@ -13,6 +13,14 @@ import {updateLocalUploadProgress} from '../../functions/videoManagement';
 import {updateCloudUploadProgress} from '../../database/firebase/videosManagement';
 import {afterUpload} from '../../functions/upload.js';
 import {boolShouldComponentUpdate} from '../../functions/redux';
+import {uploadQueueSelector} from '../../../store/selectors/uploadQueue';
+import {userIDSelector} from '../../../store/selectors/user';
+import {connectionTypeSelector} from '../../../store/selectors/connectionType';
+import {networkConnectedSelector} from '../../../store/selectors/network';
+import {
+  lastDeletedArchiveIdsSelector,
+  videoLibraryUploadSelector,
+} from '../../../store/selectors/archives';
 
 class UploadManager extends Component {
   constructor(props) {
@@ -285,12 +293,12 @@ class UploadManager extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    uploadQueue: state.uploadQueue,
-    userID: state.user.userID,
-    connectionType: state.connectionType.type,
-    isConnected: state.network.isConnected,
-    videoLibrary: state.localVideoLibrary.videoLibrary,
-    lastDeletedArchiveIds: state.localVideoLibrary.lastDeletedArchiveIds,
+    uploadQueue: uploadQueueSelector(state),
+    userID: userIDSelector(state),
+    connectionType: connectionTypeSelector(state),
+    isConnected: networkConnectedSelector(state),
+    videoLibrary: videoLibraryUploadSelector(state),
+    lastDeletedArchiveIds: lastDeletedArchiveIdsSelector(state),
   };
 };
 

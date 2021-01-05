@@ -1,18 +1,24 @@
 import React from 'react';
-import {View, Animated, Image, StatusBar} from 'react-native';
+import {View, Animated, StatusBar} from 'react-native';
 import PropTypes from 'prop-types';
+import {BlurView} from '@react-native-community/blur';
+import {connect} from 'react-redux';
+
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
-import sizes from '../../../style/sizes';
+import {
+  marginTopApp,
+  marginTopAppLandscape,
+  heightHeaderHome,
+} from '../../../style/sizes';
 import {native} from '../../../animations/animations';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {createShareVideosBranchUrl} from '../../../database/branch';
 import ButtonShareVideo from './ButtonShareVideo';
-import Button from '../../../layout/buttons/Button';
-
-import {BlurView} from '@react-native-community/blur';
 import ButtonLink from './ButtonLink';
-export default class VideoPlayerHeader extends React.Component {
+import {archiveSelector} from '../../../../store/selectors/archives';
+
+class VideoPlayerHeader extends React.Component {
   static propTypes = {
     disableRecord: PropTypes.bool,
     isEditMode: PropTypes.bool.isRequired,
@@ -27,36 +33,53 @@ export default class VideoPlayerHeader extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.videoClicks = [];
   }
-  componentDidMount() {
+  componentDidMount = () => {
     const {onRef} = this.props;
     if (onRef) onRef(this);
-    StatusBar.setHidden(true, 'fade');
-  }
-  handleClick(index) {
+  };
+  handleClick = (index) => {
     const videoIndex = this.videoClicks.indexOf(index);
     let toValue = 1;
     if (videoIndex === -1) {
+      StatusBar.setHidden(false, 'fade');
       this.videoClicks.push(index);
     } else {
       this.videoClicks.splice(videoIndex, 1);
     }
     if (this.videoClicks.length === 0) {
-      toValue = 0;
       StatusBar.setHidden(true, 'fade');
-    } else {
-      StatusBar.setHidden(false, 'fade');
+      toValue = 0;
     }
+
     Animated.timing(this.translateY, native(toValue)).start();
-  }
+  };
+  isButtonReviewVisible = () => {
+    const {disableRecord, archives, firstArchive, route} = this.props;
+    const {coachSessionID} = route.params;
+    if (disableRecord || archives.length > 1) return false;
+    if (firstArchive?.recordedActions || coachSessionID) return false;
+    return true;
+  };
+  iconReview = () => {
+    const {isEditMode} = this.props;
+    const isButtonReviewVisible = this.isButtonReviewVisible();
+    if (!isButtonReviewVisible) return null;
+    if (isEditMode) return 'times';
+    return 'microphone-alt';
+  };
+  clickIconReview = () => {
+    const {isEditMode, editModeOn, editModeOff} = this.props;
+    const isButtonReviewVisible = this.isButtonReviewVisible();
+    if (!isButtonReviewVisible) return null;
+    if (isEditMode) return editModeOff();
+    return editModeOn();
+  };
   header() {
     const {
       isEditMode,
       isRecording,
-      disableRecord,
       isPreviewing,
       addVideo,
-      editModeOff,
-      editModeOn,
       close,
       route,
       isDrawingEnabled,
@@ -64,14 +87,11 @@ export default class VideoPlayerHeader extends React.Component {
       recordedActions,
       navigation,
       archives,
-      videoInfos,
-      personSharingScreen,
       userConnected,
     } = this.props;
     const {coachSessionID} = route.params;
-
     const sharedProps = {
-      inputRange: [5, 10],
+      inputRange: [100, 100],
       colorLoader: 'white',
       AnimatedHeaderValue: this.AnimatedHeaderValue,
       sizeLoader: 40,
@@ -80,63 +100,30 @@ export default class VideoPlayerHeader extends React.Component {
       nobackgroundColorIcon1: false,
       backgroundColorIcon1: 'transparent',
       initialBorderColorIcon: 'transparent',
-      sizeIcon1: 18,
+      initialBackgroundColor: 'transparent',
+      sizeIcon1: 15,
       colorIcon1: colors.white,
       typeIcon1: 'font',
       marginTop: -3,
       backgroundColorIcon2: 'transparent',
       typeIcon2: !isEditMode && !coachSessionID ? 'font' : 'font',
       sizeIcon2: !isEditMode && !coachSessionID ? 19 : 19,
-      icon2:
-        !videoInfos || disableRecord
-          ? null
-          : !Object.values(videoInfos)[0]
-          ? null
-          : archives.length !== 1 ||
-            (archives.length === 1 &&
-              Object.values(videoInfos)[0].recordedActions) ||
-            personSharingScreen
-          ? 'microphone-alt'
-          : !isEditMode && !coachSessionID
-          ? 'microphone-alt'
-          : 'times',
+      icon2: this.iconReview(),
       text2: 'Edit',
-      colorIcon2: !videoInfos
-        ? colors.greyDark
-        : !Object.values(videoInfos)[0]
-        ? colors.greyDark
-        : archives.length !== 1 ||
-          (archives.length === 1 &&
-            Object.values(videoInfos)[0].recordedActions) ||
-          personSharingScreen
-        ? colors.greyDark
-        : colors.white,
-      clickButton2: () => {
-        !videoInfos || disableRecord
-          ? null
-          : !Object.values(videoInfos)[0]
-          ? null
-          : archives.length !== 1 ||
-            (archives.length === 1 &&
-              Object.values(videoInfos)[0].recordedActions) ||
-            personSharingScreen
-          ? null
-          : !isEditMode && !coachSessionID
-          ? editModeOn()
-          : editModeOff();
-      },
+      colorIcon2: colors.white,
+      clickButton2: this.clickIconReview,
       icon11: 'arrows-alt',
       colorIcon11: !isDrawingEnabled ? colors.greyDarker : colors.white,
       typeIcon11: 'font',
       backgroundColorIcon11: !isDrawingEnabled
         ? colors.secondary
         : 'transparent',
-      sizeIcon11: 21,
+      sizeIcon11: 17,
       clickButton11: () => setState({isDrawingEnabled: false}),
       icon12: 'paint-brush',
       colorIcon12: isDrawingEnabled ? colors.greyDarker : colors.white,
       typeIcon12: 'font',
-      sizeIcon12: 19,
+      sizeIcon12: 17,
       backgroundColorIcon12: isDrawingEnabled
         ? colors.secondary
         : 'transparent',
@@ -173,15 +160,15 @@ export default class VideoPlayerHeader extends React.Component {
           recordedActions.length > 0
         ) && addVideo();
       },
-      sizeIconOffset: 20,
-      icon1: 'chevron-left',
+      sizeIconOffset: 17,
+      icon1: 'times',
       clickButton1: () => close(),
     };
     return <HeaderBackButton {...sharedProps} />;
   }
 
   buttonSharing = () => {
-    const {isEditMode, coachSessionID, videoInfos, getVideoState} = this.props;
+    const {isEditMode, coachSessionID, getVideoState, archives} = this.props;
     if (!coachSessionID) {
       return null;
     }
@@ -189,8 +176,8 @@ export default class VideoPlayerHeader extends React.Component {
     return (
       <ButtonShareVideo
         onRef={(ref) => (this.buttonShareRef = ref)}
-        archives={videoInfos}
         isEditMode={isEditMode}
+        archives={archives}
         coachSessionID={coachSessionID}
         getVideoState={getVideoState}
       />
@@ -211,16 +198,17 @@ export default class VideoPlayerHeader extends React.Component {
   render() {
     const {portrait} = this.props;
     const {translateY} = this;
-    const marginTop = portrait
-      ? sizes.marginTopApp
-      : sizes.marginTopAppLandscape;
-    let marginTopFloatingButtons = sizes.marginTopApp + sizes.heightHeaderHome;
+    const marginTop = portrait ? marginTopApp : marginTopAppLandscape;
+    let marginTopFloatingButtons = marginTopApp + heightHeaderHome;
     if (!portrait)
-      marginTopFloatingButtons =
-        sizes.marginTopAppLandscape + sizes.heightHeaderHome;
+      marginTopFloatingButtons = marginTopAppLandscape + heightHeaderHome;
     const headerTranslateY = translateY.interpolate({
       inputRange: [0, 1],
       outputRange: [-250, 0],
+    });
+    const headerOpacity = translateY.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 1],
     });
     const floatingButtonsTranslateY = translateY.interpolate({
       inputRange: [0, 1],
@@ -247,14 +235,17 @@ export default class VideoPlayerHeader extends React.Component {
       width: '95%',
       left: '2.5%',
       overflow: 'hidden',
-      transform: [{translateY: headerTranslateY}],
+      opacity: headerOpacity,
+      // transform: [{translateY: headerTranslateY}],
     };
     const floatingButtonsStyle = {
-      width: '95%',
-      left: '2.5%',
+      position: 'absolute',
+      right: '5%',
       alignItems: 'flex-end',
+      alignSelf: 'flex-end',
       marginTop: marginTopFloatingButtons,
-      transform: [{translateY: floatingButtonsTranslateY}],
+      // transform: [{translateY: floatingButtonsTranslateY}],
+      opacity: headerOpacity,
     };
     return (
       <View style={containerStyle}>
@@ -270,3 +261,11 @@ export default class VideoPlayerHeader extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state, props) => {
+  return {
+    firstArchive: archiveSelector(state, {id: props.archives[0]}),
+  };
+};
+
+export default connect(mapStateToProps)(VideoPlayerHeader);

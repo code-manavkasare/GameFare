@@ -19,6 +19,8 @@ import RecordingComponent from './recording/index';
 import ControlButtonRecording from './recording/components/ControlButtonsRecording';
 import AllIcon from '../../../layout/icons/AllIcons';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
+import {archiveSelector} from '../../../../store/selectors/archives';
+import {userIDSelector} from '../../../../store/selectors/user';
 
 class SinglePlayer extends Component {
   static propTypes = {
@@ -189,7 +191,10 @@ class SinglePlayer extends Component {
     this.recordingRef.previewRecording(props);
   };
   replayRecording = async () => {
-    this.recordingRef.launchIfPreview();
+    const {seekAudioPlayer, archive} = this.props;
+    await this.setState({isPlayingReview: false});
+    if (!archive.isMicrophoneMuted) await seekAudioPlayer(0);
+    this.recordingRef.launchIfPreview(true);
   };
   singlePlayer = () => {
     const {
@@ -260,11 +265,7 @@ class SinglePlayer extends Component {
           <ControlButtonRecording
             displayButtonReplay={displayButtonReplay}
             isPlayingReview={isPlayingReview}
-            replay={async () => {
-              await this.setState({isPlayingReview: false});
-              if (!archive.isMicrophoneMuted) await seekAudioPlayer(0);
-              this.recordingRef.launchIfPreview(true);
-            }}
+            replay={this.replayRecording}
             clickVideo={() => {
               clickVideo(index);
             }}
@@ -394,10 +395,8 @@ class SinglePlayer extends Component {
 
 const mapStateToProps = (state, props) => {
   return {
-    userID: state.user.userID,
-    archive: props.nativeArchive
-      ? props.nativeArchive
-      : state.archives[props.id],
+    userID: userIDSelector(state),
+    archive: archiveSelector(state, props),
   };
 };
 

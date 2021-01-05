@@ -1,30 +1,25 @@
 import React, {Component} from 'react';
-import {View, Text, Image, InteractionManager} from 'react-native';
+import {View} from 'react-native';
 
 import {connect} from 'react-redux';
-import isEqual from 'lodash.isequal';
 
 import {navigate} from '../../../../../../NavigationService';
 import CardStreamView from './CardStreamView';
 import {rowTitle} from '../../../TeamPage/components/elements';
 import {FlatListComponent} from '../../../../layout/Views/FlatList';
-import {getSortedSessions} from '../../../../functions/coach';
 import {newConversation} from '../../../../functions/message';
 import {boolShouldComponentUpdate} from '../../../../functions/redux';
 import styleApp from '../../../../style/style';
 import colors from '../../../../style/colors';
-import sizes from '../../../../style/sizes';
-import Button from '../../../../layout/buttons/Button';
+import {heightFooter, marginBottomApp} from '../../../../style/sizes';
 import Loader from '../../../../layout/loaders/Loader';
+import {userConnectedSelector} from '../../../../../store/selectors/user';
+import {sessionsSelector} from '../../../../../store/selectors/sessions';
 
 class ListStreams extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      coachSessions: getSortedSessions({
-        coachSessions: props.coachSessions,
-        sortBy: 'lastMessage',
-      }),
       loading: false,
     };
   }
@@ -51,6 +46,7 @@ class ListStreams extends Component {
           containerStyle: {
             marginBottom: -10,
             marginTop: 5,
+            ...styleApp.marginView,
           },
         })}
       </View>
@@ -70,8 +66,8 @@ class ListStreams extends Component {
     );
   }
   list = () => {
-    const {userConnected, AnimatedHeaderValue} = this.props;
-    const {coachSessions, loading} = this.state;
+    const {userConnected, AnimatedHeaderValue, coachSessions} = this.props;
+
     const styleViewLiveLogo = {
       ...styleApp.center,
       backgroundColor: colors.off,
@@ -83,46 +79,15 @@ class ListStreams extends Component {
       marginTop: -100,
       marginLeft: 65,
     };
-    if (loading) {
-      return this.loader();
-    }
     if (!userConnected || !coachSessions) {
       return null;
     }
-    if (Object.values(coachSessions).length === 0) {
-      return (
-        <View style={[styleApp.marginView, styleApp.center]}>
-          <View style={[styleApp.center, {marginBottom: 80, marginTop: 30}]}>
-            <Image
-              source={require('../../../../../img/images/racket.png')}
-              style={{height: 80, width: 80, marginTop: 30}}
-            />
-            <View style={styleViewLiveLogo}>
-              <Image
-                source={require('../../../../../img/images/live-news.png')}
-                style={{
-                  height: 27,
-                  width: 27,
-                }}
-              />
-            </View>
-          </View>
-
-          <Button
-            text={'Send a message'}
-            icon={{
-              name: 'plus',
-              size: 18,
-              type: 'font',
-              color: colors.white,
-            }}
-            backgroundColor={'green'}
-            onPressColor={colors.greenLight}
-            click={async () => newConversation()}
-          />
-        </View>
-      );
-    }
+    const styleCard = {
+      borderBottomWidth: 1,
+      borderColor: colors.off,
+      paddingTop: 15,
+      paddingBottom: 15,
+    };
     return (
       <FlatListComponent
         list={coachSessions}
@@ -133,12 +98,7 @@ class ListStreams extends Component {
               key={session.objectID}
               unselectable={true}
               scale={1}
-              style={{
-                borderBottomWidth: 1,
-                borderColor: colors.off,
-                paddingTop: 15,
-                paddingBottom: 15,
-              }}
+              style={styleCard}
             />
           ) : null
         }
@@ -149,7 +109,17 @@ class ListStreams extends Component {
         initialNumberToRender={8}
         styleContainer={{marginTop: 10}}
         AnimatedHeaderValue={AnimatedHeaderValue}
-        paddingBottom={sizes.heightFooter + sizes.marginBottomApp}
+        paddingBottom={heightFooter + marginBottomApp}
+        ListEmptyComponent={{
+          clickButton: () =>
+            !userConnected ? navigate('SignIn') : newConversation(),
+          textButton: !userConnected ? 'Sign in' : 'Search',
+          text: !userConnected
+            ? 'Sign in to send messages'
+            : 'Search for users to send messages',
+          iconButton: !userConnected ? 'user' : 'search',
+          icon: 'comment-alt',
+        }}
       />
     );
   };
@@ -161,12 +131,9 @@ class ListStreams extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    coachSessions: state.user.infoUser.coachSessions,
-    userConnected: state.user.userConnected,
+    coachSessions: sessionsSelector(state, {hideCurrentSession: false}),
+    userConnected: userConnectedSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(ListStreams);
+export default connect(mapStateToProps)(ListStreams);

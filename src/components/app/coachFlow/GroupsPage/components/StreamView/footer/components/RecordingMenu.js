@@ -14,10 +14,16 @@ import ExportQueue from './FinalizeRecording/components/ExportQueue';
 import {native} from '../../../../../../../animations/animations';
 
 import colors from '../../../../../../../style/colors';
-import sizes from '../../../../../../../style/sizes';
+import {
+  width,
+  offsetFooterStreaming,
+  marginBottomApp,
+} from '../../../../../../../style/sizes';
 import styleApp from '../../../../../../../style/style';
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
+import {userIDSelector} from '../../../../../../../../store/selectors/user';
+import {currentScreenSizeSelector} from '../../../../../../../../store/selectors/layout';
 
 class RecordingMenu extends Component {
   constructor(props) {
@@ -169,18 +175,14 @@ class RecordingMenu extends Component {
 
   render() {
     const {visible, members} = this.state;
-    const {members: propsMembers, currentScreenSize, userID} = this.props;
+    const {members: propsMembers, currentScreenSize} = this.props;
     const {selectMember, coachSessionID} = this.props;
     const {currentWidth: width, currentHeight: height} = currentScreenSize;
     const {length} = members;
 
     const parentTranslateY = this.menuAnimation.interpolate({
       inputRange: [0, 0.5, 1],
-      outputRange: [
-        1000 + sizes.offsetFooterStreaming,
-        350,
-        (length - 1) * 65 - 10,
-      ],
+      outputRange: [1000 + offsetFooterStreaming, 350, (length - 1) * 65 - 10],
       extrapolate: 'clamp',
     });
 
@@ -200,7 +202,7 @@ class RecordingMenu extends Component {
           pointerEvents={visible ? 'auto' : 'none'}
           style={{
             ...styles.menuContainer,
-            width: sizes.width * 0.9,
+            width: width * 0.9,
             transform: [{translateY: recordingTranslateY}],
           }}>
           <Text style={styles.text}>Record</Text>
@@ -259,7 +261,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     paddingHorizontal: 10,
     paddingBottom: 25,
-    bottom: 450 + sizes.marginBottomApp,
+    bottom: 450 + marginBottomApp,
     backgroundColor: colors.white,
     borderRadius: 25,
     zIndex: 1,
@@ -278,7 +280,7 @@ const styles = StyleSheet.create({
   fullPage: {
     position: 'absolute',
     ...styleApp.fullSize,
-    width: sizes.width,
+    width: width,
     height: 200000,
     bottom: 0,
     backgroundColor: 'transparent',
@@ -305,8 +307,8 @@ RecordingMenu.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    userID: state.user.userID,
-    currentScreenSize: state.layout.currentScreenSize,
+    userID: userIDSelector(state),
+    currentScreenSize: currentScreenSizeSelector(state),
   };
 };
 

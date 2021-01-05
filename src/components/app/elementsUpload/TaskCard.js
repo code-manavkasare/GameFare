@@ -8,9 +8,11 @@ import {boolShouldComponentUpdate} from '../../functions/redux';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 
-import {uploadQueueAction} from '../../../store/actions/uploadQueueActions';
 import AsyncImage from '../../layout/image/AsyncImage';
 import {FormatDate, formatDuration} from '../../functions/date';
+import {currentScreenSizeSelector} from '../../../store/selectors/layout';
+import {connectionTypeSelector} from '../../../store/selectors/connectionType';
+import {thumbnailSelector} from '../../../store/selectors/archives';
 
 class TaskCard extends Component {
   constructor(props) {
@@ -61,7 +63,11 @@ class TaskCard extends Component {
       <View style={{width: '100%'}}>
         <Text style={{...styleApp.title, fontSize: 15, marginBottom: 5}}>
           {type === 'video'
-            ? formatDuration(task?.videoInfo?.durationSeconds)
+            ? formatDuration({
+                duration: task?.videoInfo?.durationSeconds,
+                inputUnit: 'second',
+                formatType: 'textBrief',
+              })
             : ''}
         </Text>
         <Text style={{...styleApp.text, fontSize: 15, marginBottom: 15}}>
@@ -157,13 +163,10 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, props) => {
   return {
-    currentScreenSize: state.layout.currentScreenSize,
-    connectionType: state.connectionType.type,
-    archiveThumbnail: state.archives[props.task.cloudID].thumbnail,
+    currentScreenSize: currentScreenSizeSelector(state),
+    connectionType: connectionTypeSelector(state),
+    archiveThumbnail: thumbnailSelector(state, {id: props.task.cloudID}),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {uploadQueueAction},
-)(TaskCard);
+export default connect(mapStateToProps)(TaskCard);

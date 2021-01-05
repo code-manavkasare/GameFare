@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {StatusBar} from 'react-native';
 
 import {lockOrientation} from '../functions/orientation';
-import {store} from '../../store/reduxStore';
 import {getCurrentRoute} from '../../../NavigationService';
 
 export default class FocusListeners extends Component {
@@ -11,17 +10,19 @@ export default class FocusListeners extends Component {
     this.state = {};
   }
   componentDidMount = () => {
-    const {navigation} = this.props;
+    const {navigation, statusBarOnFocus} = this.props;
     this.focusListener = navigation.addListener('focus', () => {
       lockOrientation(false);
-      StatusBar.setBarStyle('light-content', true);
+      if (statusBarOnFocus) StatusBar.setBarStyle('light-content', true);
     });
 
     this.blurListener = navigation.addListener('blur', () => {
-      StatusBar.setBarStyle('dark-content', true);
+      if (statusBarOnFocus) StatusBar.setBarStyle('dark-content', true);
       const currentRoute = getCurrentRoute();
       if (currentRoute !== 'VideoPlayerPage' && currentRoute !== 'Session')
-        lockOrientation(true);
+        return lockOrientation(true);
+
+      lockOrientation(false);
     });
   };
   componentWillUnmount() {

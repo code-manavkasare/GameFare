@@ -12,8 +12,9 @@ var heightFooter = 70;
 var marginTopApp = 10;
 let marginTopAppLandscape = 0;
 var heightHeaderHome = 70;
+var heightHeaderModal = 40;
 var heightHeaderFilter = 100;
-var heightHeaderHomeSearch = 130;
+let heightHeaderHomeSearch = 130;
 var height0 = 50;
 var borderRadius = 0;
 
@@ -92,23 +93,28 @@ const ratio = (w, h) => {
   return h / w;
 };
 
-module.exports = {
-  heightFooterBooking: heightFooterBooking,
-  heightFooter: heightFooter,
-  marginTopApp: marginTopApp,
-  marginTopHeader: marginTopHeader,
-  heightPicture: heightPicture,
-  height0: height0,
-  heightHeaderHome: heightHeaderHome,
-  heightHeaderFilter: heightHeaderFilter,
-  heightHeaderHomeSearch: heightHeaderHomeSearch,
-  height: height,
-  width: width,
+const getDimention = () => {
+  return Dimensions.get('screen');
+};
+
+export {
+  heightFooterBooking,
+  heightFooter,
+  marginTopApp,
+  marginTopHeader,
+  heightPicture,
+  height0,
+  heightHeaderHome,
+  heightHeaderModal,
+  heightHeaderFilter,
+  heightHeaderHomeSearch,
+  height,
+  width,
   borderRadius,
-  marginBottomApp: marginBottomApp,
-  keyboardOffset: keyboardOffset,
-  initialHeightControlBar: initialHeightControlBar,
-  offsetFooterStreaming: offsetFooterStreaming,
+  marginBottomApp,
+  keyboardOffset,
+  initialHeightControlBar,
+  offsetFooterStreaming,
   heightCardSession,
   widthCardSession,
   heightHeaderStream,
@@ -116,4 +122,5 @@ module.exports = {
   marginTopAppLandscape,
   marginBottomAppLandscade,
   ratio,
+  getDimention,
 };

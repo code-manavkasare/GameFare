@@ -16,8 +16,9 @@ import {
   FormatDate,
   duration,
 } from '../../../../../../../../../functions/date';
+import CardUser from '../../../../../../../../../layout/cards/CardUser';
 
-class CardFlag extends Component {
+export default class CardFlag extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -106,7 +107,7 @@ class CardFlag extends Component {
       flagsSelected,
       click,
       totalTime,
-      memberPicture,
+      memberID,
       stopTimestamp,
       size,
     } = this.props;
@@ -139,10 +140,11 @@ class CardFlag extends Component {
                     )}
                   </View>
                   <View style={styles.memberPictureContainer}>
-                    {memberPicture ? (
-                      <AsyncImage
-                        mainImage={memberPicture}
-                        style={styles.memberPicture}
+                    {memberID ? (
+                      <CardUser
+                        id={memberID}
+                        imgOnly
+                        styleImg={styleApp.fullSize}
                       />
                     ) : null}
                   </View>
@@ -157,7 +159,11 @@ class CardFlag extends Component {
                     {!id.includes('fullVideo') && endTime
                       ? duration(startTime) + ' to ' + duration(endTime)
                       : flagTime && stopTimestamp
-                      ? formatDuration(flagTime)
+                      ? formatDuration({
+                          duration: flagTime,
+                          inputUnit: 'second',
+                          formatType: 'textBrief',
+                        })
                       : 'Loading...'}
                   </Text>
                 </Col>
@@ -180,10 +186,11 @@ class CardFlag extends Component {
                     )}
                   </View>
                   <View style={styles.memberPictureContainerLg}>
-                    {memberPicture ? (
-                      <AsyncImage
-                        mainImage={memberPicture}
-                        style={styles.memberPicture}
+                    {memberID ? (
+                      <CardUser
+                        id={memberID}
+                        imgOnly
+                        styleImg={styleApp.fullSize}
                       />
                     ) : null}
                   </View>
@@ -199,7 +206,11 @@ class CardFlag extends Component {
                       {!id.includes('fullVideo') && endTime
                         ? duration(startTime) + ' to ' + duration(endTime)
                         : flagTime
-                        ? formatDuration(flagTime)
+                        ? formatDuration({
+                            duration: flagTime,
+                            inputUnit: 'second',
+                            formatType: 'textBrief',
+                          })
                         : 'Loading...'}
                     </Text>
                   </Col>
@@ -278,11 +289,3 @@ const styles = StyleSheet.create({
     right: -5,
   },
 });
-
-const mapStateToProps = (state) => {
-  return {
-    userID: state.user.userID,
-  };
-};
-
-export default connect(mapStateToProps)(CardFlag);

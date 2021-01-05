@@ -139,16 +139,6 @@ async function getPhotoUser() {
   });
   return edges;
 }
-
-const sortVideos = (videos) => {
-  if (!videos) {
-    videos = {};
-  }
-  return Object.values(videos).sort(
-    (a, b) => b.startTimestamp - a.startTimestamp,
-  );
-};
-
 const getLastVideo = async () => {
   const {edges} = await CameraRoll.getPhotos({
     first: 1,
@@ -189,7 +179,7 @@ const generateThumbnail = async (videoPath, timeStamp) => {
     thumbnail.width,
     thumbnail.height,
     'JPEG',
-    80,
+    10,
   );
   await deleteLocalVideoFile(thumbnail.path);
   thumbnail.path = uri;
@@ -350,7 +340,6 @@ export {
   resize,
   rotateImage,
   getPhotoUser,
-  sortVideos,
   getVideoInfo,
   getLastVideo,
   permission,

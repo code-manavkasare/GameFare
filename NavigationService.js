@@ -53,6 +53,10 @@ const dismiss = () => {
   navigationRef.dangerouslyGetParent().pop();
 };
 
+const popToTop = () => {
+  navigationRef.current.popToTop();
+};
+
 const setParams = ({routeKey, params}) => {
   if (navigationRef.current) return navigationRef.current.setParams(params);
 
@@ -77,7 +81,11 @@ const clickNotification = async (notification) => {
     }
     return navigate(action, {...notification.data, date: Date.now()});
   }
-  return push(action, {...notification.data, date: Date.now()});
+  return push(action, {
+    ...notification.data,
+    id: notification?.data?.coachSessionID,
+    date: Date.now(),
+  });
 };
 
 // add other navigation functions that you need and export them
@@ -92,4 +100,5 @@ export {
   setParams,
   clickNotification,
   getCurrentRoute,
+  popToTop,
 };

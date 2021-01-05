@@ -14,8 +14,10 @@ import {native} from '../../../animations/animations';
 import VideoList from './VideoList';
 import sizes from '../../../style/sizes';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
+import {currentSessionIDSelector} from '../../../../store/selectors/sessions';
+import {userIDSelector} from '../../../../store/selectors/user';
 
-const heightFooterFull = sizes.heightFooter + sizes.marginBottomApp;
+const heightFooterFull = heightFooter + marginBottomApp;
 
 class ToolRow extends Component {
   constructor(props) {
@@ -189,7 +191,7 @@ class ToolRow extends Component {
                   click: () =>
                     !currentSessionID
                       ? clickButton2({forceSelect: true})
-                      : clickButton0({}),
+                      : clickButton0({forceSharing: true}),
                 })}
               </Col>
             }
@@ -276,15 +278,11 @@ const mapStateToProps = (state, props) => {
   }
 
   return {
-    currentSessionID: state.coach.currentSessionID,
-    userID: state.user.userID,
-    userConnected: state.user.userConnected,
+    currentSessionID: currentSessionIDSelector(state),
+    userConnected: userIDSelector(state),
     selectedLocalVideos,
     selectedRecordVideos,
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(ToolRow);
+export default connect(mapStateToProps)(ToolRow);

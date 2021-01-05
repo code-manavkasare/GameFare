@@ -29,6 +29,7 @@ export default class CardMessage extends React.Component {
     };
     this.clickLink.bind(this);
   }
+
   urlify(text) {
     const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
     const that = this;
@@ -117,7 +118,7 @@ export default class CardMessage extends React.Component {
   };
   goToProfilePage = () => {
     navigate('ProfilePage', {
-      user: this.props.message.currentMessage.user,
+      id: this.props.message.currentMessage.user.id,
     });
   };
   displayPictureUser = (props) => {
@@ -152,6 +153,23 @@ export default class CardMessage extends React.Component {
       </View>
     );
   }
+  viewBookingStatus(props) {
+    const {currentMessage} = props;
+    const {text} = currentMessage;
+    return (
+      <View style={[styleApp.center, {height: 15, marginTop: 20}]}>
+        <Text style={[styleApp.subtitle, {fontSize: 12}]}>
+          <AllIcon
+            name="shopping-cart"
+            size={12}
+            color={styleApp.subtitle.color}
+            type="font"
+          />
+          {'  '} {text}
+        </Text>
+      </View>
+    );
+  }
   viewRequest(props) {
     const {currentMessage} = props;
     const {text} = currentMessage;
@@ -170,10 +188,39 @@ export default class CardMessage extends React.Component {
     );
   }
   renderMessage(props) {
+    const {userID: currentUserID} = this.props;
     const {currentMessage, previousMessage} = props;
     const {user, timeStamp, text, type, content} = currentMessage;
-
+    const isSender = user.id === currentUserID;
     const displayPictureUser = this.displayPictureUser(props);
+    const messageStyle = isSender
+      ? {
+          backgroundColor: colors.primary,
+          borderRadius: 15,
+          paddingVertical: 10,
+          paddingHorizontal: 15,
+          ...styleApp.shadowWeak,
+          color: colors.white,
+          marginTop: 5,
+        }
+      : {
+          backgroundColor: colors.greyDark,
+          borderRadius: 15,
+          paddingVertical: 10,
+          paddingHorizontal: 15,
+          ...styleApp.shadowWeak,
+          color: colors.white,
+          marginTop: 5,
+        };
+    const messageContainer = isSender
+      ? {
+          width: width * 0.9 - 60,
+          ...styleApp.center3,
+        }
+      : {
+          width: width * 0.9 - 60,
+          ...styleApp.center8,
+        };
     return (
       <View
         style={[
@@ -186,30 +233,40 @@ export default class CardMessage extends React.Component {
         {this.rowDay(props)}
         {type === 'connection' ? (
           this.viewUserConnect(props)
+        ) : type === 'bookingStatus' ? (
+          this.viewBookingStatus(props)
         ) : type === 'request' ? (
           this.viewRequest(props)
         ) : (
           <Row>
-            <Col
-              size={20}
+            <View
               activeOpacity={1}
+              style={{minWidth: 60, paddingRight: 15, ...styleApp.center4}}
               onPress={() =>
                 !user.info.noProfileClick &&
                 displayPictureUser &&
                 this.goToProfilePage()
               }>
-              {displayPictureUser ? (
+              {displayPictureUser && !isSender ? (
                 <AsyncImage
-                  style={{width: 45, height: 45, borderRadius: 5}}
+                  style={{
+                    width: 45,
+                    height: 45,
+                    borderRadius: 55,
+                    marginTop: 5,
+                  }}
                   mainImage={messageAvatar(user.info)}
                   imgInitial={messageAvatar(user.info)}
                 />
               ) : null}
-            </Col>
-            <Col size={80} style={styleApp.center2}>
+            </View>
+            <View style={messageContainer}>
               {displayPictureUser ? (
                 <Text
-                  style={[styleApp.title, {fontSize: 16}]}
+                  style={[
+                    styleApp.title,
+                    {color: colors.greyDarker, fontSize: 14, marginBottom: 2},
+                  ]}
                   onPress={() =>
                     !user.info.noProfileClick && this.goToProfilePage()
                   }>
@@ -220,18 +277,20 @@ export default class CardMessage extends React.Component {
                 </Text>
               ) : null}
               {text !== '' ? (
-                <Hyperlink
-                  // linkDefault={true}
-                  onPress={(url) => this.clickLink(url, this.state.viewUrl)}
-                  linkStyle={{color: colors.blue, fontWeight: 'bold'}}>
+                <View style={messageStyle}>
                   <Text
                     style={[
-                      styleApp.smallText,
-                      {marginTop: 5, fontSize: 14, marginBottom: 0},
+                      styleApp.textBold,
+                      {
+                        position: 'relative',
+                        color: colors.white,
+                        fontSize: 14,
+                        marginBottom: 0,
+                      },
                     ]}>
                     {text}
                   </Text>
-                </Hyperlink>
+                </View>
               ) : null}
               {type === 'video' ? (
                 <CardArchive
@@ -240,7 +299,7 @@ export default class CardMessage extends React.Component {
                     ...styleApp.cardArchive,
                     marginTop: 15,
                     marginLeft: -1,
-                    borderRadius: 6,
+                    borderRadius: 10,
                   }}
                 />
               ) : null}
@@ -286,7 +345,30 @@ export default class CardMessage extends React.Component {
                   onPressColor={colors.off}
                 />
               ) : null}
-            </Col>
+            </View>
+            {/* {!isSender ? null : (
+              <View
+                activeOpacity={1}
+                style={{minWidth: 60, paddingLeft: 15, ...styleApp.center4}}
+                onPress={() =>
+                  !user.info.noProfileClick &&
+                  displayPictureUser &&
+                  this.goToProfilePage()
+                }>
+                {displayPictureUser ? (
+                  <AsyncImage
+                    style={{
+                      width: 45,
+                      height: 45,
+                      borderRadius: 55,
+                      marginTop: 5,
+                    }}
+                    mainImage={messageAvatar(user.info)}
+                    imgInitial={messageAvatar(user.info)}
+                  />
+                ) : null}
+              </View>
+            )} */}
           </Row>
         )}
       </View>
@@ -303,6 +385,7 @@ export default class CardMessage extends React.Component {
             return result;
           }, {})
       : [];
+
     return (
       <View>
         {this.renderMessage(this.props.message)}
@@ -314,8 +397,7 @@ export default class CardMessage extends React.Component {
                 <Row
                   style={{
                     height: 55,
-                    width: width,
-                    // backgroundColor: 'red',
+                    width,
                     position: 'absolute',
                     marginTop: 30,
                     zIndex: 100,
@@ -369,8 +451,8 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   cardMessage: {
-    flex: 1,
-    width: '100%',
+    // flex: 1,
+    // width: '100%',
     marginBottom: 5,
     paddingLeft: 20,
     paddingRight: 20,

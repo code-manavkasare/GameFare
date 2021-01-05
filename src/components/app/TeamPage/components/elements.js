@@ -8,9 +8,7 @@ import styleApp from '../../../style/style';
 
 import {getSortedMembers} from '../../../functions/session';
 import AllIcons from '../../../layout/icons/AllIcons';
-import AsyncImage from '../../../layout/image/AsyncImage';
 import ButtonColor from '../../../layout/Views/Button';
-import CardConversation from '../../elementsMessage/CardConversation';
 import {FlatListComponent} from '../../../layout/Views/FlatList';
 
 import {store} from '../../../../store/reduxStore';
@@ -22,8 +20,8 @@ import {
 import {createInviteToSessionBranchUrl} from '../../../database/branch';
 
 import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
-import ImageUser from '../../../layout/image/ImageUser';
 import AllIcon from '../../../layout/icons/AllIcons';
+import CardUser from '../../../layout/cards/CardUser';
 
 const imageCardTeam = (session, size, hideDots, color) => {
   let scale = 1;
@@ -47,13 +45,12 @@ const imageCardTeam = (session, size, hideDots, color) => {
     }
   };
   let styleContainer = {};
-  // if (size) styleContainer = {height: size, width: size};
   return (
     <View style={{flex: 1, ...styleApp.center, ...styleContainer}}>
       {length > 2 ? (
         <View>
           {userCircle({
-            member: length - 2,
+            displayRemainder: length - 2,
             style: styleByIndex(-1),
             scale,
             length: Object.values(session.members).length - 1,
@@ -80,8 +77,16 @@ const imageCardTeam = (session, size, hideDots, color) => {
 };
 
 const userCircle = (options) => {
-  const {member, style, scale, length, hideDots, single, color} = options;
-  const userID = store.getState().user.userID;
+  const {
+    member,
+    style,
+    scale,
+    length,
+    hideDots,
+    single,
+    color,
+    displayRemainder,
+  } = options;
   let borderRadius = 100;
   let sizeImg = length > 1 ? 45 * scale : 63 * scale;
   const styleImg = {
@@ -93,59 +98,38 @@ const userCircle = (options) => {
     overflow: 'hidden',
     backgroundColor: colors.grey,
   };
-  const firstAndLastName =
-    member &&
-    member.info &&
-    member.info.firstname &&
-    member.info.lastname &&
-    member.info.firstname !== '' &&
-    member.info.lastname !== '';
-
-  const altNames = member && member.info && member.info.userInfo;
+  const containerStyle = {
+    ...styleApp.fullSize,
+    ...styleApp.center,
+    borderRadius,
+    backgroundColor: colors.greyDark,
+  };
 
   return (
-    <View key={member.id ? member.id : -1}>
+    <View key={member?.id ?? -1}>
       <View style={{...style}}>
         <View style={{...styleImg}}>
-          {member.info && member.info.picture ? (
-            <AsyncImage
-              style={{
-                ...styleApp.fullSize,
-                borderRadius,
-                backgroundColor: colors.grey,
-              }}
-              mainImage={member.info.picture}
-              imgInitial={member.info.picture}
-            />
-          ) : (
-            <View
-              style={{
-                ...styleApp.fullSize,
-                ...styleApp.center,
-                backgroundColor: colors.greyDark,
-                borderRadius,
-              }}>
+          {displayRemainder ? (
+            <View style={containerStyle}>
               <Text
                 style={{
                   ...styleApp.textBold,
+                  fontSize: 13,
                   color: colors.white,
-                  letterSpacing: 1,
-                  textAlign: 'center',
-                  marginLeft: 3,
-                  marginTop: 1,
-                  fontSize: single ? 21 : 16,
                 }}>
-                {firstAndLastName
-                  ? member.info.firstname[0] + member.info.lastname[0]
-                  : altNames
-                  ? member.info.userInfo.firstname[0] +
-                    member.info.userInfo.lastname[0]
-                  : '+' + member}
+                +{displayRemainder}
               </Text>
             </View>
+          ) : (
+            <CardUser
+              id={member?.id}
+              imgOnly
+              styleImg={containerStyle}
+              profileInitialsStyle={{fontSize: scale * (single ? 21 : 14)}}
+            />
           )}
         </View>
-        {!hideDots && member.info ? (
+        {!hideDots && member ? (
           <View
             style={{
               position: 'absolute',
@@ -180,10 +164,11 @@ const titleSession = (session, size, short) => {
     return 'You';
   }
   if (short) {
-    const name = members[0]?.info?.firstname;
+    const firstMember = store.getState().users[members[0].id];
+    const name = firstMember?.firstname;
     const string =
       members.length === 1
-        ? name
+        ? name + ' ' + firstMember?.lastname
         : name +
           ' & ' +
           (members.length - 1) +
@@ -192,9 +177,10 @@ const titleSession = (session, size, short) => {
     return string;
   }
 
-  const names = members.reduce((nameString, member, i, members) => {
-    if (member.info && member.info.firstname && member.info.lastname) {
-      const {firstname, lastname} = member.info;
+  const names = members.reduce((nameString, memberObject, i, members) => {
+    const member = store.getState().users[memberObject.id];
+    if (member && member.firstname && member.lastname) {
+      const {firstname, lastname} = member;
       const and = short ? ' & ' : ' and ';
       if (nameString === '') {
         return firstname + ' ' + lastname;
@@ -221,13 +207,10 @@ const titleSession = (session, size, short) => {
       return nameString;
     }
   }, '');
-  if (size) {
-    return names.slice(0, 30) + '...';
-  }
   return names;
 };
 
-const dateSession = ({session, messages, component}) => {
+const dateSession = ({session, lastMessage, component, messages}) => {
   let {members, createdAt} = session;
   if (!members) {
     return formatDate(Date.now());
@@ -254,9 +237,8 @@ const dateSession = ({session, messages, component}) => {
       return 0;
     }
   })[0].disconnectionTimeStamp;
-
+  if (!lastMessage) lastMessage = lastMessageObject(messages);
   let dateLastMessage = 0;
-  const lastMessage = lastMessageObject(messages);
   if (lastMessage) {
     dateLastMessage = lastMessage.timeStamp;
   }
@@ -279,14 +261,24 @@ const sessionTitle = (session, styleText) => {
   );
 };
 
-const sessionDate = ({session, messages}) => {
+const lastMessageObject = (messages) => {
+  if (!messages) {
+    return false;
+  }
+  if (Object.keys(messages)[0] === 'noMessage') {
+    return false;
+  }
+  return Object.values(messages)[0];
+};
+
+const sessionDate = ({session, lastMessage, messages}) => {
   return (
     <Text
       style={[
         styleApp.text,
         {color: colors.greyDark, marginTop: 0, fontSize: 10},
       ]}>
-      {dateSession({session, messages, component: true})}
+      {dateSession({session, lastMessage, component: true, messages})}
     </Text>
   );
 };
@@ -303,26 +295,14 @@ const blueBadge = () => {
   return <View style={blueBadge} />;
 };
 
-const lastMessageObject = (messages) => {
-  if (!messages) {
-    return false;
-  }
-  if (Object.keys(messages)[0] === 'noMessage') {
-    return false;
-  }
-  return Object.values(messages)[0];
-};
-
-const lastMessage = (messages) => {
-  if (!messages) return null;
-  const userID = store.getState().user.userID;
-  const lastMessage = lastMessageObject(messages);
-  if (!lastMessage) {
-    return null;
-  }
-
-  const {user, timeStamp, images, type} = lastMessage;
+const lastMessageView = (lastMessage) => {
+  if (!lastMessage) return null;
+  const {user, images, type} = lastMessage;
+  if (lastMessage.id === 'noMessage') return null;
+  const {userID} = store.getState().user;
+  const userInfo = store.getState().users[user.id];
   let {text} = lastMessage;
+  if (!text) text = '';
   text = text.replace(/(\r\n|\n|\r)/gm, ' ');
   if (images) {
     text = `${Object.values(images).length} file${
@@ -392,30 +372,16 @@ const lastMessage = (messages) => {
     textAlignVertical: 'center',
     marginRight: user.id === userID ? 5 : undefined,
   };
-  const notificationStyle = {
-    height: 17,
-    width: 17,
-    backgroundColor: colors.blue,
-    borderRadius: 15,
-    position: 'absolute',
-    right: -8,
-    top: -5,
-  };
   return (
     <Row style={containerStyle}>
       <View style={messageContainerStyle}>
         <View style={styleProfilePhotoContainer}>
-          <ImageUser
-            onClick={() => true}
-            user={user}
-            styleImgProps={profilePhotoStyle}
-          />
+          <CardUser imgOnly styleImg={profilePhotoStyle} id={user.id} />
         </View>
-        {/* {notification && <View style={notificationStyle} />} */}
         <Text style={nameTextStyle}>
           {user.id === userID
             ? 'You'
-            : user.info.firstname + ' ' + user.info.lastname}
+            : userInfo?.firstname + ' ' + userInfo?.lastname}
         </Text>
         <AllIcon
           name={
@@ -530,7 +496,6 @@ const hangupButton = (session) => {
     ...styleApp.center,
     borderRadius: 20,
   };
-  const styleText = {...styleApp.textBold, color: colors.white, fontSize: 10};
   return (
     <ButtonColor
       view={() => {
@@ -601,7 +566,6 @@ const iconWithBadge = (icon, badgeNumber) => {
 };
 
 const rowTitle = ({
-  icon,
   badge,
   title,
   hideDividerHeader,
@@ -610,11 +574,15 @@ const rowTitle = ({
   customButton,
   containerStyle,
   titleStyle,
+  clickOnRow,
 }) => {
+  const icon = button?.icon;
   const styleButton = {
-    height: 34,
+    height: 30,
     width: '100%',
-    borderRadius: 5,
+    borderRadius: 10,
+    ...button?.style,
+    zIndex: 10,
   };
   const styleBadgeText = {
     fontSize:
@@ -628,7 +596,11 @@ const rowTitle = ({
   };
   return (
     <View style={styleContainer}>
-      <Row>
+      <Row
+        activeOpacity={1}
+        onPress={() => {
+          clickOnRow && button.click();
+        }}>
         <Col size={1} />
         <Col size={55} style={styleApp.center2}>
           <Text
@@ -646,20 +618,31 @@ const rowTitle = ({
           ) : button ? (
             <ButtonColor
               view={() => {
-                return (
+                return button.text ? (
                   <Text
                     style={[
                       styleApp.textBold,
-                      {color: colors.white, fontSize: 14},
+                      {color: colors.white, fontSize: button?.fontSize ?? 14},
                     ]}>
                     {button.text}
                   </Text>
-                );
+                ) : icon ? (
+                  <AllIcon
+                    name={icon.name}
+                    solid
+                    size={icon.size ?? 17}
+                    color={icon.color ?? colors.white}
+                    type={icon.type}
+                    style={icon.style}
+                  />
+                ) : null;
               }}
-              color={colors.primary}
+              color={button.color ?? colors.primary}
               style={styleButton}
-              click={() => button.click()}
-              onPressColor={colors.primaryLight}
+              click={() => {
+                button.click();
+              }}
+              onPressColor={button.onPressColor ?? colors.primaryLight}
             />
           ) : null}
         </Col>
@@ -703,7 +686,7 @@ const ListContents = (props) => {
       initialNumberToRender={8}
       hideDividerHeader={true}
       ListEmptyComponent={{
-        text: `You have not shared any content yet.`,
+        text: 'You have not shared any content yet',
       }}
       header={rowTitle({
         icon: {name: 'galery', type: 'moon', color: colors.title, size: 20},
@@ -778,7 +761,7 @@ const ListPlayers = (props) => {
             paddingTop: 10,
             paddingBottom: 10,
           }}
-          click={() => navigate('ProfilePage', {user: member})}
+          click={() => navigate('ProfilePage', {id: member.id})}
           onPressColor={colors.off2}
         />
       )}
@@ -793,7 +776,7 @@ const ListPlayers = (props) => {
         button: {
           text: 'Add',
           click: async () =>
-            navigate('UserDirectory', {
+            navigate('SearchPage', {
               action: 'invite',
               sessionToInvite: objectID,
               branchLink: await createInviteToSessionBranchUrl(objectID),
@@ -805,20 +788,6 @@ const ListPlayers = (props) => {
       })}
     />
   );
-};
-
-const conversationView = (session) => {
-  const {objectID} = session;
-  return viewWithTitle({
-    view: <CardConversation objectID={objectID} />,
-    title: 'Chat',
-    icon: {
-      name: 'speech',
-      type: 'moon',
-      color: colors.title,
-      size: 20,
-    },
-  });
 };
 
 const contentView = (session) => {
@@ -841,10 +810,9 @@ module.exports = {
   blueBadge,
   buttonPlay,
   contentView,
-  conversationView,
   hangupButton,
   imageCardTeam,
-  lastMessage,
+  lastMessageView,
   ListContents,
   ListPlayers,
   rowTitle,

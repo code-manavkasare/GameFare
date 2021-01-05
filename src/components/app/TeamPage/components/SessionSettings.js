@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, Animated} from 'react-native';
+import {View, Animated} from 'react-native';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
-import sizes from '../../../style/sizes';
+import {heightHeaderHome, height} from '../../../style/sizes';
 import {goBack} from '../../../../../NavigationService';
 
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
@@ -14,6 +14,13 @@ import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {imageCardTeam, sessionTitle} from './elements';
 import RowIcon from '../../../layout/rows/RowIcon';
 import {deleteSession} from '../../../functions/coach';
+import {sessionSelector} from '../../../../store/selectors/sessions';
+import {
+  userConnectedSelector,
+  userIDSelector,
+  userInfoSelector,
+} from '../../../../store/selectors/user';
+import {messagesSelector} from '../../../../store/selectors/conversations';
 
 class SessionSettings extends Component {
   constructor(props) {
@@ -26,7 +33,7 @@ class SessionSettings extends Component {
     const {navigate} = navigation;
     const {objectID} = route.params;
     return (
-      <View style={{minHeight: sizes.height}}>
+      <View style={{minHeight: height}}>
         <View style={styleApp.marginView}>
           <Row style={{flex: 0, paddingTop: 20, paddingBottom: 20}}>
             <Col size={25} style={styleApp.center2}>
@@ -76,7 +83,7 @@ class SessionSettings extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.settings()}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={heightHeaderHome}
           offsetBottom={30}
           showsVerticalScrollIndicator={true}
         />
@@ -87,20 +94,13 @@ class SessionSettings extends Component {
 
 const mapStateToProps = (state, props) => {
   const {objectID} = props.route.params;
-  const conversation = state.conversations[objectID]
-  let messages = {}
-  if (conversation) messages = conversation.messages
   return {
-    userID: state.user.userID,
-    userConnected: state.user.userConnected,
-    infoUser: state.user.infoUser.userInfo,
-    session: state.coachSessions[objectID],
-    messages
-  }
+    userID: userIDSelector(state),
+    userConnected: userConnectedSelector(state),
+    infoUser: userInfoSelector(state),
+    session: sessionSelector(state, {id: objectID}),
+    messages: messagesSelector(state, {id: objectID}),
+  };
 };
 
-
-export default connect(
-  mapStateToProps,
-  {},
-)(SessionSettings);
+export default connect(mapStateToProps)(SessionSettings);

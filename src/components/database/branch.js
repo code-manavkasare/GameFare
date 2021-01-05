@@ -192,7 +192,36 @@ const createBranchUrl = async (branchUniversalObject) => {
   return url;
 };
 
-module.exports = {
+const createInviteToClubBranchUrl = async (clubID) => {
+  const {userID} = store.getState().user;
+  const club = store.getState().clubs[clubID];
+  const {title, description} = club.info;
+
+  const branchUniversalObject = await branch.createBranchUniversalObject(
+    'canonicalIdentifier',
+    {
+      title,
+      contentDescription: description,
+      contentMetadata: {
+        customMetadata: {
+          id: clubID,
+          type: 'club',
+          sentBy: userID,
+          $uri_redirect_mode: '1',
+        },
+      },
+    },
+  );
+  const branchPromise = createBranchUrl(branchUniversalObject);
+  branchPromise.catch((r) => {
+    console.log('createInviteToSessionBranchUrl error', r);
+    return false;
+  });
+  const response = await branchPromise;
+  return await response;
+};
+
+export {
   getParams,
   openUrl,
   createInviteToAppBranchUrl,
@@ -200,4 +229,5 @@ module.exports = {
   createShareVideosBranchUrl,
   getArchivesFromBranchParams,
   getSessionFromBranchParams,
+  createInviteToClubBranchUrl,
 };

@@ -1,6 +1,4 @@
-export * from './globaleVariablesActions';
 export * from './userActions';
-export * from './historicSearchActions';
 export * from './messageActions';
 export * from './coachActions';
 export * from './layoutActions';
@@ -9,5 +7,5 @@ export * from './appSettingsActions';
 export * from './localVideoLibraryActions';
 export * from './archivesActions';
 export * from './coachSessionsActions';
-export * from './phoneContactsActions';
 export * from './connectionTypeActions';
+export * from './initialInteractionActions';

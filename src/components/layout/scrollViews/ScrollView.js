@@ -9,12 +9,12 @@ import {
   Easing,
   Dimensions,
   RefreshControl,
-} from 'react-native'; 
+} from 'react-native';
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {marginTopApp, marginTopAppLandscape} from '../../style/sizes';
 
-export default class ScrollViewPage extends PureComponent {
+export default class ScrollViewPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,10 +29,11 @@ export default class ScrollViewPage extends PureComponent {
     }
   }
   styleScrollView() {
-    let {marginTop} = this.props;
+    let {marginTop, style} = this.props;
     const marginTopAdded = marginTopApp;
     return {
       marginTop: marginTop + marginTopAdded,
+      ...style,
     };
   }
   styleInsideView() {
@@ -99,4 +100,3 @@ export default class ScrollViewPage extends PureComponent {
     );
   }
 }
-

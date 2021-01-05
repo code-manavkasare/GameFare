@@ -11,7 +11,6 @@ import {logMixpanel} from '../../../../functions/logs';
 import {boolShouldComponentUpdate} from '../../../../functions/redux';
 
 import {sessionOpening} from '../../../../functions/coach';
-import {conversationIsInNotification} from '../../../../functions/notifications.js';
 import {createInviteToSessionBranchUrl} from '../../../../database/branch';
 
 import {
@@ -20,7 +19,7 @@ import {
   sessionTitle,
   sessionDate,
   viewLive,
-  lastMessage,
+  lastMessageView,
 } from '../../../TeamPage/components/elements';
 import {
   bindSession,
@@ -32,6 +31,15 @@ import ButtonColor from '../../../../layout/Views/Button';
 import Loader from '../../../../layout/loaders/Loader';
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
+import {
+  notificationsByConversationSelector,
+  userIDSelector,
+} from '../../../../../store/selectors/user';
+import {
+  currentSessionIDSelector,
+  sessionSelector,
+} from '../../../../../store/selectors/sessions';
+import {lastMessageSelector} from '../../../../../store/selectors/conversations';
 
 class CardStream extends Component {
   static propTypes = {
@@ -85,15 +93,27 @@ class CardStream extends Component {
     const {
       coachSessionID,
       session,
-      conversation,
       recentView,
       onClick,
-      key,
+      lastMessage,
       selected,
       notifications,
       unselectable,
     } = this.props;
-
+    const styleButton = [
+      styleApp.fullSize,
+      {
+        paddingVertical: 0,
+        ...style,
+        width: '100%',
+        borderWidth: unselectable ? 0 : 2,
+        borderColor: unselectable
+          ? colors.off
+          : selected
+          ? colors.green
+          : colors.white,
+      },
+    ];
     const checkButtonContainerStyle = {
       ...styleApp.center,
       ...styleApp.fullSize,
@@ -101,10 +121,7 @@ class CardStream extends Component {
       position: 'absolute',
       opacity: this.selectionIndication,
     };
-    const hasNotification = conversationIsInNotification(
-      coachSessionID,
-      notifications,
-    );
+    const hasNotification = notifications.length > 0;
     return (
       <ButtonColor
         click={() => {
@@ -115,21 +132,12 @@ class CardStream extends Component {
           if (onClick) {
             onClick(session);
           } else {
-            navigate('Conversation', {coachSessionID: coachSessionID});
+            navigate('Conversation', {id: coachSessionID});
           }
         }}
         color={colors.white}
         onPressColor={colors.off}
-        style={[
-          styleApp.fullSize,
-          {
-            paddingVertical: 0,
-            ...style,
-            width: '100%',
-            borderWidth: selected ? 2 : 0,
-            borderColor: unselectable ? colors.off : colors.green,
-          },
-        ]}
+        style={styleButton}
         view={() =>
           !session ? (
             <PlaceHolder />
@@ -148,9 +156,7 @@ class CardStream extends Component {
                 </Col>
                 <Col size={50} style={[styleApp.center2, {paddingRight: 6}]}>
                   {sessionTitle(session, {}, false)}
-                  {!recentView
-                    ? lastMessage(conversation?.messages, hasNotification)
-                    : null}
+                  {!recentView ? lastMessageView(lastMessage) : null}
                 </Col>
                 {!recentView ? (
                   <Col size={20} style={styleApp.center}>
@@ -159,7 +165,7 @@ class CardStream extends Component {
                         ? blueBadge()
                         : sessionDate({
                             session,
-                            messages: conversation?.messages,
+                            lastMessage,
                           })}
                     </View>
                   </Col>
@@ -194,7 +200,6 @@ class CardStream extends Component {
       showCallButton,
       showAddMemberButton,
       key,
-      selected,
       style,
     } = this.props;
 
@@ -250,7 +255,7 @@ class CardStream extends Component {
               color={colors.greyLight}
               onPressColor={colors.grey}
               click={async () =>
-                navigate('UserDirectory', {
+                navigate('SearchPage', {
                   action: 'invite',
                   sessionToInvite:
                     currentSessionID === coachSessionID
@@ -310,15 +315,12 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, props) => {
   return {
-    userID: state.user.userID,
-    session: state.coachSessions[props.coachSessionID],
-    conversation: state.conversations[props.coachSessionID],
-    currentSessionID: state.coach.currentSessionID,
-    notifications: state.user.infoUser.notifications,
+    userID: userIDSelector(state),
+    session: sessionSelector(state, {id: props.coachSessionID}),
+    lastMessage: lastMessageSelector(state, {id: props.coachSessionID}),
+    currentSessionID: currentSessionIDSelector(state),
+    notifications: notificationsByConversationSelector(state, props),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(CardStream);
+export default connect(mapStateToProps)(CardStream);

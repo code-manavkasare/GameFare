@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
 import {object, oneOfType, string, array} from 'prop-types';
-import {View, Animated} from 'react-native';
-import FastImage from 'react-native-fast-image';
+import {View, Animated, Image} from 'react-native';
 
 import {native} from '../../animations/animations';
 import {timeout} from '../../functions/coach';
-import {sentryCaptureException} from '../../functions/logs.js';
 
 export default class AsyncImage extends Component {
   static propTypes = {
@@ -26,23 +24,16 @@ export default class AsyncImage extends Component {
     };
     this.opacityFastImageCached = new Animated.Value(0);
   }
-  componentDidMount() {
-    this.preloadImage();
-  }
   componentDidUpdate(prevProps, prevState) {
     if (this.props.mainImage !== prevProps.mainImage) {
       this.preloadImage();
     }
   }
   async preloadImage() {
-    await FastImage.preload([
-      {
-        uri: this.props.mainImage,
-        cache: FastImage.cacheControl.web,
-      },
-    ]);
+    const {mainImage} = this.props;
+    await Image.prefetch(mainImage);
     await timeout(1000);
-    this.setState({imagePath: this.props.mainImage});
+    this.setState({imagePath: mainImage});
   }
   enterPictureCached() {
     Animated.timing(this.opacityFastImageCached, native(1)).start();
@@ -55,7 +46,7 @@ export default class AsyncImage extends Component {
     return mainImage;
   }
   imgDisplay() {
-    const {style, resizeMode, onError} = this.props;
+    const {style, resizeMode} = this.props;
     const {imagePath} = this.state;
     return (
       <Animated.View
@@ -64,25 +55,13 @@ export default class AsyncImage extends Component {
           height: style.height,
           width: style.width,
         }}>
-        <FastImage
-          resizeMode={resizeMode ? resizeMode : 'cover'}
+        <Image
           onLoadEnd={() => {
             this.enterPictureCached();
           }}
+          source={{uri: imagePath, cache: 'force-cache'}}
           style={[style, {zIndex: 10, position: 'absolute', top: 0}]}
-          source={{
-            cache: FastImage.cacheControl.web,
-            uri: imagePath,
-          }}
-          onError={(response) => {
-            if (onError) onError();
-            sentryCaptureException({
-              event: 'FastImageError',
-              error: response,
-              props: this.props,
-              state: this.state,
-            });
-          }}
+          resizeMode={resizeMode}
         />
       </Animated.View>
     );

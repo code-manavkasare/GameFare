@@ -1,4 +1,4 @@
-import React, {Component, memo} from 'react';
+import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 
@@ -6,19 +6,25 @@ import {navigate} from '../../../../../NavigationService';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
-import sizes from '../../../style/sizes';
+import {heightFooter, marginBottomApp} from '../../../style/sizes';
 
 import {FlatListComponent} from '../../../layout/Views/FlatList';
 import {boolShouldComponentUpdate} from '../../../functions/redux';
 
 import {viewLive, rowTitle} from '../../TeamPage/components/elements';
-import {getSortedSessions} from '../../../functions/coach';
 import CardStreamView from '../../coachFlow/GroupsPage/components/CardStreamView';
+import {
+  currentSessionIDSelector,
+  sessionsSelector,
+} from '../../../../store/selectors/sessions';
+import {userConnectedSelector} from '../../../../store/selectors/user';
 
 class ListVideoCalls extends Component {
   constructor(props) {
     super(props);
     this.state = {};
+    this.clickCardLive = this.clickCardLive.bind(this);
+    this.clickCard = this.clickCard.bind(this);
   }
   shouldComponentUpdate(nextProps, nextState) {
     return boolShouldComponentUpdate({
@@ -29,54 +35,41 @@ class ListVideoCalls extends Component {
       component: 'ListVideoCalls',
     });
   }
-  sessionsArray = () => {
-    const {coachSessions, currentSessionID} = this.props;
-    if (!coachSessions) {
-      return [];
-    }
-    return Object.values(coachSessions)
-      .sort(function(a, b) {
-        return b.timestamp - a.timestamp;
-      })
-      .filter((s) => {
-        return s && s.id && s.id !== currentSessionID;
-      });
-  };
 
+  clickCardLive = () => {
+    navigate('Session');
+  };
+  clickCard = (session) => {
+    const {onClick} = this.props;
+    onClick(session);
+  };
   render() {
     const {
       userConnected,
-      onClick,
       selectedSessions,
       hideCallButton,
       currentSessionID,
       AnimatedHeaderValue,
-      openUserDirectory,
-      coachSessions: propSessions,
+      openSearchPage,
+      coachSessions,
       headerTitle,
       inlineSearch,
       liveSessionHeader,
-      currentSession,
     } = this.props;
-
     const currentlyInSession =
       currentSessionID && liveSessionHeader && !inlineSearch;
-    let coachSessions = getSortedSessions({
-      coachSessions: propSessions,
-      sortBy: 'lastConnection',
-      exclude: [currentSessionID],
-    });
     return (
       <FlatListComponent
         list={coachSessions}
         ListEmptyComponent={{
           clickButton: () =>
-            !userConnected ? navigate('SignIn') : openUserDirectory(),
+            !userConnected ? navigate('SignIn') : openSearchPage(),
           textButton: !userConnected ? 'Sign in' : 'Search',
           text: !userConnected
-            ? 'Sign in to start a call'
-            : 'Search users or share invite to start a call.',
+            ? 'Sign in to start a video call'
+            : 'Search for users and start a video call',
           iconButton: !userConnected ? 'user' : 'search',
+          icon: 'video',
           image: require('../../../../img/images/search.png'),
         }}
         cardList={({item: session}) => {
@@ -85,7 +78,7 @@ class ListVideoCalls extends Component {
               <CardStreamView
                 coachSessionID={session.id}
                 key={session.id}
-                onClick={(session) => onClick(session)}
+                onClick={this.clickCard}
                 selected={selectedSessions[session.id] ? true : false}
                 showCallButton={!hideCallButton}
                 scale={1}
@@ -103,7 +96,7 @@ class ListVideoCalls extends Component {
             {rowTitle({
               hideDividerHeader: true,
               title: headerTitle,
-              titleColor: colors.black,
+              titleColor: colors.greyDarker,
               titleStyle: {
                 fontWeight: '800',
                 fontSize: 23,
@@ -114,15 +107,15 @@ class ListVideoCalls extends Component {
             })}
             {currentlyInSession ? (
               <View style={styles.sessionMenuStyle}>
-                {viewLive(currentSession, {
+                {/* {viewLive(currentSession, {
                   position: 'absolute',
                   left: -5,
                   top: -5,
                   zIndex: 2,
-                })}
+                })} */}
                 <CardStreamView
                   coachSessionID={currentSessionID}
-                  onClick={() => navigate('Session')}
+                  onClick={this.clickCardLive}
                   selected={false}
                   showAddMemberButton
                   scale={1}
@@ -133,65 +126,15 @@ class ListVideoCalls extends Component {
             ) : null}
           </View>
         }
+        headerStyle={styleApp.marginView}
         AnimatedHeaderValue={AnimatedHeaderValue}
-        paddingBottom={sizes.heightFooter + sizes.marginBottomApp + 90}
+        paddingBottom={heightFooter + marginBottomApp + 90}
       />
     );
   }
 }
 
 const styles = StyleSheet.create({
-  inviteButtonStyle: {
-    ...styleApp.center,
-    position: 'absolute',
-    width: 40,
-    height: 40,
-    right: 15,
-    borderRadius: 20,
-  },
-  searchBarStyle: {
-    ...styleApp.center2,
-    paddingLeft: 25,
-    height: 50,
-    width: '100%',
-    borderRadius: 15,
-    backgroundColor: colors.greyLight,
-    marginVertical: 20,
-  },
-  searchButtonStyle: {
-    ...styleApp.center,
-    position: 'absolute',
-    width: 40,
-    height: 40,
-    right: 70,
-    borderRadius: 20,
-  },
-  searchTextStyle: {
-    ...styleApp.textBold,
-    color: colors.greyDark,
-    marginLeft: 20,
-  },
-  searchRowStyle: {
-    height: '100%',
-    ...styleApp.center4,
-  },
-  styleViewLiveLogo: {
-    ...styleApp.center,
-    backgroundColor: colors.off,
-    height: 45,
-    width: 45,
-    borderRadius: 22.5,
-    borderWidth: 1,
-    borderColor: colors.grey,
-    marginTop: -100,
-    marginLeft: 65,
-  },
-  recentTextStyle: {
-    ...styleApp.textBold,
-    marginTop: 10,
-    marginLeft: 5,
-    fontSize: 23,
-  },
   cardStreamContainerStyle: {
     width: '90%',
     marginLeft: '5%',
@@ -209,21 +152,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     marginBottom: 5,
   },
-  currentSessionView: {
-    ...styleApp.center4,
-    paddingTop: 15,
-    paddingVertical: 5,
-    marginTop: 0,
-    marginBottom: 10,
-    height: 90,
-    width: 110,
-  },
-  liveAddMemberButton: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    height: 70,
-  },
+
   divider: {
     width: '115%',
     left: '-7.5%',
@@ -234,14 +163,13 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    coachSessions: state.user.infoUser.coachSessions,
-    userConnected: state.user.userConnected,
-    currentSessionID: state.coach.currentSessionID,
-    currentSession: state.coachSessions[state.coach.currentSessionID],
+    coachSessions: sessionsSelector(state, {
+      sortBy: 'lastConnection',
+      hideCurrentSession: true,
+    }),
+    userConnected: userConnectedSelector(state),
+    currentSessionID: currentSessionIDSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(ListVideoCalls);
+export default connect(mapStateToProps)(ListVideoCalls);

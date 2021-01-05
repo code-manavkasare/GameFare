@@ -12,18 +12,15 @@ import {Col, Row} from 'react-native-easy-grid';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
-import {
-  marginTopApp,
-  heightHeaderHome,
-  marginTopAppLandscape,
-} from '../../style/sizes';
+import {marginTopApp, heightHeaderHome} from '../../style/sizes';
 import Loader from '../../layout/loaders/Loader';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import CardUserSelect from '../../layout/cards/CardUserSelect';
 
-import {historicSearchAction} from '../../../store/actions/historicSearchActions';
 import {autocompleteSearchUsers} from '../../functions/users';
 import {createDiscussion, searchDiscussion} from '../../functions/message';
+import {userIDSelector, userInfoSelector} from '../../../store/selectors/user';
+import {blockedByUsersSelector} from '../../../store/selectors/blockedUsers';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -53,18 +50,19 @@ class NewConversation extends React.Component {
     this.setState({users: users, loader: false});
   }
   async next(selectedUsers) {
+    const {userID, infoUser} = this.props;
     if (Object.values(selectedUsers).length === 0) return true;
     await this.setState({loaderHeader: true});
     let users = Object.values(selectedUsers).map((user) => user.objectID);
-    users.push(this.props.userID);
+    users.push(userID);
     var discussion = await searchDiscussion(users, users.length);
     users = Object.values(selectedUsers).map((user) => {
       user.id = user.objectID;
       return user;
     });
     users = users.concat({
-      id: this.props.userID,
-      info: this.props.infoUser,
+      id: userID,
+      info: infoUser,
     });
 
     if (!discussion) {
@@ -194,7 +192,6 @@ const styles = StyleSheet.create({
   scrollViewUsers: {
     paddingTop: 10,
     minHeight: height,
-    // backgroundColor: colors.green,
   },
   searchBar: {
     backgroundColor: colors.off2,
@@ -207,18 +204,14 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
   },
-  imgUser: {width: 40, height: 40, borderRadius: 20},
 });
 
 const mapStateToProps = (state) => {
   return {
-    blockedByUsers: state.user.infoUser.blockedByUsers,
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
+    blockedByUsers: blockedByUsersSelector(state),
+    userID: userIDSelector(state),
+    infoUser: userInfoSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {historicSearchAction},
-)(NewConversation);
+export default connect(mapStateToProps)(NewConversation);

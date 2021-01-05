@@ -1,11 +1,10 @@
 import React from 'react';
 import {Animated, StyleSheet, View, Text} from 'react-native';
-import PropTypes from 'prop-types';
 import ButtonColor from '../../../../../layout/Views/Button';
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import {connect} from 'react-redux';
 
 import {navigate} from '../../../../../../../NavigationService';
+import {store} from '../../../../../../store/reduxStore';
 import {boolShouldComponentUpdate} from '../../../../../functions/redux';
 
 import colors from '../../../../../style/colors';
@@ -14,7 +13,7 @@ import AllIcons from '../../../../../layout/icons/AllIcons';
 
 import {heightHeaderHome, marginTopApp} from '../../../../../style/sizes';
 
-class RecordingMenu extends React.Component {
+export default class RecordingMenu extends React.Component {
   static propTypes = {};
   constructor(props) {
     super(props);
@@ -90,17 +89,19 @@ class RecordingMenu extends React.Component {
       />
     );
   };
+  clickSaveReview = () => {
+    const {saveReview} = this.props;
+    const {userConnected} = store.getState().user;
+    if (!userConnected) return navigate('SignIn');
+    return saveReview();
+  };
   render() {
     const {
-      previewRecording,
       isEditMode,
       isRecording,
       recordedActions,
       startRecording,
       stopRecording,
-      saveReview,
-      userConnected,
-      toggleMuteMicrophone,
     } = this.props;
     const {isMicrophoneMuted} = this.state;
     if (!isEditMode) return null;
@@ -143,7 +144,7 @@ class RecordingMenu extends React.Component {
               backgroundColor: colors.title + '70',
               text: 'Save',
               onPressColor: colors.greyDark + '70',
-              click: userConnected ? saveReview : () => navigate('SignIn'),
+              click: this.clickSaveReview,
               icon: {
                 name: 'sd-card',
                 type: 'font',
@@ -173,14 +174,3 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
-
-const mapStateToProps = (state, props) => {
-  return {
-    userConnected: state.user.userConnected,
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  {},
-)(RecordingMenu);

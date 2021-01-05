@@ -2,6 +2,7 @@ import {ProcessingManager} from 'react-native-video-processing';
 import RNFS from 'react-native-fs';
 import database from '@react-native-firebase/database';
 import {DocumentDirectoryPath} from 'react-native-fs';
+import {unzip} from 'react-native-zip-archive';
 import {assoc} from 'ramda';
 import {getPhotos} from '@react-native-community/cameraroll';
 
@@ -41,6 +42,7 @@ import {
   deleteCloudVideoInfo,
   updateThumbnailCloud,
 } from '../database/firebase/videosManagement';
+import {timeout} from './coach';
 
 const generateVideoInfosFromFlags = async (
   sourceVideoInfo,
@@ -176,14 +178,16 @@ const openVideoPlayer = async ({
   coachSessionID,
   forceSharing,
 }) => {
-  if (open) {
+  if (getCurrentRoute() === 'VideoPlayerPage') {
+    goBack();
+    await timeout(300);
+  }
+  if (open && archives.length > 0) {
     return navigate('VideoPlayerPage', {
       archives,
       coachSessionID,
       forceSharing,
     });
-  } else if (getCurrentRoute() === 'VideoPlayerPage') {
-    return goBack();
   }
   return;
 };
@@ -466,16 +470,6 @@ const updateLocalUploadProgress = (videoID, progress) => {
     store.dispatch(setArchive({...videoInfo, progress}));
   }
 };
-
-const regenerateThumbnail = async (archive) => {
-  let newArchive = {...archive};
-  const thumbnailPath = await generateThumbnail(archive.url);
-  const oldThumbnailPath = archive.thumbnail;
-  newArchive.thumbnail = thumbnailPath;
-  store.dispatch(setArchive(newArchive));
-  RNFS.unlink(oldThumbnailPath);
-};
-
 const dimensionRectangle = ({startPoint, endPoint}) => {
   const {x: x1, y: y1} = startPoint;
   const {x: x2, y: y2} = endPoint;
@@ -568,22 +562,77 @@ const addVideosFromCamerarollToApp = async (videos) => {
     videos.map((localIdentifier) => getNativeVideoInfo(localIdentifier)),
   );
   videosInfos.forEach((video) => {
+    video.url = `file://${video.url}`;
     addLocalVideo({video, backgroundUpload: true});
   });
   goToLibraryPage();
   openVideoPlayerIfOneVideoImported(videosInfos);
 };
+
+const checkIfThumbnailsSeekBarExist = async (videoId) => {
+  const tempPath = `${RNFS.TemporaryDirectoryPath}/${videoId}/thumbnails`;
+  const folderExist = await RNFS.exists(tempPath);
+  return folderExist;
+};
+
+const checkFetchAndSaveThumbnailsForSeekBar = async ({archiveId, url}) => {
+  const folderExist = await checkIfThumbnailsSeekBarExist(archiveId);
+  const thumbnailsPath = getThumbnailsPath(archiveId);
+
+  if (!folderExist && url) {
+    await downloadAndUnzip(url, thumbnailsPath);
+  }
+  return getAllFilesInDirPath(thumbnailsPath);
+};
+
+const getThumbnailsPath = (archiveId) => {
+  return `${RNFS.TemporaryDirectoryPath}${archiveId}/thumbnails`;
+};
+
+const downloadAndUnzip = async (url, destination) => {
+  return new Promise(async (resolve, reject) => {
+    const tempZipPath = `${destination}/tempFile.zip`;
+    await RNFS.mkdir(destination);
+    RNFS.downloadFile({
+      fromUrl: url,
+      toFile: tempZipPath,
+    }).promise.then(() => {
+      unzip(tempZipPath, destination)
+        .then(async (path) => {
+          console.log(`unzip completed at ${path}`);
+          await RNFS.unlink(tempZipPath);
+
+          const folderInfo = await RNFS.readdir(destination);
+          console.log('folderInfo: ', folderInfo);
+          resolve();
+        })
+        .catch((error) => {
+          console.error(error);
+          reject(error);
+        });
+    });
+  });
+};
+
+const getAllFilesInDirPath = async (dirPath) => {
+  const filesName = await RNFS.readdir(dirPath);
+  filesName.sort();
+  const filesPathArray = await filesName.map((filesName) => {
+    return `${dirPath}/${filesName}`;
+  });
+  return filesPathArray;
+};
 export {
   addVideosFromCamerarollToApp,
   addLocalVideo,
   arrayUploadFromSnippets,
+  checkFetchAndSaveThumbnailsForSeekBar,
   deleteLocalVideoFile,
   deleteVideos,
   dimensionRectangle,
   generateThumbnailSet,
   oneTimeFixStoreLocalVideoLibrary,
   openVideoPlayer,
-  regenerateThumbnail,
   selectVideosFromCameraRoll,
   shareVideosWithTeams,
   updateLocalUploadProgress,

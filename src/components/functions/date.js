@@ -3,7 +3,6 @@ import {Platform, PermissionsAndroid, Dimensions} from 'react-native';
 import moment from 'moment';
 import {request, PERMISSIONS} from 'react-native-permissions';
 
-
 const minutes = (time) => {
   return Math.floor(time / 60);
 };
@@ -46,41 +45,63 @@ const duration = (value) => {
   return minutes(value) + ' min ' + seconds(value) + ' sec';
 };
 
-const formatDuration = (duration, numerical) => {
-  if (!numerical) {
-    if (duration > 60)
-      return (
-        Math.round(duration / 60).toString() +
-        ' minute' +
-        (Math.round(duration / 60) !== 1 ? 's' : '') +
-        ' long'
-      );
-    else
-      return (
-        Math.round(duration).toString() +
-        ' second' +
-        (Math.round(duration) !== 1 ? 's' : '') +
-        ' long'
-      );
-  }
-  function pad(num, size) {
-    var s = num + '';
-    while (s.length < size) s = '0' + s;
-    return s;
-  }
+/**
+ * @param {number} duration     Duration in whichever input unit specified.
+ * @param {string} inputUnit    The unit of time to format the input to.
+ *  'millisecond', 'second', 'minute', 'hour',
+ * @param {string} formatType   How to display the duration.
+ *  'text':       "{h} hours {m} min {s} sec",
+ *  'textBrief':  "{s} seconds long" / "{m} minutes long",
+ *  'numerical':  "00:00:00"
+ */
+
+const formatDuration = ({duration, inputUnit, formatType}) => {
   if (duration < 0) duration = 0;
-  let ms = duration % 1000;
-  let sec = ((duration - ms) / 1000) % 60;
-  let min = ((duration - ms - sec * 1000) / 60000) % 60;
-  let hours = ((duration - ms - sec * 1000 - min * 60000) / 3600000) % 24;
-  return (
-    (hours > 0 ? `${pad(hours, 2)}:` : ``) + `${pad(min, 2)}:${pad(sec, 2)}`
-  );
+  switch (inputUnit) {
+    case 'second':
+      duration = duration * 1000;
+      break;
+    case 'minute':
+      duration = duration * 1000 * 60;
+      break;
+    case 'hour':
+      duration = duration * 1000 * 60 * 60;
+      break;
+    default:
+      break;
+  }
+  const ms = duration % 1000;
+  const sec = ((duration - ms) / 1000) % 60;
+  const min = ((duration - ms - sec * 1000) / 60000) % 60;
+  const hours = ((duration - ms - sec * 1000 - min * 60000) / 3600000) % 24;
+  switch (formatType) {
+    case 'text':
+      let format = '';
+      if (hours) format += `${hours} hour${hours === 1 ? '' : 's'} `;
+      if (min) format += `${min} min `;
+      if (sec) format += `${min} sec`;
+      return format;
+    case 'textBrief':
+      if (hours) return `${hours} hour${hours === 1 ? '' : 's'} long`;
+      if (min) return `${min} minute${min === 1 ? '' : 's'} long`;
+      if (sec) return `${sec} second${sec === 1 ? '' : 's'} long`;
+      return;
+    default:
+      const padWithZeroes = (num, size) => {
+        let s = num + '';
+        while (s.length < size) s = '0' + s;
+        return s;
+      };
+      return (
+        (hours > 0 ? `${padWithZeroes(hours, 2)}:` : '') +
+        `${padWithZeroes(min, 2)}:${padWithZeroes(sec, 2)}`
+      );
+  }
 };
 
 class FormatDate extends Component {
   //// Required props: date
-  // This component re-renders every 60 seconds
+  // This component re-renders every 60 seconds if it's within the last hour
   // and formats the date in a nice way
 
   // Within 1 minute : 'Just now'
@@ -94,12 +115,16 @@ class FormatDate extends Component {
   constructor(props) {
     super(props);
   }
-  // componentDidMount() {
-  //   this.interval = setInterval(() => this.tick(), 60000);
-  // }
-  // componentWillUnmount() {
-  //   clearInterval(this.interval);
-  // }
+  componentDidMount() {
+    const {date} = this.props;
+    let earlier = moment(Date.now()).subtract(1, 'hour');
+    if (date > earlier) {
+      setInterval(() => this.tick(), 60000);
+    }
+  }
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
   tick() {
     const {date} = this.props;
     let earlier = moment(Date.now()).subtract(7, 'days');

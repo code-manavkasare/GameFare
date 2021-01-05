@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, Animated, ScrollView} from 'react-native';
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Text, StyleSheet} from 'react-native';
+import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 
 import colors from '../../../style/colors';
@@ -11,6 +11,12 @@ import ButtonColor from '../../../layout/Views/Button';
 import {openVideoPlayer} from '../../../functions/videoManagement';
 import styleApp from '../../../style/style';
 import AllIcon from '../../../layout/icons/AllIcons';
+import {
+  currentSessionIDSelector,
+  sessionSelector,
+} from '../../../../store/selectors/sessions';
+import {userIDSelector} from '../../../../store/selectors/user';
+import {width} from '../../../style/sizes';
 
 class VideoBeingShared extends Component {
   constructor(props) {
@@ -28,27 +34,21 @@ class VideoBeingShared extends Component {
     const videos = Object.keys(
       session.members[personSharingScreen].sharedVideos,
     );
+    const displayVideos = Object.keys(
+      session.members[personSharingScreen].sharedVideos,
+    ).splice(0, 3);
     return (
       <ButtonColor
         view={() => {
           return (
             <Row>
-              <Col size={40} style={{paddingTop: 5, marginLeft: -10}}>
-                {videos.map((video, index) => {
+              <Col size={40} style={{paddingTop: 10}}>
+                {displayVideos.map((video, index) => {
                   return (
                     <CardArchive
                       style={{
-                        height: 70,
-                        width: 70,
                         left: Number(index) * 20,
-                        borderRadius: 35,
-                        borderWidth: 2,
-                        borderColor: colors.off,
-                        overflow: 'hidden',
-                        // marginRight: 3,
-                        position: 'absolute',
-                        // backgroundColor: 'red',
-                        // ...styleApp.shade,
+                        ...styles.cardArchive,
                       }}
                       disableClick={true}
                       hideInformation={true}
@@ -60,34 +60,13 @@ class VideoBeingShared extends Component {
                   );
                 })}
               </Col>
-              <Col size={30} style={styleApp.center2}>
-                <Text style={styleApp.textBold}>{`${videos.length} video${
-                  videos.length > 1 ? `s` : ''
-                }`}</Text>
+              <Col size={50} style={styleApp.center2}>
+                <Text style={styleApp.textBold}>Currently Live</Text>
+                <Text style={styles.text}>
+                  {`${videos.length} video${videos.length === 1 ? '' : 's'}`}
+                </Text>
               </Col>
-              <Col size={15} style={styleApp.center2}>
-                <View
-                  style={[
-                    styleApp.center,
-                    {
-                      height: 25,
-                      width: 50,
-                      borderRadius: 5,
-                      borderColor: colors.off,
-                      backgroundColor: colors.red,
-                      borderWidth: 1,
-                    },
-                  ]}>
-                  <Text
-                    style={[
-                      styleApp.textBold,
-                      {color: colors.white, fontSize: 12},
-                    ]}>
-                    Live
-                  </Text>
-                </View>
-              </Col>
-              <Col size={15} style={styleApp.center3}>
+              <Col size={10} style={styleApp.center}>
                 <AllIcon
                   name={'play'}
                   size={12}
@@ -98,8 +77,14 @@ class VideoBeingShared extends Component {
             </Row>
           );
         }}
-        style={[styles.button, styleApp.marginView]}
-        click={() => openVideoPlayer({archives: videos, open: true})}
+        style={[styles.button]}
+        click={() =>
+          openVideoPlayer({
+            archives: videos,
+            open: true,
+            coachSessionID: currentSessionID,
+          })
+        }
         color={colors.white}
         onPressColor={colors.off}
       />
@@ -109,24 +94,40 @@ class VideoBeingShared extends Component {
 
 const styles = StyleSheet.create({
   button: {
-    height: 80,
-    borderRadius: 5,
-    marginBottom: 10,
+    ...styleApp.marginView,
+    ...styleApp.center,
+    ...styleApp.shadow,
+    height: 90,
+    borderRadius: 15,
+    marginBottom: -10,
     borderColor: colors.off,
     borderWidth: 0,
+    width: width * 0.9,
+  },
+  text: {
+    ...styleApp.textBold,
+    color: colors.greyDark,
+    fontSize: 14,
+  },
+  cardArchive: {
+    height: 70,
+    width: 50,
+    borderRadius: 15,
+    overflow: 'hidden',
+    borderWidth: 3,
+    borderColor: colors.white,
+    position: 'absolute',
+    backgroundColor: colors.greyDark,
   },
 });
 
 const mapStateToProps = (state, props) => {
   const {currentSessionID} = state.coach;
   return {
-    userID: state.user.userID,
-    currentSessionID,
-    session: state.coachSessions[currentSessionID],
+    userID: userIDSelector(state),
+    currentSessionID: currentSessionIDSelector(state),
+    session: sessionSelector(state, {id: currentSessionID}),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(VideoBeingShared);
+export default connect(mapStateToProps)(VideoBeingShared);

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, Easing} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
@@ -8,15 +8,17 @@ import database from '@react-native-firebase/database';
 
 import ImageUser from '../../../../../../../layout/image/ImageUser';
 import AddFlagButton from './AddFlagButton';
-import {uploadQueueAction} from '../../../../../../../../store/actions/uploadQueueActions';
 import {arrayUploadFromSnippets} from '../../../../../../../functions/videoManagement';
-import {navigate} from '../../../../../../../../../NavigationService';
 
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 import Loader from '../../../../../../../layout/loaders/Loader';
 import Timer from './Timer';
-import {request} from 'react-native-permissions';
+import {
+  infoUserByIdSelector,
+  userIDSelector,
+} from '../../../../../../../../store/selectors/user';
+import CardUser from '../../../../../../../layout/cards/CardUser';
 
 class MemberSource extends Component {
   constructor(props) {
@@ -164,15 +166,20 @@ class MemberSource extends Component {
 
   member() {
     const {member} = this.state;
-    const {userID, coachSessionID, takeSnapShotCameraView} = this.props;
-    const {firstname, lastname} = member.info;
+    const {
+      userID,
+      coachSessionID,
+      takeSnapShotCameraView,
+      infoUser,
+    } = this.props;
     const {recording} = member;
-
+    const firstname = infoUser?.firstname;
+    const lastname = infoUser?.lastname;
     return (
       <View key={member.id} style={styles.cardUser}>
         <Row>
           <Col size={15} style={styleApp.center2}>
-            <ImageUser user={member} />
+            <CardUser imgOnly id={member.id} />
           </Col>
 
           <Col size={2} />
@@ -277,13 +284,11 @@ MemberSource.propTypes = {
   selectMember: PropTypes.func,
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
   return {
-    userID: state.user.userID,
+    userID: userIDSelector(state),
+    infoUser: infoUserByIdSelector(state, {id: props.member.id}),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {uploadQueueAction},
-)(MemberSource);
+export default connect(mapStateToProps)(MemberSource);

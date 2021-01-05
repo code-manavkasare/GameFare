@@ -36,7 +36,7 @@ class ListPlayers extends Component {
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => (
-            <View >{listPlayers({session, messages})}</View>
+            <View>{listPlayers({session, messages})}</View>
           )}
           marginBottomScrollView={0}
           marginTop={0}
@@ -50,9 +50,9 @@ class ListPlayers extends Component {
 
 const mapStateToProps = (state, props) => {
   const {objectID} = props;
-  const conversation = state.conversations[objectID]
-  let messages = {}
-  if (conversation) messages = conversation.messages
+  const conversation = state.conversations[objectID];
+  let messages = {};
+  if (conversation) messages = conversation.messages;
   return {
     userID: state.user.userID,
     userConnected: state.user.userConnected,
@@ -62,7 +62,4 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {},
-)(ListPlayers);
+export default connect(mapStateToProps)(ListPlayers);

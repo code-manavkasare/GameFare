@@ -1,32 +1,46 @@
 import {
   SET_USER_INFO,
   RESET_USER_INFO,
-  SET_LAYOUT_SETTINGS,
-  HIDE_FOOTER_APP,
+  SET_USER_CLOUD_ARCHIVES,
+  RESET_USER_CLOUD_ARCHIVES,
+  SET_USER_SESSIONS,
+  RESET_USER_SESSIONS,
+  SET_USER_SESSIONS_REQUESTS,
+  RESET_USER_SESSIONS_REQUESTS,
+  SET_USER_NOTIFICATIONS,
+  RESET_USER_NOTIFICATIONS,
+  SET_USER_BLOCKED_USERS,
+  RESET_USER_BLOCKED_USERS,
+  SET_USER_BLOCKED_BY_USERS,
+  RESET_USER_BLOCKED_BY_USERS,
+  SET_USER_SILENT_FRIENDS,
+  RESET_USER_SILENT_FRIENDS,
+  SET_USER_CLUBS,
+  RESET_USER_CLUBS,
+  SET_USER_BOOKINGS,
+  RESET_USER_BOOKINGS,
 } from '../types';
 
 const initialState = {
   userConnected: false,
-  layoutSettings: {
-    footerIsVisible: true,
-  },
-  infoUser: {
-    userInfo: {},
-    wallet: {},
-    defaultCard: {},
-    archivedStreams: {
-      ['demoVideo']: {
-        startTimestamp: Date.now(),
-        id: 'demoVideo',
-      },
-    },
-  },
   userID: '',
   phoneNumber: '',
+  infoUser: {
+    userInfo: {},
+    defaultCard: {},
+    wallet: {},
+  },
   country: {
     name: 'United States',
     dial_code: '+1',
     code: 'US',
+  },
+};
+
+const initialStateCloudArchives = {
+  ['demoVideo']: {
+    startTimestamp: Date.now(),
+    id: 'demoVideo',
   },
 };
 
@@ -36,22 +50,134 @@ const userReducer = (state = initialState, action) => {
       return {...state, ...action.userInfo};
     case RESET_USER_INFO:
       return initialState;
-    case SET_LAYOUT_SETTINGS:
-      return {
-        ...state,
-        layoutSettings: {...state.layoutSettings, ...action.layoutSettings},
-      };
-    case HIDE_FOOTER_APP:
-      return {
-        ...state,
-        layoutSettings: {
-          ...state.layoutSettings,
-          footerIsVisible: !state.layoutSettings.footerIsVisible,
-        },
-      };
+
     default:
       return state;
   }
 };
 
-export default userReducer;
+const userCloudArchivesReducer = (
+  state = initialStateCloudArchives,
+  action,
+) => {
+  switch (action.type) {
+    case SET_USER_CLOUD_ARCHIVES:
+      return {...action.archives};
+    case RESET_USER_CLOUD_ARCHIVES:
+      return initialStateCloudArchives;
+    default:
+      return state;
+  }
+};
+
+const initialStateCoachSessions = {};
+const userSessionsReducer = (state = initialStateCoachSessions, action) => {
+  switch (action.type) {
+    case SET_USER_SESSIONS:
+      return {...action.sessions};
+    case RESET_USER_SESSIONS:
+      return initialStateCoachSessions;
+    default:
+      return state;
+  }
+};
+
+const initialCoachSessionsRequests = {};
+const userSessionsRequestsReducer = (
+  state = initialCoachSessionsRequests,
+  action,
+) => {
+  switch (action.type) {
+    case SET_USER_SESSIONS_REQUESTS:
+      return {...action.sessions};
+    case RESET_USER_SESSIONS_REQUESTS:
+      return initialCoachSessionsRequests;
+    default:
+      return state;
+  }
+};
+
+const initialNotifications = {};
+const userNotificationsReducer = (state = initialNotifications, action) => {
+  switch (action.type) {
+    case SET_USER_NOTIFICATIONS:
+      return {...action.notifications};
+    case RESET_USER_NOTIFICATIONS:
+      return initialNotifications;
+    default:
+      return state;
+  }
+};
+
+const initialBlockedUsers = {};
+const userBlockedUsersReducer = (state = initialBlockedUsers, action) => {
+  switch (action.type) {
+    case SET_USER_BLOCKED_USERS:
+      return {...action.users};
+    case RESET_USER_BLOCKED_USERS:
+      return initialBlockedUsers;
+    default:
+      return state;
+  }
+};
+
+const initialBlockedByUsers = {};
+const userBlockedByUsersReducer = (state = initialBlockedByUsers, action) => {
+  switch (action.type) {
+    case SET_USER_BLOCKED_BY_USERS:
+      return {...action.users};
+    case RESET_USER_BLOCKED_BY_USERS:
+      return initialBlockedByUsers;
+    default:
+      return state;
+  }
+};
+
+const initialSilentFriends = {};
+const userSilentFriendsReducer = (state = initialSilentFriends, action) => {
+  switch (action.type) {
+    case SET_USER_SILENT_FRIENDS:
+      return {...action.users};
+    case RESET_USER_SILENT_FRIENDS:
+      return initialSilentFriends;
+    default:
+      return state;
+  }
+};
+
+const initialClubs = {};
+const userClubsReducer = (state = initialClubs, action) => {
+  switch (action.type) {
+    case SET_USER_CLUBS:
+      return {...action.clubs};
+    case RESET_USER_CLUBS:
+      return initialClubs;
+    default:
+      return state;
+  }
+};
+
+const initialBookings = {};
+const userBookingsReducer = (state = initialBookings, action) => {
+  switch (action.type) {
+    case SET_USER_BOOKINGS:
+      return {...action.bookings};
+    case RESET_USER_BOOKINGS:
+      return initialBookings;
+    default:
+      return state;
+  }
+};
+
+export {
+  userReducer,
+  userCloudArchivesReducer,
+  userNotificationsReducer,
+  userSessionsReducer,
+  userSessionsRequestsReducer,
+  userBlockedUsersReducer,
+  userBlockedByUsersReducer,
+  userSilentFriendsReducer,
+  userClubsReducer,
+  userBookingsReducer,
+};
