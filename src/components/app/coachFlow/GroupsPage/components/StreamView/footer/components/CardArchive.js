@@ -78,7 +78,6 @@ class CardArchive extends Component {
 
   static getDerivedStateFromProps(props, state) {
     let {archive, isSelected} = props;
-
     const {archiveFromCameraroll, userID} = props;
 
     if (archiveFromCameraroll) {

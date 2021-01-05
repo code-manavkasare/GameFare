@@ -575,6 +575,7 @@ const capitalize = (str) => {
 
 const deleteSession = (objectID) => {
   const userID = store.getState().user.userID;
+  console.log('delete session@@!');
   navigate('Alert', {
     title: 'Do you want to leave this conversation?',
     textButton: 'Leave',

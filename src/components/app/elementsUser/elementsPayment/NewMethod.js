@@ -65,7 +65,7 @@ class NewMethod extends Component {
         </View>
 
         {this.row(cardIcon('default'), 'Credit/Debit card', 'NewCard', {})}
-        {/* {this.row(cardIcon('applePay'), 'Apple Pay', 'ApplePay', {})} */}
+        {this.row(cardIcon('applePay'), 'Apple Pay', 'ApplePay', {})}
       </View>
     );
   }

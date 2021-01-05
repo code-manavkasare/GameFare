@@ -162,6 +162,11 @@ const shareCloudVideoWithCoachSession = async (
   coachSessionID,
   sharingScreenID,
 ) => {
+  console.log('shareCloudVideoWithCoachSession', {
+    cloudVideoID,
+    coachSessionID,
+    sharingScreenID,
+  });
   database()
     .ref()
     .update({
