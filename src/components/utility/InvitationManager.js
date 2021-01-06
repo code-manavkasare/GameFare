@@ -256,7 +256,12 @@ class InvitationManager extends Component {
   };
 
   confirmInvites() {
-    const {selectedSessions, selectedUsers, onConfirmInvites} = this.props;
+    const {
+      selectedSessions,
+      selectedUsers,
+      onConfirmInvites,
+      onClearInvites,
+    } = this.props;
     if (onConfirmInvites) {
       return onConfirmInvites({
         sessions: selectedSessions,
@@ -270,6 +275,7 @@ class InvitationManager extends Component {
     } else if (userArray.length > 0) {
       this.confirmUserInvites();
     }
+    onClearInvites();
   }
 
   button = () => {
