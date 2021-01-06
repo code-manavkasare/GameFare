@@ -88,7 +88,7 @@ class GuidedInteraction extends Component {
   };
   onLayout = async (index) => {
     const {delay} = this.props;
-    if (delay) await timeout(delay);
+    await timeout(delay ? delay + 1500 : 1500);
     this.childrenRef[index].measure((_, __, width, height, x, y) => {
       this.setState({x, y, height, width});
     });

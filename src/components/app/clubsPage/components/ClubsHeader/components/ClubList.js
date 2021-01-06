@@ -120,7 +120,7 @@ class ClubList extends Component {
             type={'overlay'}
             interaction={'clubSearch'}
             style={styles.footerButton}
-            delay={1500}
+            delay={3000}
             overlayStyle={{backgroundColor: colors.white}}
             onPress={this.searchClubs}>
             <View

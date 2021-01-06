@@ -150,6 +150,7 @@ class FooterButton extends React.Component {
         }
         type={'overlay'}
         interaction={(label ?? 'session') + 'Tab'}
+        offset={{y: 30}}
         onPress={this.clickButton}
         overlayStyle={{opacity: 0}}
         style={styles.button}>
@@ -182,8 +183,8 @@ class FooterButton extends React.Component {
                     </Reanimated.Text>
                   ) : null}
                   {displayPastille &&
-                  (numberNotifications > 0 ||
-                    numberBookingsNotifications > 0) ? (
+                  ((numberNotifications > 0 && label === 'Calls') ||
+                    (numberBookingsNotifications > 0 && label === 'Clubs')) ? (
                     <View
                       pointerEvents="none"
                       style={[
@@ -193,15 +194,8 @@ class FooterButton extends React.Component {
                             ? colors.primaryLight
                             : colors.grey,
                         },
-                      ]}>
-                      <Text
-                        style={[
-                          styleApp.textBold,
-                          {color: colors.white, fontSize: 10},
-                        ]}>
-                        {/* {numberNotifications} */}
-                      </Text>
-                    </View>
+                      ]}
+                    />
                   ) : null}
                 </Reanimated.View>
               );
@@ -248,15 +242,12 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   absoluteViewBadge: {
-    justifyContent: 'center',
-    alignItems: 'center',
     height: 5,
     width: 5,
     borderRadius: 10,
     backgroundColor: colors.blue,
     position: 'absolute',
-    top: 54,
-    right: '48%',
+    bottom: 0,
   },
   recordButton: {
     ...styleApp.center,

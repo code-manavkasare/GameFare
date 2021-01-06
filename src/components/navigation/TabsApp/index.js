@@ -39,6 +39,7 @@ class TabsApp extends React.Component {
           options={{
             pageStack: 'Clubs',
             label: 'Clubs',
+            displayPastille: true,
             signInToPass: false,
             icon: {
               name: 'users',

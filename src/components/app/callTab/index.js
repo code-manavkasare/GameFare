@@ -280,10 +280,6 @@ class CallTab extends Component {
           onClearInvites={() =>
             this.setState({selectedUsers: {}, selectedSessions: {}})
           }
-          onConfirmInvites={({sessions}) => {
-            this.setState({selectedUsers: {}, selectedSessions: {}});
-            sessionOpening(Object.values(sessions)[0]);
-          }}
           action={action}
           archivesToShare={archivesToShare}
           bottomOffset={modal ? 55 : heightFooter}
