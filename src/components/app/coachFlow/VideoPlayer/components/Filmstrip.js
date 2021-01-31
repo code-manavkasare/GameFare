@@ -35,7 +35,6 @@ export default class Filmstrip extends Component {
       thumbnailAspect: size.height / size.width,
       thumbnails: archive.initialSeekbarThumbnails,
     });
-    console.log('archive: ', archive);
     if (!local) {
       console.log('fetch Thumbnails');
       const {thumbnailsSeekBar} = archive;

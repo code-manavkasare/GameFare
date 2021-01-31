@@ -104,6 +104,10 @@ export default class VideoPlayer extends Component {
       this.PinchableBoxRef?.resetPosition();
     }
 
+    if (prevProps.archive?.local && !this.props.archive?.local) {
+      this.getProxySource();
+    }
+
     if (videoLoaded && !prevState.videoLoaded && !noUpdateInCloud) {
       setTimeout(() => {
         this.seek(currentTime);
