@@ -542,12 +542,12 @@ const createSession = async (members) => {
 };
 
 const sessionOpening = async (session) => {
-  /* Re-enable for payment support
+  // Re-enable for payment support
   const currentSessionID = store.getState().coach.currentSessionID;
   if (!isSessionFree(session) && currentSessionID !== session.objectID) {
-      return openMemberAcceptCharge(session);
+    return openMemberAcceptCharge(session);
   }
-  */
+
   await AudioSession.setCategoryAndMode(
     'PlayAndRecord',
     'VideoChat',
@@ -565,8 +565,7 @@ const sessionOpening = async (session) => {
     session ID forces session component to update
     before navigation blocking the UI thread.
   */
-  // setTimeout(async () => {
-  // }, 200);
+  setTimeout(async () => {}, 200);
 };
 
 const capitalize = (str) => {
