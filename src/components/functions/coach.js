@@ -541,6 +541,14 @@ const createSession = async (members) => {
   );
 };
 
+const isSessionFree = (session) => {
+  const coach = infoCoach(session.members);
+  if (!coach) {
+    return true;
+  }
+  return !coach.chargeForSession;
+};
+
 const sessionOpening = async (session) => {
   // Re-enable for payment support
   const currentSessionID = store.getState().coach.currentSessionID;
