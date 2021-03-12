@@ -120,15 +120,15 @@ class Footer extends React.Component {
   appBackgroundNotificationListenner() {
     this.removeNotificationListener = messaging().onNotificationOpenedApp(
       (notification) => {
-        clickNotification(notification);
+        clicktification(notification);
       },
     );
   }
   async appOpenFistNotification() {
-    const notificationOpen = await messaging().getInitialNotification();
-    if (notificationOpen) {
-      return clickNotification(notificationOpen);
-    }
+    // const notificationOpen = await messaging().getInitialNotification();
+    // if (notificationOpen) {
+    //   return clickNotification(notificationOpen);
+    // }
   }
   animatedValues() {
     const {state, position} = this.props;

@@ -7,7 +7,7 @@ import SplashScreen from 'react-native-splash-screen';
 import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
 import BackgroundTimer from 'react-native-background-timer';
-import {Text, StatusBar, LogBox} from 'react-native';
+import {Text, StatusBar, LogBox, Linking} from 'react-native';
 
 import {store} from './src/store/reduxStore';
 
@@ -17,7 +17,7 @@ import UploadManager from './src/components/app/elementsUpload/UploadManager';
 import AppState from './src/components/app/functional/AppState.js';
 import {updateNotificationBadgeInBackground} from './src/components/functions/notifications.js';
 import {signIn} from './src/store/actions/userActions';
-import {navigationRef} from './NavigationService';
+import {clickNotification, navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
 import ConnectionTypeProvider from './src/components/utility/ConnectionTypeProvider';
 
@@ -25,6 +25,7 @@ import BranchManager from './src/components/utility/BranchManager';
 import CallListener from './src/components/utility/CallListener';
 import {audioDebugger} from './src/components/utility/AudioSessionDebugger';
 import {logsBridgeRN} from './src/components/functions/logs';
+import messaging from '@react-native-firebase/messaging';
 
 import {
   updateLocalVideoUrls,
@@ -115,6 +116,11 @@ export default class App extends Component {
         phoneNumber: phoneNumber,
         countryCode: countryCode,
       });
+    }
+
+    const notificationOpen = await messaging().getInitialNotification();
+    if (notificationOpen) {
+      return clickNotification(notificationOpen);
     }
 
     return true;
