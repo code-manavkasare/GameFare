@@ -1,7 +1,6 @@
 import React, {Component, PureComponent} from 'react';
 import {View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {Col, Row, Grid} from 'react-native-easy-grid';
 import colors from '../style/colors';
 import styleApp from '../style/style';
 
