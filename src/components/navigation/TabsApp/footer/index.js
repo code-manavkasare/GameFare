@@ -120,7 +120,7 @@ class Footer extends React.Component {
   appBackgroundNotificationListenner() {
     this.removeNotificationListener = messaging().onNotificationOpenedApp(
       (notification) => {
-        clicktification(notification);
+        clickNotification(notification);
       },
     );
   }
