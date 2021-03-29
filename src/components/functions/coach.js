@@ -567,13 +567,13 @@ const sessionOpening = async (session) => {
   });
 
   await navigate('Session');
-  return finalizeOpening(session);
   /*
-    Set timeout is a quick fix, unset/set current
-    session ID forces session component to update
-    before navigation blocking the UI thread.
+  Set timeout is a quick fix, unset/set current
+  session ID forces session component to update
+  before navigation blocking the UI thread.
   */
   setTimeout(async () => {}, 200);
+  return finalizeOpening(session);
 };
 
 const capitalize = (str) => {

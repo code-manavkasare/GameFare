@@ -1,29 +1,30 @@
 import database from '@react-native-firebase/database';
 
 import {getValueOnce} from '../database/firebase/methods';
-import {fetchGameFareCommission} from '../database/firebase/fetchData';
-import {fetchStripeFees} from './stripe';
+// import {fetchGameFareCommission} from '../database/firebase/fetchData';
+// import {fetchStripeFees} from './stripe';
 
 const calculateFees = async ({amount}) => {
-  const {stripeFixed, stripeVariable} = await fetchStripeFees();
-  const gamefareCommission = await fetchGameFareCommission();
+  // const {stripeFixed, stripeVariable} = await fetchStripeFees();
+  // const gamefareCommission = await fetchGameFareCommission();
 
   amount = amount ?? 0;
 
-  // Stripe processing
-  let processingFees = amount * stripeVariable + stripeFixed;
+  // // Stripe processing
+  // let processingFees = amount * stripeVariable + stripeFixed;
 
-  // GameFare commission
-  let serviceCharge = amount * gamefareCommission * 0.01;
+  // // GameFare commission
+  // let serviceCharge = amount * gamefareCommission * 0.01;
 
-  // Total amount to transfer
-  let total = amount - serviceCharge - processingFees;
+  // // Total amount to transfer
+  // let total = amount - serviceCharge - processingFees;
+  let total = amount;
 
-  processingFees = processingFees.toFixed(2);
-  serviceCharge = serviceCharge.toFixed(2);
+  // processingFees = processingFees.toFixed(2);
+  // serviceCharge = serviceCharge.toFixed(2);
   total = total.toFixed(2);
 
-  return {processingFees, serviceCharge, total};
+  return {processingFees: 0, serviceCharge: 0, total};
 };
 
 const payUser = async ({userID, amount, description}) => {
