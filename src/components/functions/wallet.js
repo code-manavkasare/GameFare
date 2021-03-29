@@ -6,7 +6,7 @@ import {getValueOnce} from '../database/firebase/methods';
 
 const calculateFees = async ({amount}) => {
   // const {stripeFixed, stripeVariable} = await fetchStripeFees();
-  // const gamefareCommission = await fetchGameFareCommission();
+  // const gamefareCommission = await  fetchGameFareCommission();
 
   amount = amount ?? 0;
 
