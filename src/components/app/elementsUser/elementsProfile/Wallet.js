@@ -16,6 +16,17 @@ import styleApp from '../../../style/style';
 import CardTransfer from './CardTransfer';
 import {userIDSelector, walletSelector} from '../../../../store/selectors/user';
 
+function moveArrayItemToNewIndex(arr, old_index, new_index) {
+  if (new_index >= arr.length) {
+    var k = new_index - arr.length + 1;
+    while (k--) {
+      arr.push(undefined);
+    }
+  }
+  arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+  return arr;
+}
+
 class Wallet extends Component {
   constructor(props) {
     super(props);
@@ -39,10 +50,24 @@ class Wallet extends Component {
     listTransfers = Object.values(listTransfers).sort(function(a, b) {
       return new Date(b.date) - new Date(a.date);
     });
-    return this.setState({
-      loader: false,
-      listTransfers: Object.values(listTransfers),
+    const promise = listTransfers.map(({date}, index) => {
+      if (!date) {
+        const newArray = moveArrayItemToNewIndex(
+          listTransfers,
+          index,
+          listTransfers.length > 0
+            ? listTransfers.length - 1
+            : listTransfers.length,
+        );
+        listTransfers = newArray;
+      }
     });
+    return Promise.all(promise).then(() =>
+      this.setState({
+        loader: false,
+        listTransfers: Object.values(listTransfers),
+      }),
+    );
   }
   placehoder() {
     return (
@@ -76,7 +101,7 @@ class Wallet extends Component {
   }
   async refresh() {
     await this.setState({loader: true});
-    return this.loadTransfers();
+    return await this.loadTransfers();
   }
   widthdraw(wallet) {
     const {navigate} = this.props.navigation;
