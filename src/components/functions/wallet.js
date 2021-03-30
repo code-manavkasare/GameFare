@@ -32,7 +32,7 @@ const payUser = async ({userID, amount, description}) => {
 
   let currentWallet = parseFloat(await getValueOnce(walletPath));
   if (isNaN(currentWallet)) currentWallet = 0;
-
+  //
   let {total} = await calculateFees({amount});
 
   let newWallet = Number(parseFloat(total) + currentWallet).toFixed(2);
