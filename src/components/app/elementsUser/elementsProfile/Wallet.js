@@ -50,24 +50,10 @@ class Wallet extends Component {
     listTransfers = Object.values(listTransfers).sort(function(a, b) {
       return new Date(b.date) - new Date(a.date);
     });
-    const promise = listTransfers.map(({date}, index) => {
-      if (!date) {
-        const newArray = moveArrayItemToNewIndex(
-          listTransfers,
-          index,
-          listTransfers.length > 0
-            ? listTransfers.length - 1
-            : listTransfers.length,
-        );
-        listTransfers = newArray;
-      }
+    this.setState({
+      loader: false,
+      listTransfers: Object.values(listTransfers),
     });
-    return Promise.all(promise).then(() =>
-      this.setState({
-        loader: false,
-        listTransfers: Object.values(listTransfers),
-      }),
-    );
   }
   placehoder() {
     return (
